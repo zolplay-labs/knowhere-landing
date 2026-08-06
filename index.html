@@ -83,7 +83,6 @@
     #top .hero-copy > * { animation: none !important; opacity: 1 !important; transform: none !important; }
     .hero-copy .eyebrow { margin: 0; }
     .hero-copy h1 { position: relative; max-width: 880px; margin: 0; font-size: 56px; line-height: 1.08; text-wrap: balance; }
-    .hero-copy .hero-title-tiles { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .title-type-cursor { position: absolute; display: inline; margin-left: .08em; font: inherit; color: currentColor; animation: title-cursor-blink .8s steps(1, end) infinite; }
     .title-type-reserve { visibility: hidden; }
     .js.title-type-ready .type-title.is-waiting { color: transparent; }
@@ -853,7 +852,7 @@
   <main id="main" tabindex="-1">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <h1 id="hero-title">Turn complex documents into context your agents can use.<canvas class="hero-title-tiles" data-title-tiles aria-hidden="true"></canvas></h1>
+        <h1 id="hero-title">Turn complex documents into context your agents can use.</h1>
         <p class="lede">Knowhere preserves text, structure, visual context, and source links, so your agents can retrieve the right information and show where it came from.</p>
         <div class="button-row"><a class="button" href="https://knowhereto.ai/login">Start free trial</a><a class="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
       </div>
@@ -1780,8 +1779,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     headingTypingTimers.delete(heading);
   }
   function replaceHeadingText(heading, text) {
-    const persistentChildren = $$(':scope > [data-title-tiles]', heading);
-    heading.replaceChildren(document.createTextNode(text), ...persistentChildren);
+    heading.replaceChildren(document.createTextNode(text));
   }
   function showHeading(heading, text) {
     stopHeadingTyping(heading);
@@ -1792,7 +1790,6 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   function typeHeading(heading, text) {
     stopHeadingTyping(heading);
-    const persistentChildren = $$(':scope > [data-title-tiles]', heading);
     const typedText = document.createTextNode('');
     const reservedText = document.createElement('span');
     reservedText.className = 'title-type-reserve';
@@ -1805,7 +1802,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     cursor.className = 'title-type-cursor';
     cursor.setAttribute('aria-hidden', 'true');
     cursor.textContent = '|';
-    heading.replaceChildren(typedText, cursor, reservedText, ...persistentChildren);
+    heading.replaceChildren(typedText, cursor, reservedText);
     const characters = [...text];
     const duration = 300;
     const startedAt = performance.now();
