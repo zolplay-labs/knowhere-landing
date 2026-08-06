@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Transform unstructured documents into clean, structured data. Extract tables, formulas, and layouts with pixel-perfect precision.">
-  <title>KNOWHERE — Transform unstructured documents into structured data</title>
+  <meta name="description" content="Knowhere turns complex documents into structured, navigable, and source-linked context for agents.">
+  <title>KNOWHERE — Document context for agents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -853,9 +853,9 @@
   <main id="main" tabindex="-1">
     <section class="hero shell" id="top" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <h1 id="hero-title">Transform unstructured documents into clean, structured data.<canvas class="hero-title-tiles" data-title-tiles aria-hidden="true"></canvas></h1>
-        <p class="lede">Extract tables, formulas, and layouts with pixel-perfect precision.</p>
-        <div class="button-row"><a class="button" href="https://knowhereto.ai/login">Start Free Trial</a><a class="button button-secondary" href="https://docs.knowhereto.ai/">View Docs</a></div>
+        <h1 id="hero-title">Turn complex documents into context your agents can use.<canvas class="hero-title-tiles" data-title-tiles aria-hidden="true"></canvas></h1>
+        <p class="lede">Knowhere preserves text, structure, visual context, and source links, so your agents can retrieve the right information and show where it came from.</p>
+        <div class="button-row"><a class="button" href="https://knowhereto.ai/login">Start free trial</a><a class="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
       </div>
       <div class="hero-visual" aria-label="Illustration of a document becoming structured content with a source reference">
         <div class="document-stage" role="img" aria-label="Document illustration frame"></div>
@@ -863,7 +863,7 @@
     </section>
 
     <section class="section shell reveal" id="playground" aria-labelledby="playground-title">
-      <div class="section-heading"><p class="section-no">PRODUCT</p><h2 id="playground-title">Turn any document into RAG-ready chunks.</h2><p>Grab a file below and experience Knowhere turn messy documents into clean &amp; structured JSON.</p></div>
+      <div class="section-heading"><p class="section-no">PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
       <aside class="sample-panel sample-panel--standalone" aria-label="Preset source documents">
         <ol class="sample-list" role="listbox" aria-label="Preset documents">
           <li role="presentation"><button role="option" aria-selected="true" draggable="true" data-sample="research"><span class="sample-spine-num">01</span><span class="sample-file-name">Tesla Q4 2025 Update.pdf</span><span class="sample-file-type">PDF</span><span class="sample-spine-dot" aria-hidden="true"></span><span class="sample-spine-progress" aria-hidden="true"><span></span></span><span class="sample-drag">Drag ↗</span></button></li>
@@ -896,29 +896,29 @@
     <div class="capabilities-scroll-track">
     <section class="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
       <div class="capabilities-sticky">
-        <div class="section-heading"><p class="section-no">PROCESS</p><h2 id="capabilities-title">From document input to agent-ready output.</h2><p>A unified pipeline captures text and visual context, builds document structure, and returns traceable output for agents.</p></div>
+        <div class="section-heading"><p class="section-no">PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps the important parts connected.</h2></div>
         <div class="narrative-grid">
           <div class="story-steps" role="tablist" aria-label="Data transformation stages">
-            <div id="story-tab-structure" class="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabindex="0"><span>01</span><h3>Document Input</h3><p>Upload a document in any supported format.</p><div class="mobile-story-visual">Document received</div></div>
-            <div id="story-tab-visual" class="story-step" data-story="visual" role="tab" aria-selected="false" aria-controls="story-panel-visual" tabindex="-1"><span>02</span><h3>Text &amp; Visual Capture</h3><p>Read native text or apply OCR while preserving every original page.</p><div class="mobile-story-visual">Content captured</div></div>
-            <div id="story-tab-source" class="story-step" data-story="source" role="tab" aria-selected="false" aria-controls="story-panel-source" tabindex="-1"><span>03</span><h3>Structure &amp; Understanding</h3><p>Build document structure through Text Parse and Vision Map.</p><div class="mobile-story-visual">Document mapped</div></div>
-            <div id="story-tab-relations" class="story-step" data-story="relations" role="tab" aria-selected="false" aria-controls="story-panel-relations" tabindex="-1"><span>04</span><h3>Agent-ready Output</h3><p>Return structured, navigable, and source-linked context.</p><div class="mobile-story-visual">Structured context ready</div></div>
+            <div id="story-tab-structure" class="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabindex="0"><span>01</span><h3>Ingest the document</h3><p>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p><div class="mobile-story-visual" aria-hidden="true"></div></div>
+            <div id="story-tab-visual" class="story-step" data-story="visual" role="tab" aria-selected="false" aria-controls="story-panel-visual" tabindex="-1"><span>02</span><h3>Capture text and visual context</h3><p>Read native text or apply OCR while preserving the original pages and visual regions.</p><div class="mobile-story-visual" aria-hidden="true"></div></div>
+            <div id="story-tab-source" class="story-step" data-story="source" role="tab" aria-selected="false" aria-controls="story-panel-source" tabindex="-1"><span>03</span><h3>Understand the structure</h3><p>Map headings, tables, formulas, layouts, and relationships across the document.</p><div class="mobile-story-visual" aria-hidden="true"></div></div>
+            <div id="story-tab-relations" class="story-step" data-story="relations" role="tab" aria-selected="false" aria-controls="story-panel-relations" tabindex="-1"><span>04</span><h3>Return traceable context</h3><p>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p><div class="mobile-story-visual" aria-hidden="true"></div></div>
           </div>
           <div class="story-card-stack">
             <div class="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
-              <div class="capability-copy"><span data-story-label>01</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Document Input</h3><p data-story-output>Document received</p></div><p data-story-summary>Upload a PDF, DOCX, XLSX, presentation, image, or other supported document.</p></div></div>
+              <div class="capability-copy"><span data-story-label>01</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Ingest the document</h3></div><p data-story-summary>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p></div></div>
               <div class="capability-media" role="img" aria-label="Data transformation image placeholder"></div>
             </div>
             <div class="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
-              <div class="capability-copy"><span data-story-label>02</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Text &amp; Visual Capture</h3><p data-story-output>Content captured</p></div><p data-story-summary>Read native text or apply OCR while preserving every original page and visual region.</p></div></div>
+              <div class="capability-copy"><span data-story-label>02</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Capture text and visual context</h3></div><p data-story-summary>Read native text or apply OCR while preserving the original pages and visual regions.</p></div></div>
               <div class="capability-media" role="img" aria-label="Data transformation image placeholder"></div>
             </div>
             <div class="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
-              <div class="capability-copy"><span data-story-label>03</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Structure &amp; Understanding</h3><p data-story-output>Document mapped</p></div><p data-story-summary>Build hierarchy, tables, formulas, and relationships through Text Parse and Vision Map.</p></div></div>
+              <div class="capability-copy"><span data-story-label>03</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Understand the structure</h3></div><p data-story-summary>Map headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
               <div class="capability-media" role="img" aria-label="Data transformation image placeholder"></div>
             </div>
             <div class="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
-              <div class="capability-copy"><span data-story-label>04</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Agent-ready Output</h3><p data-story-output>Structured context ready</p></div><p data-story-summary>Return structured JSON, a navigable document map, and source-linked pages for agents.</p></div></div>
+              <div class="capability-copy"><span data-story-label>04</span><div class="capability-copy-main"><div class="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p></div></div>
               <div class="capability-media" role="img" aria-label="Data transformation image placeholder"></div>
             </div>
           </div>
@@ -929,7 +929,7 @@
 
     <div class="formats-scroll-track">
     <section class="section shell reveal" id="formats" aria-labelledby="formats-title">
-      <div class="section-heading"><p class="section-no">SCOPE</p><h2 id="formats-title">Built for every document challenge.</h2><p>Enterprise-grade features designed to handle the most complex document parsing scenarios.</p></div>
+      <div class="section-heading"><p class="section-no">SCOPE</p><h2 id="formats-title">Core capabilities.</h2></div>
       <div class="formats-grid">
         <article class="format-feature format-feature--formats">
           <div class="format-orbit-stage" aria-label="Illustrative formats">
@@ -963,12 +963,12 @@
           <div class="formats-secondary-sticky">
             <div class="formats-secondary-viewport">
               <div class="formats-secondary-grid">
-                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Page-native Vision Map</h3><p>Preserve original pages as visual sources of truth, keeping layouts, diagrams, drawings, and spatial relationships available for agents to inspect on demand.</p></div></article>
-                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Agentic-Native Structure</h3><p>Progressive disclosure and hierarchical memory natively designed for agentic engineering workflows.</p></div></article>
-                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Formula &amp; Chemical Recognition</h3><p>Extract mathematical formulas (LaTeX/MathML) and chemical structures with ~95% accuracy for scientific documents.</p></div></article>
-                <article class="format-feature"><div><span class="format-feature-category">TRUST</span></div><div><h3>Full Provenance Tracing</h3><p>100% source traceability for every extracted element, making it easy to audit and verify AI-generated content.</p></div></article>
-                <article class="format-feature"><div><span class="format-feature-category">INFRASTRUCTURE</span></div><div><h3>On-premise Deployment</h3><p>Supports local deployment for enterprise long-tail needs: conflict detection, compliance auditing, risk identification, and more.</p></div></article>
-                <article class="format-feature"><div><span class="format-feature-category">INFRASTRUCTURE</span></div><div><h3>API First Design</h3><p>RESTful API with webhooks, comprehensive SDKs for all major languages, and detailed documentation.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Page-native visual understanding</h3><p>Keep the original page as a source of truth. Preserve layouts, diagrams, drawings, and spatial relationships for agents to inspect when text alone is not enough.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Agent-ready structure</h3><p>Return hierarchical, progressive context instead of a flat block of extracted text. Agents can start with the outline and reveal detail when they need it.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">UNDERSTANDING</span></div><div><h3>Formula and chemical recognition</h3><p>Extract mathematical formulas and chemical structures in formats agents and downstream systems can use.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">TRUST</span></div><div><h3>Full provenance tracing</h3><p>Trace extracted elements back to their page and source region, making AI-generated answers easier to verify.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">INFRASTRUCTURE</span></div><div><h3>On-premise deployment</h3><p>Deploy Knowhere locally when document privacy, compliance, or long-term control matters.</p></div></article>
+                <article class="format-feature"><div><span class="format-feature-category">INFRASTRUCTURE</span></div><div><h3>API-first integration</h3><p>Process documents through a REST API, webhooks, SDKs, or MCP.</p></div></article>
               </div>
             </div>
           </div>
@@ -981,30 +981,10 @@
       <div class="section-heading">
         <p class="section-no">COMPARISON / EVALUATION</p>
         <h2 id="comparison-title">How we compare.</h2>
-        <p>On a benchmark of 50 retrieval tasks across 500+ curated documents, Knowhere achieved significantly higher first-pass accuracy and recall than raw document pipelines, while using fewer tokens, fewer agent loops, and lower latency.</p>
       </div>
       <div class="comparison-frame" aria-label="Illustrative document pipeline comparison">
-        <div class="comparison-dashboard">
-          <div class="comparison-chart">
-            <div class="divider-hatch" aria-hidden="true"></div>
-            <div class="comparison-chart-header">
-              <p class="comparison-chart-note">Comparison performance</p>
-              <div class="comparison-legend" aria-label="Comparison categories"><span><i></i>All</span><span><i class="knowhere-key"></i>Structures</span><span><i class="unstructured-key"></i>Tables</span><span><i class="mineru-key"></i>Interpretability</span><span><i class="markitdown-key"></i>Downstream</span></div>
-            </div>
-            <div class="comparison-metrics" aria-hidden="true">
-              <div class="comparison-metric"><i style="height:82%"></i><i style="height:79%"></i><i style="height:94%"></i><i style="height:84%"></i><i style="height:75%"></i></div>
-              <div class="comparison-metric"><i style="height:94%"></i><i style="height:74%"></i><i style="height:81%"></i><i style="height:85%"></i><i style="height:73%"></i></div>
-              <div class="comparison-metric"><i style="height:52%"></i><i style="height:43%"></i><i style="height:47%"></i><i style="height:44%"></i><i style="height:42%"></i></div>
-              <div class="comparison-metric"><i style="height:50%"></i><i style="height:68%"></i><i style="height:61%"></i><i style="height:66%"></i><i style="height:59%"></i></div>
-              <div class="comparison-metric"><i style="height:53%"></i><i style="height:79%"></i><i style="height:69%"></i><i style="height:64%"></i><i style="height:54%"></i></div>
-              <div class="comparison-metric"><i style="height:74%"></i><i style="height:82%"></i><i style="height:77%"></i><i style="height:78%"></i><i style="height:76%"></i></div>
-            </div>
-            <div class="comparison-metric-labels"><span>Token used</span><span>Time used</span><span>Agent loops</span><span>First-time accuracy</span><span>Accuracy with feedback</span><span>Recall</span></div>
-          </div>
-          <div class="divider-hatch divider-hatch--bottom" aria-hidden="true"></div>
-        </div>
         <div class="comparison-scoreboard" role="group" aria-label="Document understanding capability matrix">
-          <div class="comparison-scoreboard-head"><strong>Capability matrix</strong><div class="comparison-scoreboard-head-actions"><span>Published product comparison</span><button class="comparison-toggle" type="button" aria-expanded="false" aria-controls="comparison-table"><span class="sr-only">Toggle comparison details</span></button></div></div>
+          <div class="comparison-scoreboard-head"><strong>Capability matrix</strong><div class="comparison-scoreboard-head-actions"><button class="comparison-toggle" type="button" aria-expanded="false" aria-controls="comparison-table"><span class="sr-only">Toggle comparison details</span></button></div></div>
           <div class="comparison-scoreboard-body" id="comparison-table"><div class="comparison-scoreboard-grid">
             <div class="scoreboard-cell scoreboard-head-cell">Feature</div><div class="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div class="scoreboard-cell scoreboard-head-cell">Others</div>
             <div class="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Bad</span></div>
@@ -1012,8 +992,6 @@
             <div class="scoreboard-cell scoreboard-feature">Table boundary detection</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
             <div class="scoreboard-cell scoreboard-feature">Source traceability</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Bad</span></div>
             <div class="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Vectorless RAG &amp; hybrid RAG</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Top-K boost ~10%+ in production</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
             <div class="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Limited</span></div>
           </div></div>
         </div>
@@ -1021,9 +999,9 @@
     </section>
 
     <section class="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div class="section-heading"><p class="section-no">INTEGRATION</p><h2 id="integration-title">Integrate in minutes.</h2><p>Connect Knowhere to your workflow with a simple API, webhooks, and MCP.</p></div>
+      <div class="section-heading"><p class="section-no">INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
       <div class="integration-grid">
-        <ol class="steps"><li><span>01</span><div><h3>Get your API key</h3><p>Sign up and generate your secure API key from the dashboard.</p></div></li><li><span>02</span><div><h3>Submit a job</h3><p>Send a URL or upload a file to our processing queue.</p></div></li><li><span>03</span><div><h3>Receive results</h3><p>Get structured JSON data via webhook or polling.</p></div></li></ol>
+        <ol class="steps"><li><span>01</span><div><h3>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><span>02</span><div><h3>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><span>03</span><div><h3>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
         <div class="integration-plinth" aria-hidden="true"></div>
         <div class="code-card"><div class="code-head"><span>Illustrative flow · interface details unconfirmed</span><button type="button" class="copy-code">Copy</button></div><div class="tabs compact" role="tablist" aria-label="Code examples"><button role="tab" id="code-python" aria-selected="true" aria-controls="code-panel-python">Python</button><button role="tab" id="code-node" aria-selected="false" aria-controls="code-panel-node" tabindex="-1">Node.js</button><button role="tab" id="code-curl" aria-selected="false" aria-controls="code-panel-curl" tabindex="-1">cURL</button></div><div class="code-panels"><pre role="tabpanel" tabindex="0" id="code-panel-python" aria-labelledby="code-python"><code># Illustrative only — no real endpoint
 result = knowhere.process("sample.pdf")
@@ -1032,7 +1010,7 @@ const result = await knowhere.process("sample.pdf")
 console.log(result.structure)</code></pre><pre role="tabpanel" tabindex="0" id="code-panel-curl" aria-labelledby="code-curl"><code># Illustrative only — no real endpoint
 curl -X POST "[endpoint-to-be-confirmed]" \
   -F "file=@sample.pdf"</code></pre></div><p class="sr-only" aria-live="polite" data-copy-live></p></div>
-        <div class="mcp"><h3>MCP server available</h3><p>MCP server available for Cursor, VS Code, Claude, and Codex.</p><a href="https://docs.knowhereto.ai/mcp" class="text-link">Read the MCP docs →</a></div>
+        <div class="mcp"><h3>MCP</h3><p>Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" class="text-link">Read the MCP docs →</a></div>
       </div>
     </section>
 
@@ -1054,8 +1032,8 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     <section class="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div class="enterprise-content">
         <p class="section-no enterprise-label">ENTERPRISE</p>
-        <div class="enterprise-copy"><div class="enterprise-copy-text"><h2 id="enterprise-title">Need custom solutions?</h2><p class="lede">Get custom limits, SLAs, and dedicated support for your enterprise needs.</p></div><a class="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a></div>
-        <ul class="enterprise-metrics"><li class="enterprise-metric">Custom rate limits</li><li class="enterprise-metric">Priority processing</li><li class="enterprise-metric">Dedicated support channel</li><li class="enterprise-metric">Custom SLA agreements</li><li class="enterprise-metric">Volume discounts</li><li class="enterprise-metric">Invoice billing</li></ul>
+        <div class="enterprise-copy"><div class="enterprise-copy-text"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><p class="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div><a class="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a></div>
+        <ul class="enterprise-metrics"><li class="enterprise-metric">Custom rate limits</li><li class="enterprise-metric">Priority processing</li><li class="enterprise-metric">Deployment options</li><li class="enterprise-metric">Support requirements</li><li class="enterprise-metric">SLA requirements</li><li class="enterprise-metric">Commercial terms</li></ul>
       </div>
     </section>
 
@@ -1072,9 +1050,8 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     </section>
 
     <section class="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <div id="final-cta-copy"><h2 id="final-title">Ready to get started?</h2><p class="lede">Join thousands of developers building AI agents with the most accurate document parsing API.</p></div>
-      <div id="final-cta-highlights" role="list"><span role="listitem">No credit card required</span><span role="listitem">Free 14-day trial</span><span role="listitem">Cancel anytime</span></div>
-      <div id="final-cta-actions"><a class="button" href="https://knowhereto.ai/login">Start Free Trial</a><a class="button button-secondary" href="mailto:team@knowhereto.ai">Book A Demo</a></div>
+      <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p class="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
+      <div id="final-cta-actions"><a class="button" href="https://knowhereto.ai/login">Start free trial</a><a class="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
     </section>
   </main>
 
@@ -1280,9 +1257,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'Agentic-Native Structure': '面向智能体的原生结构',
     'Progressive disclosure and hierarchical memory natively designed for agentic engineering workflows.': '为智能体工程工作流原生设计渐进式呈现与层级记忆。',
     'Formula & Chemical Recognition': '公式与化学结构识别',
-    'Extract mathematical formulas (LaTeX/MathML) and chemical structures with ~95% accuracy for scientific documents.': '从科研文档中提取数学公式（LaTeX/MathML）与化学结构，准确率约为 95%。',
     'Full Provenance Tracing': '完整来源追溯',
-    '100% source traceability for every extracted element, making it easy to audit and verify AI-generated content.': '每个提取元素均可 100% 追溯至来源，便于审计和核验 AI 生成内容。',
     'On-premise Deployment': '本地化部署',
     'Supports local deployment for enterprise needs including conflict detection, compliance auditing, and risk identification.': '支持面向冲突检测、合规审计和风险识别等企业需求的本地部署。',
     'API First Design': 'API 优先设计',
@@ -1300,7 +1275,6 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'Read the MCP docs →': '阅读 MCP 文档 →',
     'COMPARISON / EVALUATION': '对比 / 评估',
     'How we compare.': '我们的对比。',
-    'On a benchmark of 50 retrieval tasks across 500+ curated documents, Knowhere achieved significantly higher first-pass accuracy and recall than raw document pipelines, while using fewer tokens, fewer agent loops, and lower latency.': '在涵盖 500 多份精选文档的 50 项检索任务基准测试中，Knowhere 相比原始文档管线实现了更高的首次准确率与召回率，同时使用更少的 Token、更少的智能体循环并降低延迟。',
     'Comparison performance': '对比表现',
     'Agent + Knowhere': '智能体 + Knowhere',
     'Agent + Unstructured': '智能体 + Unstructured',
@@ -1313,7 +1287,6 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'Structured output is ready for agent use.': '结构化输出可直接供智能体使用。',
     'Capability matrix': '能力矩阵', 'Published product comparison': '官网公开产品对比',
     'Knowhere': 'Knowhere', 'Others': '其他方案', 'Yes': '是', 'Bad': '较弱', 'No': '不支持', 'Limited': '有限',
-    'Top-K boost ~10%+ in production': '生产环境中 Top-K 提升约 10% 以上',
     'Page-native visual understanding': '页面原生视觉理解',
     'Simple, transparent pricing.': '简单、透明的定价。',
     'Pay only for what you use. No hidden fees, no complex tiers.': '只为实际使用量付费，没有隐藏费用，也没有复杂套餐。',
@@ -1390,7 +1363,6 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'Structure Analysis': '结构分析', 'Analyze layout, relationships, hierarchies.': '分析版式、关系和层级。', 'Structure mapped': '结构已映射',
     'JSON Output': 'JSON 输出', 'Clean, structured data for AI consumption.': '输出供 AI 使用的清晰结构化数据。', 'Structured JSON ready': '结构化 JSON 已生成',
     'Ready to get started?': '准备好开始了吗？',
-    'Join thousands of developers building AI agents with the most accurate document parsing API.': '加入数千名开发者，使用高精度文档解析 API 构建 AI 智能体。',
     'No credit card required': '无需信用卡', 'Free 14-day trial': '14 天免费试用', 'Cancel anytime': '可随时取消',
     'Book A Demo': '预约演示',
     'Hierarchy construction': '层级构建', 'Complex merged cells': '复杂合并单元格', 'Table boundary detection': '表格边界检测',
@@ -1398,6 +1370,45 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'All': '全部', 'Structures': '结构', 'Tables': '表格', 'Interpretability': '可解释性', 'Downstream': '下游应用',
     'Agent': '智能体', 'Output': '输出', 'Trace': '追溯', 'Document outline': '文档大纲', 'Awaiting document': '等待文档',
     'Open menu': '打开菜单', 'Everything you need to know about credits, billing, and refunds.': '了解页面额度、计费与退款的常见问题。',
+    'Turn complex documents into context your agents can use.': '将复杂文档转化为智能体可用的上下文。',
+    'Knowhere preserves text, structure, visual context, and source links, so your agents can retrieve the right information and show where it came from.': 'Knowhere 保留文本、结构、视觉上下文与来源链接，让智能体能够检索正确的信息，并说明信息来自哪里。',
+    'Read the docs': '阅读文档',
+    'From messy files to agent-ready context.': '从杂乱文件到面向智能体的上下文。',
+    'Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.': 'Knowhere 将 PDF、电子表格、演示文稿、扫描件及其他复杂文档转化为结构化、可导航的数据。文本、表格、公式、页面版式与视觉区域保持关联，让智能体检索信息时不会丢失其原始文档上下文。',
+    'A document pipeline that keeps the important parts connected.': '一条让关键信息始终保持关联的文档处理流程。',
+    'Ingest the document': '接收文档',
+    'Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.': '上传 PDF、DOCX、XLSX、演示文稿、图片或其他受支持格式。',
+    'Capture text and visual context': '捕获文本与视觉上下文',
+    'Read native text or apply OCR while preserving the original pages and visual regions.': '读取原生文本或执行 OCR，同时保留原始页面与视觉区域。',
+    'Understand the structure': '理解文档结构',
+    'Map headings, tables, formulas, layouts, and relationships across the document.': '映射文档中的标题、表格、公式、版式与关系。',
+    'Return traceable context': '返回可追溯上下文',
+    'Get structured JSON, a navigable document map, and source-linked pages for your agents.': '为智能体获得结构化 JSON、可导航文档地图及关联来源的页面。',
+    'Core capabilities.': '核心能力。',
+    'Page-native visual understanding': '页面原生视觉理解',
+    'Keep the original page as a source of truth. Preserve layouts, diagrams, drawings, and spatial relationships for agents to inspect when text alone is not enough.': '将原始页面保留为事实来源。当纯文本不足时，让智能体可以查看版式、图表、图纸与空间关系。',
+    'Agent-ready structure': '面向智能体的结构',
+    'Return hierarchical, progressive context instead of a flat block of extracted text. Agents can start with the outline and reveal detail when they need it.': '返回具有层级且可渐进展开的上下文，而非一整块扁平文本。智能体可以从大纲开始，并在需要时展开细节。',
+    'Formula and chemical recognition': '公式与化学结构识别',
+    'Extract mathematical formulas and chemical structures in formats agents and downstream systems can use.': '以智能体和下游系统可用的格式提取数学公式与化学结构。',
+    'Full provenance tracing': '完整来源追溯',
+    'Trace extracted elements back to their page and source region, making AI-generated answers easier to verify.': '将提取元素追溯回对应页面和来源区域，让 AI 生成的回答更容易核验。',
+    'On-premise deployment': '本地部署',
+    'Deploy Knowhere locally when document privacy, compliance, or long-term control matters.': '当文档隐私、合规或长期控制至关重要时，在本地部署 Knowhere。',
+    'API-first integration': 'API 优先集成',
+    'Process documents through a REST API, webhooks, SDKs, or MCP.': '通过 REST API、Webhook、SDK 或 MCP 处理文档。',
+    'Add document understanding to your workflow in minutes.': '几分钟内为你的工作流加入文档理解能力。',
+    'Send a document, receive structured results, and connect the output to the tools your agents already use.': '发送文档、接收结构化结果，并将输出连接到智能体已经使用的工具。',
+    'Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.': '通过 MCP 在 Cursor、VS Code、Claude 或 Codex 中使用 Knowhere。',
+    'Get an API key': '获取 API 密钥', 'Sign up and generate your API key from the dashboard.': '注册并从控制台生成 API 密钥。',
+    'Submit a document': '提交文档', 'Send a URL or upload a file to the processing queue.': '发送 URL 或将文件上传至处理队列。',
+    'Receive structured results': '接收结构化结果', 'Get structured JSON through webhook or polling.': '通过 Webhook 或轮询获取结构化 JSON。',
+    'Start free trial': '免费试用', 'Book a demo': '预约演示',
+    'Need custom limits or deployment support?': '需要定制限额或部署支持？',
+    'Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.': '与团队沟通定制速率限制、优先处理、部署选项、支持方式及 SLA 需求。',
+    'Support requirements': '支持需求', 'SLA requirements': 'SLA 需求', 'Commercial terms': '商业条款',
+    'Ready to build with better document context?': '准备好使用更好的文档上下文进行构建了吗？',
+    'Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.': '从 API 开始，连接现有智能体工作流，看看 Knowhere 如何处理纯文本管线容易遗漏的文档信息。',
   });
   const originalText = new WeakMap();
   const headingSourceText = new WeakMap();
@@ -1432,11 +1443,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     activeLanguage = language;
     document.documentElement.lang = isChinese ? 'zh-CN' : 'en';
     document.body.dataset.language = language;
-    document.title = isChinese ? 'KNOWHERE — 将非结构化文档转化为结构化数据' : 'KNOWHERE — Transform unstructured documents into structured data';
+    document.title = isChinese ? 'KNOWHERE — 面向智能体的文档上下文' : 'KNOWHERE — Document context for agents';
     const description = document.querySelector('meta[name="description"]');
     if (description) description.content = isChinese
-      ? '将非结构化文档转化为清晰的结构化数据，以像素级精度提取表格、公式和版式。'
-      : 'Transform unstructured documents into clean, structured data. Extract tables, formulas, and layouts with pixel-perfect precision.';
+      ? 'Knowhere 将复杂文档转化为供智能体使用的结构化、可导航、可追溯上下文。'
+      : 'Knowhere turns complex documents into structured, navigable, and source-linked context for agents.';
     languageToggles.forEach(button => {
       const nextLanguage = isChinese ? 'en' : 'zh';
       const label = nextLanguage === 'zh' ? 'Switch to Chinese' : '切换至英文';
@@ -1670,17 +1681,16 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   comparisonContent?.setAttribute('aria-hidden', 'true');
 
   const storyContent = {
-    structure: { label: '01', heading: 'Document Input', output: 'Document received', summary: 'Upload a PDF, DOCX, XLSX, presentation, image, or other supported document.' },
-    visual: { label: '02', heading: 'Text & Visual Capture', output: 'Content captured', summary: 'Read native text or apply OCR while preserving every original page and visual region.' },
-    source: { label: '03', heading: 'Structure & Understanding', output: 'Document mapped', summary: 'Build hierarchy, tables, formulas, and relationships through Text Parse and Vision Map.' },
-    relations: { label: '04', heading: 'Agent-ready Output', output: 'Structured context ready', summary: 'Return structured JSON, a navigable document map, and source-linked pages for agents.' }
+    structure: { label: '01', heading: 'Ingest the document', summary: 'Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.' },
+    visual: { label: '02', heading: 'Capture text and visual context', summary: 'Read native text or apply OCR while preserving the original pages and visual regions.' },
+    source: { label: '03', heading: 'Understand the structure', summary: 'Map headings, tables, formulas, layouts, and relationships across the document.' },
+    relations: { label: '04', heading: 'Return traceable context', summary: 'Get structured JSON, a navigable document map, and source-linked pages for your agents.' }
   };
   function renderStoryCanvas() {
     storyCards.forEach(card => {
       const content = storyContent[card.dataset.story];
       $('[data-story-label]', card).textContent = localizeText(content.label);
       $('[data-story-heading]', card).textContent = localizeText(content.heading);
-      $('[data-story-output]', card).textContent = localizeText(content.output);
       $('[data-story-summary]', card).textContent = localizeText(content.summary);
     });
   }
