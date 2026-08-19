@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
-import { createRoot } from 'react-dom/client'
 import { DialRoot, useDialKit } from 'dialkit'
 import 'dialkit/styles.css'
 
 const STORAGE_KEY = 'knowhere-page-style'
+const HERO_TEXTURE_STORAGE_KEY = 'hero-b-pixel-controls'
 const DEFAULTS = { font: 'schengen', color: '#181818' }
+const HERO_TEXTURE_DEFAULTS = { position: 76, spread: 12, density: 30, contrast: 50 }
 const FONT_STACKS = {
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
   geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
@@ -27,6 +28,17 @@ function loadSettings() {
 }
 
 const initialSettings = loadSettings()
+
+function loadHeroTextureSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(HERO_TEXTURE_STORAGE_KEY) || '{}')
+    return { ...HERO_TEXTURE_DEFAULTS, ...saved }
+  } catch {
+    return { ...HERO_TEXTURE_DEFAULTS }
+  }
+}
+
+const initialHeroTextureSettings = loadHeroTextureSettings()
 
 function readableForeground(hex) {
   const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255)
@@ -51,10 +63,10 @@ function applySettings(targetDocument, settings) {
   rootStyle.setProperty('--page-primary-foreground', readableForeground(settings.color))
 }
 
-function PageStyleControls() {
+export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
-  const params = useDialKit('Page Style', {
-    typography: {
+  const params = useDialKit('Knowhere Landing', {
+    appearance: {
       fontFamily: {
         type: 'select',
         options: [
@@ -65,17 +77,28 @@ function PageStyleControls() {
         ],
         default: initialSettings.font,
       },
-    },
-    color: {
       mainColor: { type: 'color', default: initialSettings.color },
+    },
+    heroTexture: {
+      position: [initialHeroTextureSettings.position, 55, 88, 1],
+      spread: [initialHeroTextureSettings.spread, 6, 24, 1],
+      density: [initialHeroTextureSettings.density, 5, 70, 1],
+      contrast: [initialHeroTextureSettings.contrast, 10, 85, 1],
+      reset: { type: 'action', label: 'Reset Texture' },
+    },
+  }, {
+    onAction: (path) => {
+      if (path !== 'heroTexture.reset') return
+      localStorage.removeItem(HERO_TEXTURE_STORAGE_KEY)
+      window.location.reload()
     },
   })
 
-  const font = FONT_STACKS[params.typography.fontFamily]
-    ? params.typography.fontFamily
+  const font = FONT_STACKS[params.appearance.fontFamily]
+    ? params.appearance.fontFamily
     : DEFAULTS.font
-  const color = /^#[0-9a-f]{6}$/i.test(params.color.mainColor || '')
-    ? params.color.mainColor.toUpperCase()
+  const color = /^#[0-9a-f]{6}$/i.test(params.appearance.mainColor || '')
+    ? params.appearance.mainColor.toUpperCase()
     : DEFAULTS.color
 
   useEffect(() => {
@@ -101,8 +124,22 @@ function PageStyleControls() {
     return () => scanFrame?.removeEventListener('load', syncFrame)
   }, [color, font])
 
+  useEffect(() => {
+    const settings = {
+      position: params.heroTexture.position,
+      spread: params.heroTexture.spread,
+      density: params.heroTexture.density,
+      contrast: params.heroTexture.contrast,
+    }
+
+    localStorage.setItem(HERO_TEXTURE_STORAGE_KEY, JSON.stringify(settings))
+    window.dispatchEvent(new CustomEvent('hero-texture-change', { detail: settings }))
+  }, [
+    params.heroTexture.contrast,
+    params.heroTexture.density,
+    params.heroTexture.position,
+    params.heroTexture.spread,
+  ])
+
   return <DialRoot position="top-right" defaultOpen={defaultOpen} theme="dark" productionEnabled />
 }
-
-const mount = document.querySelector('#page-style-dialkit')
-if (mount) createRoot(mount).render(<PageStyleControls />)

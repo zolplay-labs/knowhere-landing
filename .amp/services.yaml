@@ -5,6 +5,7 @@ services:
     portal:
       title: Knowhere landing
       description: Live Vite preview with the DialKit page-style controls.
+    review: false
     portals:
       - folder: Alternate prototypes
         links:
