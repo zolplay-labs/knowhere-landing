@@ -978,117 +978,6 @@
     .final-cta {
       border-color: var(--page-primary);
     }
-    .page-style-controller {
-      position: fixed;
-      z-index: 150;
-      top: 92px;
-      right: 16px;
-      width: 292px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 8px;
-      background: rgba(31,31,31,.98);
-      color: #f5f5f5;
-      box-shadow: 0 18px 45px rgba(0,0,0,.18);
-      font-family: "Geist Sans", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-      font-size: 12px;
-      line-height: 1.35;
-      color-scheme: dark;
-      backdrop-filter: blur(20px) saturate(140%);
-    }
-    .page-style-controller > summary {
-      display: flex;
-      min-height: 48px;
-      padding: 0 12px;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      border-bottom: 1px solid rgba(255,255,255,.08);
-      cursor: pointer;
-      list-style: none;
-      user-select: none;
-    }
-    .page-style-controller > summary::-webkit-details-marker { display: none; }
-    .page-style-controller-title,
-    .page-style-controller[open] > summary .page-style-controller-title { display: flex; align-items: center; gap: 8px; color: #f5f5f5; font: 520 12px/1.35 "Geist Sans", Inter, sans-serif; }
-    .page-style-controller[open] > summary .page-style-controller-title::after { content: none; }
-    .page-style-controller-title svg { width: 15px; height: 15px; color: rgba(255,255,255,.68); }
-    .page-style-controller-chevron { width: 14px; height: 14px; color: rgba(255,255,255,.5); transition: transform .18s cubic-bezier(.22,1,.36,1); }
-    .page-style-controller[open] .page-style-controller-chevron { transform: rotate(180deg); }
-    .page-style-controller-body { display: grid; gap: 10px; padding: 10px; }
-    .page-style-section {
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 8px;
-      background: rgba(255,255,255,.025);
-    }
-    .page-style-section-header {
-      display: flex;
-      min-height: 38px;
-      padding: 0 10px 0 12px;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-    }
-    .page-style-section-header h2 { margin: 0; color: rgba(255,255,255,.72); font: 520 11px/1 "Geist Sans", Inter, sans-serif; letter-spacing: .04em; text-transform: uppercase; }
-    .page-style-reset {
-      display: grid;
-      width: 28px;
-      min-width: 28px;
-      height: 28px;
-      min-height: 28px;
-      padding: 0;
-      place-items: center;
-      border: 0;
-      border-radius: 5px;
-      background: transparent;
-      color: rgba(255,255,255,.45);
-      cursor: pointer;
-    }
-    .page-style-reset:hover { background: rgba(255,255,255,.08); color: #fff; }
-    .page-style-reset svg { width: 14px; height: 14px; }
-    .page-style-field { display: grid; gap: 7px; padding: 11px 12px 12px; color: rgba(255,255,255,.5); font-size: 11px; }
-    .page-style-select-wrap { position: relative; display: block; }
-    .page-style-select,
-    .page-style-hex {
-      width: 100%;
-      height: 32px;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 6px;
-      background: rgba(255,255,255,.065);
-      color: #f7f7f7;
-      font: 12px/1 "Geist Sans", Inter, sans-serif;
-      outline: none;
-    }
-    .page-style-select { padding: 0 34px 0 10px; appearance: none; cursor: pointer; }
-    .page-style-select-wrap svg { position: absolute; top: 50%; right: 10px; width: 12px; height: 12px; color: rgba(255,255,255,.44); pointer-events: none; transform: translateY(-50%); }
-    .page-style-select:hover,
-    .page-style-hex:hover { border-color: rgba(255,255,255,.16); background: rgba(255,255,255,.085); }
-    .page-style-select:focus-visible,
-    .page-style-hex:focus-visible,
-    .page-style-color:focus-visible,
-    .page-style-reset:focus-visible,
-    .page-style-controller > summary:focus-visible { outline: 2px solid #70b0fa; outline-offset: -2px; }
-    .page-style-color-row { display: grid; grid-template-columns: 32px minmax(0,1fr); gap: 6px; }
-    .page-style-color {
-      width: 32px;
-      height: 32px;
-      padding: 4px;
-      border: 1px solid rgba(255,255,255,.1);
-      border-radius: 6px;
-      background: rgba(255,255,255,.065);
-      cursor: pointer;
-    }
-    .page-style-color::-webkit-color-swatch-wrapper { padding: 0; }
-    .page-style-color::-webkit-color-swatch { border: 0; border-radius: 3px; }
-    .page-style-hex { padding: 0 10px; text-transform: uppercase; }
-    @media (max-width: 767px) {
-      .page-style-controller { top: 76px; right: 12px; width: min(292px, calc(100vw - 24px)); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .page-style-controller-chevron { transition: none; }
-    }
   </style>
   <style id="figma-section-two-restoration">
     /* Figma 394:2508 — Section 2 onward. Copy and interaction markup stay unchanged. */
@@ -2065,7 +1954,28 @@
       z-index: -1;
       inset: 60px 80px;
       border-radius: 4px;
-      background: var(--figma-primary);
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, .045) 0,
+          rgba(255, 255, 255, .045) 1px,
+          transparent 1px,
+          transparent 4px
+        ),
+        var(--figma-primary);
+      content: "";
+    }
+
+    #final-cta::after {
+      position: absolute;
+      z-index: -2;
+      inset: 60px 0;
+      background-image:
+        repeating-linear-gradient(135deg, transparent 0 7px, rgba(24, 24, 24, .035) 7px 8px),
+        repeating-linear-gradient(45deg, transparent 0 7px, rgba(24, 24, 24, .035) 7px 8px);
+      background-position: left top, right top;
+      background-repeat: no-repeat;
+      background-size: 80px 100%, 80px 100%;
       content: "";
     }
 
@@ -2178,6 +2088,10 @@
 
       #final-cta::before {
         inset-inline: 40px;
+      }
+
+      #final-cta::after {
+        background-size: 40px 100%, 40px 100%;
       }
     }
 
@@ -2439,6 +2353,11 @@
         inset: 40px 20px;
       }
 
+      #final-cta::after {
+        inset-block: 40px;
+        background-size: 20px 100%, 20px 100%;
+      }
+
       #final-cta .lede {
         width: auto;
         max-width: 498px;
@@ -2652,7 +2571,7 @@
             <div class="divider-hatch" aria-hidden="true"></div>
             <div class="comparison-chart-header">
               <p class="comparison-chart-note">Comparison performance</p>
-              <div class="comparison-legend" aria-label="Comparison categories"><span><i></i>All</span><span><i class="knowhere-key"></i>Structures</span><span><i class="unstructured-key"></i>Tables</span><span><i class="mineru-key"></i>Interpretability</span><span><i class="markitdown-key"></i>Downstream</span></div>
+              <div class="comparison-legend" aria-label="Compared document processing tools"><span><i></i>Raw Docs</span><span><i class="unstructured-key"></i>Unstructured</span><span><i class="knowhere-key"></i>Knowhere</span><span><i class="mineru-key"></i>MinerU</span><span><i class="markitdown-key"></i>Markitdown</span></div>
             </div>
             <div class="comparison-plot">
               <div class="comparison-axis-y comparison-axis-y--left" aria-hidden="true"><strong>token used</strong><div class="comparison-axis-ticks"><span>2000</span><span>1500</span><span>1000</span><span>500</span><span>0</span></div></div>
@@ -2755,52 +2674,8 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     <div class="footer-meta"><p id="prototype-notice" tabindex="-1">Prototype page · © 2026 KNOWHERE</p><span>DOCUMENT UNDERSTANDING FOR AI</span></div>
   </footer>
   <div class="toast" role="status" aria-live="polite" hidden><p data-toast-message></p><button type="button" aria-label="Close notification">×</button></div>
-  <details class="page-style-controller" data-page-style-controller open>
-    <summary>
-      <span class="page-style-controller-title">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6" stroke-linecap="round"/></svg>
-        Page Style
-      </span>
-      <svg class="page-style-controller-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </summary>
-    <div class="page-style-controller-body">
-      <section class="page-style-section" aria-labelledby="page-style-type-title">
-        <div class="page-style-section-header">
-          <h2 id="page-style-type-title">Typography</h2>
-          <button class="page-style-reset" type="button" data-page-style-reset="font" aria-label="Reset font family">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4.9 9A8 8 0 1 1 6 17.3M4.9 9V4.5M4.9 9h4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <label class="page-style-field">
-          <span>Font Family</span>
-          <span class="page-style-select-wrap">
-            <select class="page-style-select" data-page-font>
-              <option value="schengen">Schengen · Default</option>
-              <option value="geist">Geist Sans</option>
-              <option value="helvetica">Helvetica Neue</option>
-              <option value="serif">Georgia Serif</option>
-            </select>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m7 10 5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </span>
-        </label>
-      </section>
-      <section class="page-style-section" aria-labelledby="page-style-color-title">
-        <div class="page-style-section-header">
-          <h2 id="page-style-color-title">Color</h2>
-          <button class="page-style-reset" type="button" data-page-style-reset="color" aria-label="Reset main color">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4.9 9A8 8 0 1 1 6 17.3M4.9 9V4.5M4.9 9h4.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
-        <label class="page-style-field">
-          <span>Main Color</span>
-          <span class="page-style-color-row">
-            <input class="page-style-color" type="color" value="#181818" data-page-color aria-label="Choose main color">
-            <input class="page-style-hex" type="text" value="#181818" maxlength="7" spellcheck="false" data-page-color-hex aria-label="Main color hex value">
-          </span>
-        </label>
-      </section>
-    </div>
-  </details>
+  <div id="page-style-dialkit"></div>
+  <script type="module" src="/src/page-style-controller.jsx"></script>
   <script>
 (() => {
   'use strict';
@@ -5135,92 +5010,6 @@ syncPricingCalculator();
   (() => {
     'use strict';
 
-    const storageKey = 'knowhere-page-style';
-    const defaults = { font: 'schengen', color: '#181818' };
-    const fontStacks = {
-      schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
-      geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
-      helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-      serif: 'Georgia, "Times New Roman", "Songti SC", serif'
-    };
-    const controller = document.querySelector('[data-page-style-controller]');
-    const fontSelect = controller?.querySelector('[data-page-font]');
-    const colorInput = controller?.querySelector('[data-page-color]');
-    const colorHex = controller?.querySelector('[data-page-color-hex]');
-    const scanFrame = document.querySelector('.section-scan-frame iframe');
-    if (!controller || !fontSelect || !colorInput || !colorHex) return;
-    if (matchMedia('(max-width: 767px)').matches) controller.open = false;
-
-    let settings = { ...defaults };
-    try {
-      const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      if (fontStacks[saved.font]) settings.font = saved.font;
-      if (/^#[0-9a-f]{6}$/i.test(saved.color || '')) settings.color = saved.color.toUpperCase();
-    } catch {}
-
-    function readableForeground(hex) {
-      const channels = [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16) / 255);
-      const linear = channels.map(value => value <= .03928 ? value / 12.92 : ((value + .055) / 1.055) ** 2.4);
-      const luminance = .2126 * linear[0] + .7152 * linear[1] + .0722 * linear[2];
-      return luminance > .42 ? '#181818' : '#FFFFFF';
-    }
-
-    function applyToDocument(targetDocument) {
-      if (!targetDocument?.documentElement) return;
-      const rootStyle = targetDocument.documentElement.style;
-      const fontStack = fontStacks[settings.font] || fontStacks[defaults.font];
-      rootStyle.setProperty('--sans', fontStack);
-      rootStyle.setProperty('--serif', fontStack);
-      rootStyle.setProperty('--mono', fontStack);
-      rootStyle.setProperty('--accent', settings.color);
-      rootStyle.setProperty('--page-primary', settings.color);
-      rootStyle.setProperty('--page-primary-foreground', readableForeground(settings.color));
-    }
-
-    function applySettings({ persist = true } = {}) {
-      applyToDocument(document);
-      try { applyToDocument(scanFrame?.contentDocument); } catch {}
-      fontSelect.value = settings.font;
-      colorInput.value = settings.color.toLowerCase();
-      colorHex.value = settings.color.toUpperCase();
-      if (persist) {
-        try { localStorage.setItem(storageKey, JSON.stringify(settings)); } catch {}
-      }
-    }
-
-    fontSelect.addEventListener('change', () => {
-      settings.font = fontStacks[fontSelect.value] ? fontSelect.value : defaults.font;
-      applySettings();
-    });
-
-    colorInput.addEventListener('input', () => {
-      settings.color = colorInput.value.toUpperCase();
-      applySettings();
-    });
-
-    colorHex.addEventListener('input', () => {
-      const nextColor = colorHex.value.trim();
-      if (!/^#[0-9a-f]{6}$/i.test(nextColor)) return;
-      settings.color = nextColor.toUpperCase();
-      applySettings();
-    });
-
-    controller.querySelectorAll('[data-page-style-reset]').forEach(button => {
-      button.addEventListener('click', () => {
-        if (button.dataset.pageStyleReset === 'font') settings.font = defaults.font;
-        if (button.dataset.pageStyleReset === 'color') settings.color = defaults.color;
-        applySettings();
-      });
-    });
-
-    scanFrame?.addEventListener('load', () => applySettings({ persist: false }));
-    applySettings({ persist: false });
-  })();
-  </script>
-  <script>
-  (() => {
-    'use strict';
-
     const canvas = document.querySelector('[data-format-globe]');
     const stage = canvas?.closest('.format-orbit-stage--thread-globe');
     if (!canvas || !stage) return;
@@ -5609,9 +5398,32 @@ syncPricingCalculator();
     }
 
     #comparison .comparison-metric > i {
+      position: relative;
       filter: none;
       opacity: 1;
       background: linear-gradient(180deg, rgba(0, 0, 0, .10), rgba(0, 0, 0, 0));
+    }
+
+    #comparison .comparison-metric > i::after {
+      position: absolute;
+      z-index: 2;
+      top: 0;
+      left: 50%;
+      color: rgba(0, 0, 0, .42);
+      content: attr(data-value);
+      font-family: var(--figma-display);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 1;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, calc(-100% + 6px)) rotate(-45deg);
+      transform-origin: center;
+      transition:
+        opacity 180ms cubic-bezier(.23, 1, .32, 1),
+        transform 180ms cubic-bezier(.23, 1, .32, 1);
+      white-space: nowrap;
     }
 
     #comparison .comparison-metric > i:nth-child(3) {
@@ -5620,17 +5432,28 @@ syncPricingCalculator();
         linear-gradient(180deg, #6d80b6 0%, #f5f6fa 100%);
     }
 
+    #comparison .comparison-metric > i:nth-child(3)::after {
+      color: #6d80b6;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #comparison .comparison-metric > i:hover::after {
+        opacity: 1;
+        transform: translate(-50%, calc(-100% - 4px)) rotate(-45deg);
+      }
+    }
+
     #comparison .comparison-plot {
       display: grid;
       grid-template-columns: 64px minmax(0, 1fr) 62px 62px;
-      column-gap: 12px;
+      column-gap: 6px;
     }
 
     #comparison .comparison-axis-y {
       height: 250px;
       display: grid;
       grid-template-columns: 16px minmax(0, 1fr);
-      gap: 6px;
+      gap: 3px;
       color: rgba(0, 0, 0, .4);
       font-family: var(--figma-mono);
       font-size: 10px;
@@ -5658,7 +5481,7 @@ syncPricingCalculator();
 
     #comparison .comparison-axis-y--right {
       grid-template-columns: minmax(0, 1fr) 16px;
-      padding-left: 8px;
+      padding-left: 4px;
       border-left: 1px solid rgba(0, 0, 0, .22);
     }
 
@@ -5707,6 +5530,13 @@ syncPricingCalculator();
         text-align: center;
       }
 
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #comparison .comparison-metric > i::after {
+        transform: translate(-50%, calc(-100% - 4px)) rotate(-45deg);
+        transition: opacity 180ms cubic-bezier(.23, 1, .32, 1);
+      }
     }
 
     #comparison .divider-hatch--bottom {

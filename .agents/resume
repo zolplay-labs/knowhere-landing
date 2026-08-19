@@ -3,7 +3,10 @@ set -euo pipefail
 
 started_at=$SECONDS
 
-echo "[resume] Ensuring the static preview portal is live"
+echo "[resume] Ensuring the Vite preview portal is live"
+if [[ ! -d node_modules ]]; then
+  npm ci
+fi
 amp orb services ensure
 
 echo "[resume] Complete in $((SECONDS - started_at))s"

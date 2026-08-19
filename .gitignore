@@ -2,3 +2,5 @@
 !.amp/services.yaml
 .vercel
 .env*
+node_modules/
+dist/

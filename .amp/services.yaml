@@ -1,10 +1,10 @@
 services:
   preview:
-    command: python3 -u -m http.server "$PORT" --bind 0.0.0.0
+    command: npm run dev -- --host 0.0.0.0 --port "$PORT"
     health: /
     portal:
       title: Knowhere landing
-      description: Live static preview with no dependency install or build step.
+      description: Live Vite preview with the DialKit page-style controls.
     portals:
       - folder: Alternate prototypes
         links:

@@ -3,8 +3,8 @@ set -euo pipefail
 
 started_at=$SECONDS
 
-echo "[setup] Checking the dependency-free static-site runtime"
-for command_name in amp python3; do
+echo "[setup] Checking the landing-page runtime"
+for command_name in amp node npm; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "[setup] Required command is unavailable: $command_name" >&2
     exit 1
@@ -18,8 +18,10 @@ for entrypoint in index.html landing-source.html document-scan-section.html; do
   fi
 done
 
-echo "[setup] No packages or browsers to install; browser automation stays on demand"
-echo "[setup] Starting the supervised static preview and portal"
+echo "[setup] Installing the locked frontend dependencies"
+npm ci
+
+echo "[setup] Starting the supervised Vite preview and portal"
 amp orb services ensure
 
 echo "[setup] Complete in $((SECONDS - started_at))s"
