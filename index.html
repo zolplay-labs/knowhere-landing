@@ -260,7 +260,7 @@
     .pricing-facts dd { color: var(--ink); font-size: clamp(22px, 2.2vw, 32px); font-weight: 500; line-height: 1.05; letter-spacing: -.035em; text-align: left; }
     .pricing-control-card { padding: 0; }
     .pricing-range-control { position: relative; height: 96px; overflow: hidden; border-bottom: 1px solid rgba(24,24,24,.18); background-color: rgba(255,255,255,.18); background-image: repeating-linear-gradient(to right, transparent 0 calc(1.25% - 1px), rgba(24,24,24,.14) calc(1.25% - 1px) 1.25%), repeating-linear-gradient(to right, transparent 0 calc(5% - 1px), rgba(24,24,24,.24) calc(5% - 1px) 5%), repeating-linear-gradient(to right, transparent 0 calc(25% - 1px), rgba(24,24,24,.42) calc(25% - 1px) 25%); background-position: left bottom, left bottom, left bottom; background-size: 100% 36px, 100% 52px, 100% 96px; background-repeat: no-repeat; }
-    .pricing-range-fill { position: absolute; inset: 0; background-image: repeating-linear-gradient(to right, transparent 0 calc(1.25% - 2px), rgba(24,24,24,.58) calc(1.25% - 2px) 1.25%), repeating-linear-gradient(to right, transparent 0 calc(5% - 2px), rgba(24,24,24,.76) calc(5% - 2px) 5%), repeating-linear-gradient(to right, transparent 0 calc(25% - 2px), rgba(24,24,24,.94) calc(25% - 2px) 25%); background-position: left bottom, left bottom, left bottom; background-size: 100% 36px, 100% 52px, 100% 96px; background-repeat: no-repeat; clip-path: inset(0 calc(100% - var(--pricing-progress, 0%)) 0 0); pointer-events: none; transition: clip-path .12s ease; }
+    .pricing-range-fill { position: absolute; inset: 0; background-image: repeating-linear-gradient(to right, transparent 0 calc(1.25% - 1px), rgba(24,24,24,.58) calc(1.25% - 1px) 1.25%), repeating-linear-gradient(to right, transparent 0 calc(5% - 1px), rgba(24,24,24,.76) calc(5% - 1px) 5%), repeating-linear-gradient(to right, transparent 0 calc(25% - 1px), rgba(24,24,24,.94) calc(25% - 1px) 25%); background-position: left bottom, left bottom, left bottom; background-size: 100% 36px, 100% 52px, 100% 96px; background-repeat: no-repeat; clip-path: inset(0 calc(100% - var(--pricing-progress, 0%)) 0 0); pointer-events: none; transition: clip-path .12s ease; }
     .pricing-range { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; margin: 0; appearance: none; -webkit-appearance: none; background: transparent; cursor: ew-resize; }
     .pricing-range:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
     .pricing-range::-webkit-slider-runnable-track { height: 96px; background: transparent; }
@@ -421,11 +421,8 @@
     .scoreboard-cell.scoreboard-knowhere { background: #f2f2ed; color: var(--ink); }
     .scoreboard-cell.scoreboard-feature { color: var(--ink); }
     .scoreboard-mark { display: inline-flex; align-items: center; gap: 7px; color: var(--muted); }
-    .scoreboard-mark::before { display: inline-flex; width: 16px; height: 16px; align-items: center; justify-content: center; border: 1px solid currentColor; border-radius: 50%; content: ""; font-size: 12px; }
+    .scoreboard-mark i { width: 16px; font-size: 16px; line-height: 1; text-align: center; }
     .scoreboard-mark--yes { color: var(--ink); }
-    .scoreboard-mark--yes::before { content: "✓"; }
-    .scoreboard-mark--bad::before { content: "!"; }
-    .scoreboard-mark--no::before { content: "×"; }
     @media (max-width: 1199px) {
       .comparison-scoreboard-grid { min-width: 680px; }
       .comparison-scoreboard { overflow-x: auto; }
@@ -2596,12 +2593,12 @@
           <div class="comparison-scoreboard-head"><strong>Capability matrix</strong><div class="comparison-scoreboard-head-actions"><button class="comparison-toggle" type="button" aria-expanded="false" aria-controls="comparison-table"><span class="sr-only">Toggle comparison details</span></button></div></div>
           <div class="comparison-scoreboard-body" id="comparison-table"><div class="comparison-scoreboard-grid">
             <div class="scoreboard-cell scoreboard-head-cell">Feature</div><div class="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div class="scoreboard-cell scoreboard-head-cell">Others</div>
-            <div class="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Bad</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Complex merged cells</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Bad</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Table boundary detection</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Source traceability</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Bad</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no">No</span></div>
-            <div class="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes">Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad">Limited</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad"><i class="ri-error-warning-line" aria-hidden="true"></i>Bad</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Complex merged cells</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad"><i class="ri-error-warning-line" aria-hidden="true"></i>Bad</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Table boundary detection</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no"><i class="ri-close-line" aria-hidden="true"></i>No</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Source traceability</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--bad"><i class="ri-error-warning-line" aria-hidden="true"></i>Bad</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--no"><i class="ri-close-line" aria-hidden="true"></i>No</span></div>
+            <div class="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div class="scoreboard-cell scoreboard-knowhere"><span class="scoreboard-mark scoreboard-mark--yes"><i class="ri-check-line" aria-hidden="true"></i>Yes</span></div><div class="scoreboard-cell"><span class="scoreboard-mark scoreboard-mark--limited"><i class="ri-subtract-line" aria-hidden="true"></i>Limited</span></div>
           </div></div>
         </div>
       </div>
@@ -5588,9 +5585,9 @@ syncPricingCalculator();
 
     #comparison .scoreboard-cell.scoreboard-head-cell {
       min-height: 52px;
-      background: #fafafa;
+      background: #fff;
       color: #6d80b6;
-      font-family: var(--figma-mono);
+      font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
       font-size: 12px;
       font-weight: 400;
       line-height: 16px;
@@ -5601,6 +5598,10 @@ syncPricingCalculator();
     #comparison .scoreboard-cell.scoreboard-knowhere {
       background: rgba(109, 128, 182, .06);
       color: #181818;
+    }
+
+    #comparison .scoreboard-cell.scoreboard-head-cell.scoreboard-knowhere {
+      background: #fff;
     }
 
     #comparison .scoreboard-mark {
@@ -5734,6 +5735,26 @@ syncPricingCalculator();
 
       #pricing .pricing-result-card {
         padding: 0;
+      }
+
+      #pricing .pricing-range-control {
+        overflow: visible;
+        background-image:
+          repeating-linear-gradient(to right, transparent 0 calc(1.25% - 1px), rgba(24,24,24,.14) calc(1.25% - 1px) 1.25%),
+          repeating-linear-gradient(to right, transparent 0 calc(5% - 1px), rgba(24,24,24,.24) calc(5% - 1px) 5%);
+      }
+
+      #pricing .pricing-range-control::before {
+        position: absolute;
+        inset: -266px 0 0;
+        background-image: repeating-linear-gradient(to right, transparent 0 calc(25% - 1px), rgba(24,24,24,.42) calc(25% - 1px) 25%);
+        content: "";
+        pointer-events: none;
+      }
+
+      #pricing .pricing-range-fill {
+        inset: -266px 0 0;
+        background-size: 100% 36px, 100% 52px, 100% 362px;
       }
 
       #pricing .pricing-result-value {
