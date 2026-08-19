@@ -1,0 +1,16 @@
+services:
+  preview:
+    command: python3 -u -m http.server "$PORT" --bind 0.0.0.0
+    health: /
+    portal:
+      title: Knowhere landing
+      description: Live static preview with no dependency install or build step.
+    portals:
+      - url: /
+        title: Current landing page
+      - folder: Alternate prototypes
+        links:
+          - url: /landing-source.html
+            title: Landing source
+          - url: /document-scan-section.html
+            title: Document scan section

@@ -1,3 +1,4 @@
-.amp/
+.amp/*
+!.amp/services.yaml
 .vercel
 .env*

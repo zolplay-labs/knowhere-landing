@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+started_at=$SECONDS
+
+echo "[resume] Ensuring the static preview portal is live"
+amp orb services ensure
+
+echo "[resume] Complete in $((SECONDS - started_at))s"
