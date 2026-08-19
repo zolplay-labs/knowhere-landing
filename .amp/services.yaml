@@ -6,8 +6,6 @@ services:
       title: Knowhere landing
       description: Live static preview with no dependency install or build step.
     portals:
-      - url: /
-        title: Current landing page
       - folder: Alternate prototypes
         links:
           - url: /landing-source.html
