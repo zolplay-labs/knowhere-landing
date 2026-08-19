@@ -29,6 +29,7 @@ const MAIN_PALETTE_OPTIONS = Object.keys(MAIN_PALETTES).map((value, index) => ({
 const DEFAULTS = { font: 'schengen', palette: 'main-7' }
 const FONT_STACKS = {
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
+  fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial, sans-serif',
   geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
   helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   serif: 'Georgia, "Times New Roman", "Songti SC", serif',
@@ -93,6 +94,7 @@ export function PageStyleControls() {
         type: 'select',
         options: [
           { value: 'schengen', label: 'Schengen · Default' },
+          { value: 'fellix', label: 'Fellix' },
           { value: 'geist', label: 'Geist Sans' },
           { value: 'helvetica', label: 'Helvetica Neue' },
           { value: 'serif', label: 'Georgia Serif' },
