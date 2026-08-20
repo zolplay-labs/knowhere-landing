@@ -642,6 +642,14 @@ function initializeHeroCanvas(root, cleanups) {
     function syncScanReveal() {
       if (reducedMotion) return;
       const { scan, headY } = scanState();
+      if (scan >= 1) {
+        scanRevealTargets.forEach(element => {
+          element.style.opacity = '1';
+          element.style.clipPath = 'none';
+          element.style.willChange = 'auto';
+        });
+        return;
+      }
       const lineY = canvas.getBoundingClientRect().top + headY;
       const states = scanRevealTargets.map(element => {
         const rect = element.getBoundingClientRect();
@@ -651,7 +659,6 @@ function initializeHeroCanvas(root, cleanups) {
       states.forEach(({ element, progress }) => {
         element.style.opacity = progress > 0 ? '1' : '0';
         element.style.clipPath = `inset(0 0 ${(1 - progress) * 100}% 0)`;
-        if (scan >= 1) element.style.willChange = 'auto';
       });
     }
 
@@ -724,7 +731,7 @@ function initializeHeroCanvas(root, cleanups) {
       const dataHeight = height - scanExtension;
       const dividerY = Math.floor((dataHeight - cell) / cell) * cell;
       const squareCount = Math.ceil(width / cell) + 1;
-      const requestedScatterTop = Math.floor((dataHeight - 32) * scatterControls.position / 100 / cell) * cell + cell * 10 + 32 + 60;
+      const requestedScatterTop = Math.floor((dataHeight - 32) * scatterControls.position / 100 / cell) * cell + cell * 10 + 32 + 72;
       const scatterTop = Math.min(dividerY - cell * 9, requestedScatterTop);
       const scatterHeight = Math.max(cell * 2, Math.min(
         cell * 8,
@@ -1288,7 +1295,7 @@ function initializeFormatGlobe(root, cleanups) {
       const tailLength = Math.max(0.001, reveal - tailStart);
 
       context.save();
-      context.shadowColor = 'rgba(109, 128, 182, 0.55)';
+      context.shadowColor = mainColorWithAlpha(0.55);
       context.shadowBlur = 5;
       for (let index = firstSegment; index < lastSegment; index += 1) {
         const start = Math.max(index / segments, tailStart);
@@ -1301,7 +1308,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(pointA.x, pointA.y);
         context.lineTo(pointB.x, pointB.y);
         context.lineWidth = 1 + strength * 1.1;
-        context.strokeStyle = `rgba(109, 128, 182, ${(0.12 + strength * 0.88) * opacity})`;
+        context.strokeStyle = mainColorWithAlpha((0.12 + strength * 0.88) * opacity);
         context.stroke();
       }
       context.restore();
@@ -1452,7 +1459,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(frameX + frameWidth - cornerLength, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - cornerLength);
-        context.strokeStyle = '#6d80b6';
+        context.strokeStyle = mainColor;
         context.lineWidth = 1;
         context.stroke();
         context.fillStyle = '#fff';

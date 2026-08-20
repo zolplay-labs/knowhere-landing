@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { DialRoot, useDialKit } from 'dialkit'
 import 'dialkit/styles.css'
 
 const STORAGE_KEY = 'knowhere-page-style'
-const PALETTE_VERSION = 2
+const PALETTE_VERSION = 3
+const FONT_VERSION = 2
 const MAIN_PALETTES = {
   'main-1': { 50: '#F5F6FA', 100: '#E9EBF3', 200: '#D5D9EA', 300: '#BFC6DF', 400: '#ACB5D6', 500: '#96A2CB', 600: '#6D80B6', 700: '#4E5D88', 800: '#343F5E', 900: '#1B2134', 950: '#101523' },
   'main-2': { 50: '#F8F4E0', 100: '#F2E9B9', 200: '#DFD5A4', 300: '#C8BF92', 400: '#B4AC83', 500: '#9E9773', 600: '#7D775A', 700: '#5C5741', 800: '#3F3C2C', 900: '#222016', 950: '#15130C' },
@@ -22,11 +23,16 @@ const MAIN_COLOR_VALUES = {
   'main-6': '#9CB2AF',
   'main-7': '#96B0CB',
 }
-const MAIN_PALETTE_OPTIONS = Object.keys(MAIN_PALETTES).map((value, index) => ({
-  value,
-  label: `Main #${index + 1} · ${MAIN_COLOR_VALUES[value]}`,
-}))
-const DEFAULTS = { font: 'schengen', chineseFont: 'frex-sans-gb', palette: 'main-7', finalCtaConvergence: 357 }
+const MAIN_PALETTE_OPTIONS = [
+  { value: 'main-1', label: 'Blue · Default' },
+  { value: 'main-2', label: 'Yellow' },
+  { value: 'main-3', label: 'Green' },
+  { value: 'main-4', label: 'Indigo' },
+  { value: 'main-5', label: 'Electric Blue' },
+  { value: 'main-6', label: 'Teal' },
+  { value: 'main-7', label: 'Slate Blue' },
+]
+const DEFAULTS = { font: 'fellix', chineseFont: 'frex-sans-gb', palette: 'main-1' }
 const FONT_STACKS = {
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
   fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -44,23 +50,19 @@ const ENGLISH_FONT_FACES = {
 const CHINESE_FONT_STACKS = {
   'frex-sans-gb': '"Frex Sans GB VF", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
   'noto-sans-sc': '"Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
-  'pingfang-sc': '"PingFang SC", "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif',
-  'microsoft-yahei': '"Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
-  'songti-sc': '"Songti SC", "STSong", "Noto Serif CJK SC", serif',
 }
 
 function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
     return {
-      font: FONT_STACKS[saved.font] ? saved.font : DEFAULTS.font,
+      font: saved.fontVersion === FONT_VERSION && FONT_STACKS[saved.font]
+        ? saved.font
+        : DEFAULTS.font,
       chineseFont: CHINESE_FONT_STACKS[saved.chineseFont] ? saved.chineseFont : DEFAULTS.chineseFont,
       palette: saved.paletteVersion === PALETTE_VERSION && MAIN_PALETTES[saved.palette]
         ? saved.palette
         : DEFAULTS.palette,
-      finalCtaConvergence: Number.isFinite(saved.finalCtaConvergence)
-        ? Math.min(500, Math.max(260, saved.finalCtaConvergence))
-        : DEFAULTS.finalCtaConvergence,
     }
   } catch {
     return { ...DEFAULTS }
@@ -91,6 +93,58 @@ function paletteStyles(palette) {
   return Object.entries(palette).map(([stop, color]) => `--main-${stop}:${color}`).join(';')
 }
 
+const CONTROLLER_LAYOUT_STYLES = `
+  .dialkit-root {
+    position: fixed;
+    z-index: 2147483000;
+    inset: 0;
+    width: 100%;
+    height: 0;
+  }
+  .dialkit-panel-inner:not([data-collapsed="true"]) {
+    width: min(400px, calc(100vw - 32px)) !important;
+  }
+  .dialkit-panel[data-position="top-right"]:has(.dialkit-panel-inner:not([data-collapsed="true"])) {
+    top: 80px;
+  }
+  .dialkit-select-trigger {
+    gap: 12px;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+  .dialkit-select-label {
+    min-width: 0;
+    flex: 1 1 auto;
+    text-align: left;
+  }
+  .dialkit-select-right {
+    min-width: 0;
+    flex: 0 0 220px;
+    align-self: stretch;
+    padding: 0 10px;
+    justify-content: space-between;
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, .05);
+  }
+  .dialkit-select-trigger:hover .dialkit-select-right,
+  .dialkit-select-trigger[data-open="true"] .dialkit-select-right {
+    border-color: rgba(255, 255, 255, .2);
+    background: rgba(255, 255, 255, .08);
+  }
+  .dialkit-select-value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  @media (max-width: 479px) {
+    .dialkit-select-right {
+      flex-basis: 180px;
+    }
+  }
+`
+
 function applySettings(targetDocument, settings) {
   if (!targetDocument?.documentElement) return
 
@@ -116,17 +170,15 @@ function applySettings(targetDocument, settings) {
   targetWindow?.dispatchEvent(new targetWindow.CustomEvent('main-palette-change'))
 }
 
-export function PageStyleControls({ onFinalCtaConvergenceChange }) {
-  const [heroTextureVisible, setHeroTextureVisible] = useState(false)
-  const [playgroundTextureVisible, setPlaygroundTextureVisible] = useState(true)
+export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const params = useDialKit('Knowhere Landing', {
     appearance: {
       fontFamily: {
         type: 'select',
         options: [
-          { value: 'schengen', label: 'Schengen · Default' },
-          { value: 'fellix', label: 'Fellix' },
+          { value: 'schengen', label: 'Schengen' },
+          { value: 'fellix', label: 'Fellix · Default' },
           { value: 'geist', label: 'Geist Sans' },
           { value: 'helvetica', label: 'Helvetica Neue' },
           { value: 'serif', label: 'Georgia Serif' },
@@ -138,9 +190,6 @@ export function PageStyleControls({ onFinalCtaConvergenceChange }) {
         options: [
           { value: 'frex-sans-gb', label: 'Frex Sans GB VF · Default' },
           { value: 'noto-sans-sc', label: 'Noto Sans SC' },
-          { value: 'pingfang-sc', label: 'PingFang SC' },
-          { value: 'microsoft-yahei', label: 'Microsoft YaHei' },
-          { value: 'songti-sc', label: 'Songti SC' },
         ],
         default: initialSettings.chineseFont,
       },
@@ -149,9 +198,6 @@ export function PageStyleControls({ onFinalCtaConvergenceChange }) {
         options: MAIN_PALETTE_OPTIONS,
         default: initialSettings.palette,
       },
-    },
-    motion: {
-      finalCtaConvergence: [initialSettings.finalCtaConvergence, 260, 500, 1],
     },
   })
 
@@ -164,10 +210,14 @@ export function PageStyleControls({ onFinalCtaConvergenceChange }) {
   const palette = MAIN_PALETTES[params.appearance.mainColor]
     ? params.appearance.mainColor
     : DEFAULTS.palette
-  const finalCtaConvergence = params.motion.finalCtaConvergence
-
   useEffect(() => {
-    const settings = { font, chineseFont, palette, paletteVersion: PALETTE_VERSION }
+    const settings = {
+      font,
+      fontVersion: FONT_VERSION,
+      chineseFont,
+      palette,
+      paletteVersion: PALETTE_VERSION,
+    }
     const scanFrame = document.querySelector('.section-scan-frame iframe')
     const syncSettings = () => {
       const language = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'
@@ -193,26 +243,21 @@ export function PageStyleControls({ onFinalCtaConvergenceChange }) {
   }, [font, chineseFont, palette])
 
   useEffect(() => {
-    onFinalCtaConvergenceChange(finalCtaConvergence)
-    saveSettings({ finalCtaConvergence })
-  }, [finalCtaConvergence, onFinalCtaConvergenceChange])
-
-  useEffect(() => {
-    document.documentElement.toggleAttribute('data-hero-texture', heroTextureVisible)
+    document.documentElement.setAttribute('data-hero-texture', '')
     window.dispatchEvent(new CustomEvent('hero-texture-change', {
-      detail: { visible: heroTextureVisible },
+      detail: { visible: true },
     }))
-  }, [heroTextureVisible])
+  }, [])
 
   useEffect(() => {
     const scanFrame = document.querySelector('.section-scan-frame iframe')
     const syncTextureVisibility = () => {
       try {
         if (typeof scanFrame?.contentWindow?.setTraceDitherVisible === 'function') {
-          scanFrame.contentWindow.setTraceDitherVisible(playgroundTextureVisible)
+          scanFrame.contentWindow.setTraceDitherVisible(false)
         } else {
           const textureCanvas = scanFrame?.contentDocument?.querySelector('[data-trace-dither-field]')
-          if (textureCanvas) textureCanvas.hidden = !playgroundTextureVisible
+          if (textureCanvas) textureCanvas.hidden = true
         }
       } catch {
         // The embedded preview can become cross-origin without affecting the control.
@@ -222,35 +267,15 @@ export function PageStyleControls({ onFinalCtaConvergenceChange }) {
     syncTextureVisibility()
     scanFrame?.addEventListener('load', syncTextureVisibility)
     return () => scanFrame?.removeEventListener('load', syncTextureVisibility)
-  }, [playgroundTextureVisible])
+  }, [])
 
   const initialPalette = MAIN_PALETTES[initialSettings.palette]
   const initialMainColor = MAIN_COLOR_VALUES[initialSettings.palette]
 
   return (
     <>
-      <style>{`:root{${paletteStyles(initialPalette)};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}`}</style>
+      <style>{`:root{${paletteStyles(initialPalette)};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="dark" productionEnabled />
-      <div className="texture-visibility-controls">
-        <button
-          className="texture-visibility-control"
-          type="button"
-          aria-pressed={heroTextureVisible}
-          onClick={() => setHeroTextureVisible(visible => !visible)}
-        >
-          <span>Lower texture</span>
-          <strong>{heroTextureVisible ? 'On' : 'Off'}</strong>
-        </button>
-        <button
-          className="texture-visibility-control"
-          type="button"
-          aria-pressed={playgroundTextureVisible}
-          onClick={() => setPlaygroundTextureVisible(visible => !visible)}
-        >
-          <span>Product texture</span>
-          <strong>{playgroundTextureVisible ? 'On' : 'Off'}</strong>
-        </button>
-      </div>
     </>
   )
 }

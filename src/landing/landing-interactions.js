@@ -446,48 +446,10 @@ if (!(root instanceof Element)) return () => {};
     if (storyReady) renderStoryCanvas();
     if (titleTypeReady) refreshTypedHeadings();
     if (pricingReady) syncPricingCalculator();
-    try { localStorage.setItem('knowhere-language', language); } catch {}
     if (announce) showToast(isChinese ? localizeText('Language state: Chinese.') : 'Language state: English.');
   }
   languageToggles.forEach(button => button.addEventListener('click', () => setLanguage(activeLanguage === 'zh' ? 'en' : 'zh')));
-  let savedLanguage = 'en';
-  try { savedLanguage = localStorage.getItem('knowhere-language') === 'zh' ? 'zh' : 'en'; } catch {}
-  setLanguage(savedLanguage, false);
-
-  const encryptedLabels = $$('#main .section-no');
-  const encryptedLabelFrames = new WeakMap();
-  const encryptionCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+<>?';
-  const canEncryptLabels = !matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function animateEncryptedLabel(label) {
-    const textNode = [...label.childNodes].find(node => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim());
-    if (!textNode) return;
-    cancelAnimationFrame(encryptedLabelFrames.get(label));
-    const leading = textNode.nodeValue.match(/^\s*/)[0];
-    const trailing = textNode.nodeValue.match(/\s*$/)[0];
-    const target = textNode.nodeValue.trim();
-    const characters = [...target];
-    const languageAtStart = activeLanguage;
-    const duration = 500;
-    const startedAt = performance.now();
-    const renderFrame = now => {
-      if (languageAtStart !== activeLanguage) return;
-      const progress = Math.min(1, (now - startedAt) / duration);
-      const revealedCount = Math.floor(progress * characters.length);
-      const encrypted = characters.map((character, index) => {
-        if (index < revealedCount || /\s/.test(character)) return character;
-        return encryptionCharacters[Math.floor(Math.random() * encryptionCharacters.length)];
-      }).join('');
-      textNode.nodeValue = `${leading}${progress === 1 ? target : encrypted}${trailing}`;
-      if (progress < 1) encryptedLabelFrames.set(label, requestAnimationFrame(renderFrame));
-      else encryptedLabelFrames.delete(label);
-    };
-    encryptedLabelFrames.set(label, requestAnimationFrame(renderFrame));
-  }
-  if (canEncryptLabels) {
-    encryptedLabels.forEach(label => label.addEventListener('pointerenter', event => {
-      if (event.pointerType === 'mouse') animateEncryptedLabel(label);
-    }));
-  }
+  setLanguage('en', false);
 
   $('.skip-link').addEventListener('click', () => {
     setTimeout(() => $('#main').focus({ preventScroll: true }), 0);
@@ -705,15 +667,14 @@ if (!(root instanceof Element)) return () => {};
   comparisonContent?.setAttribute('aria-hidden', String(!comparisonScoreboard?.classList.contains('is-expanded')));
 
   const storyContent = {
-    structure: { label: '01', heading: 'Ingest the document', summary: 'Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.' },
-    visual: { label: '02', heading: 'Capture text and visual context', summary: 'Read native text or apply OCR while preserving the original pages and visual regions.' },
-    source: { label: '03', heading: 'Understand the structure', summary: 'Map headings, tables, formulas, layouts, and relationships across the document.' },
-    relations: { label: '04', heading: 'Return traceable context', summary: 'Get structured JSON, a navigable document map, and source-linked pages for your agents.' }
+    structure: { heading: 'Ingest the document', summary: 'Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.' },
+    visual: { heading: 'Capture text and visual context', summary: 'Read native text or apply OCR while preserving the original pages and visual regions.' },
+    source: { heading: 'Understand the structure', summary: 'Map headings, tables, formulas, layouts, and relationships across the document.' },
+    relations: { heading: 'Return traceable context', summary: 'Get structured JSON, a navigable document map, and source-linked pages for your agents.' }
   };
   function renderStoryCanvas() {
     storyCards.forEach(card => {
       const content = storyContent[card.dataset.story];
-      $('[data-story-label]', card).textContent = localizeText(content.label);
       $('[data-story-heading]', card).textContent = localizeText(content.heading);
       $('[data-story-summary]', card).textContent = localizeText(content.summary);
     });

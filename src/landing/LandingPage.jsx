@@ -45,7 +45,7 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
   <a className="skip-link" href="#main">Skip to content</a>
   <header className="site-header" data-header>
     <nav className="nav shell" aria-label="Main navigation">
-      <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="assets/knowhere-wordmark.svg" width={344} height={47} alt="" /></a>
+      <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-wordmark.svg" width={344} height={47} alt="" /></a>
       <div className="desktop-nav">
         <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a>
       </div>
@@ -77,12 +77,15 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
           <div className="hero-b-chart-shell" aria-hidden="true" />
         </article>
       </div>
+      <div className="hero-placeholder-texture" aria-hidden="true" />
+      <span className="hero-placeholder-label">Placeholder image</span>
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
       <div className="section-scan-frame">
-        <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" />
+        <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
+        <span className="section-scan-placeholder">Placeholder image</span>
       </div>
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">
@@ -122,20 +125,20 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
             </div>
             <div className="story-card-stack">
               <div className="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
-                <div className="capability-copy"><span data-story-label>01</span><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest the document</h3></div><p data-story-summary>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-ingest.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest the document</h3></div><p data-story-summary>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p></div></div>
+                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-ingest.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
-                <div className="capability-copy"><span data-story-label>02</span><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture text and visual context</h3></div><p data-story-summary>Read native text or apply OCR while preserving the original pages and visual regions.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-visual.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture text and visual context</h3></div><p data-story-summary>Read native text or apply OCR while preserving the original pages and visual regions.</p></div></div>
+                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-visual.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
-                <div className="capability-copy"><span data-story-label>03</span><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Understand the structure</h3></div><p data-story-summary>Map headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-structure.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Understand the structure</h3></div><p data-story-summary>Map headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
+                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-structure.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
-                <div className="capability-copy"><span data-story-label>04</span><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-traceable.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p></div></div>
+                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-traceable.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
             </div>
           </div>
@@ -339,23 +342,25 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
         <svg className="final-cta-vector" viewBox="0 0 1280 410" preserveAspectRatio="none">
           <defs>
             <linearGradient id="final-cta-line-gradient" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stopColor="#6d80b6" stopOpacity="0.32" />
-              <stop offset="0.62" stopColor="#91c7f1" stopOpacity="0.72" />
-              <stop offset="1" stopColor="#a9ddff" />
+              <stop offset="0" stopColor="var(--main-600)" stopOpacity="0.32" />
+              <stop offset="0.62" stopColor="var(--main-400)" stopOpacity="0.72" />
+              <stop offset="1" stopColor="var(--main-300)" />
             </linearGradient>
           </defs>
           <FinalCtaPathFan convergenceX={finalCtaConvergence} />
           <g transform="translate(1280 0) scale(-1 1)"><FinalCtaPathFan convergenceX={finalCtaConvergence} /></g>
         </svg>
+        <span className="final-cta-placeholder final-cta-placeholder--left">Placeholder image</span>
+        <span className="final-cta-placeholder final-cta-placeholder--right">Placeholder image</span>
       </div>
-      <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div>
+      <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
       <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
     </section>
   </main>
   <footer className="footer">
     <div className="footer-inner">
       <div className="footer-main">
-        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="assets/knowhere-logo-new.svg" width={340} height={38} alt="" /></a>
+        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-logo-new.svg" width={340} height={38} alt="" /></a>
         <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
       </div>
       <div className="footer-divider" aria-hidden="true" />

@@ -312,7 +312,6 @@
     #capabilities .story-card:nth-child(3) { z-index: 3; }
     #capabilities .story-card:nth-child(4) { z-index: 4; }
     .capability-copy { width: 100%; min-width: 0; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: center; gap: 38px; padding: clamp(26px, 4vw, 56px); }
-    .capability-copy > span { color: var(--muted); font: 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
     .capability-copy-main { display: flex; flex-direction: column; gap: 28px; }
     .capability-copy-title { display: flex; flex-direction: column; gap: 8px; }
     .capability-copy-title h3 { min-height: 1.15em; margin: 0; color: var(--ink); font-size: 32px; line-height: 1.15; letter-spacing: -.03em; font-weight: 600; white-space: pre-line; }
@@ -572,7 +571,6 @@
       .story-card-stack { display: grid; grid-column: auto; gap: 24px; aspect-ratio: auto; overflow: visible; }
       #capabilities .story-canvas { position: relative; inset: auto; top: auto; width: 100%; height: auto; min-height: 0; max-height: none; aspect-ratio: auto; display: grid; grid-template-columns: 1fr; grid-template-rows: auto; overflow: hidden; border: 1px solid rgba(24,24,24,.12); border-radius: 12px; background: #fffefa; transform: none !important; }
       #capabilities .capability-copy { position: static; order: 2; width: 100%; padding: 28px 24px; display: flex; }
-      #capabilities .capability-copy > span { display: block; color: var(--muted); font: 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
       #capabilities .capability-copy-title p { display: block; margin: 0; color: var(--muted); font-size: 16px; }
       #capabilities .capability-media { order: 1; width: 100%; height: auto; min-height: 0; aspect-ratio: 1 / 1; border: 0; border-radius: 0; box-shadow: none; }
       #brain { grid-template-columns: 1fr; gap: 32px; padding-block: 72px; }
@@ -896,7 +894,7 @@
       100% { clip-path: inset(100% 0 0 0); opacity: 0; visibility: hidden; }
     }
     @media (min-width: 1100px) {
-      #top.hero-b-layout { min-height: 0; padding-top: 110px; padding-bottom: 64px; grid-template-columns: minmax(0, .78fr) minmax(660px, 1.22fr); gap: clamp(24px, 2.5vw, 44px); }
+      #top.hero-b-layout { min-height: 0; padding-top: 110px; padding-bottom: 124px; grid-template-columns: minmax(0, .78fr) minmax(660px, 1.22fr); gap: clamp(24px, 2.5vw, 44px); }
       #top.hero-b-layout .hero-copy h1 { max-width: 590px; }
       #top.hero-b-layout .hero-copy .lede { max-width: 590px; }
       #top.hero-b-layout .hero-visual { align-self: start; }
@@ -1246,6 +1244,18 @@
       border-radius: 0;
       background: var(--main-600);
       box-shadow: none;
+      isolation: isolate;
+    }
+
+    #capabilities .capability-media::after {
+      position: absolute;
+      z-index: 1;
+      inset: 0;
+      display: block;
+      background: var(--main-700);
+      content: "";
+      mix-blend-mode: color;
+      pointer-events: none;
     }
 
     #capabilities .capability-media img {
@@ -1254,9 +1264,9 @@
       height: 100%;
       object-fit: cover;
       object-position: center;
-      filter: grayscale(1) contrast(.92);
-      mix-blend-mode: screen;
-      opacity: .78;
+      filter: none;
+      mix-blend-mode: normal;
+      opacity: 1;
     }
 
     #capabilities .capability-copy {
@@ -1270,16 +1280,6 @@
       gap: 38px;
       background: #fff;
       color: #181818;
-    }
-
-    #capabilities .capability-copy > span {
-      display: block;
-      color: var(--figma-text-high);
-      font-family: var(--figma-mono);
-      font-size: 15px;
-      line-height: 24px;
-      letter-spacing: 0;
-      text-transform: none;
     }
 
     #capabilities .capability-copy h3 {
@@ -1806,7 +1806,7 @@
       align-items: flex-start;
       gap: 8px;
       border-left: 1px solid var(--figma-primary);
-      background: #f5f6fa;
+      background: var(--main-50);
     }
 
     #pricing .pricing-result-value strong {
@@ -2151,12 +2151,12 @@
       z-index: -4;
       inset: 0;
       background:
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 19px / 100% 1px no-repeat,
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 60px / 100% 1px no-repeat,
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 calc(100% - 60px) / 100% 1px no-repeat,
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 calc(100% - 19px) / 100% 1px no-repeat,
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 79px 19px / 1px calc(100% - 38px) no-repeat,
-        linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) calc(100% - 80px) 19px / 1px calc(100% - 38px) no-repeat;
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 19px / 100% 1px no-repeat,
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 60px / 100% 1px no-repeat,
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 calc(100% - 60px) / 100% 1px no-repeat,
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 calc(100% - 19px) / 100% 1px no-repeat,
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 79px 19px / 1px calc(100% - 38px) no-repeat,
+        linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) calc(100% - 80px) 19px / 1px calc(100% - 38px) no-repeat;
       content: "";
       pointer-events: none;
     }
@@ -2166,7 +2166,7 @@
       z-index: -2;
       inset: 60px 80px;
       overflow: hidden;
-      background: #4e5d88 url("/assets/final-cta-center-pattern.png") center / 96px 96px repeat;
+      background: var(--main-700) url("/assets/final-cta-center-pattern.png") center / 96px 96px repeat;
       pointer-events: none;
       isolation: isolate;
     }
@@ -2309,9 +2309,9 @@
       background: conic-gradient(
         from 90deg,
         transparent 0deg 150deg,
-        rgba(109, 128, 182, .2) 166deg,
-        #6d80b6 180deg,
-        rgba(109, 128, 182, .2) 194deg,
+        color-mix(in srgb, var(--main-600) 20%, transparent) 166deg,
+        var(--main-600) 180deg,
+        color-mix(in srgb, var(--main-600) 20%, transparent) 194deg,
         transparent 210deg 360deg
       );
       animation: final-cta-shimmer-spin 2.8s linear infinite;
@@ -2667,12 +2667,12 @@
 
       #final-cta::after {
         background:
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 19px / 100% 1px no-repeat,
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 40px / 100% 1px no-repeat,
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 calc(100% - 40px) / 100% 1px no-repeat,
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 0 calc(100% - 19px) / 100% 1px no-repeat,
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) 19px 19px / 1px calc(100% - 38px) no-repeat,
-          linear-gradient(rgba(109, 128, 182, .2), rgba(109, 128, 182, .2)) calc(100% - 20px) 19px / 1px calc(100% - 38px) no-repeat;
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 19px / 100% 1px no-repeat,
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 40px / 100% 1px no-repeat,
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 calc(100% - 40px) / 100% 1px no-repeat,
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 0 calc(100% - 19px) / 100% 1px no-repeat,
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) 19px 19px / 1px calc(100% - 38px) no-repeat,
+          linear-gradient(color-mix(in srgb, var(--main-600) 20%, transparent), color-mix(in srgb, var(--main-600) 20%, transparent)) calc(100% - 20px) 19px / 1px calc(100% - 38px) no-repeat;
       }
 
       #final-cta .lede {
@@ -2831,11 +2831,11 @@
       width: 136px;
       height: 40px;
       background-image:
-        repeating-linear-gradient(90deg, #ced9f7 0 4.72px, transparent 4.72px 8.73px),
-        repeating-linear-gradient(90deg, #ced9f7 0 4.72px, transparent 4.72px 8.73px),
-        repeating-linear-gradient(90deg, #ced9f7 0 4.72px, transparent 4.72px 8.73px),
-        repeating-linear-gradient(90deg, #ced9f7 0 4.72px, transparent 4.72px 8.73px),
-        repeating-linear-gradient(90deg, #ced9f7 0 4.72px, transparent 4.72px 8.73px);
+        repeating-linear-gradient(90deg, var(--main-200) 0 4.72px, transparent 4.72px 8.73px),
+        repeating-linear-gradient(90deg, var(--main-200) 0 4.72px, transparent 4.72px 8.73px),
+        repeating-linear-gradient(90deg, var(--main-200) 0 4.72px, transparent 4.72px 8.73px),
+        repeating-linear-gradient(90deg, var(--main-200) 0 4.72px, transparent 4.72px 8.73px),
+        repeating-linear-gradient(90deg, var(--main-200) 0 4.72px, transparent 4.72px 8.73px);
       background-position: 0 0, 0 8.8px, 0 17.6px, 0 26.4px, 0 35.2px;
       background-size: 100% 4.8px;
       background-repeat: no-repeat;
@@ -3417,16 +3417,17 @@
         max-width: none;
         padding: 12px 20px;
         gap: 8px;
-        border-left: 1px solid var(--figma-primary);
+        border-left: 1px solid var(--main-600);
+        background-color: var(--main-50);
         background-image:
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary)),
-          linear-gradient(var(--figma-primary), var(--figma-primary));
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600)),
+          linear-gradient(var(--main-600), var(--main-600));
         background-position:
           left top, left top,
           right top, right top,
@@ -3441,7 +3442,7 @@
       }
 
       #pricing .pricing-result-value strong {
-        color: var(--figma-primary);
+        color: var(--main-600);
         font-size: 32px;
         font-weight: 500;
         line-height: 40px;
@@ -4112,7 +4113,7 @@
       padding: 6px 10px;
       border: 0;
       border-radius: 2px;
-      background: #6d80b6;
+      background: var(--main-600);
       color: #fff;
       font-family: var(--figma-display);
       font-size: 15px;
@@ -4122,8 +4123,8 @@
     }
 
     #enterprise .sales-link:hover {
-      border-color: #5d70a6;
-      background: #5d70a6;
+      border-color: var(--main-700);
+      background: var(--main-700);
     }
 
     #enterprise .enterprise-metrics {
@@ -4147,13 +4148,13 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
       border: 0;
       color: #1b2134;
       font-family: var(--figma-display);
       letter-spacing: 0;
-      text-align: center;
+      text-align: left;
     }
 
     #enterprise .enterprise-metric-visual {
@@ -4193,7 +4194,7 @@
       min-width: 0;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       gap: 8px;
     }
 
@@ -4459,7 +4460,7 @@
       gap: 10px;
       overflow: hidden;
       border-radius: 0;
-      background: #4e5d88;
+      background: var(--main-700);
     }
 
     #final-cta::before,
@@ -4469,7 +4470,7 @@
 
     #final-cta .final-cta-art {
       inset: 0;
-      background: #4e5d88;
+      background: var(--main-700);
     }
 
     #final-cta-copy {
@@ -4523,7 +4524,7 @@
       padding: 0 0 40px;
       overflow: visible;
       border: 0;
-      background: #4e5d88;
+      background: var(--main-700);
       box-shadow: none;
     }
 
@@ -5034,6 +5035,39 @@
       transform: translateX(-50%);
     }
 
+    /* Unfinished Hero: use the same placeholder treatment as Section One. */
+    #top.hero-b-layout #hero-b-pixel-field,
+    #top.hero-b-layout .hero-copy,
+    #top.hero-b-layout .hero-visual {
+      opacity: .12 !important;
+    }
+
+    #top.hero-b-layout .hero-placeholder-texture {
+      position: absolute;
+      z-index: 4;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 100vw;
+      background: url("/assets/playground-placeholder-texture.svg") 0 0 / 48px 48px repeat;
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
+
+    #top.hero-b-layout .hero-placeholder-label {
+      position: absolute;
+      z-index: 5;
+      top: 50%;
+      left: 50%;
+      padding: 6px 10px;
+      background: var(--main-600);
+      color: #fff;
+      font: 500 13px/20px var(--figma-display);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
     /* Section 1: full-bleed demo surface with content retained on the 1280px grid. */
     #playground.section.shell {
       width: 100%;
@@ -5051,53 +5085,44 @@
     }
 
     #playground .section-scan-frame {
+      position: relative;
       width: 100vw;
       margin-inline: 0;
+      isolation: isolate;
       border: 0;
       background: #fff;
       transform: none;
+    }
+
+    #playground .section-scan-frame::before {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      background: url("/assets/playground-placeholder-texture.svg") 0 0 / 48px 48px repeat;
+      content: "";
+      pointer-events: none;
     }
 
     #playground .section-scan-frame iframe {
       display: block;
       width: 100%;
       border: 0;
+      opacity: .12;
+      pointer-events: none;
     }
 
-    .texture-visibility-controls {
-      position: fixed;
-      z-index: 1000;
-      bottom: 16px;
-      left: 16px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .texture-visibility-control {
-      min-height: 42px;
-      padding: 8px 10px;
-      display: inline-flex;
-      align-items: center;
-      gap: 14px;
-      border: 1px solid rgba(255, 255, 255, .12);
-      border-radius: 6px;
-      background: #222;
+    #playground .section-scan-placeholder {
+      position: absolute;
+      z-index: 3;
+      top: 50%;
+      left: 50%;
+      padding: 6px 10px;
+      background: var(--main-600);
       color: #fff;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
-      font: 12px/1.2 var(--figma-display);
-      cursor: pointer;
-    }
-
-    .texture-visibility-control strong {
-      min-width: 24px;
-      color: color-mix(in srgb, var(--main-500) 85%, #fff);
-      font-weight: 500;
-      text-align: right;
-    }
-
-    .texture-visibility-control:focus-visible {
-      outline: 2px solid var(--main-500);
-      outline-offset: 2px;
+      font: 500 13px/20px var(--figma-display);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
     }
 
     /* Figma 490:15452 — CTA panel and footer surface. */
@@ -5117,17 +5142,41 @@
       gap: 10px;
       justify-content: center;
       overflow: hidden;
-      background: #fff;
+      background: var(--white);
     }
 
     #final-cta .final-cta-art {
-      inset: 60px 80px auto;
-      height: 410px;
-      background-color: #4e5d88;
+      inset: 60px 80px;
+      height: auto;
+      background-color: var(--main-700);
       background-image: url("/assets/final-cta-center-pattern.png");
       background-position: center;
       background-size: 96px 96px;
       background-repeat: repeat;
+    }
+
+    #final-cta .final-cta-placeholder {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      padding: 6px 10px;
+      background: var(--main-600);
+      color: #fff;
+      font-family: var(--figma-display);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 20px;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+    }
+
+    #final-cta .final-cta-placeholder--left {
+      left: 14%;
+    }
+
+    #final-cta .final-cta-placeholder--right {
+      left: 86%;
     }
 
     #final-cta-copy {
@@ -5137,7 +5186,7 @@
 
     #final-cta .section-no {
       margin: 0;
-      color: #6d80b6;
+      color: var(--main-600);
       font-family: var(--figma-mono);
       font-size: 12px;
       font-weight: 400;
@@ -5231,6 +5280,10 @@
       #final-cta .final-cta-art {
         inset: 40px 20px;
         height: auto;
+      }
+
+      #final-cta .final-cta-placeholder {
+        display: none;
       }
 
       #final-cta h2 {
@@ -5441,9 +5494,32 @@
       }
     }
 
-    /* Figma 394:2798 — preserve the four authored capability image treatments. */
-    #capabilities .capability-media img {
-      filter: none;
-      mix-blend-mode: normal;
-      opacity: 1;
+    /* Use the Final CTA button as the shared button sizing and type treatment. */
+    #main .button {
+      width: auto !important;
+      min-width: 0 !important;
+      min-height: 38px !important;
+      padding: 8px 16px !important;
+      font-family: var(--figma-display) !important;
+      font-size: 15px !important;
+      font-weight: 500 !important;
+      line-height: 24px !important;
+    }
+
+    .site-header .nav-actions .button {
+      color: #fff;
+    }
+
+    #pricing .pricing-facts dt {
+      font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+      text-transform: uppercase;
+    }
+
+    #integration .mcp > p:not(.pending) {
+      font-weight: 400;
+    }
+
+    #integration .mcp .text-link {
+      font-size: 13px;
+      line-height: 20px;
     }

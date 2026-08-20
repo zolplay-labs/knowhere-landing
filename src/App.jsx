@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Agentation } from 'agentation'
 import { LandingPage } from './landing/LandingPage'
 import './landing/landing.css'
@@ -22,12 +21,10 @@ async function copyToClipboard(text) {
 }
 
 export function App() {
-  const [finalCtaConvergence, setFinalCtaConvergence] = useState(357)
-
   return (
     <>
-      <LandingPage finalCtaConvergence={finalCtaConvergence} />
-      <PageStyleControls onFinalCtaConvergenceChange={setFinalCtaConvergence} />
+      <LandingPage />
+      <PageStyleControls />
       {import.meta.env.DEV && (
         <Agentation copyToClipboard={false} onCopy={copyToClipboard} />
       )}
