@@ -1360,6 +1360,12 @@
           </div>
         </div>
       </div>
+      <div hidden aria-hidden="true">
+        <img data-trace-source-asset="revenue" src="assets/source-revenue.png" alt="">
+        <img data-trace-source-asset="table" src="assets/source-table.png" alt="">
+        <img data-trace-source-asset="margin" src="assets/source-margin.png" alt="">
+        <img data-trace-source-asset="chart" src="assets/source-chart.png" alt="">
+      </div>
     </section>
 
     <section class="section shell reveal" id="playground" aria-labelledby="playground-title">
@@ -2758,76 +2764,79 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     frame = requestAnimationFrame(paint);
   }
   initTraceMapDecrypt();
+  const traceSourceAssets = Object.fromEntries(
+    $$('[data-trace-source-asset]').map(image => [image.dataset.traceSourceAsset, image.src])
+  );
   const traceSummaries = {
     revenue: {
       region: 'revenue',
-      image: 'assets/source-revenue.png',
+      image: traceSourceAssets.revenue,
       coordinate: { en: 'PAGE 12 · PARAGRAPH B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     table: {
       region: 'table',
-      image: 'assets/source-table.png',
+      image: traceSourceAssets.table,
       coordinate: { en: 'PAGE 12 · TABLE 03', zh: '第 12 页 · 表格 03' },
       summary: { en: 'Table 03 shows APAC growing 21.6% and Europe growing 19.4% year over year.', zh: '表格 03 显示，亚太地区同比增长 21.6%，欧洲同比增长 19.4%。' }
     },
     margin: {
       region: 'margin',
-      image: 'assets/source-margin.png',
+      image: traceSourceAssets.margin,
       coordinate: { en: 'PAGE 12 · NOTE C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Operating income reached $1.1B as the operating margin expanded to 22.9%.', zh: '营业利润达到 11 亿美元，营业利润率提升至 22.9%。' }
     },
     chart: {
       region: 'chart',
-      image: 'assets/source-chart.png',
+      image: traceSourceAssets.chart,
       coordinate: { en: 'PAGE 12 · FIGURE 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 preserves the quarter-by-quarter visual evidence behind the sustained revenue trend.', zh: '图表 05 保留了收入持续增长趋势背后的逐季度视觉证据。' }
     },
     'regional-growth': {
       region: 'table',
-      image: 'assets/source-table.png',
+      image: traceSourceAssets.table,
       coordinate: { en: 'PAGE 12 · TABLE 03 · APAC / EUROPE', zh: '第 12 页 · 表格 03 · 亚太 / 欧洲' },
       summary: { en: 'APAC grew 21.6% and Europe grew 19.4%, leading regional year-over-year expansion.', zh: '亚太地区增长 21.6%，欧洲增长 19.4%，领跑各区域同比增幅。' }
     },
     'north-america': {
       region: 'table',
-      image: 'assets/source-table.png',
+      image: traceSourceAssets.table,
       coordinate: { en: 'PAGE 12 · TABLE 03 · NORTH AMERICA', zh: '第 12 页 · 表格 03 · 北美' },
       summary: { en: 'North America remained the largest region at $2.302B, representing 18.4% year-over-year growth.', zh: '北美仍是最大区域，收入为 23.02 亿美元，同比增长 18.4%。' }
     },
     'regional-total': {
       region: 'table',
-      image: 'assets/source-table.png',
+      image: traceSourceAssets.table,
       coordinate: { en: 'PAGE 12 · TABLE 03 · TOTAL', zh: '第 12 页 · 表格 03 · 合计' },
       summary: { en: 'Total regional revenue reached $4.8B, compared with $4.03B in Q4 2024.', zh: '区域收入合计达到 48 亿美元，去年同期为 40.3 亿美元。' }
     },
     'regional-positive': {
       region: 'table',
-      image: 'assets/source-table.png',
+      image: traceSourceAssets.table,
       coordinate: { en: 'PAGE 12 · TABLE 03 · YOY CHANGE', zh: '第 12 页 · 表格 03 · 同比变化' },
       summary: { en: 'Every reported region posted positive year-over-year revenue growth in Q4 2025.', zh: '2025 年第四季度，所有披露区域的收入均实现同比正增长。' }
     },
     'operating-revenue': {
       region: 'revenue',
-      image: 'assets/source-revenue.png',
+      image: traceSourceAssets.revenue,
       coordinate: { en: 'PAGE 12 · PARAGRAPH B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, up 18.4% year over year.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     'operating-income': {
       region: 'margin',
-      image: 'assets/source-margin.png',
+      image: traceSourceAssets.margin,
       coordinate: { en: 'PAGE 12 · PARAGRAPH C', zh: '第 12 页 · 段落 C' },
       summary: { en: 'Operating income increased to $1.1B in Q4 2025.', zh: '2025 年第四季度营业利润增长至 11 亿美元。' }
     },
     'operating-margin': {
       region: 'margin',
-      image: 'assets/source-margin.png',
+      image: traceSourceAssets.margin,
       coordinate: { en: 'PAGE 12 · NOTE C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Disciplined cost management lifted operating margin to 22.9%.', zh: '严格的成本管理将营业利润率提升至 22.9%。' }
     },
     'operating-trend': {
       region: 'chart',
-      image: 'assets/source-chart.png',
+      image: traceSourceAssets.chart,
       coordinate: { en: 'PAGE 12 · FIGURE 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 shows revenue rising in every reported quarter from Q4 2023 through Q4 2025.', zh: '图表 05 显示，从 2023 年第四季度到 2025 年第四季度，收入每个披露季度均有增长。' }
     }
