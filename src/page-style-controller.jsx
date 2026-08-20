@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DialRoot, useDialKit } from 'dialkit'
 import 'dialkit/styles.css'
 
@@ -26,7 +26,7 @@ const MAIN_PALETTE_OPTIONS = Object.keys(MAIN_PALETTES).map((value, index) => ({
   value,
   label: `Main #${index + 1} · ${MAIN_COLOR_VALUES[value]}`,
 }))
-const DEFAULTS = { font: 'schengen', palette: 'main-7' }
+const DEFAULTS = { font: 'schengen', chineseFont: 'frex-sans-gb', palette: 'main-7', finalCtaConvergence: 357 }
 const FONT_STACKS = {
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
   fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial, sans-serif',
@@ -34,15 +34,33 @@ const FONT_STACKS = {
   helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
   serif: 'Georgia, "Times New Roman", "Songti SC", serif',
 }
+const ENGLISH_FONT_FACES = {
+  schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk"',
+  fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial',
+  geist: '"Geist Sans", "Helvetica Neue", Arial',
+  helvetica: '"Helvetica Neue", Helvetica, Arial',
+  serif: 'Georgia, "Times New Roman"',
+}
+const CHINESE_FONT_STACKS = {
+  'frex-sans-gb': '"Frex Sans GB VF", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+  'noto-sans-sc': '"Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+  'pingfang-sc': '"PingFang SC", "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif',
+  'microsoft-yahei': '"Microsoft YaHei", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
+  'songti-sc': '"Songti SC", "STSong", "Noto Serif CJK SC", serif',
+}
 
 function loadSettings() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
     return {
       font: FONT_STACKS[saved.font] ? saved.font : DEFAULTS.font,
+      chineseFont: CHINESE_FONT_STACKS[saved.chineseFont] ? saved.chineseFont : DEFAULTS.chineseFont,
       palette: saved.paletteVersion === PALETTE_VERSION && MAIN_PALETTES[saved.palette]
         ? saved.palette
         : DEFAULTS.palette,
+      finalCtaConvergence: Number.isFinite(saved.finalCtaConvergence)
+        ? Math.min(500, Math.max(260, saved.finalCtaConvergence))
+        : DEFAULTS.finalCtaConvergence,
     }
   } catch {
     return { ...DEFAULTS }
@@ -50,6 +68,15 @@ function loadSettings() {
 }
 
 const initialSettings = loadSettings()
+
+function saveSettings(settings) {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}')
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...saved, ...settings }))
+  } catch {
+    // Styling still works when storage is unavailable.
+  }
+}
 
 function readableForeground(hex) {
   const channels = [1, 3, 5].map((index) => parseInt(hex.slice(index, index + 2), 16) / 255)
@@ -68,7 +95,10 @@ function applySettings(targetDocument, settings) {
   if (!targetDocument?.documentElement) return
 
   const rootStyle = targetDocument.documentElement.style
-  const fontStack = FONT_STACKS[settings.font] || FONT_STACKS[DEFAULTS.font]
+  const englishFont = FONT_STACKS[settings.font] || FONT_STACKS[DEFAULTS.font]
+  const englishFaces = ENGLISH_FONT_FACES[settings.font] || ENGLISH_FONT_FACES[DEFAULTS.font]
+  const chineseFont = CHINESE_FONT_STACKS[settings.chineseFont] || CHINESE_FONT_STACKS[DEFAULTS.chineseFont]
+  const fontStack = settings.language === 'zh' ? `${englishFaces}, ${chineseFont}` : englishFont
   const palette = MAIN_PALETTES[settings.palette] || MAIN_PALETTES[DEFAULTS.palette]
   const mainColor = MAIN_COLOR_VALUES[settings.palette] || MAIN_COLOR_VALUES[DEFAULTS.palette]
 
@@ -86,7 +116,9 @@ function applySettings(targetDocument, settings) {
   targetWindow?.dispatchEvent(new targetWindow.CustomEvent('main-palette-change'))
 }
 
-export function PageStyleControls() {
+export function PageStyleControls({ onFinalCtaConvergenceChange }) {
+  const [heroTextureVisible, setHeroTextureVisible] = useState(false)
+  const [playgroundTextureVisible, setPlaygroundTextureVisible] = useState(true)
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const params = useDialKit('Knowhere Landing', {
     appearance: {
@@ -101,43 +133,96 @@ export function PageStyleControls() {
         ],
         default: initialSettings.font,
       },
+      chineseFontFamily: {
+        type: 'select',
+        options: [
+          { value: 'frex-sans-gb', label: 'Frex Sans GB VF · Default' },
+          { value: 'noto-sans-sc', label: 'Noto Sans SC' },
+          { value: 'pingfang-sc', label: 'PingFang SC' },
+          { value: 'microsoft-yahei', label: 'Microsoft YaHei' },
+          { value: 'songti-sc', label: 'Songti SC' },
+        ],
+        default: initialSettings.chineseFont,
+      },
       mainColor: {
         type: 'select',
         options: MAIN_PALETTE_OPTIONS,
         default: initialSettings.palette,
       },
     },
+    motion: {
+      finalCtaConvergence: [initialSettings.finalCtaConvergence, 260, 500, 1],
+    },
   })
 
   const font = FONT_STACKS[params.appearance.fontFamily]
     ? params.appearance.fontFamily
     : DEFAULTS.font
+  const chineseFont = CHINESE_FONT_STACKS[params.appearance.chineseFontFamily]
+    ? params.appearance.chineseFontFamily
+    : DEFAULTS.chineseFont
   const palette = MAIN_PALETTES[params.appearance.mainColor]
     ? params.appearance.mainColor
     : DEFAULTS.palette
+  const finalCtaConvergence = params.motion.finalCtaConvergence
 
   useEffect(() => {
-    const settings = { font, palette, paletteVersion: PALETTE_VERSION }
+    const settings = { font, chineseFont, palette, paletteVersion: PALETTE_VERSION }
     const scanFrame = document.querySelector('.section-scan-frame iframe')
-    const syncFrame = () => {
+    const syncSettings = () => {
+      const language = document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en'
+      const localizedSettings = { ...settings, language }
+      applySettings(document, localizedSettings)
       try {
-        applySettings(scanFrame?.contentDocument, settings)
+        applySettings(scanFrame?.contentDocument, localizedSettings)
       } catch {
         // The embedded preview can become cross-origin without affecting the page controls.
       }
     }
 
-    applySettings(document, settings)
-    syncFrame()
-    scanFrame?.addEventListener('load', syncFrame)
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
-    } catch {
-      // Styling still works when storage is unavailable.
+    syncSettings()
+    const languageObserver = new MutationObserver(syncSettings)
+    languageObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] })
+    scanFrame?.addEventListener('load', syncSettings)
+    saveSettings(settings)
+
+    return () => {
+      languageObserver.disconnect()
+      scanFrame?.removeEventListener('load', syncSettings)
+    }
+  }, [font, chineseFont, palette])
+
+  useEffect(() => {
+    onFinalCtaConvergenceChange(finalCtaConvergence)
+    saveSettings({ finalCtaConvergence })
+  }, [finalCtaConvergence, onFinalCtaConvergenceChange])
+
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-hero-texture', heroTextureVisible)
+    window.dispatchEvent(new CustomEvent('hero-texture-change', {
+      detail: { visible: heroTextureVisible },
+    }))
+  }, [heroTextureVisible])
+
+  useEffect(() => {
+    const scanFrame = document.querySelector('.section-scan-frame iframe')
+    const syncTextureVisibility = () => {
+      try {
+        if (typeof scanFrame?.contentWindow?.setTraceDitherVisible === 'function') {
+          scanFrame.contentWindow.setTraceDitherVisible(playgroundTextureVisible)
+        } else {
+          const textureCanvas = scanFrame?.contentDocument?.querySelector('[data-trace-dither-field]')
+          if (textureCanvas) textureCanvas.hidden = !playgroundTextureVisible
+        }
+      } catch {
+        // The embedded preview can become cross-origin without affecting the control.
+      }
     }
 
-    return () => scanFrame?.removeEventListener('load', syncFrame)
-  }, [font, palette])
+    syncTextureVisibility()
+    scanFrame?.addEventListener('load', syncTextureVisibility)
+    return () => scanFrame?.removeEventListener('load', syncTextureVisibility)
+  }, [playgroundTextureVisible])
 
   const initialPalette = MAIN_PALETTES[initialSettings.palette]
   const initialMainColor = MAIN_COLOR_VALUES[initialSettings.palette]
@@ -146,6 +231,26 @@ export function PageStyleControls() {
     <>
       <style>{`:root{${paletteStyles(initialPalette)};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="dark" productionEnabled />
+      <div className="texture-visibility-controls">
+        <button
+          className="texture-visibility-control"
+          type="button"
+          aria-pressed={heroTextureVisible}
+          onClick={() => setHeroTextureVisible(visible => !visible)}
+        >
+          <span>Lower texture</span>
+          <strong>{heroTextureVisible ? 'On' : 'Off'}</strong>
+        </button>
+        <button
+          className="texture-visibility-control"
+          type="button"
+          aria-pressed={playgroundTextureVisible}
+          onClick={() => setPlaygroundTextureVisible(visible => !visible)}
+        >
+          <span>Product texture</span>
+          <strong>{playgroundTextureVisible ? 'On' : 'Off'}</strong>
+        </button>
+      </div>
     </>
   )
 }

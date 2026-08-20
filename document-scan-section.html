@@ -47,6 +47,10 @@
   <style>
     :root {
       --accent: var(--ink);
+      --trace-accent: var(--main-600, #2858a5);
+      --trace-accent-light: var(--main-400, #6d80b6);
+      --trace-accent-soft: var(--main-100, #e9ecee);
+      --trace-accent-dark: var(--main-800, #24272b);
       --sans: "KMR Melange Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
       --serif: "KMR Melange Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
       --mono: "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
@@ -126,20 +130,20 @@
     .js .trace-demo:not(.is-stage-entered) .trace-content-box,
     .js .trace-demo:not(.is-stage-entered) .trace-dither-field { -webkit-mask-image: linear-gradient(transparent,transparent); mask-image: linear-gradient(transparent,transparent); }
     .trace-debug { position: fixed; z-index: 220; right: 16px; bottom: 16px; display: grid; gap: 8px; justify-items: end; font-family: var(--mono); }
-    .trace-debug-toggle { appearance: none; display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 0 12px; border: 1px solid rgba(15,46,92,.16); border-radius: 4px; background: rgba(253,252,252,.92); color: #5f5e5c; font: 700 10px/1 var(--mono); letter-spacing: .08em; cursor: pointer; box-shadow: 0 2px 8px rgba(20,22,24,.06); }
-    .trace-debug-toggle:hover, .trace-debug-toggle[aria-expanded="true"] { border-color: rgba(15,46,92,.34); color: #181818; }
-    .trace-debug-toggle-dot { width: 6px; height: 6px; border-radius: 50%; background: #2858a5; opacity: .8; }
-    .trace-debug-panel { width: min(228px, calc(100vw - 32px)); max-height: min(72vh, 560px); padding: 12px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid rgba(15,46,92,.16); border-radius: 6px; background: rgba(253,252,252,.96); color: #5f5e5c; box-shadow: 0 10px 28px rgba(20,22,24,.08); }
+    .trace-debug-toggle { appearance: none; display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--trace-accent) 16%, transparent); border-radius: 4px; background: rgba(253,252,252,.92); color: #5f5e5c; font: 700 10px/1 var(--mono); letter-spacing: .08em; cursor: pointer; box-shadow: 0 2px 8px rgba(20,22,24,.06); }
+    .trace-debug-toggle:hover, .trace-debug-toggle[aria-expanded="true"] { border-color: color-mix(in srgb, var(--trace-accent) 34%, transparent); color: #181818; }
+    .trace-debug-toggle-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--trace-accent); opacity: .8; }
+    .trace-debug-panel { width: min(228px, calc(100vw - 32px)); max-height: min(72vh, 560px); padding: 12px; overflow-y: auto; overscroll-behavior: contain; border: 1px solid color-mix(in srgb, var(--trace-accent) 16%, transparent); border-radius: 6px; background: rgba(253,252,252,.96); color: #5f5e5c; box-shadow: 0 10px 28px rgba(20,22,24,.08); }
     .trace-debug-panel[hidden] { display: none; }
     .trace-debug-kicker { margin: 0 0 10px; color: #898887; font: 700 9px/1 var(--mono); letter-spacing: .1em; }
     .trace-debug-row { margin: 0 0 10px; }
     .trace-debug-row:last-of-type { margin-bottom: 12px; }
     .trace-debug-label { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 4px; color: #6f6e69; font-size: 9px; letter-spacing: .06em; text-transform: uppercase; }
     .trace-debug-label output { color: #181818; font-weight: 700; letter-spacing: 0; text-transform: none; }
-    .trace-debug-range { display: block; width: 100%; height: 16px; margin: 0; accent-color: #2858a5; cursor: pointer; }
-    .trace-debug-color { display: block; width: 100%; height: 26px; margin: 0; padding: 0; border: 1px solid rgba(15,46,92,.16); border-radius: 4px; background: transparent; cursor: pointer; }
-    .trace-debug-reset { appearance: none; width: 100%; min-height: 26px; border: 1px solid rgba(15,46,92,.16); border-radius: 4px; background: transparent; color: #5f5e5c; font: 700 9px/1 var(--mono); letter-spacing: .1em; cursor: pointer; }
-    .trace-debug-reset:hover { border-color: rgba(15,46,92,.34); color: #181818; }
+    .trace-debug-range { display: block; width: 100%; height: 16px; margin: 0; accent-color: var(--trace-accent); cursor: pointer; }
+    .trace-debug-color { display: block; width: 100%; height: 26px; margin: 0; padding: 0; border: 1px solid color-mix(in srgb, var(--trace-accent) 16%, transparent); border-radius: 4px; background: transparent; cursor: pointer; }
+    .trace-debug-reset { appearance: none; width: 100%; min-height: 26px; border: 1px solid color-mix(in srgb, var(--trace-accent) 16%, transparent); border-radius: 4px; background: transparent; color: #5f5e5c; font: 700 9px/1 var(--mono); letter-spacing: .1em; cursor: pointer; }
+    .trace-debug-reset:hover { border-color: color-mix(in srgb, var(--trace-accent) 34%, transparent); color: #181818; }
     .trace-debug-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .trace-content-box { position: absolute; z-index: 1; top: 0; bottom: 0; left: 50%; width: min(var(--trace-layout-width), 100%); transform: translateX(-50%); }
     .trace-document-page { position: absolute; top: 5.5%; width: 42.4%; height: 89%; padding: 0; overflow: hidden; border: 0; border-radius: var(--trace-card-radius); background: #fdfcfc; color: #17191b; font-family: var(--trace-mono); box-shadow: 0 10px 28px rgba(20,22,24,.035); cursor: pointer; transform-origin: left top; transition: top .48s cubic-bezier(.22,1,.36,1), left .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, opacity .25s ease; }
@@ -158,37 +162,37 @@
     .trace-document-page:not([data-slot="primary"]) .trace-page-inner { pointer-events: none; }
     .trace-document-page:not([data-slot="primary"]) .trace-source-mark { pointer-events: none; }
     .trace-document-page::after { display: none; content: none; }
-    .trace-document-page:focus-visible { outline: 2px solid #2858a5; outline-offset: -2px; }
-    .trace-doc-kicker { margin: 0 0 8px; color: rgba(40,88,165,.76); font: 700 8.5px/1.2 var(--trace-mono); letter-spacing: .09em; text-transform: uppercase; }
+    .trace-document-page:focus-visible { outline: 2px solid var(--trace-accent); outline-offset: -2px; }
+    .trace-doc-kicker { margin: 0 0 8px; color: color-mix(in srgb, var(--trace-accent) 76%, transparent); font: 700 8.5px/1.2 var(--trace-mono); letter-spacing: .09em; text-transform: uppercase; }
     .trace-document-page h3 { max-width: 520px; margin: 0 0 2.2%; color: #111315; font-family: var(--trace-mono); font-size: clamp(22px,1.8vw,29px); font-weight: 500; line-height: 1.03; letter-spacing: -.05em; text-transform: none; }
-    .trace-document-page h3 span { color: #2858a5; }
-    .trace-doc-rule { height: 0; margin: 0 -7% 2%; border-top: 1px solid rgba(40,88,165,.2); }
+    .trace-document-page h3 span { color: var(--trace-accent); }
+    .trace-doc-rule { height: 0; margin: 0 -7% 2%; border-top: 1px solid color-mix(in srgb, var(--trace-accent) 20%, transparent); }
     .trace-doc-meta { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 1.2%; padding-bottom: 2.2%; border-bottom: 0; font: 700 9px/1.3 var(--trace-mono); letter-spacing: .035em; text-transform: uppercase; }
     .trace-doc-meta span { color: rgba(20,22,24,.5); white-space: nowrap; }
     .trace-doc-meta strong { overflow: hidden; color: #17191b; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
     .trace-doc-records { min-height: 0; flex: 1; display: grid; margin-bottom: 5.5%; grid-template-rows: repeat(4,minmax(0,1fr)); }
     .trace-doc-record { min-height: 0; display: flex; padding: 2.2% 0; align-items: center; border-bottom: 0; }
-    .trace-doc-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 2.2%; border-top: 1px solid rgba(40,88,165,.12); color: rgba(20,22,24,.46); font: 700 8px/1.3 var(--trace-mono); letter-spacing: .06em; text-transform: uppercase; }
-    .trace-doc-footer span:last-child { color: rgba(40,88,165,.72); text-align: right; }
+    .trace-doc-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 2.2%; border-top: 1px solid color-mix(in srgb, var(--trace-accent) 12%, transparent); color: rgba(20,22,24,.46); font: 700 8px/1.3 var(--trace-mono); letter-spacing: .06em; text-transform: uppercase; }
+    .trace-doc-footer span:last-child { color: color-mix(in srgb, var(--trace-accent) 72%, transparent); text-align: right; }
     .trace-record-index { display: none; }
     .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; font-family: var(--trace-mono); font-size: clamp(11.5px,.96vw,14px); font-weight: 500; line-height: 1.5; letter-spacing: -.018em; }
     .trace-record-label { display: block; margin-bottom: 3px; color: #111315; font-size: 9px; font-weight: 800; line-height: 1.2; letter-spacing: .03em; text-transform: none; }
-    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: rgba(53,195,207,.2); color: #111315; font: inherit; font-weight: 700; text-align: inherit; box-shadow: none; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
-    .trace-source-mark.is-preview { background: rgba(53,195,207,.2); color: #111315; box-shadow: none; }
-    .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: #2858a5; color: #fff; box-shadow: 0 0 0 2px rgba(40,88,165,.16); outline: 0; }
+    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; font: inherit; font-weight: 700; text-align: inherit; box-shadow: none; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+    .trace-source-mark.is-preview { background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; box-shadow: none; }
+    .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); outline: 0; }
     .trace-target-cursor { --trace-dot-x: 50%; --trace-dot-y: 50%; --trace-parallax-x: 0px; --trace-parallax-y: 0px; position: fixed; z-index: 120; top: 0; left: 0; width: 0; height: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .1s ease, visibility 0s .1s; }
     .trace-target-cursor.is-visible { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-target-frame { position: absolute; inset: 0; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0); }
     .trace-target-cursor.is-locking .trace-target-frame { animation: trace-target-lock .24s cubic-bezier(.2,.82,.28,1) both; }
-    .trace-target-corner { position: absolute; width: 11px; height: 11px; border-color: #2858a5; border-style: solid; filter: drop-shadow(0 0 2px rgba(40,88,165,.2)); }
+    .trace-target-corner { position: absolute; width: 11px; height: 11px; border-color: var(--trace-accent); border-style: solid; filter: drop-shadow(0 0 2px color-mix(in srgb, var(--trace-accent) 20%, transparent)); }
     .trace-target-corner--tl { top: 0; left: 0; border-width: 1.5px 0 0 1.5px; }
     .trace-target-corner--tr { top: 0; right: 0; border-width: 1.5px 1.5px 0 0; }
     .trace-target-corner--br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0; }
     .trace-target-corner--bl { bottom: 0; left: 0; border-width: 0 0 1.5px 1.5px; }
-    .trace-target-dot { position: absolute; top: var(--trace-dot-y); left: var(--trace-dot-x); width: 4px; height: 4px; border: 1px solid #f4f3f3; border-radius: 50%; background: #2fbbc7; box-shadow: 0 0 0 1px rgba(26,69,105,.42); transform: translate(-50%,-50%); }
+    .trace-target-dot { position: absolute; top: var(--trace-dot-y); left: var(--trace-dot-x); width: 4px; height: 4px; border: 1px solid #f4f3f3; border-radius: 50%; background: var(--trace-accent-light); box-shadow: 0 0 0 1px color-mix(in srgb, var(--trace-accent-dark) 42%, transparent); transform: translate(-50%,-50%); }
     @keyframes trace-target-lock { 0% { opacity: .25; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(.42) rotate(28deg); } 62% { opacity: 1; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(1.035) rotate(-2deg); } 100% { opacity: 1; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(1) rotate(0); } }
     @media (hover: hover) and (pointer: fine) { .trace-source-mark { cursor: none; } }
-    .trace-page-index { position: absolute; z-index: 4; top: 2.8%; right: 3.5%; color: #2858a5; font: 800 11px/1 var(--trace-mono); letter-spacing: .08em; }
+    .trace-page-index { position: absolute; z-index: 4; top: 2.8%; right: 3.5%; color: var(--trace-accent); font: 800 11px/1 var(--trace-mono); letter-spacing: .08em; }
     .trace-page-texture { position: absolute; z-index: 2; inset: 0; overflow: hidden; border-radius: inherit; opacity: 1; visibility: visible; background: #fdfcfc; transition: opacity .22s ease, visibility 0s; }
     .trace-page-texture img { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     .trace-page-texture .trace-decrypt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -203,22 +207,22 @@
     .trace-source-card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 14px; padding: 0 2px 10px; color: rgba(255,255,255,.72); font: 700 8px/1 var(--trace-mono); letter-spacing: .05em; text-transform: uppercase; }
     .trace-source-thumb { position: relative; aspect-ratio: 900 / 410; overflow: hidden; border-radius: var(--trace-card-radius); background: #f8f7f5; box-shadow: 0 0 0 1px rgba(20,22,24,.14); }
     .trace-source-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; filter: grayscale(1) contrast(1.06) brightness(1.025); }
-    .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid #2858a5; background: rgba(40,88,165,.07); box-shadow: 0 0 0 999px rgba(17,19,21,.045); transition: inset .2s ease, width .2s ease, height .2s ease; }
+    .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: 0 0 0 999px rgba(17,19,21,.045); transition: inset .2s ease, width .2s ease, height .2s ease; }
     .trace-document-scanner { position: absolute; z-index: 3; top: 0; right: 0; left: 0; height: 20%; overflow: visible; opacity: 0; pointer-events: none; transform: translate3d(0,-120%,0); animation: trace-document-scan 4.2s linear infinite; will-change: transform, opacity; }
-    .trace-document-scanner::before { position: absolute; inset: 0; content: ""; background: linear-gradient(180deg,rgba(255,255,255,0),rgba(244,247,252,.08) 38%,rgba(214,227,247,.22) 78%,rgba(40,88,165,.12) 94%,rgba(40,88,165,0)); }
-    .trace-document-scanner::after { position: absolute; right: 0; bottom: 5%; left: 0; height: 1px; content: ""; background: linear-gradient(90deg,rgba(40,88,165,0),rgba(40,88,165,.28) 10%,rgba(239,246,255,.96) 48%,rgba(40,88,165,.48) 78%,rgba(40,88,165,0)); box-shadow: 0 -4px 12px rgba(40,88,165,.12),0 2px 8px rgba(255,255,255,.5); }
+    .trace-document-scanner::before { position: absolute; inset: 0; content: ""; background: linear-gradient(180deg,transparent,color-mix(in srgb, var(--trace-accent-soft) 8%, transparent) 38%,color-mix(in srgb, var(--trace-accent-light) 22%, transparent) 78%,color-mix(in srgb, var(--trace-accent) 12%, transparent) 94%,transparent); }
+    .trace-document-scanner::after { position: absolute; right: 0; bottom: 5%; left: 0; height: 1px; content: ""; background: linear-gradient(90deg,transparent,color-mix(in srgb, var(--trace-accent) 28%, transparent) 10%,color-mix(in srgb, var(--trace-accent-soft) 96%, white) 48%,color-mix(in srgb, var(--trace-accent) 48%, transparent) 78%,transparent); box-shadow: 0 -4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent),0 2px 8px rgba(255,255,255,.5); }
     @keyframes trace-document-scan { 0% { opacity: 0; transform: translate3d(0,-120%,0); } 7% { opacity: .76; } 88% { opacity: .76; } 100% { opacity: 0; transform: translate3d(0,500%,0); } }
     .trace-summary-card { position: relative; z-index: 3; width: 100%; min-height: 112px; padding: 17px 18px; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
     .trace-demo.is-trace-visible .trace-summary-card { transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-source-card { opacity: 1; clip-path: none; transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-summary-card { opacity: 1; visibility: visible; transform: none; }
-    .trace-summary-label { display: flex; align-items: center; margin-bottom: 10px; color: #2858a5; font: 800 9px/1 var(--trace-mono); letter-spacing: .04em; text-transform: none; }
+    .trace-summary-label { display: flex; align-items: center; margin-bottom: 10px; color: var(--trace-accent); font: 800 9px/1 var(--trace-mono); letter-spacing: .04em; text-transform: none; }
     .trace-summary { margin: 0; font-family: var(--trace-mono); font-size: clamp(12px,1.02vw,14px); font-weight: 600; line-height: 1.5; letter-spacing: -.02em; }
     .trace-source-card, .trace-summary-card { overflow: visible; isolation: isolate; border: 0; border-radius: var(--trace-card-radius); background: transparent; box-shadow: none; }
     .trace-source-card::before, .trace-summary-card::before { position: absolute; z-index: 0; border: 0; content: ""; }
-    .trace-source-card::before { inset: 0; border-radius: inherit; background: #2858a5; box-shadow: 0 18px 42px rgba(20,22,24,.18), 0 4px 12px rgba(40,88,165,.12); }
+    .trace-source-card::before { inset: 0; border-radius: inherit; background: var(--trace-accent); box-shadow: 0 18px 42px rgba(20,22,24,.18), 0 4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent); }
     .trace-source-card::after { display: none; content: none; }
-    .trace-summary-card::before { inset: 0; border-radius: inherit; background: #fbfcfd; box-shadow: inset 0 0 0 1px rgba(40,88,165,.12), 0 8px 20px rgba(20,22,24,.05); }
+    .trace-summary-card::before { inset: 0; border-radius: inherit; background: #fbfcfd; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--trace-accent) 12%, transparent), 0 8px 20px rgba(20,22,24,.05); }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .trace-source-card .trace-pixel-reveal, .trace-summary-card .trace-pixel-reveal { border-radius: var(--trace-card-radius); clip-path: inset(0 round var(--trace-card-radius)); }
@@ -1185,7 +1189,12 @@
     }
   </style>
   <script>document.documentElement.classList.replace('no-js', 'js')</script>
-</head>
+    <style>
+      .trace-dither-field {
+        transform: translateY(40px);
+      }
+    </style>
+  </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header" data-header>
@@ -1278,7 +1287,7 @@
         <span class="hero-center-divider" aria-hidden="true"></span>
       </div>
       <div class="hero-visual" aria-label="Interactive illustration showing an AI answer linked back to its original page and visual region">
-        <div class="document-stage trace-demo" data-trace-demo data-region="revenue" aria-label="AI-generated document with selectable source-linked statements">
+        <div class="document-stage trace-demo is-stage-entered" data-trace-demo data-region="revenue" aria-label="AI-generated document with selectable source-linked statements">
           <canvas class="trace-dither-field" data-trace-dither-field aria-hidden="true"></canvas>
           <canvas class="trace-stage-reveal" data-trace-stage-reveal aria-hidden="true"></canvas>
           <div class="trace-content-box" data-trace-content-box>
@@ -1337,14 +1346,14 @@
                   <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>PAGE 12 · PARAGRAPH B</span></figcaption>
                   <div class="trace-source-thumb"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div>
                 </div>
-                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="#e9ecee,#9cabc1,#2858a5" aria-hidden="true"></canvas>
+                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
               </figure>
               <aside class="trace-summary-card" data-trace-summary-card aria-label="AI summary of the selected source">
                 <div class="trace-card-content">
                   <span class="trace-summary-label">AI summary</span>
                   <p class="trace-summary" data-trace-summary>Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.</p>
                 </div>
-                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="364" data-pixel-duration="225" data-pixel-colors="#fdfcfc,#2858a5,#24272b" aria-hidden="true"></canvas>
+                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="364" data-pixel-duration="225" data-pixel-colors="#fdfcfc,main-600,main-800" aria-hidden="true"></canvas>
               </aside>
             </div>
           </div>
@@ -1930,8 +1939,48 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     'Support requirements': '支持需求', 'SLA requirements': 'SLA 需求', 'Commercial terms': '商业条款',
     'Ready to build with better document context?': '准备好使用更好的文档上下文进行构建了吗？',
     'Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.': '从 API 开始，连接现有智能体工作流，看看 Knowhere 如何处理纯文本管线容易遗漏的文档信息。',
+    'Revenue performance': '收入表现', 'Q4 2025 market report': '2025 年第四季度市场报告', 'Page 12 / 48': '第 12 / 48 页',
+    'Revenue / growth': '收入 / 增长', 'Enterprise software revenue reached': '企业软件收入达到',
+    '$4.8B, up 18.4% year over year': '48 亿美元，同比增长 18.4%',
+    ', supported by continued demand for cloud, security, and data platforms.': '，得益于云、安全和数据平台需求持续增长。',
+    'Regional performance': '区域表现', 'APAC grew 21.6% and Europe grew 19.4%': '亚太地区增长 21.6%，欧洲增长 19.4%',
+    '. North America remained the largest contributor to revenue.': '。北美仍是收入贡献最大的区域。',
+    'Operating margin': '营业利润率', 'Operating income rose to $1.1B as disciplined cost management lifted': '营业利润增至 11 亿美元，严格的成本管理将',
+    'operating margin to 22.9%': '营业利润率提升至 22.9%', 'Trend / visual evidence': '趋势 / 视觉证据',
+    'Revenue increased in every reported quarter since Q4 2023': '自 2023 年第四季度以来，每个披露季度的收入均有增长',
+    ', preserving the upward trend in the original chart.': '，原始图表中的上升趋势得以保留。',
+    'Source-linked': '已关联来源', 'Visual evidence preserved': '视觉证据已保留',
+    'Regional leaders': '领先区域', ', leading the year-over-year expansion.': '，领跑同比增长。',
+    'North America': '北美', 'The largest region reached': '最大区域的收入达到', '$2.302B with 18.4% growth': '23.02 亿美元，同比增长 18.4%',
+    'Total revenue': '总收入', 'Reported revenue closed at': '披露收入达到', '$4.8B versus $4.03B': '48 亿美元，去年同期为 40.3 亿美元',
+    'in the prior year.': '。', 'Portfolio signal': '业务组合信号', 'Every reported region remained positive': '所有披露区域均保持正增长',
+    'across the period.': '。', 'Regional evidence preserved': '区域证据已保留',
+    'Operating signals': '运营指标', 'Revenue': '收入', 'Quarterly revenue reached': '季度收入达到',
+    'Operating income': '营业利润', 'Operating income increased to': '营业利润增至', '$1.1B in Q4 2025': '2025 年第四季度达到 11 亿美元',
+    'Margin expansion': '利润率提升', 'Cost discipline lifted the': '成本管控将', 'Trend evidence': '趋势证据',
+    'Revenue rose in each reported quarter since Q4 2023': '自 2023 年第四季度以来，每个披露季度的收入均有增长',
+    'Operating evidence preserved': '运营证据已保留', 'Original file': '原始文件',
+    'PAGE 12 · PARAGRAPH B': '第 12 页 · 段落 B', 'AI summary': 'AI 摘要',
+    'Original Q4 2025 market report page': '2025 年第四季度市场报告原始页面',
+    'Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.': '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。',
+    'Main navigation': '主导航', 'KNOWHERE, back to top': 'KNOWHERE，返回页面顶部', 'Open navigation menu': '打开导航菜单',
+    'Mobile navigation': '移动端导航', 'Trace dither field debug controls': '来源追溯抖动场调试控件',
+    'Interactive illustration showing an AI answer linked back to its original page and visual region': '展示 AI 回答关联回原始页面和视觉区域的交互式插画',
+    'AI-generated document with selectable source-linked statements': '包含可选择来源关联语句的 AI 生成文档',
+    'Document metadata': '文档元数据', 'Regional performance document, click to bring forward': '区域表现文档，点击置于前方',
+    'Operating signals document, click to bring forward': '运营指标文档，点击置于前方',
+    'AI summary of the selected source': '所选来源的 AI 摘要', 'Comparison categories': '对比类别',
+    'Product links': '产品链接', 'Resource links': '资源链接', 'Company links': '公司链接',
+    'Preset documents': '预设文档', 'Structured document workspace': '结构化文档工作台',
+    'Structured document views': '结构化文档视图', 'Document connections': '文档连接',
+    'Traceable output status': '可追溯输出状态', 'Agent configuration': '智能体配置',
+    'Data transformation stages': '数据转换阶段', 'Data transformation image placeholder': '数据转换图片占位',
+    'Illustrative formats': '示意格式', 'Illustrative document pipeline comparison': '示意文档处理流程对比',
+    'Document understanding capability matrix': '文档理解能力矩阵', 'Code examples': '代码示例',
+    'Close notification': '关闭通知',
   });
   const originalText = new WeakMap();
+  const originalAttributes = new WeakMap();
   const headingSourceText = new WeakMap();
   $$('#main h1, #main h2').forEach(heading => headingSourceText.set(heading, heading.textContent.trim()));
   let activeLanguage = 'en';
@@ -1939,7 +1988,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   let storyReady = false;
   let titleTypeReady = false;
   let pricingReady = false;
-  function localizeText(value) { return activeLanguage === 'zh' ? (zh[value] || value) : value; }
+  function localizeText(value) {
+    if (activeLanguage !== 'zh') return value;
+    return zh[value] || value.replaceAll('Illustrative only — no real endpoint', '仅作示意 — 非真实接口');
+  }
   function translatePage() {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
@@ -1956,6 +2008,16 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       const trailing = original.match(/\s*$/)[0];
       const key = original.trim();
       node.nodeValue = `${leading}${localizeText(key)}${trailing}`;
+    });
+    $$('[aria-label], [title], [placeholder], [alt]').forEach(element => {
+      if (element.matches('[data-language-toggle]')) return;
+      if (!originalAttributes.has(element)) originalAttributes.set(element, new Map());
+      const attributes = originalAttributes.get(element);
+      ['aria-label', 'title', 'placeholder', 'alt'].forEach(attribute => {
+        if (!element.hasAttribute(attribute)) return;
+        if (!attributes.has(attribute)) attributes.set(attribute, element.getAttribute(attribute));
+        element.setAttribute(attribute, localizeText(attributes.get(attribute)));
+      });
     });
   }
   const languageToggles = $$('[data-language-toggle]');
@@ -1983,6 +2045,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     if (announce) showToast(isChinese ? localizeText('Language state: Chinese.') : 'Language state: English.');
   }
   languageToggles.forEach(button => button.addEventListener('click', () => setLanguage(activeLanguage === 'zh' ? 'en' : 'zh')));
+  window.setKnowhereLanguage = language => setLanguage(language === 'zh' ? 'zh' : 'en', false);
   let savedLanguage = 'en';
   try { savedLanguage = localStorage.getItem('knowhere-language') === 'zh' ? 'zh' : 'en'; } catch {}
   setLanguage(savedLanguage, false);
@@ -2163,6 +2226,12 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   const traceTargetFrame = $('[data-trace-target-frame]');
   const traceFinePointer = matchMedia('(hover: hover) and (pointer: fine)');
   const traceDitherCanvas = traceDemo ? $('[data-trace-dither-field]', traceDemo) : null;
+  const tracePaletteHex = (stop, fallback) => getComputedStyle(document.documentElement).getPropertyValue(`--main-${stop}`).trim() || fallback;
+  const tracePaletteRgb = (stop, fallback) => {
+    const hex = tracePaletteHex(stop, fallback);
+    return [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
+  };
+  const tracePaletteRgba = (stop, alpha, fallback) => `rgba(${tracePaletteRgb(stop, fallback).join(',')},${alpha})`;
   function initTraceDitherField() {
     if (!traceDitherCanvas || !traceDemo) return;
     const context = traceDitherCanvas.getContext('2d');
@@ -2182,6 +2251,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     let rows = 1;
     let frame = 0;
     let isVisible = true;
+    let textureEnabled = true;
     let lastPaint = 0;
     const controls = {
       pointSize: 1,
@@ -2194,7 +2264,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       blueMix: 1,
       blueWidth: .36,
       bottomWeight: 1.65,
-      dotColor: '#4f4dff',
+      dotColor: tracePaletteHex(800, '#24272b'),
       pointSizeMin: .2, pointSizeMax: 3,
       spacingMin: 2, spacingMax: 24,
       speedMin: 0, speedMax: 5,
@@ -2274,6 +2344,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       drawDitherField(performance.now(), true);
     }
     function drawDitherField(now, force = false) {
+      if (!textureEnabled) {
+        context.clearRect(0, 0, width, height);
+        return;
+      }
       if (!force && now - lastPaint < 42) {
         frame = requestAnimationFrame(drawDitherField);
         return;
@@ -2281,6 +2355,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       lastPaint = now;
       context.clearRect(0, 0, width, height);
       const phase = reducedMotion.matches ? 0 : now * .00016 * controls.speed;
+      const accent = tracePaletteRgb(600, '#2858a5');
       for (let row = 0; row < rows; row += 1) {
         const yRatio = (row + .5) / rows;
         for (let column = 0; column < columns; column += 1) {
@@ -2310,9 +2385,9 @@ curl -X POST "[endpoint-to-be-confirmed]" \
           const graphiteG = channel(dot.g + level * 28 - bottomTone * 9 * controls.bottomWeight);
           const graphiteB = channel(dot.b + level * 28 - bottomTone * 9 * controls.bottomWeight);
           const blue = {
-            r: channel(40 + level * 11),
-            g: channel(88 + level * 17),
-            b: channel(165 + level * 18)
+            r: channel(accent[0] + level * 11),
+            g: channel(accent[1] + level * 17),
+            b: channel(accent[2] + level * 18)
           };
           const blueMix = diagonalBlue * controls.blueMix;
           const red = channel(graphiteR * (1 - blueMix) + blue.r * blueMix);
@@ -2326,7 +2401,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
           context.fillRect(x - size / 2, y - size / 2, size, size);
         }
       }
-      if (!reducedMotion.matches && isVisible) frame = requestAnimationFrame(drawDitherField);
+      if (!reducedMotion.matches && isVisible && textureEnabled) frame = requestAnimationFrame(drawDitherField);
     }
     const resizeObserver = new ResizeObserver(() => {
       rebuild();
@@ -2336,13 +2411,20 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     const visibilityObserver = new IntersectionObserver(entries => {
       isVisible = entries[0]?.isIntersecting ?? true;
       cancelAnimationFrame(frame);
-      if (isVisible) frame = requestAnimationFrame(drawDitherField);
+      if (isVisible && textureEnabled) frame = requestAnimationFrame(drawDitherField);
     }, { rootMargin: '120px' });
     visibilityObserver.observe(traceDemo);
+    window.setTraceDitherVisible = visible => {
+      textureEnabled = Boolean(visible);
+      traceDitherCanvas.hidden = !textureEnabled;
+      cancelAnimationFrame(frame);
+      if (textureEnabled) drawDitherField(performance.now(), true);
+      else context.clearRect(0, 0, width, height);
+    };
     reducedMotion.addEventListener?.('change', () => {
       cancelAnimationFrame(frame);
       drawDitherField(performance.now(), true);
-      if (!reducedMotion.matches && isVisible) frame = requestAnimationFrame(drawDitherField);
+      if (!reducedMotion.matches && isVisible && textureEnabled) frame = requestAnimationFrame(drawDitherField);
     });
     const debugPanel = $('[data-trace-debug]');
     const debugRanges = debugPanel ? $$('[data-trace-debug-range]', debugPanel) : [];
@@ -2407,7 +2489,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       blueMix: 1,
       blueWidth: .36,
       bottomWeight: 1.65,
-      dotColor: '#4f4dff'
+      dotColor: tracePaletteHex(800, '#24272b')
     };
     const controlKeys = Object.keys(factoryControls);
     const readSaved = () => {
@@ -2492,6 +2574,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
         } catch (error) {}
       }
     };
+    addEventListener('main-palette-change', () => applyControls({ dotColor: tracePaletteHex(800, '#24272b') }));
     rebuild();
     syncDebugPanel();
   }
@@ -2506,7 +2589,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       colored: 1, brightness: 1, legibility: 1, contrast: 1, exposure: 1,
       scramble: .1, scrambleSpeed: 6, edgeWidth: .2, edgeFlicker: 1,
       edgeGlow: 2, edgeTint: .75, aberration: 10, passthrough: .15,
-      threshold: .025, smoothing: .2, color: [40, 88, 165]
+      threshold: .025, smoothing: .2, color: tracePaletteRgb(600, '#2858a5')
     };
     const glyphBands = ['·.:', ':+=', '+*x', '#%@'];
     const hash = value => {
@@ -2610,6 +2693,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     const paint = now => {
       if (now - lastPaint >= 33) {
         lastPaint = now;
+        const accentLight = tracePaletteRgb(400, '#6d80b6');
         states.forEach(state => {
           const { context, width, height } = state;
           if (!context) return;
@@ -2648,7 +2732,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
             const alpha = Math.min(1, Math.max(.34 * config.legibility, cell.signal * .92) * config.brightness + activity * .2);
             if (activity > .22 && config.aberration > 0) {
               const offset = Math.min(2.5, config.aberration * .22);
-              context.fillStyle = `rgba(47,187,199,${(activity * .2).toFixed(3)})`;
+              context.fillStyle = `rgba(${accentLight[0]},${accentLight[1]},${accentLight[2]},${(activity * .2).toFixed(3)})`;
               context.fillText(glyph, cell.x + offset, cell.y);
             }
             context.fillStyle = `rgba(${red},${green},${blue},${alpha.toFixed(3)})`;
@@ -2667,6 +2751,9 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     reducedMotion.addEventListener?.('change', () => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(paint);
+    });
+    addEventListener('main-palette-change', () => {
+      config.color = tracePaletteRgb(600, '#2858a5');
     });
     frame = requestAnimationFrame(paint);
   }
@@ -2752,10 +2839,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   let traceFlowLines = [];
   let traceFlowAnchors = [];
   let traceFlowTimers = [];
-  let traceStageEntered = false;
+  const animateInitialTraceStage = false;
+  let traceStageEntered = traceDemo?.classList.contains('is-stage-entered') ?? false;
   let traceStageAnimation = 0;
   function playTraceStageEntrance() {
-    if (!traceDemo || traceStageEntered) return;
+    if (!traceDemo) return;
+    if (traceStageEntered) {
+      syncTracePreview(false);
+      return;
+    }
+    if (!animateInitialTraceStage) {
+      traceStageEntered = true;
+      traceDemo.classList.add('is-stage-entered');
+      syncTracePreview(false);
+      return;
+    }
     const canvas = $('[data-trace-stage-reveal]', traceDemo);
     const content = $('[data-trace-content-box]', traceDemo);
     const dither = $('[data-trace-dither-field]', traceDemo);
@@ -2793,6 +2891,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     }
     const duration = 980;
     const startedAt = performance.now() + 90;
+    const stageColors = [
+      tracePaletteHex(700, '#31599d'),
+      tracePaletteHex(400, '#9cabc1'),
+      tracePaletteHex(100, '#e9ecee')
+    ];
     let lastMaskUpdate = -Infinity;
     const render = now => {
       const elapsed = now - startedAt;
@@ -2851,7 +2954,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
         const shimmer = .72 + Math.sin(elapsed * .036 + particle.phase) * .28;
         const size = particle.size * (.65 + envelope * .7) * shimmer;
         context.globalAlpha = .4 + envelope * .6;
-        context.fillStyle = particle.noise > .72 ? '#31599d' : particle.noise > .38 ? '#9cabc1' : '#e9ecee';
+        context.fillStyle = particle.noise > .72 ? stageColors[0] : particle.noise > .38 ? stageColors[1] : stageColors[2];
         context.fillRect(particle.x - size / 2, particle.y - size / 2, size, size);
       });
       context.globalAlpha = 1;
@@ -2968,7 +3071,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       const maskContext = maskCanvas.getContext('2d');
       if (!maskContext || !card) return;
       maskContext.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const colors = (canvas.dataset.pixelColors || '#a993ff').split(',');
+      const colors = (canvas.dataset.pixelColors || 'main-400').split(',').map(color => {
+        const paletteStop = color.trim().match(/^main-(\d+)$/)?.[1];
+        return paletteStop ? tracePaletteHex(paletteStop, '#6d80b6') : color.trim();
+      });
       const delay = Number(canvas.dataset.pixelDelay || 0);
       const duration = Number(canvas.dataset.pixelDuration || 300);
       const gap = 6;
@@ -3066,14 +3172,14 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     };
     const track = new LeaderLine(start, end, {
       ...shared,
-      color: 'rgba(40,88,165,.42)',
+      color: tracePaletteRgba(600, .42, '#2858a5'),
       size: 1.6
     });
     const flow = new LeaderLine(start, end, {
       ...shared,
-      color: '#2858a5',
+      color: tracePaletteHex(600, '#2858a5'),
       size: 2.25,
-      gradient: { startColor: '#2fbbc7', endColor: '#2858a5' },
+      gradient: { startColor: tracePaletteHex(400, '#6d80b6'), endColor: tracePaletteHex(600, '#2858a5') },
       dash: { len: 2.2, gap: 6.4, animation: { duration: 720, timing: 'linear' } }
     });
     traceFlowLines.push(track, flow);
@@ -3190,6 +3296,12 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     if (traceTargetMark) positionTraceTarget(traceTargetMark);
   });
   addEventListener('scroll', () => { if (traceTargetMark) positionTraceTarget(traceTargetMark); }, true);
+  addEventListener('main-palette-change', () => {
+    if (traceActiveMark) {
+      createTraceFlowLines(traceActiveMark);
+      playTracePixels();
+    }
+  });
   if ('IntersectionObserver' in window) {
     const traceEntranceObserver = new IntersectionObserver(entries => {
       if (!entries[0]?.isIntersecting) return;

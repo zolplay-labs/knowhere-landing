@@ -2,7 +2,30 @@ import { useEffect, useRef } from 'react'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 
-export function LandingPage() {
+function FinalCtaPathFan({ convergenceX }) {
+  const paths = [
+    `M-28 20C42 22 84 62 126 132S210 300 ${convergenceX} 205`,
+    `M-28 66C48 70 94 154 138 236S220 118 ${convergenceX} 205`,
+    `M-28 112C52 116 98 258 146 292S228 148 ${convergenceX} 205`,
+    `M-28 158C60 160 106 224 152 252S236 172 ${convergenceX} 205`,
+    `M-28 205H${convergenceX}`,
+    `M-28 252C60 250 106 186 152 158S236 238 ${convergenceX} 205`,
+    `M-28 298C52 294 98 152 146 118S228 262 ${convergenceX} 205`,
+    `M-28 344C48 340 94 256 138 174S220 292 ${convergenceX} 205`,
+    `M-28 390C42 388 84 348 126 278S210 110 ${convergenceX} 205`,
+  ]
+  const animatedPaths = [...paths, paths[0], paths[paths.length - 1]]
+
+  return (
+    <g className="final-cta-path-fan">
+      {animatedPaths.map((path, index) => (
+        <path key={index} d={path} style={{'--final-cta-helix-phase': `${(-8 * index / animatedPaths.length).toFixed(3)}s`, transformOrigin: `${convergenceX}px 205px`}} />
+      ))}
+    </g>
+  )
+}
+
+export function LandingPage({ finalCtaConvergence = 357 }) {
   const rootRef = useRef(null)
 
   useEffect(() => {
@@ -56,8 +79,8 @@ export function LandingPage() {
       </div>
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
-    <section className="section shell reveal" id="playground" aria-labelledby="playground-title">
-      <div className="section-heading"><p className="section-no">PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
+    <section className="section shell" id="playground" aria-labelledby="playground-title">
+      <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" />
       </div>
@@ -89,7 +112,7 @@ export function LandingPage() {
     <div className="capabilities-scroll-track">
       <section className="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
         <div className="capabilities-sticky">
-          <div className="section-heading"><p className="section-no">PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps the important parts connected.</h2></div>
+          <div className="section-heading"><p className="section-no">&gt;_PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps the important parts connected.</h2></div>
           <div className="narrative-grid">
             <div className="story-steps" role="tablist" aria-label="Data transformation stages">
               <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest the document</h3><p>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
@@ -112,7 +135,7 @@ export function LandingPage() {
               </div>
               <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
                 <div className="capability-copy"><span data-story-label>04</span><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-ingest.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="assets/capability-placeholder-traceable.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
             </div>
           </div>
@@ -121,7 +144,7 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">SCOPE</p><h2 id="formats-title">Core capabilities.</h2></div>
+        <div className="section-heading"><p className="section-no">&gt;_SCOPE</p><h2 id="formats-title">Core capabilities.</h2></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
             <div className="format-orbit-layout">
@@ -183,8 +206,9 @@ export function LandingPage() {
     </div>
     <section className="section shell reveal" id="comparison" aria-labelledby="comparison-title">
       <div className="section-heading">
-        <p className="section-no">COMPARISON / EVALUATION</p>
+        <p className="section-no">&gt;_COMPARISON / EVALUATION</p>
         <h2 id="comparison-title">How we compare.</h2>
+        <p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p>
       </div>
       <div className="comparison-frame" aria-label="Illustrative document pipeline comparison">
         <div className="comparison-dashboard">
@@ -213,36 +237,70 @@ export function LandingPage() {
           </div>
         </div>
         <div className="divider-hatch divider-hatch--bottom" aria-hidden="true" />
-        <div className="comparison-scoreboard is-expanded" role="group" aria-label="Document understanding capability matrix">
-          <div className="comparison-scoreboard-head"><strong>Capability matrix</strong><div className="comparison-scoreboard-head-actions"><button className="comparison-toggle" type="button" aria-expanded="true" aria-controls="comparison-table"><span className="sr-only">Toggle comparison details</span></button></div></div>
-          <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="false"><div className="comparison-scoreboard-grid">
+        <div className="comparison-scoreboard" role="group" aria-label="Document understanding capability matrix">
+          <div className="comparison-scoreboard-head"><strong>Capability matrix</strong><div className="comparison-scoreboard-head-actions"><button className="comparison-toggle" type="button" aria-expanded="false" aria-controls="comparison-table"><span className="sr-only">Toggle comparison details</span></button></div></div>
+          <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="true"><div className="comparison-scoreboard-grid">
               <div className="scoreboard-cell scoreboard-head-cell">Feature</div><div className="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div className="scoreboard-cell scoreboard-head-cell">Others</div>
-              <div className="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Table boundary detection</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Source traceability</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-check-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Table boundary detection</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Source traceability</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div className="section-heading"><p className="section-no">INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
+      <div className="section-heading"><p className="section-no">&gt;_INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
       <div className="integration-grid">
         <ol className="steps"><li><span>01</span><div><h3>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><span>02</span><div><h3>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><span>03</span><div><h3>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
-        <div className="integration-plinth" aria-hidden="true" />
+        <div className="integration-plinth" aria-hidden="true">
+          <svg className="integration-wormhole" viewBox="0 0 612 408" fill="none" preserveAspectRatio="none">
+            <g className="integration-wormhole-base">
+              <g className="integration-wormhole-rings integration-wormhole-drawing">
+                <ellipse cx="306" cy="74" rx="245" ry="58" />
+                <ellipse cx="306" cy="101" rx="193" ry="48" />
+                <ellipse cx="306" cy="127" rx="137" ry="36" />
+                <ellipse cx="306" cy="151" rx="79" ry="23" />
+                <ellipse cx="306" cy="171" rx="42" ry="12" />
+                <ellipse cx="306" cy="237" rx="42" ry="12" />
+                <ellipse cx="306" cy="257" rx="79" ry="23" />
+                <ellipse cx="306" cy="281" rx="137" ry="36" />
+                <ellipse cx="306" cy="307" rx="193" ry="48" />
+                <ellipse cx="306" cy="334" rx="245" ry="58" />
+              </g>
+              <g className="integration-wormhole-meridians integration-wormhole-drawing" id="integration-wormhole-meridian-paths">
+                <path d="M61 74C93 109 216 126 281 177C298 190 302 199 306 204C302 209 298 218 281 231C216 282 93 299 61 334" />
+                <path d="M82 49C130 89 230 118 287 176C299 188 303 198 306 204C303 210 299 220 287 232C230 290 130 319 82 359" />
+                <path d="M123 32C162 79 242 117 292 176C301 188 304 198 306 204C304 210 301 220 292 232C242 291 162 329 123 376" />
+                <path d="M180 21C208 74 255 116 297 176C303 187 305 198 306 204C305 210 303 221 297 232C255 292 208 334 180 387" />
+                <path d="M243 17C255 72 274 116 301 177C305 188 306 198 306 204C306 210 305 220 301 231C274 292 255 336 243 391" />
+                <path d="M280 16C285 72 291 119 304 178C306 189 306 199 306 204C306 209 306 219 304 230C291 289 285 336 280 392" />
+                <path d="M306 16V392" />
+                <path d="M332 16C327 72 321 119 308 178C306 189 306 199 306 204C306 209 306 219 308 230C321 289 327 336 332 392" />
+                <path d="M369 17C357 72 338 116 311 177C307 188 306 198 306 204C306 210 307 220 311 231C338 292 357 336 369 391" />
+                <path d="M432 21C404 74 357 116 315 176C309 187 307 198 306 204C307 210 309 221 315 232C357 292 404 334 432 387" />
+                <path d="M489 32C450 79 370 117 320 176C311 188 308 198 306 204C308 210 311 220 320 232C370 291 450 329 489 376" />
+                <path d="M530 49C482 89 382 118 325 176C313 188 309 198 306 204C309 210 313 220 325 232C382 290 482 319 530 359" />
+                <path d="M551 74C519 109 396 126 331 177C314 190 310 199 306 204C310 209 314 218 331 231C396 282 519 299 551 334" />
+              </g>
+            </g>
+            <g className="integration-wormhole-flow-layer"><use href="#integration-wormhole-meridian-paths" /></g>
+          </svg>
+          <span className="integration-placeholder">Placeholder</span>
+        </div>
         <div className="code-card"><div className="code-head"><span>Illustrative flow · interface details unconfirmed</span><button type="button" className="copy-code">Copy</button></div><div className="tabs compact" role="tablist" aria-label="Code examples"><button role="tab" id="code-python" aria-selected="true" aria-controls="code-panel-python">Python</button><button role="tab" id="code-node" aria-selected="false" aria-controls="code-panel-node" tabIndex={-1}>Node.js</button><button role="tab" id="code-curl" aria-selected="false" aria-controls="code-panel-curl" tabIndex={-1}>cURL</button></div><div className="code-panels"><pre role="tabpanel" tabIndex={0} id="code-panel-python" aria-labelledby="code-python"><code># Illustrative only — no real endpoint{"\n"}result = knowhere.process("sample.pdf"){"\n"}print(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-node" aria-labelledby="code-node"><code>// Illustrative only — no real endpoint{"\n"}const result = await knowhere.process("sample.pdf"){"\n"}console.log(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-curl" aria-labelledby="code-curl"><code># Illustrative only — no real endpoint{"\n"}curl -X POST "[endpoint-to-be-confirmed]" \{"\n"}{"  "}-F "file=@sample.pdf"</code></pre></div><p className="sr-only" aria-live="polite" data-copy-live /></div>
-        <div className="mcp"><h3>MCP</h3><p>Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs →</a></div>
+        <div className="mcp"><h3>[ MCP ]</h3><p>Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
       </div>
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
       <div className="pricing-card">
-        <div className="pricing-heading"><p className="section-no">PRICING</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
+        <div className="pricing-heading"><p className="section-no">&gt;_PRICING</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
         <div className="pricing-calculator">
           <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
-          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control"><span className="pricing-range-fill" data-pricing-range-fill style={{'--pricing-progress': '4.0404%'}} aria-hidden="true" /><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
+          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control"><span className="pricing-range-fill" data-pricing-range-fill style={{'--pricing-progress': '4.0404%'}} aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true" /><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
         </div>
         <section className="pricing-file-limits" aria-labelledby="pricing-file-limits-title">
           <div className="pricing-file-limits-head"><h3 id="pricing-file-limits-title">File Size Limits</h3><p>Need higher limits? Contact <a href="mailto:team@knowhereto.ai">team@knowhereto.ai</a><br />for enterprise pricing with custom limits.</p></div>
@@ -252,39 +310,56 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
-        <p className="section-no enterprise-label">&gt;\_ENTERPRISE</p>
-        <div className="enterprise-copy"><div className="enterprise-copy-text"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div><a className="button sales-link" href="https://knowhereto.ai/login">Start free trial</a></div>
-        <ul className="enterprise-metrics"><li className="enterprise-metric">Custom rate limits</li><li className="enterprise-metric">Custom rate limits</li><li className="enterprise-metric">Custom rate limits</li><li className="enterprise-metric">Custom rate limits</li><li className="enterprise-metric">Custom rate limits</li><li className="enterprise-metric">Custom rate limits</li></ul>
+        <p className="section-no enterprise-label">&gt;_ENTERPRISE</p>
+        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div></div>
+        <ul className="enterprise-metrics">
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>Deployment options</strong><p>Review managed, dedicated, or self-hosted options.</p></div></li>
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>Support requirements</strong><p>Align support channels and response expectations.</p></div></li>
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>SLA requirements</strong><p>Define your uptime and service-level needs.</p></div></li>
+          <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><span>Placeholder</span><img src="/assets/enterprise-capability.png" alt="" /></div><div className="enterprise-metric-copy"><strong>Commercial terms</strong><p>Discuss billing and terms for your usage.</p></div></li>
+        </ul>
+        <a className="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a>
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
-      <div className="section-heading"><p className="section-no">&gt;\_FAQ</p><h2 id="faq-title">Frequently Asked Questions</h2></div>
-      <div className="faq-list">
-        <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
-        <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
-        <details><summary aria-expanded="false" aria-controls="faq-answer-3">Can I get a refund?<span aria-hidden="true">↓</span></summary><p id="faq-answer-3">Contact team@knowhereto.ai for refund requests within 14 days of purchase.</p></details>
-        <details><summary aria-expanded="false" aria-controls="faq-answer-4">What payment methods are accepted?<span aria-hidden="true">↓</span></summary><p id="faq-answer-4">We accept all major credit cards through Stripe: Visa, Mastercard, American Express, and more.</p></details>
-        <details><summary aria-expanded="false" aria-controls="faq-answer-5">When does Knowhere use visual understanding?<span aria-hidden="true">↓</span></summary><p id="faq-answer-5">Knowhere uses Text Parse for clean electronic content and Vision Map when layouts, drawings, diagrams, scans, or spatial relationships carry meaning. Both remain connected through the same document map, so agents can retrieve text or reopen the original page as needed.</p></details>
-      </div>
-      {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
+        <div className="section-heading"><p className="section-no">&gt;_FAQ</p><h2 id="faq-title">Frequently Asked Questions</h2></div>
+        <div className="faq-list">
+          <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
+          <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
+          <details><summary aria-expanded="false" aria-controls="faq-answer-3">Can I get a refund?<span aria-hidden="true">↓</span></summary><p id="faq-answer-3">Contact team@knowhereto.ai for refund requests within 14 days of purchase.</p></details>
+          <details><summary aria-expanded="false" aria-controls="faq-answer-4">What payment methods are accepted?<span aria-hidden="true">↓</span></summary><p id="faq-answer-4">We accept all major credit cards through Stripe: Visa, Mastercard, American Express, and more.</p></details>
+          <details><summary aria-expanded="false" aria-controls="faq-answer-5">When does Knowhere use visual understanding?<span aria-hidden="true">↓</span></summary><p id="faq-answer-5">Knowhere uses Text Parse for clean electronic content and Vision Map when layouts, drawings, diagrams, scans, or spatial relationships carry meaning. Both remain connected through the same document map, so agents can retrieve text or reopen the original page as needed.</p></details>
+        </div>
+        {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
-      <div id="final-cta-actions"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
+      <div className="final-cta-art" aria-hidden="true">
+        <svg className="final-cta-vector" viewBox="0 0 1280 410" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="final-cta-line-gradient" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stopColor="#6d80b6" stopOpacity="0.32" />
+              <stop offset="0.62" stopColor="#91c7f1" stopOpacity="0.72" />
+              <stop offset="1" stopColor="#a9ddff" />
+            </linearGradient>
+          </defs>
+          <FinalCtaPathFan convergenceX={finalCtaConvergence} />
+          <g transform="translate(1280 0) scale(-1 1)"><FinalCtaPathFan convergenceX={finalCtaConvergence} /></g>
+        </svg>
+      </div>
+      <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div>
+      <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
     </section>
   </main>
   <footer className="footer">
-    <pre className="footer-ascii" aria-hidden="true">{"  "}\{"       "}/\/\{"    "}/{"  "}\{"  "}//\{"    "}/\{"  "}/{"   "}\{"     "}//{"  "}/\/\{"   "}/\{"     "}/ /\{"  "}\{"      "}/\{"   "}//{"   "}/\{"  "}/\{"      "}\{"  "}/{"  "}/\{"   "}/{"   "}\{"  "}/\{"   "}//{"\n"} /\{"  "}/\/{"    "}\/\/\{"   "}\//{"  "}\/\/{"  "}\/ /\/\ \ /\/{"  "}\/{"   "}\ /{"  "}\/\/\/ /{"  "}\/\ /\/{"  "}\/\ /{"  "}\//{"  "}\/{"  "}\ /\/\/\// /\/{"  "}\/\{"  "}/ \{"\n"}\/ \/{"  "}\ /\/{"  "}/{"  "}\/\ /\ /\{"  "}/\ /\/{"   "}\/\/{"  "}\ /\/\/\ /\ /{"  "}\{"  "}/\/\ /{"  "}\{"  "}/{"  "}\/{"  "}\/\/\ /\ /\/{"  "}\/\/{"  "}/{"  "}\/{"  "}\/\/\/\/{"\n"} ʼV\v{"  "}/ʼ\/v\{"  "}V/ ʼv\/{"  "}V\ʼv /\/ʼ \vV/ʼ\V{"  "}/v\/ Vʼ\v\/{"  "}/\vʼV\ /v{"  "}V/\ʼ v\/V\ʼ\/v /ʼV\{"  "}v/\/ ʼv\V/ʼ\ /v\/ʼV\ v{"\n"}Vʼı\/vʼ\ı/ʼVv\ /lı\/ʼvV\ı/\/ıʼV\/v\ʼı/V\vʼı\V/ʼvlı\ /Vʼ\ı/v\/Vvʼ\ı/ʼ\/vV\ıʼ/\Vv/ʼı\/V\vʼ/lı\/ʼV\ıv/ʼV\/\{"\n"} ıʼ\/\v`/ʼ\Vı/\/ʼv\ıV/`\/\ʼv/ıV\`/ʼ\/vı\V/ʼ`\/ıv\ʼ/V\ı/ʼ\/\v`/Vıʼ\/v\ı/ʼV\/`vı\ʼ/\/Vıʼ\v/`\/ʼıV\ /ʼ\</pre>
     <div className="footer-inner">
       <div className="footer-main">
-        <p className="footer-statement"><img className="footer-statement-logo" src="assets/knowhere-wordmark.svg" width={344} height={47} alt="Knowhere" /> turns complex documents into structured, source-linked context your agents can use. <a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Read the docs</a> or <a href="mailto:team@knowhereto.ai">talk to our team</a>.</p>
-        <div className="footer-links">
-          <nav className="footer-column" aria-label="Information links"><span>Information</span><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a></nav>
-          <nav className="footer-column" aria-label="Product links"><span>Product</span><a href="#integration">Integration</a><a href="https://knowhereto.ai/login">Dashboard</a><a href="https://docs.knowhereto.ai/mcp" target="_blank" rel="noopener noreferrer">MCP</a></nav>
-          <nav className="footer-column" aria-label="Company links"><span>Company</span><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a><a href="https://knowhereto.ai/github" target="_blank" rel="noopener noreferrer">GitHub</a><a href="mailto:team@knowhereto.ai">Contact</a></nav>
-        </div>
+        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="assets/knowhere-logo-new.svg" width={340} height={38} alt="" /></a>
+        <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
       </div>
-      <div className="footer-meta"><p id="prototype-notice" tabIndex={-1}>Prototype page · © 2026 KNOWHERE</p><span>DOCUMENT UNDERSTANDING FOR AI</span></div>
+      <div className="footer-divider" aria-hidden="true" />
+      <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. Allrights reserved</p>
     </div>
   </footer>
   <div className="toast" role="status" aria-live="polite" hidden><p data-toast-message /><button type="button" aria-label="Close notification">×</button></div>

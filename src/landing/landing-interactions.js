@@ -342,10 +342,40 @@ if (!(root instanceof Element)) return () => {};
     'Need custom limits or deployment support?': '需要定制限额或部署支持？',
     'Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.': '与团队沟通定制速率限制、优先处理、部署选项、支持方式及 SLA 需求。',
     'Support requirements': '支持需求', 'SLA requirements': 'SLA 需求', 'Commercial terms': '商业条款',
+    'Discuss throughput limits for your production traffic.': '根据生产流量讨论合适的吞吐上限。',
+    'Plan priority handling for time-sensitive workloads.': '规划时间敏感任务的优先处理方式。',
+    'Review managed, dedicated, or self-hosted options.': '评估托管、专属或私有化部署方案。',
+    'Align support channels and response expectations.': '明确支持渠道与响应预期。',
+    'Define your uptime and service-level needs.': '明确可用性与服务等级需求。',
+    'Discuss billing and terms for your usage.': '根据使用规模讨论结算方式与条款。',
     'Ready to build with better document context?': '准备好使用更好的文档上下文进行构建了吗？',
     'Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.': '从 API 开始，连接现有智能体工作流，看看 Knowhere 如何处理纯文本管线容易遗漏的文档信息。',
+    '>_PRODUCT': '>_产品', '>_PROCESS': '>_流程', '>_SCOPE': '>_范围',
+    '>_COMPARISON / EVALUATION': '>_对比 / 评估', '>_INTEGRATION': '>_集成',
+    '>_PRICING': '>_价格', '>_ENTERPRISE': '>_企业版', '>_FAQ': '>_常见问题',
+    'Works with common file formats, including': '支持常见文件格式，包括',
+    'DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.': 'DOCX、PDF、JPG、PPTX、XLSX、CSV、PNG、MD、JSON 和 TXT。',
+    'Support for': '即将支持',
+    'EPUB, HTML, XML, MP4, MP3, and skills.md': 'EPUB、HTML、XML、MP4、MP3 和 skills.md',
+    'is coming soon.': '。',
+    'Raw Docs': '原始文档', 'token used': 'Token 用量', 'time used (s)': '耗时（秒）', 'agent loops': '智能体循环',
+    'Read the MCP docs': '阅读 MCP 文档', 'Deployment options': '部署选项',
+    '© 2026 Knowhere API. Allrights reserved': '© 2026 Knowhere API。保留所有权利。',
+    'Main navigation': '主导航', 'Mobile navigation': '移动端导航', 'Footer links': '页脚链接',
+    'Knowhere, back to top': 'Knowhere，返回页面顶部',
+    'Interactive four-stage document processing pipeline from original document to RAG structure': '从原始文档到 RAG 结构的四阶段交互式文档处理流程',
+    'Interactive document scan and source traceability demonstration': '交互式文档扫描与来源追溯演示',
+    'Preset documents': '预设文档', 'Structured document workspace': '结构化文档工作台',
+    'Structured document views': '结构化文档视图', 'Document connections': '文档连接',
+    'Traceable output status': '可追溯输出状态', 'Agent configuration': '智能体配置',
+    'Data transformation stages': '数据转换阶段', 'Data transformation image placeholder': '数据转换图片占位',
+    'Illustrative formats': '示意格式', 'Illustrative document pipeline comparison': '示意文档处理流程对比',
+    'Compared document processing tools': '参与对比的文档处理工具',
+    'Document understanding capability matrix': '文档理解能力矩阵', 'Code examples': '代码示例',
+    'Close notification': '关闭通知',
   });
   const originalText = new WeakMap();
+  const originalAttributes = new WeakMap();
   const headingSourceText = new WeakMap();
   $$('#main h1, #main h2').forEach(heading => headingSourceText.set(heading, heading.textContent.trim()));
   let activeLanguage = 'en';
@@ -353,7 +383,10 @@ if (!(root instanceof Element)) return () => {};
   let storyReady = false;
   let titleTypeReady = false;
   let pricingReady = false;
-  function localizeText(value) { return activeLanguage === 'zh' ? (zh[value] || value) : value; }
+  function localizeText(value) {
+    if (activeLanguage !== 'zh') return value;
+    return zh[value] || value.replaceAll('Illustrative only — no real endpoint', '仅作示意 — 非真实接口');
+  }
   function translatePage() {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
@@ -371,8 +404,27 @@ if (!(root instanceof Element)) return () => {};
       const key = original.trim();
       node.nodeValue = `${leading}${localizeText(key)}${trailing}`;
     });
+    $$('[aria-label], [title], [placeholder], [alt]').forEach(element => {
+      if (element.matches('[data-language-toggle]')) return;
+      if (!originalAttributes.has(element)) originalAttributes.set(element, new Map());
+      const attributes = originalAttributes.get(element);
+      ['aria-label', 'title', 'placeholder', 'alt'].forEach(attribute => {
+        if (!element.hasAttribute(attribute)) return;
+        if (!attributes.has(attribute)) attributes.set(attribute, element.getAttribute(attribute));
+        element.setAttribute(attribute, localizeText(attributes.get(attribute)));
+      });
+    });
   }
   const languageToggles = $$('[data-language-toggle]');
+  const scanFrame = $('.section-scan-frame iframe');
+  function syncScanFrameLanguage() {
+    try {
+      scanFrame?.contentWindow?.setKnowhereLanguage?.(activeLanguage);
+    } catch {
+      // The embedded demo can become cross-origin without blocking the main language switch.
+    }
+  }
+  scanFrame?.addEventListener('load', syncScanFrameLanguage);
   function setLanguage(language, announce = true) {
     const isChinese = language === 'zh';
     activeLanguage = language;
@@ -390,6 +442,7 @@ if (!(root instanceof Element)) return () => {};
       button.setAttribute('title', label);
     });
     translatePage();
+    syncScanFrameLanguage();
     if (storyReady) renderStoryCanvas();
     if (titleTypeReady) refreshTypedHeadings();
     if (pricingReady) syncPricingCalculator();
@@ -400,6 +453,41 @@ if (!(root instanceof Element)) return () => {};
   let savedLanguage = 'en';
   try { savedLanguage = localStorage.getItem('knowhere-language') === 'zh' ? 'zh' : 'en'; } catch {}
   setLanguage(savedLanguage, false);
+
+  const encryptedLabels = $$('#main .section-no');
+  const encryptedLabelFrames = new WeakMap();
+  const encryptionCharacters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&*+<>?';
+  const canEncryptLabels = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function animateEncryptedLabel(label) {
+    const textNode = [...label.childNodes].find(node => node.nodeType === Node.TEXT_NODE && node.nodeValue.trim());
+    if (!textNode) return;
+    cancelAnimationFrame(encryptedLabelFrames.get(label));
+    const leading = textNode.nodeValue.match(/^\s*/)[0];
+    const trailing = textNode.nodeValue.match(/\s*$/)[0];
+    const target = textNode.nodeValue.trim();
+    const characters = [...target];
+    const languageAtStart = activeLanguage;
+    const duration = 500;
+    const startedAt = performance.now();
+    const renderFrame = now => {
+      if (languageAtStart !== activeLanguage) return;
+      const progress = Math.min(1, (now - startedAt) / duration);
+      const revealedCount = Math.floor(progress * characters.length);
+      const encrypted = characters.map((character, index) => {
+        if (index < revealedCount || /\s/.test(character)) return character;
+        return encryptionCharacters[Math.floor(Math.random() * encryptionCharacters.length)];
+      }).join('');
+      textNode.nodeValue = `${leading}${progress === 1 ? target : encrypted}${trailing}`;
+      if (progress < 1) encryptedLabelFrames.set(label, requestAnimationFrame(renderFrame));
+      else encryptedLabelFrames.delete(label);
+    };
+    encryptedLabelFrames.set(label, requestAnimationFrame(renderFrame));
+  }
+  if (canEncryptLabels) {
+    encryptedLabels.forEach(label => label.addEventListener('pointerenter', event => {
+      if (event.pointerType === 'mouse') animateEncryptedLabel(label);
+    }));
+  }
 
   $('.skip-link').addEventListener('click', () => {
     setTimeout(() => $('#main').focus({ preventScroll: true }), 0);
@@ -650,7 +738,7 @@ if (!(root instanceof Element)) return () => {};
     activateStory(index, true);
     const card = storyCards[index];
     if (!card) return;
-    const top = scrollY + card.getBoundingClientRect().top - 112;
+    const top = scrollY + card.getBoundingClientRect().top - 40;
     scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
   storySteps.forEach((step, index) => {
@@ -667,7 +755,7 @@ if (!(root instanceof Element)) return () => {};
   function syncStoryToScroll() {
     capabilitiesTrack?.style.removeProperty('height');
     storyCardStack?.style.removeProperty('height');
-    const marker = Math.min(innerHeight * .42, 420);
+    const marker = 40;
     let activeIndex = 0;
     storyCards.forEach((card, index) => {
       card.style.removeProperty('transform');
@@ -687,7 +775,7 @@ if (!(root instanceof Element)) return () => {};
   activateStory(0);
   syncStoryToScroll();
 
-  const typedHeadings = $$('#main h1, #main h2');
+  const typedHeadings = $$('#main h1, #main h2').filter(heading => !heading.closest('#playground'));
   const headingTypingTimers = new WeakMap();
   let titleObserver;
   function stopHeadingTyping(heading) {
@@ -789,7 +877,7 @@ if (!(root instanceof Element)) return () => {};
     '#main .format-chips',
     '#main .tabs',
     '#main summary'
-  ].join(',')).filter(element => !element.closest('[hidden]') && !element.closest('#top'));
+  ].join(',')).filter(element => !element.closest('[hidden], #top, #playground'));
   const reducedTextMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   enteringText.forEach(element => element.classList.add('text-enter'));
   if (reducedTextMotion || !('IntersectionObserver' in window)) {
@@ -808,6 +896,8 @@ if (!(root instanceof Element)) return () => {};
 
 const pricingPages = $('#pricing-pages');
 const pricingRangeFill = $('[data-pricing-range-fill]');
+const pricingRangeHandle = $('[data-pricing-range-handle]');
+const pricingRangeBudget = $('[data-pricing-range-budget]');
 function syncPricingCalculator() {
   const pages = Number(pricingPages.value);
   const amount = (pages / 100) * 1.5;
@@ -820,10 +910,13 @@ function syncPricingCalculator() {
   const largeDocumentCount = Math.floor(pages / 500);
   const documentLabel = count => `${count.toLocaleString(locale)} ${localizeText(count === 1 ? 'document' : 'documents')}`;
   $('[data-pricing-pages]').textContent = pageLabel;
-  $('[data-pricing-price]').textContent = priceLabel;
+  $$('[data-pricing-price]').forEach(element => { element.textContent = priceLabel; });
   $('[data-pricing-pdf]').textContent = documentLabel(pdfCount);
   $('[data-pricing-large]').textContent = documentLabel(largeDocumentCount);
-  pricingRangeFill.style.setProperty('--pricing-progress', `${((pages - rangeMin) / (rangeMax - rangeMin)) * 100}%`);
+  const progress = `${((pages - rangeMin) / (rangeMax - rangeMin)) * 100}%`;
+  pricingRangeFill.style.setProperty('--pricing-progress', progress);
+  pricingRangeHandle.style.setProperty('--pricing-progress', progress);
+  pricingRangeBudget.style.setProperty('--pricing-progress', progress);
   pricingPages.setAttribute('aria-label', localizeText('Pages to process'));
   pricingPages.setAttribute('aria-valuetext', pageLabel);
 }
@@ -993,6 +1086,7 @@ syncPricingCalculator();
     }
 
     addEventListener('pointermove', event => {
+      if (!tileVisible) return;
       const bounds = title.getBoundingClientRect();
       const x = event.clientX - bounds.left;
       const y = event.clientY - bounds.top;
@@ -1032,10 +1126,39 @@ syncPricingCalculator();
     scheduleTitleTileRebuild();
   });
 
+  (() => {
+    const wormhole = $('.integration-wormhole');
+    if (!wormhole) return;
+
+    $$('.integration-wormhole-meridians > *', wormhole).forEach(line => {
+      line.setAttribute('pathLength', '1');
+    });
+
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
+      wormhole.classList.add('is-drawing');
+      return;
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      if (!entries[0]?.isIntersecting) return;
+      wormhole.classList.add('is-drawing');
+      observer.disconnect();
+    }, { threshold: .32 });
+    observer.observe(wormhole);
+  })();
+
   const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
   }), { threshold: .08 });
   $$('.reveal').forEach(section => revealObserver.observe(section));
+
+  const finalCta = $('#final-cta');
+  if (finalCta) {
+    const finalCtaArtObserver = new IntersectionObserver(entries => {
+      finalCta.classList.toggle('is-cta-art-active', entries[0]?.isIntersecting ?? false);
+    }, { threshold: 0 });
+    finalCtaArtObserver.observe(finalCta);
+  }
 })();
 
   return () => {};
@@ -1219,6 +1342,9 @@ syncPricingCalculator();
     observer.observe(svg);
     svg.addEventListener('click', render);
   })();
+
+  // Canvas animations are initialized once by initializeLandingCanvases.
+  return () => {};
 
 (() => {
     'use strict';

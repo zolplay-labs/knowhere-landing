@@ -27,6 +27,7 @@ function initializeHeroCanvas(root, cleanups) {
     const controller = new AbortController();
     const { signal } = controller;
     let active = true;
+    let lowerTextureVisible = document.documentElement.hasAttribute('data-hero-texture');
 
     const SETTINGS = Object.freeze({
       cellSize: 6,
@@ -41,8 +42,6 @@ function initializeHeroCanvas(root, cleanups) {
       fadeStart: .58,
       fadeSoftness: .28,
       gridOpacity: .022,
-      inkColor: '#1c1c1a',
-      accentColor: '#ef613d',
       paperColor: '#fff',
       seed: 17
     });
@@ -50,20 +49,28 @@ function initializeHeroCanvas(root, cleanups) {
       .getPropertyValue(`--main-${stop}`).trim();
     const STAGE_COLORS = [
       mainColor(800),
+      mainColor(700),
       mainColor(600),
-      '#b39a58',
-      '#b87560',
-      '#8c9970'
+      mainColor(500),
+      mainColor(400)
     ];
     const LAYER_COLORS = STAGE_COLORS.slice(1);
     let mainTextureColor = mainColor(400);
+    let heroInkColor = mainColor(800);
+    let heroShadowColor = mainColor(900);
     const syncMainPalette = () => {
-      STAGE_COLORS[0] = mainColor(800);
-      STAGE_COLORS[1] = mainColor(600);
-      LAYER_COLORS[0] = STAGE_COLORS[1];
+      [800, 700, 600, 500, 400].forEach((stop, index) => {
+        STAGE_COLORS[index] = mainColor(stop);
+        if (index > 0) LAYER_COLORS[index - 1] = STAGE_COLORS[index];
+      });
       mainTextureColor = mainColor(400);
+      heroInkColor = mainColor(800);
+      heroShadowColor = mainColor(900);
     };
     window.addEventListener('main-palette-change', syncMainPalette, { signal });
+    window.addEventListener('hero-texture-change', event => {
+      lowerTextureVisible = Boolean(event.detail?.visible);
+    }, { signal });
     const DATA = [
       { count: 168, width: 1 },
       { count: 96, width: .46 },
@@ -427,7 +434,7 @@ function initializeHeroCanvas(root, cleanups) {
           from.x + (to.x - from.x) * state.progress,
           from.y + (to.y - from.y) * state.progress,
           (from.alpha + (to.alpha - from.alpha) * state.progress) * opacity * (.72 + flow * .46),
-          flow > 0 ? mixHexColor(color, '#26272a', flow * .11) : color
+          flow > 0 ? mixHexColor(color, heroShadowColor, flow * .11) : color
         );
       }
     }
@@ -561,7 +568,7 @@ function initializeHeroCanvas(root, cleanups) {
       return heat[row * cols + column] || 0;
     }
 
-    function drawPixel(x, y, alpha = 1, color = SETTINGS.inkColor) {
+    function drawPixel(x, y, alpha = 1, color = heroInkColor) {
       ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
       ctx.fillStyle = color;
       ctx.fillRect(
@@ -587,7 +594,7 @@ function initializeHeroCanvas(root, cleanups) {
 
     function drawGrid(time) {
       const gridEntrance = reducedMotion ? 1 : .2 + easeOutCubic(intro * 1.65) * .8;
-      ctx.strokeStyle = `rgba(28,28,26,${SETTINGS.gridOpacity * gridEntrance})`;
+      ctx.strokeStyle = `${mainColor(800)}${Math.round(SETTINGS.gridOpacity * gridEntrance * 255).toString(16).padStart(2, '0')}`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = 0; x <= width; x += cell) {
@@ -717,7 +724,7 @@ function initializeHeroCanvas(root, cleanups) {
       const dataHeight = height - scanExtension;
       const dividerY = Math.floor((dataHeight - cell) / cell) * cell;
       const squareCount = Math.ceil(width / cell) + 1;
-      const requestedScatterTop = Math.floor((dataHeight - 32) * scatterControls.position / 100 / cell) * cell + cell * 10 + 32;
+      const requestedScatterTop = Math.floor((dataHeight - 32) * scatterControls.position / 100 / cell) * cell + cell * 10 + 32 + 60;
       const scatterTop = Math.min(dividerY - cell * 9, requestedScatterTop);
       const scatterHeight = Math.max(cell * 2, Math.min(
         cell * 8,
@@ -731,7 +738,7 @@ function initializeHeroCanvas(root, cleanups) {
       const lineStartX = 0;
       const mergeProgress = easeOutCubic((scrollProgress - .58) / .34);
 
-      ctx.fillStyle = SETTINGS.inkColor;
+      ctx.fillStyle = heroInkColor;
       for (let index = 0; index < squareCount; index += 1) {
         const prominence = hash(index + 61, 601);
         if (prominence >= scatterDensity) continue;
@@ -910,7 +917,7 @@ function initializeHeroCanvas(root, cleanups) {
         const cardOffsetX = (1 - cardVisibility) * cell * 1.8;
 
         ctx.globalAlpha = (isActive ? .72 : .2) * labelReveal * cardVisibility;
-        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : SETTINGS.inkColor;
+        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
         ctx.fillRect(lineStart, y + .5, Math.max(28, lineEnd - lineStart) * cardVisibility, 1);
         ctx.fillRect(lineStart - 2, y - 1, 4, 4);
 
@@ -923,7 +930,7 @@ function initializeHeroCanvas(root, cleanups) {
           ctx.fillRect(cardX + cardOffsetX + 1, cardY + 1, cardWidth - 2, cardHeight - 2);
         }
         ctx.globalAlpha = (isSelected ? .62 : isActive ? .46 : .14) * labelReveal * cardVisibility;
-        ctx.strokeStyle = isActive ? LAYER_COLORS[layerIndex] : SETTINGS.inkColor;
+        ctx.strokeStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
         ctx.lineWidth = 1;
         ctx.strokeRect(cardX + cardOffsetX + .5, cardY + .5, cardWidth - 1, cardHeight - 1);
         ctx.globalAlpha = (isSelected ? .96 : isActive ? .78 : .34) * labelReveal * cardVisibility;
@@ -933,7 +940,7 @@ function initializeHeroCanvas(root, cleanups) {
         const textX = cardX + cardOffsetX + 14;
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility;
-        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : SETTINGS.inkColor;
+        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
         ctx.font = '600 10px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
         ctx.fillText(layer.label, textX, cardY + 20);
         ctx.globalAlpha = (isActive ? .76 : .52) * labelReveal * cardVisibility;
@@ -1024,34 +1031,45 @@ function initializeHeroCanvas(root, cleanups) {
     }
 
     function frame(milliseconds) {
+      frameId = 0;
+      if (!active || !visible || document.hidden) return;
       const delta = lastFrame ? Math.min(.04, (milliseconds - lastFrame) / 1000) : 0;
       lastFrame = milliseconds;
-      if (visible) {
-        intro = Math.min(1, intro + delta / 1.2);
-        syncScanReveal();
-        const time = reducedMotion ? 0 : milliseconds / 1000;
-        animationTime = milliseconds / 1000;
-        const layout = buildLayout();
-        ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = SETTINGS.paperColor;
-        ctx.fillRect(0, 0, width, height);
-        ctx.save();
-        // Keep the page background solid; the funnel and scan layers render separately.
-        drawScanTrail();
-        drawHoverGridFlow(layout, milliseconds / 1000);
-        drawConvergingDivider();
-        const funnelOpacity = funnelOpacityAt(animationTime);
-        drawModeMorph(layout, animationTime);
-        drawDataStream(layout, time, funnelOpacity);
-        ctx.globalAlpha = 1;
-        ctx.restore();
-        const decay = reducedMotion ? .84 : Math.pow(SETTINGS.trailDecay, Math.max(.2, delta * 60));
-        for (let index = 0; index < heat.length; index += 1) {
-          heat[index] *= decay;
-          if (heat[index] < .003) heat[index] = 0;
-        }
+      intro = Math.min(1, intro + delta / 1.2);
+      syncScanReveal();
+      const time = reducedMotion ? 0 : milliseconds / 1000;
+      animationTime = milliseconds / 1000;
+      const layout = buildLayout();
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = SETTINGS.paperColor;
+      ctx.fillRect(0, 0, width, height);
+      ctx.save();
+      // Keep the page background solid; the funnel and scan layers render separately.
+      drawScanTrail();
+      drawHoverGridFlow(layout, milliseconds / 1000);
+      if (lowerTextureVisible) drawConvergingDivider();
+      const funnelOpacity = funnelOpacityAt(animationTime);
+      drawModeMorph(layout, animationTime);
+      drawDataStream(layout, time, funnelOpacity);
+      ctx.globalAlpha = 1;
+      ctx.restore();
+      const decay = reducedMotion ? .84 : Math.pow(SETTINGS.trailDecay, Math.max(.2, delta * 60));
+      for (let index = 0; index < heat.length; index += 1) {
+        heat[index] *= decay;
+        if (heat[index] < .003) heat[index] = 0;
       }
-      if (active) frameId = requestAnimationFrame(frame);
+      frameId = requestAnimationFrame(frame);
+    }
+
+    function startAnimation() {
+      if (!active || !visible || document.hidden || frameId) return;
+      lastFrame = 0;
+      frameId = requestAnimationFrame(frame);
+    }
+
+    function stopAnimation() {
+      cancelAnimationFrame(frameId);
+      frameId = 0;
     }
 
     hero.addEventListener('pointermove', event => {
@@ -1103,17 +1121,25 @@ function initializeHeroCanvas(root, cleanups) {
     resizeObserver.observe(hero);
     const intersectionObserver = new IntersectionObserver(entries => {
       visible = entries[0].isIntersecting;
-      if (!visible) tooltip.classList.remove('is-visible');
+      if (visible) startAnimation();
+      else {
+        stopAnimation();
+        tooltip.classList.remove('is-visible');
+      }
     }, { threshold: 0 });
     intersectionObserver.observe(hero);
 
     resize();
-    frameId = requestAnimationFrame(frame);
-    window.addEventListener('pagehide', () => cancelAnimationFrame(frameId), { once: true, signal });
+    startAnimation();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAnimation();
+      else startAnimation();
+    }, { signal });
+    window.addEventListener('pagehide', stopAnimation, { once: true, signal });
     cleanups.push(() => {
       active = false;
       controller.abort();
-      cancelAnimationFrame(frameId);
+      stopAnimation();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       hero.classList.remove('is-data-layer-hovered');
@@ -1170,6 +1196,35 @@ function initializeFormatGlobe(root, cleanups) {
     let active = true;
     const introRingDuration = 1200;
     const introRingStagger = 140;
+    const autoLabelInterval = 10000;
+    const labelFadeDuration = 800;
+    let activeLabelIndex = Math.floor(Math.random() * particles.length);
+    let outgoingLabelIndex = null;
+    let labelTransitionStartedAt = 0;
+    let previousHoveredParticleIndex = null;
+    let autoLabelTimer = 0;
+
+    function nextRandomLabelIndex(currentIndex) {
+      return (currentIndex + 1 + Math.floor(Math.random() * (particles.length - 1))) % particles.length;
+    }
+
+    function activateLabel(nextIndex, now = performance.now()) {
+      if (nextIndex === activeLabelIndex) return;
+      outgoingLabelIndex = reducedMotion ? null : activeLabelIndex;
+      activeLabelIndex = nextIndex;
+      labelTransitionStartedAt = now;
+    }
+
+    function scheduleAutoLabel() {
+      clearTimeout(autoLabelTimer);
+      if (!active || !visible || document.hidden) return;
+      autoLabelTimer = window.setTimeout(() => {
+        const now = performance.now();
+        activateLabel(nextRandomLabelIndex(activeLabelIndex), now);
+        draw(reducedMotion ? 0 : now - startTime, now);
+        scheduleAutoLabel();
+      }, autoLabelInterval);
+    }
 
     function easeInOutSine(progress) {
       return -(Math.cos(Math.PI * progress) - 1) / 2;
@@ -1332,6 +1387,15 @@ function initializeFormatGlobe(root, cleanups) {
           }, null)?.particle
         : null;
 
+      const hoveredParticleIndex = hoveredParticle?.index ?? null;
+      if (hoveredParticleIndex !== previousHoveredParticleIndex) {
+        previousHoveredParticleIndex = hoveredParticleIndex;
+        if (hoveredParticleIndex !== null) {
+          activateLabel(hoveredParticleIndex, now);
+          scheduleAutoLabel();
+        }
+      }
+
       particlePoints.forEach(particle => {
         if (particle.introAlpha <= 0) return;
         const isHovered = hoveredParticle?.index === particle.index;
@@ -1344,17 +1408,30 @@ function initializeFormatGlobe(root, cleanups) {
         context.fill();
       });
 
-      if (hoveredParticle) {
+      const transitionRaw = outgoingLabelIndex === null
+        ? 1
+        : Math.max(0, Math.min(1, (now - labelTransitionStartedAt) / labelFadeDuration));
+      const transitionProgress = easeInOutSine(transitionRaw);
+      const activeLabelParticle = particlePoints.find(
+        particle => particle.index === activeLabelIndex && particle.introAlpha >= 0.9
+      );
+      const outgoingLabelParticle = outgoingLabelIndex === null
+        ? null
+        : particlePoints.find(particle => particle.index === outgoingLabelIndex && particle.introAlpha >= 0.9);
+
+      function drawLabel(particle, opacity) {
+        if (!particle || opacity <= 0) return;
         context.save();
+        context.globalAlpha = opacity;
         context.font = '500 15px Fellix-TRIAL, "ABC Schengen Greek Variable Trial", sans-serif';
         context.textBaseline = 'middle';
-        const textWidth = context.measureText(hoveredParticle.label).width;
+        const textWidth = context.measureText(particle.label).width;
         const labelWidth = textWidth + 12;
-        const preferredX = hoveredParticle.x + 10;
+        const preferredX = particle.x + 10;
         const labelX = preferredX + labelWidth > width - 4
-          ? hoveredParticle.x - labelWidth - 10
+          ? particle.x - labelWidth - 10
           : preferredX;
-        const labelY = Math.max(4, Math.min(height - 28, hoveredParticle.y - 12));
+        const labelY = Math.max(4, Math.min(height - 28, particle.y - 12));
         context.fillStyle = mainColor;
         context.fillRect(labelX, labelY, labelWidth, 24);
         const frameX = labelX - 2;
@@ -1379,18 +1456,40 @@ function initializeFormatGlobe(root, cleanups) {
         context.lineWidth = 1;
         context.stroke();
         context.fillStyle = '#fff';
-        context.fillText(hoveredParticle.label, labelX + 6, labelY + 12);
+        context.fillText(particle.label, labelX + 6, labelY + 12);
         context.restore();
       }
+
+      drawLabel(outgoingLabelParticle, 1 - transitionProgress);
+      drawLabel(activeLabelParticle, transitionProgress);
+
+      if (activeLabelParticle) {
+        stage.dataset.activeFormatLabel = activeLabelParticle.label;
+      } else {
+        delete stage.dataset.activeFormatLabel;
+      }
+      if (transitionRaw >= 1) outgoingLabelIndex = null;
 
       stage.style.cursor = hoveredParticle ? 'pointer' : 'crosshair';
     }
 
     function frame(now) {
+      frameId = 0;
+      if (!active || reducedMotion || !visible || document.hidden) return;
       tiltX += (pointerY - tiltX) * 0.055;
       tiltY += (pointerX - tiltY) * 0.055;
       draw(now - startTime, now);
-      if (active && !reducedMotion && visible) frameId = requestAnimationFrame(frame);
+      frameId = requestAnimationFrame(frame);
+    }
+
+    function startAnimation() {
+      if (!active || reducedMotion || !visible || document.hidden || frameId) return;
+      frameId = requestAnimationFrame(frame);
+    }
+
+    function stopAnimation() {
+      cancelAnimationFrame(frameId);
+      frameId = 0;
     }
 
     function resize() {
@@ -1435,27 +1534,42 @@ function initializeFormatGlobe(root, cleanups) {
     const intersectionObserver = new IntersectionObserver(entries => {
       const nextVisible = entries[0].isIntersecting;
       if (nextVisible && introStartedAt === null) introStartedAt = performance.now();
-      if (nextVisible && !visible && !reducedMotion) {
+      if (nextVisible && !visible) {
         visible = true;
+        scheduleAutoLabel();
         if (introStartedAt === null) introStartedAt = performance.now();
-        cancelAnimationFrame(frameId);
-        frameId = requestAnimationFrame(frame);
+        startAnimation();
       } else {
         visible = nextVisible;
-        if (!visible) cancelAnimationFrame(frameId);
+        if (!visible) {
+          clearTimeout(autoLabelTimer);
+          stopAnimation();
+        }
       }
     }, { threshold: 0 });
     intersectionObserver.observe(stage);
 
     resize();
-    if (!reducedMotion) frameId = requestAnimationFrame(frame);
-    window.addEventListener('pagehide', () => cancelAnimationFrame(frameId), { once: true, signal });
+    scheduleAutoLabel();
+    startAnimation();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearTimeout(autoLabelTimer);
+        stopAnimation();
+      } else {
+        scheduleAutoLabel();
+        startAnimation();
+      }
+    }, { signal });
+    window.addEventListener('pagehide', stopAnimation, { once: true, signal });
     cleanups.push(() => {
       active = false;
       controller.abort();
-      cancelAnimationFrame(frameId);
+      clearTimeout(autoLabelTimer);
+      stopAnimation();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
+      delete stage.dataset.activeFormatLabel;
       stage.style.removeProperty('cursor');
     });
   }
