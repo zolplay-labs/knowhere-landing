@@ -48,7 +48,7 @@ const ENGLISH_FONT_FACES = {
   serif: 'Georgia, "Times New Roman"',
 }
 const CHINESE_FONT_STACKS = {
-  'frex-sans-gb': '"Frex Sans GB VF", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+  'frex-sans-gb': '"Frex Sans GB", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
   'noto-sans-sc': '"Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
 }
 
@@ -138,6 +138,11 @@ const CONTROLLER_LAYOUT_STYLES = `
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  @media (max-width: 767px) {
+    .dialkit-panel[data-position="top-right"] {
+      top: 80px;
+    }
+  }
   @media (max-width: 479px) {
     .dialkit-select-right {
       flex-basis: 180px;
@@ -188,7 +193,7 @@ export function PageStyleControls() {
       chineseFontFamily: {
         type: 'select',
         options: [
-          { value: 'frex-sans-gb', label: 'Frex Sans GB VF · Default' },
+          { value: 'frex-sans-gb', label: 'Frex Sans GB · Default' },
           { value: 'noto-sans-sc', label: 'Noto Sans SC' },
         ],
         default: initialSettings.chineseFont,

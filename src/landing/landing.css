@@ -36,6 +36,27 @@
 
 
     @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-Regular.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-Medium.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-SemiBold.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+    }
+    @font-face {
       font-family: "ABC Schengen Greek Variable Trial";
       src: local("ABC Schengen Greek Variable Trial"), local("ABC Schengen Greek Variable Trial A Regular"), local("ABCSchengenGreekVariableTrial-ARegular");
       font-style: normal;
@@ -514,7 +535,9 @@
     .site-header .desktop-nav a:hover { text-decoration: none; }
     .site-header .desktop-nav a, .site-header .nav-actions .button { font-size: 14px; }
     .language-toggle, .github-link { display: inline-grid; flex: 0 0 32px; width: 32px; height: 32px; padding: 0; place-items: center; border: 0; border-radius: 4px; background: transparent; color: var(--ink); line-height: 0; text-decoration: none; cursor: pointer; }
-    .language-toggle svg, .github-link svg { display: block; width: 20px; height: 20px; }
+    .language-toggle svg, .github-link svg { display: block; }
+    .language-toggle svg { width: 18px; height: 18px; }
+    .github-link svg { width: 20px; height: 20px; }
     .language-toggle:hover, .github-link:hover { background: #e9e8e2; }
     .language-toggle:focus-visible, .github-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
     .mobile-language { display: none; }
@@ -758,30 +781,33 @@
     .formats-secondary-grid .format-feature-icon,
     .comparison-legend i,
     .comparison-metric > i { border-radius: var(--radius-compact); }
-    .site-header, .site-header.scrolled { top: 0; padding-top: 10px; border: 0; background: rgba(253,252,252,.34); -webkit-backdrop-filter: blur(16px) saturate(115%); backdrop-filter: blur(16px) saturate(115%); transition: none; }
+    .site-header, .site-header.scrolled { top: 0; height: 72px; padding: 0; border: 0; border-bottom: 1px solid rgba(24,24,24,.08); background: rgba(255,255,255,.92); -webkit-backdrop-filter: blur(20px) saturate(115%); backdrop-filter: blur(20px) saturate(115%); transition: none; transform: none; }
     .site-header.is-hidden { transform: none; }
-    .site-header .nav.shell, .site-header.scrolled .nav.shell { position: relative; width: min(var(--content-max), calc(100% - 40px)); max-width: none; height: 52px; padding: 0; gap: 4px; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; transition: none; }
-    .site-header .wordmark { align-self: stretch; flex: 0 0 auto; min-width: 0; padding: 0 12px 0 0; border: 0; background: transparent; }
+    .site-header .nav.shell, .site-header.scrolled .nav.shell { position: relative; width: min(var(--content-max), calc(100% - 40px)); max-width: none; height: 72px; padding: 0; gap: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; backdrop-filter: none; transition: none; }
+    .site-header .wordmark { display: flex; flex: 0 0 auto; min-width: 0; padding: 0; align-items: center; border: 0; background: transparent; }
     .site-header .wordmark img { width: 120px; }
-    .site-header .desktop-nav { position: absolute; top: 0; left: 50%; width: max-content; height: 52px; margin-left: 0; gap: 8px; align-items: center; transform: translateX(-50%); }
-    .site-header .desktop-nav a { height: 28px; padding-inline: 12px; font-size: 13px; font-weight: 400; }
-    .site-header .desktop-nav a:hover { background: rgba(0,0,0,.03); }
-    .site-header .nav-actions { align-self: stretch; height: 52px; gap: 4px; }
+    .site-header .desktop-nav { position: static; width: max-content; height: 72px; margin-left: auto; gap: 24px; align-items: center; transform: none; }
+    .site-header .desktop-nav a { height: 44px; padding-inline: 2px; font-size: 14px; font-weight: 400; }
+    .site-header .desktop-nav a:hover { background: transparent; color: #5f5e5c; }
+    .site-header .nav-actions { align-self: stretch; height: 72px; margin-left: 28px; padding-left: 28px; gap: 4px; border-left: 1px solid rgba(24,24,24,.12); }
     .site-header .language-toggle,
-    .site-header .github-link { flex-basis: 52px; width: 52px; height: 52px; border: 0; border-radius: 0; background: transparent; color: var(--ink); }
+    .site-header .github-link { flex-basis: 44px; width: 44px; height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); }
     .site-header .language-toggle:hover,
     .site-header .github-link:hover { background: #ecebe7; }
-    .site-header .nav-actions .button { min-height: 44px; height: 44px; align-self: center; margin-left: 0; padding-inline: 18px; border-radius: 0; font-size: 12px; font-weight: 400; white-space: nowrap; }
+    .site-header .nav-actions .button { min-height: 36px; height: 36px; align-self: center; margin-left: 8px; padding-inline: 16px; border-radius: 6px; font-size: 13px; font-weight: 500; white-space: nowrap; }
     .site-header.over-dark .language-toggle,
     .site-header.over-dark .github-link { color: var(--ink); }
     @media (max-width: 1199px) {
       .site-header .desktop-nav { display: none; }
-      .site-header .menu-toggle { display: grid; flex: 0 0 52px; width: 52px; height: 52px; min-width: 52px; min-height: 52px; padding: 0; place-items: center; border: 0; background: transparent; text-decoration: none; }
+      .site-header .nav-actions { margin-left: auto; padding-left: 0; border-left: 0; }
+      .site-header .menu-toggle { display: grid; flex: 0 0 44px; width: 44px; height: 44px; min-width: 44px; min-height: 44px; padding: 0; place-items: center; border: 0; border-radius: 6px; background: transparent; line-height: 1; text-decoration: none; }
       .site-header .menu-toggle:hover { background: #ecebe7; }
     }
     @media (max-width: 767px) {
-      .site-header .nav.shell, .site-header.scrolled .nav.shell { width: calc(100% - 40px); }
-      .site-header .wordmark { padding-inline: 0 8px; }
+      .site-header, .site-header.scrolled { height: 64px; }
+      .site-header .nav.shell, .site-header.scrolled .nav.shell { width: calc(100% - 40px); height: 64px; }
+      .site-header .nav-actions { height: 64px; }
+      .site-header .nav-actions .button { min-height: 44px; height: 44px; }
       .site-header .wordmark img { width: 108px; }
       .desktop-github { display: none; }
     }
@@ -1113,7 +1139,7 @@
 
     #capabilities .story-steps {
       position: sticky;
-      top: 40px;
+      top: 80px;
       width: 284px;
       margin: 0;
       padding: 0;
@@ -1171,6 +1197,10 @@
       background: var(--main-600);
     }
 
+    #capabilities .story-step:last-child::after {
+      display: none;
+    }
+
     #capabilities .story-step > span {
       grid-column: 2;
       display: block;
@@ -1205,7 +1235,7 @@
       position: relative;
       width: 100%;
       height: auto !important;
-      padding-top: 0;
+      padding: 0 0 80px;
       display: grid !important;
       gap: 24px;
       overflow: visible;
@@ -2458,6 +2488,7 @@
       }
 
       #capabilities .story-steps {
+        top: 40px;
         width: 100%;
       }
 
@@ -2468,7 +2499,7 @@
       #capabilities .story-card-stack {
         height: auto !important;
         max-height: none;
-        padding-top: 0;
+        padding: 0;
         overflow: visible;
       }
 
@@ -3372,7 +3403,13 @@
 
     @media (min-width: 768px) {
       #pricing .pricing-facts {
-        padding-top: 24px;
+        padding: 34px 0 0;
+        gap: 0;
+      }
+
+      #pricing .pricing-facts > div {
+        padding: 4px 0 4px 12px;
+        gap: 4px;
       }
 
       #pricing .pricing-result-card {
@@ -3663,7 +3700,7 @@
       min-height: 82px;
       margin: 0 0 60px;
       display: grid;
-      grid-template-columns: 693px minmax(0, 1fr);
+      grid-template-columns: 600px minmax(0, 1fr);
       grid-template-rows: 16px auto;
       column-gap: 40px;
       row-gap: 10px;
@@ -4058,6 +4095,7 @@
     }
 
     #enterprise .enterprise-label {
+      align-self: flex-start;
       margin: 0;
       color: var(--main-600);
       font-family: var(--figma-mono);
@@ -4310,14 +4348,6 @@
       #main h2 {
         font-size: 32px !important;
         line-height: 36px !important;
-      }
-    }
-
-    @media (min-width: 1200px) {
-      #enterprise h2 {
-        font-size: 50px !important;
-        line-height: 56px !important;
-        letter-spacing: -.2px !important;
       }
     }
 

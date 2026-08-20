@@ -45,13 +45,13 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
   <a className="skip-link" href="#main">Skip to content</a>
   <header className="site-header" data-header>
     <nav className="nav shell" aria-label="Main navigation">
-      <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-wordmark.svg" width={344} height={47} alt="" /></a>
+      <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-back-to-top.svg" width={132} height={52} alt="" /></a>
       <div className="desktop-nav">
         <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a>
       </div>
       <div className="nav-actions">
         <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.91-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.72c.85 0 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z" /></svg></a>
-        <button className="language-toggle desktop-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true"><circle cx={12} cy={12} r={8} /><path d="M4 12h16M12 4c2.1 2.2 3.2 4.9 3.2 8S14.1 17.8 12 20c-2.1-2.2-3.2-4.9-3.2-8S9.9 6.2 12 4Z" /></svg></button>
+        <button className="language-toggle desktop-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><g fill="currentColor"><line x1="2.25" y1="4.25" x2="10.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="6.25" y1="2.25" x2="6.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M4.25,4.25c.091,2.676,1.916,4.981,4.5,5.684" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M8.25,4.25c-.4,5.625-6,6-6,6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><polyline points="9.25 15.75 12.25 7.75 12.75 7.75 15.75 15.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="10.188" y1="13.25" x2="14.813" y2="13.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></g></svg></button>
         <a className="button button-small" href="https://knowhereto.ai/login">Get API Key</a>
         <button className="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><span className="sr-only">Open menu</span><span aria-hidden="true">Menu</span></button>
       </div>
@@ -61,7 +61,7 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
       <nav aria-label="Mobile navigation">
         <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href="https://knowhereto.ai/github">GitHub</a><a href="https://blog.knowhereto.ai/">Blog</a>
       </nav>
-      <button className="language-toggle mobile-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" aria-hidden="true"><circle cx={12} cy={12} r={8} /><path d="M4 12h16M12 4c2.1 2.2 3.2 4.9 3.2 8S14.1 17.8 12 20c-2.1-2.2-3.2-4.9-3.2-8S9.9 6.2 12 4Z" /></svg></button>
+      <button className="language-toggle mobile-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><g fill="currentColor"><line x1="2.25" y1="4.25" x2="10.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="6.25" y1="2.25" x2="6.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M4.25,4.25c.091,2.676,1.916,4.981,4.5,5.684" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M8.25,4.25c-.4,5.625-6,6-6,6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><polyline points="9.25 15.75 12.25 7.75 12.75 7.75 15.75 15.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="10.188" y1="13.25" x2="14.813" y2="13.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></g></svg></button>
     </div>
   </header>
   <main id="main" tabIndex={-1}>
@@ -360,7 +360,7 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
   <footer className="footer">
     <div className="footer-inner">
       <div className="footer-main">
-        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-logo-new.svg" width={340} height={38} alt="" /></a>
+        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-back-to-top.svg" width={132} height={52} alt="" /></a>
         <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
       </div>
       <div className="footer-divider" aria-hidden="true" />
