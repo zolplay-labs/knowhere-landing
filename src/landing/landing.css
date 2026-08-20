@@ -5065,39 +5065,6 @@
       transform: translateX(-50%);
     }
 
-    /* Unfinished Hero: use the same placeholder treatment as Section One. */
-    #top.hero-b-layout #hero-b-pixel-field,
-    #top.hero-b-layout .hero-copy,
-    #top.hero-b-layout .hero-visual {
-      opacity: .12 !important;
-    }
-
-    #top.hero-b-layout .hero-placeholder-texture {
-      position: absolute;
-      z-index: 4;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 100vw;
-      background: url("/assets/playground-placeholder-texture.svg") 0 0 / 48px 48px repeat;
-      pointer-events: none;
-      transform: translateX(-50%);
-    }
-
-    #top.hero-b-layout .hero-placeholder-label {
-      position: absolute;
-      z-index: 5;
-      top: 50%;
-      left: 50%;
-      padding: 6px 10px;
-      background: var(--main-600);
-      color: #fff;
-      font: 500 13px/20px var(--figma-display);
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
-    }
-
     /* Section 1: full-bleed demo surface with content retained on the 1280px grid. */
     #playground.section.shell {
       width: 100%;
@@ -5124,35 +5091,10 @@
       transform: none;
     }
 
-    #playground .section-scan-frame::before {
-      position: absolute;
-      z-index: 2;
-      inset: 0;
-      background: url("/assets/playground-placeholder-texture.svg") 0 0 / 48px 48px repeat;
-      content: "";
-      pointer-events: none;
-    }
-
     #playground .section-scan-frame iframe {
       display: block;
       width: 100%;
       border: 0;
-      opacity: .12;
-      pointer-events: none;
-    }
-
-    #playground .section-scan-placeholder {
-      position: absolute;
-      z-index: 3;
-      top: 50%;
-      left: 50%;
-      padding: 6px 10px;
-      background: var(--main-600);
-      color: #fff;
-      font: 500 13px/20px var(--figma-display);
-      pointer-events: none;
-      transform: translate(-50%, -50%);
-      white-space: nowrap;
     }
 
     /* Figma 490:15452 — CTA panel and footer surface. */

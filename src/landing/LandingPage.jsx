@@ -77,15 +77,12 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
           <div className="hero-b-chart-shell" aria-hidden="true" />
         </article>
       </div>
-      <div className="hero-placeholder-texture" aria-hidden="true" />
-      <span className="hero-placeholder-label">Placeholder image</span>
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
-        <span className="section-scan-placeholder">Placeholder image</span>
       </div>
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">
