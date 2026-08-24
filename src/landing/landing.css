@@ -4187,7 +4187,7 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 8px;
+      gap: 44px;
       border: 0;
       color: #1b2134;
       font-family: var(--figma-display);
@@ -4197,34 +4197,38 @@
 
     #enterprise .enterprise-metric-visual {
       position: relative;
-      width: 160px;
+      width: 176px;
       max-width: 100%;
-      height: 160px;
-      flex: 0 0 160px;
-      display: block;
-    }
-
-    #enterprise .enterprise-metric-visual span {
-      position: absolute;
-      z-index: 1;
-      top: 72px;
-      left: 52px;
-      width: 55px;
-      color: #5f5e5c;
-      font-size: 10px;
-      font-weight: 400;
-      line-height: 16px;
-      text-align: center;
+      height: 152px;
+      flex: 0 0 152px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-start;
     }
 
     #enterprise .enterprise-metric-visual img {
-      position: absolute;
-      top: 13px;
-      left: 12px;
-      width: 135px;
-      max-width: calc(100% - 24px);
-      height: 133px;
+      display: block;
+      width: auto;
+      max-width: 100%;
+      height: auto;
+      max-height: 144px;
       object-fit: contain;
+      object-position: left top;
+    }
+
+    @media (min-width: 768px) {
+      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual img,
+      #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual img {
+        max-height: 152px;
+      }
+
+      #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual img {
+        max-height: 132px;
+      }
+
+      #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual img {
+        max-height: 128px;
+      }
     }
 
     #enterprise .enterprise-metric-copy {
@@ -4319,8 +4323,19 @@
 
       #enterprise .enterprise-metric {
         width: auto;
+        gap: 28px;
         font-size: 15px;
         line-height: 20px;
+      }
+
+      #enterprise .enterprise-metric-visual {
+        width: 100%;
+        height: 112px;
+        flex-basis: 112px;
+      }
+
+      #enterprise .enterprise-metric-visual img {
+        max-height: 112px;
       }
     }
 
