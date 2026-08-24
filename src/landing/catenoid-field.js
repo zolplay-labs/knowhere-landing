@@ -1,0 +1,555 @@
+(() => {
+  'use strict';
+
+  const SELECTOR = 'canvas[data-animation="catenoid-field"]';
+  const TAU = Math.PI * 2;
+  const PATH_REVEAL_MS = 1200;
+  const PATH_STAGGER_MS = 40;
+  const RING_CYCLE_MS = 5600;
+  const DATA_PULSE_DELAY_MS = 900;
+  const HYPER_CYCLE_MS = 4200;
+  const HYPER_ACTIVE_MS = 650;
+  const HYPER_GLYPHS = '01<>/{}[]+-=';
+  const CALLOUT_ENTER_MS = 600;
+  const CALLOUT_HOLD_MS = 3000;
+  const CALLOUT_EXIT_MS = 600;
+  const CALLOUT_GAP_MS = 2000;
+  const CALLOUT_CYCLE_MS = CALLOUT_ENTER_MS + CALLOUT_HOLD_MS + CALLOUT_EXIT_MS + CALLOUT_GAP_MS;
+  const POINTER_EASE = 0.055;
+  const DEFAULT_COLORS = {
+    accent: '#77e1ca',
+    secondary: '#a98bff',
+    background: '#0f141a'
+  };
+
+  function clamp(value, min = 0, max = 1) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function easeInOut(value) {
+    return -(Math.cos(Math.PI * clamp(value)) - 1) / 2;
+  }
+
+  function rgba(hex, alpha) {
+    const channels = [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
+    return `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, ${alpha})`;
+  }
+
+  function seededRandom(seed) {
+    let state = seed >>> 0;
+    return () => {
+      state += 0x6D2B79F5;
+      let value = state;
+      value = Math.imul(value ^ (value >>> 15), value | 1);
+      value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+      return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function rotate3D(point, rotation) {
+    let [x, y, z] = point;
+    const [rx, ry, rz] = rotation;
+    let cosine = Math.cos(rx);
+    let sine = Math.sin(rx);
+    [y, z] = [y * cosine - z * sine, y * sine + z * cosine];
+    cosine = Math.cos(ry);
+    sine = Math.sin(ry);
+    [x, z] = [x * cosine + z * sine, -x * sine + z * cosine];
+    cosine = Math.cos(rz);
+    sine = Math.sin(rz);
+    [x, y] = [x * cosine - y * sine, x * sine + y * cosine];
+    return [x, y, z];
+  }
+
+  class CatenoidFieldAnimation {
+    constructor(canvas) {
+      this.canvas = canvas;
+      this.context = canvas.getContext('2d');
+      if (!this.context) return;
+
+      this.preview = canvas.closest('.preview');
+      this.workspace = canvas.closest('.workbench') || this.preview;
+      this.motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      this.reduceMotion = this.motionQuery.matches;
+      this.finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      this.abortController = new AbortController();
+      this.width = 1;
+      this.height = 1;
+      this.frame = 0;
+      this.viewRotation = null;
+      this.visible = false;
+      this.introStart = null;
+      this.lastFrameTime = null;
+      this.autoYaw = 0;
+      this.cycleElapsed = 0;
+      this.calloutElapsed = 0;
+      this.rotation = { pitch: 0, yaw: 0, targetPitch: 0, targetYaw: 0 };
+      this.settings = {
+        autoRotate: true,
+        pointerFollow: true,
+        rotationSpeed: 1,
+        cycleSpeed: 1,
+        fieldOffsetX: 0,
+        fieldOffsetY: 0,
+        fieldScale: 1,
+        textOffsetX: 0,
+        textOffsetY: 0,
+        textScale: 1
+      };
+      this.colors = { ...DEFAULT_COLORS };
+      this.paths = this.createPaths();
+      this.dataPulses = this.createDataPulses();
+
+      this.resizeObserver = new ResizeObserver(() => this.resize());
+      this.intersectionObserver = new IntersectionObserver(entries => {
+        const visible = entries[0].isIntersecting;
+        this.visible = visible;
+        if (visible && this.introStart === null) {
+          this.introStart = performance.now();
+          this.render(this.introStart);
+        }
+        visible ? this.start() : this.stop();
+      }, { threshold: 0 });
+
+      this.bindEvents();
+      this.resizeObserver.observe(this.canvas);
+      this.intersectionObserver.observe(this.canvas);
+      this.resize();
+      this.preview?.classList.add('is-animated');
+      this.canvas.dataset.animationReady = 'true';
+    }
+
+    createPaths() {
+      const rings = Array.from({ length: 12 }, (_, index) => index === 0 || index === 11
+        ? { type: 'ring', fixedV: index === 0 ? -1 : 1, segments: 120 }
+        : { type: 'ring', phase: (index - 0.5) / 10, segments: 120 });
+      const meridians = Array.from({ length: 17 }, (_, index) => ({
+        type: 'meridian',
+        u: (index / 17) * TAU,
+        segments: 90
+      }));
+      return [...rings, ...meridians];
+    }
+
+    createDataPulses() {
+      const random = seededRandom(1201);
+      return Array.from({ length: 8 }, (_, index) => ({
+        index,
+        period: 2300 + Math.round(random() * 1200),
+        visibleFor: 280 + Math.round(random() * 180),
+        offset: Math.round(random() * 1500),
+        activation: -1,
+        position: null
+      }));
+    }
+
+    bindEvents() {
+      const { signal } = this.abortController;
+      this.workspace?.querySelectorAll('[data-animation-setting]').forEach(input => {
+        const updateSetting = () => {
+          const setting = input.dataset.animationSetting;
+          this.settings[setting] = input.type === 'checkbox'
+            ? input.checked
+            : Number(input.value) / 100;
+          if (setting === 'pointerFollow' && !this.settings.pointerFollow) {
+            this.rotation.targetPitch = 0;
+            this.rotation.targetYaw = 0;
+          }
+          const output = input.closest('.animation-setting')?.querySelector('output');
+          if (output) output.value = `${this.settings[setting].toFixed(1)}×`;
+        };
+        if (this.reduceMotion) input.disabled = true;
+        input.addEventListener('input', updateSetting, { signal });
+        updateSetting();
+      });
+      this.motionQuery.addEventListener('change', event => {
+        this.reduceMotion = event.matches;
+        this.workspace?.querySelectorAll('[data-animation-setting]').forEach(input => { input.disabled = event.matches; });
+        this.restart();
+      }, { signal });
+      if (this.finePointer && !this.reduceMotion) {
+        this.canvas.addEventListener('pointermove', event => {
+          const bounds = this.canvas.getBoundingClientRect();
+          if (this.settings.pointerFollow) {
+            this.rotation.targetYaw = ((event.clientX - bounds.left) / bounds.width - 0.5) * 0.55;
+            this.rotation.targetPitch = ((event.clientY - bounds.top) / bounds.height - 0.5) * 0.3;
+          }
+        }, { signal });
+        this.canvas.addEventListener('pointerleave', () => {
+          this.rotation.targetYaw = 0;
+          this.rotation.targetPitch = 0;
+        }, { signal });
+      }
+      document.addEventListener('visibilitychange', () => {
+        document.hidden ? this.stop() : this.start();
+      }, { signal });
+      window.addEventListener('pagehide', () => this.stop(), { once: true, signal });
+    }
+
+    profileRadius(v) {
+      const magnitude = Math.abs(v);
+      const normalized = (Math.cosh(1.9 * magnitude) - 1) / (Math.cosh(1.9) - 1);
+      return 0.11 + (0.94 - 0.11) * normalized;
+    }
+
+    surfacePoint(u, v) {
+      const radius = this.profileRadius(v);
+      const point = [radius * Math.cos(u), 1.08 * v, radius * Math.sin(u)];
+      const rotation = this.viewRotation
+        ?? [0.36 + this.rotation.pitch, this.autoYaw + this.rotation.yaw, 0];
+      const [x, y, z] = rotate3D(point, rotation);
+      const perspective = 1 + z * 0.1;
+      const scale = Math.min(this.width, this.height) * 0.29 * this.settings.fieldScale;
+      return {
+        x: this.width * (0.5 + this.settings.fieldOffsetX / 100) + x * perspective * scale,
+        y: this.height * (0.5 + this.settings.fieldOffsetY / 100) + y * perspective * scale,
+        z
+      };
+    }
+
+    ringProgress(path) {
+      return this.reduceMotion
+        ? path.phase
+        : (path.phase + this.cycleElapsed / RING_CYCLE_MS) % 1;
+    }
+
+    ringV(path, progress) {
+      return path.fixedV ?? (-0.9 + progress * 1.8);
+    }
+
+    samplePath(path, ringProgress) {
+      const points = [];
+      for (let index = 0; index <= path.segments; index += 1) {
+        const progress = index / path.segments;
+        points.push(path.type === 'ring'
+          ? this.surfacePoint(progress * TAU, this.ringV(path, ringProgress))
+          : this.surfacePoint(path.u, -1 + progress * 2));
+      }
+      return points;
+    }
+
+    pathReveal(index, now) {
+      if (this.reduceMotion || this.introStart === null) return 1;
+      return easeInOut((now - this.introStart - index * PATH_STAGGER_MS) / PATH_REVEAL_MS);
+    }
+
+    drawPath(points, reveal, opacity, lineWidth) {
+      if (reveal <= 0) return;
+      const context = this.context;
+      const finalIndex = Math.max(1, Math.ceil((points.length - 1) * reveal));
+      context.beginPath();
+      context.moveTo(points[0].x, points[0].y);
+      for (let index = 1; index <= finalIndex; index += 1) {
+        context.lineTo(points[index].x, points[index].y);
+      }
+      context.lineWidth = lineWidth;
+      context.strokeStyle = rgba(this.colors.accent, opacity);
+      context.stroke();
+    }
+
+    hyperText(label, index) {
+      if (this.reduceMotion) return label;
+      const local = (this.cycleElapsed + index * 940) % HYPER_CYCLE_MS;
+      if (local >= HYPER_ACTIVE_MS) return label;
+      const settled = Math.floor((local / HYPER_ACTIVE_MS) * label.length);
+      return Array.from(label, (character, characterIndex) => {
+        if (characterIndex < settled || character === ' ') return character;
+        const glyphIndex = Math.floor(local / 55 + characterIndex * 3 + index * 5) % HYPER_GLYPHS.length;
+        return HYPER_GLYPHS[glyphIndex];
+      }).join('');
+    }
+
+    drawDecorativeText() {
+      const context = this.context;
+      const compact = this.width < 520;
+      const fontSize = (compact ? 7 : 8) * this.settings.textScale;
+      context.save();
+      context.translate(
+        this.width * this.settings.textOffsetX / 100,
+        this.height * this.settings.textOffsetY / 100
+      );
+      context.font = `600 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+      context.fillStyle = rgba(this.colors.accent, 0.4);
+      context.textBaseline = 'top';
+      ['API KEY / ACTIVE', 'AUTH / BEARER', 'REQUEST / POST', 'QUEUE / READY'].forEach((label, index) => {
+        context.fillText(this.hyperText(label, index), this.width * (compact ? 0.15 : 0.055), this.height * 0.25 + index * (fontSize + 4));
+      });
+      context.fillStyle = rgba(this.colors.accent, 0.34);
+      context.textAlign = 'right';
+      ['DOCUMENT / PDF', 'UPLOAD / COMPLETE', 'WEBHOOK / READY', 'RESULT / JSON'].forEach((label, index) => {
+        context.fillText(label, this.width * (compact ? 0.9 : 0.945), this.height * 0.72 + 16 + index * (fontSize + 4));
+      });
+      context.restore();
+    }
+
+    drawCalloutGuides() {
+      const context = this.context;
+      const fieldScale = Math.min(this.width, this.height) * 0.29 * this.settings.fieldScale;
+      const centerX = this.width * (0.5 + this.settings.fieldOffsetX / 100);
+      const centerY = this.height * (0.5 + this.settings.fieldOffsetY / 100);
+      const squareSize = clamp(Math.min(this.width, this.height) * 0.023, 8, 12);
+      const guides = [
+        {
+          side: 'left',
+          anchorX: centerX - fieldScale * 0.08,
+          baseY: centerY - fieldScale * 0.48,
+          boxX: this.width * 0.055,
+          boxWidth: this.width * 0.28,
+          labels: ['sk-proj-demo_4f8a9c2d_XX', 'sk-live-demo_71b3e840_XX'],
+          phaseOffset: 0
+        },
+        {
+          side: 'right',
+          anchorX: centerX + fieldScale * 0.08,
+          baseY: centerY - fieldScale * 0.05,
+          boxX: this.width * 0.7,
+          boxWidth: this.width * 0.245,
+          labels: ['quarterly-report.pdf', 'invoice-2026-08.xlsx'],
+          phaseOffset: 2000
+        }
+      ];
+
+      context.save();
+      context.lineWidth = 1;
+      guides.forEach(({ side, anchorX, baseY, boxX, boxWidth, labels, phaseOffset }) => {
+        const elapsed = this.reduceMotion ? CALLOUT_ENTER_MS : this.calloutElapsed - phaseOffset;
+        if (elapsed < 0) return;
+        const cycleIndex = this.reduceMotion ? 0 : Math.floor(elapsed / CALLOUT_CYCLE_MS);
+        const cycleTime = this.reduceMotion ? CALLOUT_ENTER_MS : elapsed % CALLOUT_CYCLE_MS;
+        const label = labels[cycleIndex % labels.length];
+        let reveal = 1;
+        let erase = 0;
+        if (cycleTime < CALLOUT_ENTER_MS) reveal = easeInOut(cycleTime / CALLOUT_ENTER_MS);
+        else if (cycleTime < CALLOUT_ENTER_MS + CALLOUT_HOLD_MS) reveal = 1;
+        else if (cycleTime < CALLOUT_ENTER_MS + CALLOUT_HOLD_MS + CALLOUT_EXIT_MS) {
+          erase = easeInOut((cycleTime - CALLOUT_ENTER_MS - CALLOUT_HOLD_MS) / CALLOUT_EXIT_MS);
+        } else {
+          return;
+        }
+        const visibility = erase > 0 ? 1 - erase : reveal;
+        const preferredFontSize = clamp(this.width * 0.022, 8, 14);
+        context.font = `500 ${preferredFontSize}px "Geist Sans", "Helvetica Neue", Arial, sans-serif`;
+        const measuredWidth = context.measureText(label).width;
+        const fontSize = Math.max(6, preferredFontSize * Math.min(1, (boxWidth - 16) / measuredWidth));
+        const lineHeight = Math.ceil(fontSize * 1.25);
+        const labelHeight = lineHeight + 12;
+        const anchorY = baseY + (cycleIndex % 2) * (labelHeight + 6);
+        const boxEdge = boxX < anchorX ? boxX + boxWidth : boxX;
+        const direction = boxEdge < anchorX ? -1 : 1;
+
+        context.globalAlpha = visibility;
+        context.strokeStyle = rgba(this.colors.accent, 0.54);
+        context.beginPath();
+        context.moveTo(boxEdge, anchorY + 0.5);
+        context.lineTo(anchorX + direction * squareSize / 2, anchorY + 0.5);
+        context.stroke();
+        context.fillStyle = this.colors.accent;
+        context.fillRect(anchorX - squareSize / 2, anchorY - squareSize / 2, squareSize, squareSize);
+
+        const visibleStart = side === 'left'
+          ? (erase > 0 ? erase : 0)
+          : 0;
+        const visibleEnd = side === 'left'
+          ? reveal
+          : (erase > 0 ? 1 - erase : 1);
+        const mirroredStart = side === 'right' && erase === 0 ? 1 - reveal : visibleStart;
+        const clippedWidth = Math.max(0, visibleEnd - mirroredStart) * boxWidth;
+        if (clippedWidth <= 0) return;
+
+        context.save();
+        context.globalAlpha = 1;
+        context.beginPath();
+        context.rect(boxX + mirroredStart * boxWidth, anchorY - labelHeight / 2, clippedWidth, labelHeight);
+        context.clip();
+        context.fillStyle = this.colors.accent;
+        context.fillRect(boxX, anchorY - labelHeight / 2, boxWidth, labelHeight);
+        context.font = `500 ${fontSize}px "Geist Sans", "Helvetica Neue", Arial, sans-serif`;
+        context.fillStyle = this.colors.background;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText(label, boxX + boxWidth / 2, anchorY);
+        context.restore();
+      });
+      context.restore();
+    }
+
+    samplePulsePosition(pulse, activation) {
+      const random = seededRandom(1201 + pulse.index * 4099 + activation * 7919);
+      const rings = this.paths.filter(path => path.type === 'ring' && path.fixedV === undefined);
+      const ring = rings[Math.floor(random() * rings.length)];
+      const meridian = Math.floor(random() * 17);
+      const progress = this.ringProgress(ring);
+      const v = this.ringV(ring, progress);
+      return {
+        ...this.surfacePoint((meridian / 17) * TAU, v),
+        size: [14, 16, 18][Math.floor(random() * 3)] * this.settings.fieldScale * 0.5
+      };
+    }
+
+    drawDataPulses(now) {
+      if (this.reduceMotion || this.introStart === null || now - this.introStart < DATA_PULSE_DELAY_MS) return;
+      const context = this.context;
+      context.save();
+      context.fillStyle = this.colors.accent;
+      this.dataPulses.forEach(pulse => {
+        const elapsed = this.cycleElapsed + pulse.offset;
+        const activation = Math.floor(elapsed / pulse.period);
+        if (elapsed % pulse.period >= pulse.visibleFor) return;
+        if (pulse.activation !== activation || !pulse.position) {
+          pulse.activation = activation;
+          pulse.position = this.samplePulsePosition(pulse, activation);
+        }
+        const { x, y, size } = pulse.position;
+        context.fillRect(x - size / 2, y - size / 2, size, size);
+      });
+      context.restore();
+    }
+
+    render(now = performance.now()) {
+      const context = this.context;
+      context.clearRect(0, 0, this.width, this.height);
+      context.fillStyle = this.colors.background;
+      context.fillRect(0, 0, this.width, this.height);
+      this.drawDecorativeText();
+
+      const sampledPaths = this.paths.map((path, index) => {
+        const movingRing = path.type === 'ring' && path.fixedV === undefined;
+        const progress = movingRing ? this.ringProgress(path) : 0;
+        const points = this.samplePath(path, progress);
+        const averageDepth = points.reduce((sum, point) => sum + point.z, 0) / points.length;
+        const edgeFade = Math.min(clamp(progress / 0.08), clamp((1 - progress) / 0.08));
+        const edgeOpacity = movingRing ? 0.35 + edgeFade * 0.65 : 1;
+        return { path, points, index, averageDepth, edgeOpacity, reveal: this.pathReveal(index, now) };
+      }).sort((a, b) => a.averageDepth - b.averageDepth);
+
+      sampledPaths.forEach(item => {
+        const isRing = item.path.type === 'ring';
+        const depthOpacity = isRing
+          ? clamp(0.68 + (item.averageDepth + 1) * 0.14, 0.62, 0.96)
+          : clamp(0.2 + (item.averageDepth + 1) * 0.12, 0.18, 0.46);
+        this.drawPath(item.points, item.reveal, depthOpacity * item.edgeOpacity, isRing ? 1.15 : 0.85);
+      });
+      this.drawCalloutGuides();
+      this.drawDataPulses(now);
+    }
+
+    tick = now => {
+      this.frame = 0;
+      if (!this.visible || document.hidden || this.reduceMotion) return;
+      const delta = this.lastFrameTime === null ? 0 : Math.min(now - this.lastFrameTime, 64);
+      this.lastFrameTime = now;
+      if (this.settings.autoRotate) {
+        this.autoYaw += delta * 0.00008 * this.settings.rotationSpeed;
+      }
+      this.cycleElapsed += delta * this.settings.cycleSpeed;
+      this.calloutElapsed += delta;
+      this.rotation.pitch += (this.rotation.targetPitch - this.rotation.pitch) * POINTER_EASE;
+      this.rotation.yaw += (this.rotation.targetYaw - this.rotation.yaw) * POINTER_EASE;
+      this.render(now);
+      this.frame = requestAnimationFrame(this.tick);
+    };
+
+    resize() {
+      const bounds = this.canvas.getBoundingClientRect();
+      if (bounds.width < 2 || bounds.height < 2) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      this.width = bounds.width;
+      this.height = bounds.height;
+      this.canvas.width = Math.round(this.width * dpr);
+      this.canvas.height = Math.round(this.height * dpr);
+      this.context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.dataPulses.forEach(pulse => { pulse.activation = -1; pulse.position = null; });
+      this.render();
+    }
+
+    restart() {
+      if (!this.context) return;
+      this.stop();
+      const now = performance.now();
+      this.introStart = this.visible ? now : null;
+      this.autoYaw = 0;
+      this.cycleElapsed = 0;
+      this.calloutElapsed = 0;
+      this.rotation = { pitch: 0, yaw: 0, targetPitch: 0, targetYaw: 0 };
+      this.dataPulses.forEach(pulse => { pulse.activation = -1; pulse.position = null; });
+      this.resize();
+      this.render(now);
+      this.start();
+    }
+
+    setFrontView(enabled) {
+      this.setViewRotation(enabled ? [0, 0, 0] : null);
+    }
+
+    setViewRotation(rotation) {
+      this.viewRotation = rotation ? rotation.map(Number) : null;
+      this.rotation = { pitch: 0, yaw: 0, targetPitch: 0, targetYaw: 0 };
+      this.dataPulses.forEach(pulse => { pulse.activation = -1; pulse.position = null; });
+      this.render();
+    }
+
+    setOptions(options = {}) {
+      ['accent', 'secondary', 'background'].forEach(key => {
+        if (typeof options[key] === 'string' && options[key]) this.colors[key] = options[key];
+      });
+      ['rotationSpeed', 'cycleSpeed'].forEach(key => {
+        const value = Number(options[key]);
+        if (Number.isFinite(value)) this.settings[key] = clamp(value, 0, 4);
+      });
+      ['fieldOffsetX', 'fieldOffsetY', 'textOffsetX', 'textOffsetY'].forEach(key => {
+        const value = Number(options[key]);
+        if (Number.isFinite(value)) this.settings[key] = clamp(value, -50, 50);
+      });
+      ['fieldScale', 'textScale'].forEach(key => {
+        const value = Number(options[key]);
+        if (Number.isFinite(value)) this.settings[key] = clamp(value, 0.25, 2);
+      });
+      this.render();
+    }
+
+    start() {
+      if (!this.context || !this.visible || document.hidden) return;
+      if (this.reduceMotion) {
+        this.render();
+        return;
+      }
+      if (!this.frame) this.frame = requestAnimationFrame(this.tick);
+    }
+
+    stop() {
+      cancelAnimationFrame(this.frame);
+      this.frame = 0;
+      this.lastFrameTime = null;
+    }
+
+    destroy() {
+      this.stop();
+      this.abortController.abort();
+      this.resizeObserver.disconnect();
+      this.intersectionObserver.disconnect();
+    }
+  }
+
+  function initialize() {
+    document.querySelectorAll(SELECTOR).forEach(canvas => {
+      if (!canvas.__catenoidFieldAnimation) {
+        canvas.__catenoidFieldAnimation = new CatenoidFieldAnimation(canvas);
+      }
+    });
+  }
+
+  window.__parametricWireframesAnimations = {
+    initialize,
+    destroy(canvas) {
+      canvas.__catenoidFieldAnimation?.destroy();
+      delete canvas.__catenoidFieldAnimation;
+      delete canvas.dataset.animationReady;
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize, { once: true });
+  } else {
+    initialize();
+  }
+})();

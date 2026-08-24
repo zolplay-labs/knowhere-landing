@@ -798,6 +798,46 @@ function initializeHeroCanvas(root, cleanups) {
       };
     }
 
+    function drawStreamLineFormations(layout, time, funnelOpacity) {
+      if (reducedMotion || funnelOpacity <= .001) return;
+
+      const cycleTime = (time + .5) % 8.4;
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.lineCap = 'square';
+
+      for (let stage = 0; stage < DATA.length - 1; stage += 1) {
+        const localProgress = (cycleTime - (.7 + stage * .52)) / 1.4;
+        if (localProgress <= 0 || localProgress >= 1) continue;
+
+        const formationAlpha = Math.sin(localProgress * Math.PI) ** 2;
+        const head = .1 + localProgress * .8;
+        const start = Math.max(.02, head - .19);
+        const end = Math.min(.98, head + .05);
+        const tracks = selectEvenly(stageTracks[stage + 1], Math.max(4, 10 - stage * 2));
+
+        tracks.forEach((trackId, trackIndex) => {
+          const firstPoint = pointOnSegment(layout, trackId, stage, start);
+          const reveal = entranceAt(layout, firstPoint.y, trackId + stage * 181);
+          ctx.globalAlpha = formationAlpha
+            * (.2 + hash(trackId + 1901, trackIndex + stage * 17) * .16)
+            * reveal
+            * funnelOpacity;
+          ctx.strokeStyle = LAYER_COLORS[stage];
+          ctx.beginPath();
+          for (let sample = 0; sample <= 8; sample += 1) {
+            const progress = start + (end - start) * sample / 8;
+            const point = pointOnSegment(layout, trackId, stage, progress);
+            if (sample === 0) ctx.moveTo(point.x, point.y);
+            else ctx.lineTo(point.x, point.y);
+          }
+          ctx.stroke();
+        });
+      }
+
+      ctx.restore();
+    }
+
     function drawDataStream(layout, time, funnelOpacity = 1) {
       const dataAlpha = Math.max(.32, Math.min(1, SETTINGS.ambientStrength * .76));
       const unitAlpha = Math.max(.46, Math.min(.96, 1.12 - SETTINGS.densityThreshold));
@@ -824,6 +864,8 @@ function initializeHeroCanvas(root, cleanups) {
           ctx.fillRect(railX + stageWidth + cell * 1.55, y + cell * .48, cell * .45, cell * .45);
         }
       });
+
+      drawStreamLineFormations(layout, time, funnelOpacity);
 
       stageTracks[0].forEach(trackId => {
         const lastStage = lastStageByTrack.get(trackId);

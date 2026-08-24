@@ -5510,3 +5510,36 @@
       font-size: 13px;
       line-height: 20px;
     }
+
+    /* Keep the integration Canvas at the component's authored 4:3 ratio. */
+    #integration .integration-grid {
+      grid-template-rows: auto 56px;
+    }
+
+    #integration .integration-plinth {
+      width: 544px;
+      height: auto;
+      aspect-ratio: auto;
+      align-self: center;
+      overflow: visible;
+      background: transparent;
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+      #integration .integration-plinth {
+        width: calc(100% - 40px);
+        height: auto;
+      }
+    }
+
+    @media (max-width: 767px) {
+      #integration .integration-grid {
+        grid-template-rows: auto auto auto;
+      }
+
+      #integration .integration-plinth {
+        width: 100%;
+        height: auto;
+        aspect-ratio: auto;
+      }
+    }

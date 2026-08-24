@@ -1088,27 +1088,6 @@ syncPricingCalculator();
     scheduleTitleTileRebuild();
   });
 
-  (() => {
-    const wormhole = $('.integration-wormhole');
-    if (!wormhole) return;
-
-    $$('.integration-wormhole-meridians > *', wormhole).forEach(line => {
-      line.setAttribute('pathLength', '1');
-    });
-
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) {
-      wormhole.classList.add('is-drawing');
-      return;
-    }
-
-    const observer = new IntersectionObserver(entries => {
-      if (!entries[0]?.isIntersecting) return;
-      wormhole.classList.add('is-drawing');
-      observer.disconnect();
-    }, { threshold: .32 });
-    observer.observe(wormhole);
-  })();
-
   const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
   }), { threshold: .08 });

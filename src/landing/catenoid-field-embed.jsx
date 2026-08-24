@@ -1,0 +1,367 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import animationUrl from './catenoid-field.js?url'
+import './catenoid-field-embed.css'
+
+const DEFAULT_VIEW_ROTATION = [-22, 0, 0]
+const DEFAULT_CYCLE_SPEED = 0.35
+const DEFAULT_ROTATION_SPEED = 1
+const DEFAULT_COLORS = {
+  accentColor: '#7486B9',
+  secondaryColor: '#6D80B6',
+  backgroundColor: '#FFFFFF',
+}
+const DEFAULT_FIELD_LAYOUT = { x: 0, y: 13, scale: 1.5 }
+const DEFAULT_TEXT_LAYOUT = { x: 1, y: -5, scale: 1 }
+const SETTINGS_STORAGE_KEY = 'knowhere:catenoid-field-settings'
+let animationLoad = null
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value))
+}
+
+function getAnimationApi() {
+  return window.__parametricWireframesAnimations
+}
+
+function resolveColor(color) {
+  const token = color.match(/^var\((--[^,)]+)(?:,[^)]+)?\)$/)?.[1]
+  return token ? getComputedStyle(document.documentElement).getPropertyValue(token).trim() : color
+}
+
+function resolveOptions(options) {
+  return {
+    ...options,
+    accent: resolveColor(options.accent),
+    background: resolveColor(options.background),
+    secondary: resolveColor(options.secondary),
+  }
+}
+
+function loadSavedSettings() {
+  const defaults = {
+    viewRotation: DEFAULT_VIEW_ROTATION,
+    cycleSpeed: DEFAULT_CYCLE_SPEED,
+    rotationSpeed: DEFAULT_ROTATION_SPEED,
+    colors: DEFAULT_COLORS,
+    fieldLayout: DEFAULT_FIELD_LAYOUT,
+    textLayout: DEFAULT_TEXT_LAYOUT,
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY))
+    if (!saved) return defaults
+    const viewRotation = saved.viewRotation === null
+      ? null
+      : Array.isArray(saved.viewRotation) && saved.viewRotation.length === 3 && saved.viewRotation.every(Number.isFinite)
+        ? saved.viewRotation
+        : defaults.viewRotation
+    const color = (value, fallback) => /^#[0-9a-f]{6}$/i.test(value) ? value : fallback
+    const number = (value, fallback, min, max) => Number.isFinite(value) ? clamp(value, min, max) : fallback
+    return {
+      viewRotation,
+      cycleSpeed: number(saved.cycleSpeed, defaults.cycleSpeed, 0, 2),
+      rotationSpeed: number(saved.rotationSpeed, defaults.rotationSpeed, 0, 2),
+      colors: {
+        accentColor: color(saved.colors?.accentColor, defaults.colors.accentColor),
+        secondaryColor: color(saved.colors?.secondaryColor, defaults.colors.secondaryColor),
+        backgroundColor: color(saved.colors?.backgroundColor, defaults.colors.backgroundColor),
+      },
+      fieldLayout: {
+        x: number(saved.fieldLayout?.x, defaults.fieldLayout.x, -30, 30),
+        y: number(saved.fieldLayout?.y, defaults.fieldLayout.y, -30, 30),
+        scale: number(saved.fieldLayout?.scale, defaults.fieldLayout.scale, 0.5, 2),
+      },
+      textLayout: {
+        x: number(saved.textLayout?.x, defaults.textLayout.x, -20, 20),
+        y: number(saved.textLayout?.y, defaults.textLayout.y, -20, 20),
+        scale: number(saved.textLayout?.scale, defaults.textLayout.scale, 0.5, 1.5),
+      },
+    }
+  } catch {
+    return defaults
+  }
+}
+
+function loadAnimation() {
+  if (getAnimationApi()) return Promise.resolve()
+  if (animationLoad) return animationLoad
+
+  animationLoad = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-catenoid-field-embed]')
+    const script = existing ?? document.createElement('script')
+    const onLoad = () => resolve()
+    const onError = () => {
+      animationLoad = null
+      reject(new Error('Unable to load the catenoid field animation.'))
+    }
+
+    script.addEventListener('load', onLoad, { once: true })
+    script.addEventListener('error', onError, { once: true })
+    if (!existing) {
+      script.src = animationUrl
+      script.async = true
+      script.dataset.catenoidFieldEmbed = 'true'
+      document.head.appendChild(script)
+    }
+  })
+
+  return animationLoad
+}
+
+/** Renders the standalone 01 / Catenoid Field artwork without controls. */
+export function CatenoidFieldEmbed({
+  accentColor = 'var(--main-400)',
+  backgroundColor = 'var(--main-950)',
+  className,
+  cycleSpeed = 1,
+  fieldOffsetX = 0,
+  fieldOffsetY = 0,
+  fieldScale = 1,
+  rotationSpeed = 1,
+  secondaryColor = 'var(--main-600)',
+  textOffsetX = 0,
+  textOffsetY = 0,
+  textScale = 1,
+  viewRotation = DEFAULT_VIEW_ROTATION,
+}) {
+  const canvasRef = useRef(null)
+  const rotationRadians = useMemo(
+    () => viewRotation?.map(value => value * Math.PI / 180) ?? null,
+    [viewRotation],
+  )
+  const rotationRef = useRef(rotationRadians)
+  const options = useMemo(() => ({
+    accent: accentColor,
+    background: backgroundColor,
+    cycleSpeed,
+    fieldOffsetX,
+    fieldOffsetY,
+    fieldScale,
+    rotationSpeed,
+    secondary: secondaryColor,
+    textOffsetX,
+    textOffsetY,
+    textScale,
+  }), [accentColor, backgroundColor, cycleSpeed, fieldOffsetX, fieldOffsetY, fieldScale, rotationSpeed, secondaryColor, textOffsetX, textOffsetY, textScale])
+  const optionsRef = useRef(options)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return undefined
+    let disposed = false
+
+    void loadAnimation()
+      .then(() => {
+        if (disposed) return
+        getAnimationApi()?.initialize()
+        canvas.__catenoidFieldAnimation?.restart()
+        canvas.__catenoidFieldAnimation?.setOptions(resolveOptions(optionsRef.current))
+        canvas.__catenoidFieldAnimation?.setViewRotation(rotationRef.current)
+      })
+      .catch(() => {
+        canvas.dataset.animationError = 'true'
+      })
+
+    return () => {
+      disposed = true
+      getAnimationApi()?.destroy(canvas)
+    }
+  }, [])
+
+  useEffect(() => {
+    rotationRef.current = rotationRadians
+    canvasRef.current?.__catenoidFieldAnimation?.setViewRotation(rotationRadians)
+  }, [rotationRadians])
+
+  useEffect(() => {
+    optionsRef.current = options
+    const applyOptions = () => {
+      canvasRef.current?.__catenoidFieldAnimation?.setOptions(resolveOptions(options))
+    }
+    applyOptions()
+    window.addEventListener('main-palette-change', applyOptions)
+    return () => window.removeEventListener('main-palette-change', applyOptions)
+  }, [options])
+
+  return (
+    <div className={['catenoid-field-embed', className].filter(Boolean).join(' ')}>
+      <canvas
+        ref={canvasRef}
+        className="catenoid-field-embed__canvas"
+        data-animation="catenoid-field"
+        aria-hidden="true"
+      />
+    </div>
+  )
+}
+
+function RangeControl({ disabled = false, label, max, min, onChange, step = 1, suffix = '', value }) {
+  return (
+    <label className="catenoid-field-control">
+      <span>{label}</span>
+      <output>{value}{suffix}</output>
+      <input
+        type="range"
+        aria-label={label}
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        disabled={disabled}
+        onChange={event => onChange(Number(event.target.value))}
+      />
+    </label>
+  )
+}
+
+function ColorControl({ label, onChange, value }) {
+  return (
+    <label className="catenoid-field-color-control">
+      <span>{label}</span>
+      <span className="catenoid-field-color-value"><input type="color" aria-label={`${label} color`} value={value} onChange={event => onChange(event.target.value)} /><output>{value.toUpperCase()}</output></span>
+    </label>
+  )
+}
+
+/** Adds a local, collapsible tuning surface around the standalone artwork. */
+export function CatenoidFieldTuner() {
+  const initialSettings = useMemo(loadSavedSettings, [])
+  const [viewRotation, setViewRotation] = useState(initialSettings.viewRotation)
+  const [cycleSpeed, setCycleSpeed] = useState(initialSettings.cycleSpeed)
+  const [rotationSpeed, setRotationSpeed] = useState(initialSettings.rotationSpeed)
+  const [colors, setColors] = useState(initialSettings.colors)
+  const [fieldLayout, setFieldLayout] = useState(initialSettings.fieldLayout)
+  const [textLayout, setTextLayout] = useState(initialSettings.textLayout)
+  const [settingsSaved, setSettingsSaved] = useState(false)
+  const [panelPosition, setPanelPosition] = useState(null)
+  const workbenchRef = useRef(null)
+  const controlsRef = useRef(null)
+  const dragRef = useRef(null)
+  const automaticView = viewRotation === null
+
+  const setAxis = (axis, value) => {
+    setViewRotation(rotation => rotation?.map((current, index) => index === axis ? value : current) ?? DEFAULT_VIEW_ROTATION)
+  }
+  const resetDefaults = () => {
+    setViewRotation(DEFAULT_VIEW_ROTATION)
+    setCycleSpeed(DEFAULT_CYCLE_SPEED)
+    setRotationSpeed(DEFAULT_ROTATION_SPEED)
+    setColors(DEFAULT_COLORS)
+    setFieldLayout(DEFAULT_FIELD_LAYOUT)
+    setTextLayout(DEFAULT_TEXT_LAYOUT)
+  }
+  const saveSettings = () => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
+      viewRotation,
+      cycleSpeed,
+      rotationSpeed,
+      colors,
+      fieldLayout,
+      textLayout,
+    }))
+    setSettingsSaved(true)
+  }
+  const setColor = (name, value) => setColors(current => ({ ...current, [name]: value }))
+  const setLayoutValue = (setter, name, value) => setter(current => ({ ...current, [name]: value }))
+  const startPanelDrag = event => {
+    if (event.button !== 0) return
+    const workbench = workbenchRef.current
+    const panel = controlsRef.current
+    if (!workbench || !panel) return
+    const bounds = workbench.getBoundingClientRect()
+    const panelBounds = panel.getBoundingClientRect()
+    dragRef.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      panelX: panelBounds.left - bounds.left,
+      panelY: panelBounds.top - bounds.top,
+    }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  const movePanel = event => {
+    const drag = dragRef.current
+    const workbench = workbenchRef.current
+    const panel = controlsRef.current
+    if (!drag || drag.pointerId !== event.pointerId || !workbench || !panel) return
+    const bounds = workbench.getBoundingClientRect()
+    const desiredX = drag.panelX + event.clientX - drag.startX
+    const desiredY = drag.panelY + event.clientY - drag.startY
+    setPanelPosition({
+      x: clamp(bounds.left + desiredX, 8, Math.max(8, innerWidth - panel.offsetWidth - 8)) - bounds.left,
+      y: clamp(bounds.top + desiredY, 8, Math.max(8, innerHeight - panel.offsetHeight - 8)) - bounds.top,
+    })
+  }
+  const stopPanelDrag = event => {
+    if (dragRef.current?.pointerId !== event.pointerId) return
+    dragRef.current = null
+    event.currentTarget.releasePointerCapture(event.pointerId)
+    event.preventDefault()
+    event.stopPropagation()
+  }
+
+  useEffect(() => {
+    setSettingsSaved(false)
+  }, [viewRotation, cycleSpeed, rotationSpeed, colors, fieldLayout, textLayout])
+
+  return (
+    <div className="catenoid-field-workbench" ref={workbenchRef}>
+      <CatenoidFieldEmbed
+        viewRotation={viewRotation}
+        accentColor={colors.accentColor}
+        secondaryColor={colors.secondaryColor}
+        backgroundColor={colors.backgroundColor}
+        cycleSpeed={cycleSpeed}
+        fieldOffsetX={fieldLayout.x}
+        fieldOffsetY={fieldLayout.y}
+        fieldScale={fieldLayout.scale}
+        rotationSpeed={rotationSpeed}
+        textOffsetX={textLayout.x}
+        textOffsetY={textLayout.y}
+        textScale={textLayout.scale}
+      />
+      <details
+        ref={controlsRef}
+        className="catenoid-field-controls"
+        style={panelPosition ? { left: panelPosition.x, top: panelPosition.y, right: 'auto' } : undefined}
+      >
+        <summary><button className="catenoid-field-drag-handle" type="button" aria-label="Drag controls" title="Drag controls · double-click to reset position" onPointerDown={startPanelDrag} onPointerMove={movePanel} onPointerUp={stopPanelDrag} onPointerCancel={stopPanelDrag} onDoubleClick={event => { event.preventDefault(); event.stopPropagation(); setPanelPosition(null) }} onClick={event => { event.preventDefault(); event.stopPropagation() }}>⠿</button><span>Adjust Catenoid Field</span><small>{automaticView ? 'Auto view' : `${viewRotation.join('° / ')}°`}</small></summary>
+        <div className="catenoid-field-controls__body">
+          <p className="catenoid-field-mode" role="status">{automaticView ? 'Auto view · axis controls disabled' : 'Fixed view · cycle animation remains active'}</p>
+          <div className="catenoid-field-control-grid">
+            <RangeControl disabled={automaticView} label="X / Pitch" min={-90} max={90} value={viewRotation?.[0] ?? DEFAULT_VIEW_ROTATION[0]} suffix="°" onChange={value => setAxis(0, value)} />
+            <RangeControl disabled={automaticView} label="Y / Yaw" min={-180} max={180} value={viewRotation?.[1] ?? DEFAULT_VIEW_ROTATION[1]} suffix="°" onChange={value => setAxis(1, value)} />
+            <RangeControl disabled={automaticView} label="Z / Roll" min={-180} max={180} value={viewRotation?.[2] ?? DEFAULT_VIEW_ROTATION[2]} suffix="°" onChange={value => setAxis(2, value)} />
+            <RangeControl label="Cycle speed" min={0} max={2} step={0.05} value={cycleSpeed} suffix="×" onChange={setCycleSpeed} />
+            <RangeControl label="Rotation speed" min={0} max={2} step={0.05} value={rotationSpeed} suffix="×" onChange={setRotationSpeed} />
+          </div>
+          <h3 className="catenoid-field-control-heading">Field layout</h3>
+          <div className="catenoid-field-control-grid">
+            <RangeControl label="Field X" min={-30} max={30} value={fieldLayout.x} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'x', value)} />
+            <RangeControl label="Field Y" min={-30} max={30} value={fieldLayout.y} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'y', value)} />
+            <RangeControl label="Field scale" min={0.5} max={2} step={0.05} value={fieldLayout.scale} suffix="×" onChange={value => setLayoutValue(setFieldLayout, 'scale', value)} />
+          </div>
+          <h3 className="catenoid-field-control-heading">Text layout</h3>
+          <div className="catenoid-field-control-grid">
+            <RangeControl label="Text X" min={-20} max={20} value={textLayout.x} suffix="%" onChange={value => setLayoutValue(setTextLayout, 'x', value)} />
+            <RangeControl label="Text Y" min={-20} max={20} value={textLayout.y} suffix="%" onChange={value => setLayoutValue(setTextLayout, 'y', value)} />
+            <RangeControl label="Text scale" min={0.5} max={1.5} step={0.05} value={textLayout.scale} suffix="×" onChange={value => setLayoutValue(setTextLayout, 'scale', value)} />
+          </div>
+          <div className="catenoid-field-color-grid">
+            <ColorControl label="Accent" value={colors.accentColor} onChange={value => setColor('accentColor', value)} />
+            <ColorControl label="Secondary" value={colors.secondaryColor} onChange={value => setColor('secondaryColor', value)} />
+            <ColorControl label="Background" value={colors.backgroundColor} onChange={value => setColor('backgroundColor', value)} />
+          </div>
+          <div className="catenoid-field-actions">
+            <button type="button" onClick={saveSettings}>{settingsSaved ? 'Saved' : 'Save settings'}</button>
+            <button type="button" onClick={() => setViewRotation([0, 0, 0])}>Front view</button>
+            <button type="button" aria-pressed={automaticView} onClick={() => setViewRotation(null)}>Auto view</button>
+            <button type="button" onClick={resetDefaults}>Reset defaults</button>
+          </div>
+        </div>
+      </details>
+    </div>
+  )
+}

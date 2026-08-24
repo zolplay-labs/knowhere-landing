@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { CatenoidFieldTuner } from './catenoid-field-embed'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 
@@ -255,40 +256,8 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
       <div className="section-heading"><p className="section-no">&gt;_INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
       <div className="integration-grid">
         <ol className="steps"><li><span>01</span><div><h3>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><span>02</span><div><h3>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><span>03</span><div><h3>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
-        <div className="integration-plinth" aria-hidden="true">
-          <svg className="integration-wormhole" viewBox="0 0 612 408" fill="none" preserveAspectRatio="none">
-            <g className="integration-wormhole-base">
-              <g className="integration-wormhole-rings integration-wormhole-drawing">
-                <ellipse cx="306" cy="74" rx="245" ry="58" />
-                <ellipse cx="306" cy="101" rx="193" ry="48" />
-                <ellipse cx="306" cy="127" rx="137" ry="36" />
-                <ellipse cx="306" cy="151" rx="79" ry="23" />
-                <ellipse cx="306" cy="171" rx="42" ry="12" />
-                <ellipse cx="306" cy="237" rx="42" ry="12" />
-                <ellipse cx="306" cy="257" rx="79" ry="23" />
-                <ellipse cx="306" cy="281" rx="137" ry="36" />
-                <ellipse cx="306" cy="307" rx="193" ry="48" />
-                <ellipse cx="306" cy="334" rx="245" ry="58" />
-              </g>
-              <g className="integration-wormhole-meridians integration-wormhole-drawing" id="integration-wormhole-meridian-paths">
-                <path d="M61 74C93 109 216 126 281 177C298 190 302 199 306 204C302 209 298 218 281 231C216 282 93 299 61 334" />
-                <path d="M82 49C130 89 230 118 287 176C299 188 303 198 306 204C303 210 299 220 287 232C230 290 130 319 82 359" />
-                <path d="M123 32C162 79 242 117 292 176C301 188 304 198 306 204C304 210 301 220 292 232C242 291 162 329 123 376" />
-                <path d="M180 21C208 74 255 116 297 176C303 187 305 198 306 204C305 210 303 221 297 232C255 292 208 334 180 387" />
-                <path d="M243 17C255 72 274 116 301 177C305 188 306 198 306 204C306 210 305 220 301 231C274 292 255 336 243 391" />
-                <path d="M280 16C285 72 291 119 304 178C306 189 306 199 306 204C306 209 306 219 304 230C291 289 285 336 280 392" />
-                <path d="M306 16V392" />
-                <path d="M332 16C327 72 321 119 308 178C306 189 306 199 306 204C306 209 306 219 308 230C321 289 327 336 332 392" />
-                <path d="M369 17C357 72 338 116 311 177C307 188 306 198 306 204C306 210 307 220 311 231C338 292 357 336 369 391" />
-                <path d="M432 21C404 74 357 116 315 176C309 187 307 198 306 204C307 210 309 221 315 232C357 292 404 334 432 387" />
-                <path d="M489 32C450 79 370 117 320 176C311 188 308 198 306 204C308 210 311 220 320 232C370 291 450 329 489 376" />
-                <path d="M530 49C482 89 382 118 325 176C313 188 309 198 306 204C309 210 313 220 325 232C382 290 482 319 530 359" />
-                <path d="M551 74C519 109 396 126 331 177C314 190 310 199 306 204C310 209 314 218 331 231C396 282 519 299 551 334" />
-              </g>
-            </g>
-            <g className="integration-wormhole-flow-layer"><use href="#integration-wormhole-meridian-paths" /></g>
-          </svg>
-          <span className="integration-placeholder">Placeholder</span>
+        <div className="integration-plinth">
+          <CatenoidFieldTuner />
         </div>
         <div className="code-card"><div className="code-head"><span>Illustrative flow · interface details unconfirmed</span><button type="button" className="copy-code">Copy</button></div><div className="tabs compact" role="tablist" aria-label="Code examples"><button role="tab" id="code-python" aria-selected="true" aria-controls="code-panel-python">Python</button><button role="tab" id="code-node" aria-selected="false" aria-controls="code-panel-node" tabIndex={-1}>Node.js</button><button role="tab" id="code-curl" aria-selected="false" aria-controls="code-panel-curl" tabIndex={-1}>cURL</button></div><div className="code-panels"><pre role="tabpanel" tabIndex={0} id="code-panel-python" aria-labelledby="code-python"><code># Illustrative only — no real endpoint{"\n"}result = knowhere.process("sample.pdf"){"\n"}print(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-node" aria-labelledby="code-node"><code>// Illustrative only — no real endpoint{"\n"}const result = await knowhere.process("sample.pdf"){"\n"}console.log(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-curl" aria-labelledby="code-curl"><code># Illustrative only — no real endpoint{"\n"}curl -X POST "[endpoint-to-be-confirmed]" \{"\n"}{"  "}-F "file=@sample.pdf"</code></pre></div><p className="sr-only" aria-live="polite" data-copy-live /></div>
         <div className="mcp"><h3>[ MCP ]</h3><p>Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
