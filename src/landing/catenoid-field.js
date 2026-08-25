@@ -266,7 +266,7 @@
       context.save();
       context.translate(
         this.width * this.settings.textOffsetX / 100,
-        this.height * this.settings.textOffsetY / 100
+        this.height * this.settings.textOffsetY / 100 + 20
       );
       context.font = `600 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
       context.fillStyle = rgba(this.colors.accent, 0.4);
@@ -310,6 +310,7 @@
       ];
 
       context.save();
+      context.translate(0, 20);
       context.lineWidth = 1;
       guides.forEach(({ side, anchorX, baseY, boxX, boxWidth, labels, phaseOffset }) => {
         const elapsed = this.reduceMotion ? CALLOUT_ENTER_MS : this.calloutElapsed - phaseOffset;

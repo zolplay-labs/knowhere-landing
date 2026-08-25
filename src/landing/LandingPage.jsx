@@ -1,33 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
+import { ConvergingHelixTuner } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 
-function FinalCtaPathFan({ convergenceX }) {
-  const paths = [
-    `M-28 20C42 22 84 62 126 132S210 300 ${convergenceX} 205`,
-    `M-28 66C48 70 94 154 138 236S220 118 ${convergenceX} 205`,
-    `M-28 112C52 116 98 258 146 292S228 148 ${convergenceX} 205`,
-    `M-28 158C60 160 106 224 152 252S236 172 ${convergenceX} 205`,
-    `M-28 205H${convergenceX}`,
-    `M-28 252C60 250 106 186 152 158S236 238 ${convergenceX} 205`,
-    `M-28 298C52 294 98 152 146 118S228 262 ${convergenceX} 205`,
-    `M-28 344C48 340 94 256 138 174S220 292 ${convergenceX} 205`,
-    `M-28 390C42 388 84 348 126 278S210 110 ${convergenceX} 205`,
-  ]
-  const animatedPaths = [...paths, paths[0], paths[paths.length - 1]]
-
-  return (
-    <g className="final-cta-path-fan">
-      {animatedPaths.map((path, index) => (
-        <path key={index} d={path} style={{'--final-cta-helix-phase': `${(-8 * index / animatedPaths.length).toFixed(3)}s`, transformOrigin: `${convergenceX}px 205px`}} />
-      ))}
-    </g>
-  )
-}
-
-export function LandingPage({ finalCtaConvergence = 357 }) {
+export function LandingPage() {
   const rootRef = useRef(null)
 
   useEffect(() => {
@@ -305,23 +283,10 @@ export function LandingPage({ finalCtaConvergence = 357 }) {
         {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <div className="final-cta-art" aria-hidden="true">
-        <svg className="final-cta-vector" viewBox="0 0 1280 410" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="final-cta-line-gradient" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stopColor="var(--main-600)" stopOpacity="0.32" />
-              <stop offset="0.62" stopColor="var(--main-400)" stopOpacity="0.72" />
-              <stop offset="1" stopColor="var(--main-300)" />
-            </linearGradient>
-          </defs>
-          <FinalCtaPathFan convergenceX={finalCtaConvergence} />
-          <g transform="translate(1280 0) scale(-1 1)"><FinalCtaPathFan convergenceX={finalCtaConvergence} /></g>
-        </svg>
-        <span className="final-cta-placeholder final-cta-placeholder--left">Placeholder image</span>
-        <span className="final-cta-placeholder final-cta-placeholder--right">Placeholder image</span>
-      </div>
-      <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
-      <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
+      <ConvergingHelixTuner>
+        <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
+        <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
+      </ConvergingHelixTuner>
     </section>
   </main>
   <footer className="footer">

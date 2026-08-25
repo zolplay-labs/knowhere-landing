@@ -841,6 +841,7 @@ if (!(root instanceof Element)) return () => {};
     '#main summary'
   ].join(',')).filter(element => (
     !element.closest('[hidden], #top, #playground')
+    && !element.closest('.converging-helix-controls')
     && !element.matches('#enterprise .enterprise-metric')
   ));
   const reducedTextMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1095,14 +1096,6 @@ syncPricingCalculator();
     if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
   }), { threshold: .08 });
   $$('.reveal').forEach(section => revealObserver.observe(section));
-
-  const finalCta = $('#final-cta');
-  if (finalCta) {
-    const finalCtaArtObserver = new IntersectionObserver(entries => {
-      finalCta.classList.toggle('is-cta-art-active', entries[0]?.isIntersecting ?? false);
-    }, { threshold: 0 });
-    finalCtaArtObserver.observe(finalCta);
-  }
 })();
 
   return () => {};

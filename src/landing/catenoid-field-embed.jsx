@@ -195,7 +195,7 @@ export function CatenoidFieldEmbed({
   )
 }
 
-function RangeControl({ disabled = false, label, max, min, onChange, step = 1, suffix = '', value }) {
+export function RangeControl({ disabled = false, label, max, min, onChange, step = 1, suffix = '', value }) {
   return (
     <label className="catenoid-field-control">
       <span>{label}</span>
@@ -214,7 +214,7 @@ function RangeControl({ disabled = false, label, max, min, onChange, step = 1, s
   )
 }
 
-function ColorControl({ label, onChange, value }) {
+export function ColorControl({ label, onChange, value }) {
   return (
     <label className="catenoid-field-color-control">
       <span>{label}</span>
