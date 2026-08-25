@@ -1,10 +1,13 @@
 import React, { useEffect } from 'react'
 import { DialRoot, useDialKit } from 'dialkit'
+import '@fontsource/poppins/400.css'
+import '@fontsource/poppins/500.css'
+import '@fontsource/poppins/600.css'
 import 'dialkit/styles.css'
 
 const STORAGE_KEY = 'knowhere-page-style'
 const PALETTE_VERSION = 3
-const FONT_VERSION = 2
+const FONT_VERSION = 3
 const MAIN_PALETTES = {
   'main-1': { 50: '#F5F6FA', 100: '#E9EBF3', 200: '#D5D9EA', 300: '#BFC6DF', 400: '#ACB5D6', 500: '#96A2CB', 600: '#6D80B6', 700: '#4E5D88', 800: '#343F5E', 900: '#1B2134', 950: '#101523' },
   'main-2': { 50: '#F8F4E0', 100: '#F2E9B9', 200: '#DFD5A4', 300: '#C8BF92', 400: '#B4AC83', 500: '#9E9773', 600: '#7D775A', 700: '#5C5741', 800: '#3F3C2C', 900: '#222016', 950: '#15130C' },
@@ -32,8 +35,9 @@ const MAIN_PALETTE_OPTIONS = [
   { value: 'main-6', label: 'Teal' },
   { value: 'main-7', label: 'Slate Blue' },
 ]
-const DEFAULTS = { font: 'fellix', chineseFont: 'frex-sans-gb', palette: 'main-1' }
+const DEFAULTS = { font: 'poppins', chineseFont: 'frex-sans-gb', palette: 'main-1' }
 const FONT_STACKS = {
+  poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif',
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
   fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial, sans-serif',
   geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
@@ -41,6 +45,7 @@ const FONT_STACKS = {
   serif: 'Georgia, "Times New Roman", "Songti SC", serif',
 }
 const ENGLISH_FONT_FACES = {
+  poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial',
   schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk"',
   fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial',
   geist: '"Geist Sans", "Helvetica Neue", Arial',
@@ -182,8 +187,9 @@ export function PageStyleControls() {
       fontFamily: {
         type: 'select',
         options: [
+          { value: 'poppins', label: 'Poppins · Default' },
           { value: 'schengen', label: 'Schengen' },
-          { value: 'fellix', label: 'Fellix · Default' },
+          { value: 'fellix', label: 'Fellix' },
           { value: 'geist', label: 'Geist Sans' },
           { value: 'helvetica', label: 'Helvetica Neue' },
           { value: 'serif', label: 'Georgia Serif' },

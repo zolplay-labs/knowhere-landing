@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Knowhere turns complex documents into structured, navigable, and source-linked context for agents.">
   <title>KNOWHERE — Document context for agents</title>
+  <script type="module">
+    import '@fontsource/poppins/400.css';
+    import '@fontsource/poppins/500.css';
+    import '@fontsource/poppins/600.css';
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -45,14 +50,35 @@
 
   </style>
   <style>
+    @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-Regular.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 400;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-Medium.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 500;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: "Frex Sans GB";
+      src: url("/fonts/FrexSansGB-SemiBold.woff2") format("woff2");
+      font-style: normal;
+      font-weight: 600;
+      font-display: swap;
+    }
     :root {
       --accent: var(--ink);
       --trace-accent: var(--main-600, #2858a5);
       --trace-accent-light: var(--main-400, #6d80b6);
       --trace-accent-soft: var(--main-100, #e9ecee);
       --trace-accent-dark: var(--main-800, #24272b);
-      --sans: "KMR Melange Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
-      --serif: "KMR Melange Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
+      --sans: "Poppins", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
+      --serif: "Poppins", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
       --mono: "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
       --gutter: clamp(20px, 3vw, 32px);
       --content-max: 1280px;
@@ -123,9 +149,9 @@
     .hero-visual::before { display: none; content: ""; }
     .hero-visual .document-stage { width: 100%; height: var(--trace-stage-height); min-height: 0; max-height: none; aspect-ratio: auto; padding: 0; display: block; border: 0; border-radius: 0; background: transparent; box-shadow: none; isolation: isolate; }
     .hero-visual .document-stage:after { display: none; }
-    .trace-demo { --trace-mono: var(--sans); --trace-card-radius: 0px; position: relative; overflow: hidden; background: transparent !important; color: #151719; isolation: isolate; }
+    .trace-demo { --trace-mono: var(--sans); --trace-card-radius: 0px; position: relative; overflow: hidden; background-color: #fff !important; background-image: url("assets/section-one-grid.svg") !important; background-position: 0 0 !important; background-repeat: repeat !important; background-size: 39.36px 39.36px !important; color: #151719; isolation: isolate; }
     .trace-demo::before { display: none; content: ""; }
-    .trace-dither-field { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; opacity: 1; pointer-events: none; }
+    .trace-dither-field { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; opacity: .18; pointer-events: none; }
     .trace-stage-reveal { position: absolute; z-index: 12; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .js .trace-demo:not(.is-stage-entered) .trace-content-box,
     .js .trace-demo:not(.is-stage-entered) .trace-dither-field { -webkit-mask-image: linear-gradient(transparent,transparent); mask-image: linear-gradient(transparent,transparent); }
@@ -146,38 +172,39 @@
     .trace-debug-reset:hover { border-color: color-mix(in srgb, var(--trace-accent) 34%, transparent); color: #181818; }
     .trace-debug-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
     .trace-content-box { position: absolute; z-index: 1; top: 0; bottom: 0; left: 50%; width: min(var(--trace-layout-width), 100%); transform: translateX(-50%); }
-    .trace-document-page { position: absolute; top: 5.5%; width: 42.4%; height: 89%; padding: 0; overflow: hidden; border: 0; border-radius: var(--trace-card-radius); background: #fdfcfc; color: #17191b; font-family: var(--trace-mono); box-shadow: 0 10px 28px rgba(20,22,24,.035); cursor: pointer; transform-origin: left top; transition: top .48s cubic-bezier(.22,1,.36,1), left .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, opacity .25s ease; }
+    .trace-content-box::before { position: absolute; z-index: 8; top: 7.78%; left: .47%; min-height: 24px; padding: 4px 0 4px 17px; display: flex; align-items: center; background: linear-gradient(#7281b3,#7281b3) left center / 7px 7px no-repeat; color: #181818; content: "AI Output"; font: 500 15px/24px var(--trace-mono); pointer-events: none; }
+    .trace-document-page { position: absolute; top: 5.5%; width: 42.4%; height: 89%; padding: 0; overflow: hidden; border: 1px solid #cecde0; border-radius: 0; background: #fff; color: #17191b; font-family: var(--trace-mono); box-shadow: none; cursor: pointer; transform-origin: left top; transition: top .48s cubic-bezier(.22,1,.36,1), left .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, opacity .25s ease; }
     .trace-content-box .trace-document-page { width: 51.456%; }
-    .trace-document-page[data-slot="primary"] { z-index: 5; top: 5.5%; left: 37.379%; cursor: default; box-shadow: 0 16px 34px rgba(20,22,24,.055); }
-    .trace-document-page[data-slot="secondary-one"] { z-index: 4; top: 7.4%; left: 42.961%; box-shadow: 0 14px 30px rgba(20,22,24,.045); }
-    .trace-document-page[data-slot="secondary-two"] { z-index: 3; top: 9.3%; left: 48.544%; box-shadow: 0 12px 26px rgba(20,22,24,.035); }
+    .trace-document-page[data-slot="primary"] { z-index: 5; top: 5.5%; left: 37.379%; cursor: default; }
+    .trace-document-page[data-slot="secondary-one"] { z-index: 4; top: 7.4%; left: 42.961%; }
+    .trace-document-page[data-slot="secondary-two"] { z-index: 3; top: 9.3%; left: 48.544%; }
     @media (min-width: 1024px) {
-      .trace-document-page { transform: scale(.9); }
-      .trace-document-page[data-slot="primary"] { top: 9.95%; left: 39.95%; }
-      .trace-document-page[data-slot="secondary-one"] { top: 11.85%; left: 45.53%; }
-      .trace-document-page[data-slot="secondary-two"] { top: 13.75%; left: 51.12%; }
+      .trace-content-box .trace-document-page { width: 41.796875%; height: 88.6%; transform: none; }
+      .trace-document-page[data-slot="primary"] { top: 13.39%; left: .47%; }
+      .trace-document-page[data-slot="secondary-one"] { top: 15.82%; left: 1.8%; }
+      .trace-document-page[data-slot="secondary-two"] { top: 18.25%; left: 3.13%; }
     }
     .trace-document-page:not([data-slot="primary"]).is-page-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
-    .trace-page-inner { position: relative; width: 100%; height: 100%; padding: 5.5% 6% 5.2%; display: flex; flex-direction: column; transform-origin: left top; transition: width .48s cubic-bezier(.22,1,.36,1), height .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1); }
+    .trace-page-inner { position: relative; width: 100%; height: 100%; padding: 40px; display: flex; flex-direction: column; transform-origin: left top; transition: width .48s cubic-bezier(.22,1,.36,1), height .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1); }
     .trace-document-page:not([data-slot="primary"]) .trace-page-inner { pointer-events: none; }
     .trace-document-page:not([data-slot="primary"]) .trace-source-mark { pointer-events: none; }
     .trace-document-page::after { display: none; content: none; }
     .trace-document-page:focus-visible { outline: 2px solid var(--trace-accent); outline-offset: -2px; }
-    .trace-doc-kicker { margin: 0 0 8px; color: color-mix(in srgb, var(--trace-accent) 76%, transparent); font: 700 8.5px/1.2 var(--trace-mono); letter-spacing: .09em; text-transform: uppercase; }
-    .trace-document-page h3 { max-width: 520px; margin: 0 0 2.2%; color: #111315; font-family: var(--trace-mono); font-size: clamp(22px,1.8vw,29px); font-weight: 500; line-height: 1.03; letter-spacing: -.05em; text-transform: none; }
-    .trace-document-page h3 span { color: var(--trace-accent); }
-    .trace-doc-rule { height: 0; margin: 0 -7% 2%; border-top: 1px solid color-mix(in srgb, var(--trace-accent) 20%, transparent); }
-    .trace-doc-meta { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 1.2%; padding-bottom: 2.2%; border-bottom: 0; font: 700 9px/1.3 var(--trace-mono); letter-spacing: .035em; text-transform: uppercase; }
-    .trace-doc-meta span { color: rgba(20,22,24,.5); white-space: nowrap; }
-    .trace-doc-meta strong { overflow: hidden; color: #17191b; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
-    .trace-doc-records { min-height: 0; flex: 1; display: grid; margin-bottom: 5.5%; grid-template-rows: repeat(4,minmax(0,1fr)); }
-    .trace-doc-record { min-height: 0; display: flex; padding: 2.2% 0; align-items: center; border-bottom: 0; }
-    .trace-doc-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 2.2%; border-top: 1px solid color-mix(in srgb, var(--trace-accent) 12%, transparent); color: rgba(20,22,24,.46); font: 700 8px/1.3 var(--trace-mono); letter-spacing: .06em; text-transform: uppercase; }
-    .trace-doc-footer span:last-child { color: color-mix(in srgb, var(--trace-accent) 72%, transparent); text-align: right; }
+    .trace-doc-brand { display: flex; min-height: 41px; padding: 8px 0; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,.1); color: rgba(0,0,0,.9); font: 400 15px/24px var(--trace-mono); }
+    .trace-doc-brand-name { display: inline-flex; align-items: center; }
+    .trace-doc-brand-logo { display: block; width: 93px; height: 14px; opacity: 1; }
+    .trace-doc-brand time { color: rgba(0,0,0,.9); font: inherit; }
+    .trace-doc-eyebrow { margin: 0 0 -4px; color: rgba(0,0,0,.9); font: 400 15px/24px var(--trace-mono); }
+    .trace-document-page h3 { max-width: 520px; margin: 0 0 12px; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 32px; font-weight: 500; line-height: 40px; letter-spacing: -.0063em; text-transform: none; }
+    .trace-document-page h3 span { color: inherit; }
+    .trace-doc-rule { height: 24px; flex: none; margin: 0; border: 0; }
+    .trace-doc-records { min-height: 0; display: block; margin: 0; }
+    .trace-doc-record { min-height: 0; display: block; padding: 0; border: 0; }
+    .trace-doc-footer { display: none; }
     .trace-record-index { display: none; }
-    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; font-family: var(--trace-mono); font-size: clamp(11.5px,.96vw,14px); font-weight: 500; line-height: 1.5; letter-spacing: -.018em; }
-    .trace-record-label { display: block; margin-bottom: 3px; color: #111315; font-size: 9px; font-weight: 800; line-height: 1.2; letter-spacing: .03em; text-transform: none; }
-    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; font: inherit; font-weight: 700; text-align: inherit; box-shadow: none; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 24px; letter-spacing: 0; }
+    .trace-record-label { display: none; }
+    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
     .trace-source-mark.is-preview { background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; box-shadow: none; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); outline: 0; }
     .trace-target-cursor { --trace-dot-x: 50%; --trace-dot-y: 50%; --trace-parallax-x: 0px; --trace-parallax-y: 0px; position: fixed; z-index: 120; top: 0; left: 0; width: 0; height: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .1s ease, visibility 0s .1s; }
@@ -193,36 +220,41 @@
     @keyframes trace-target-lock { 0% { opacity: .25; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(.42) rotate(28deg); } 62% { opacity: 1; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(1.035) rotate(-2deg); } 100% { opacity: 1; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0) scale(1) rotate(0); } }
     @media (hover: hover) and (pointer: fine) { .trace-source-mark { cursor: none; } }
     .trace-page-index { position: absolute; z-index: 4; top: 2.8%; right: 3.5%; color: var(--trace-accent); font: 800 11px/1 var(--trace-mono); letter-spacing: .08em; }
-    .trace-page-texture { position: absolute; z-index: 2; inset: 0; overflow: hidden; border-radius: inherit; opacity: 1; visibility: visible; background: #fdfcfc; transition: opacity .22s ease, visibility 0s; }
+    .trace-page-texture { position: absolute; z-index: 2; inset: 0; overflow: hidden; border-radius: inherit; opacity: 1; visibility: visible; background: #fff; transition: opacity .22s ease, visibility 0s; }
     .trace-page-texture img { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
     .trace-page-texture .trace-decrypt-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
     .trace-document-page[data-slot="primary"] .trace-page-texture { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s ease, visibility 0s .2s; }
     .trace-branches { position: absolute; z-index: 7; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .14s ease, visibility 0s .14s; }
     .trace-demo.is-trace-visible .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
-    .trace-card-stack { position: absolute; z-index: 3; top: 21%; left: 0; width: 34.951%; display: grid; gap: 32px; }
-    .trace-source-card { --region-x: 3%; --region-y: 22%; --region-w: 62%; --region-h: 32%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 12px; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1); }
+    .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 49px; }
+    .trace-source-card { --region-x: 3%; --region-y: 22%; --region-w: 62%; --region-h: 32%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1); }
     .trace-demo.is-trace-visible .trace-source-card { transform: none; }
-    .trace-folder-tab { color: #fff; font: 800 9px/1 var(--trace-mono); letter-spacing: .04em; text-transform: none; }
-    .trace-source-card figcaption { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 14px; padding: 0 2px 10px; color: rgba(255,255,255,.72); font: 700 8px/1 var(--trace-mono); letter-spacing: .05em; text-transform: uppercase; }
-    .trace-source-thumb { position: relative; aspect-ratio: 900 / 410; overflow: hidden; border-radius: var(--trace-card-radius); background: #f8f7f5; box-shadow: 0 0 0 1px rgba(20,22,24,.14); }
-    .trace-source-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top; filter: grayscale(1) contrast(1.06) brightness(1.025); }
+    .trace-folder-tab { padding-left: 17px; background: linear-gradient(#7281b3,#7281b3) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; }
+    .trace-source-card figcaption { display: flex; width: 92.93%; height: 24px; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; padding: 4px 0; color: rgba(0,0,0,.6); font: 400 13px/20px var(--trace-mono); letter-spacing: 0; text-transform: none; }
+    .trace-source-thumb { position: relative; width: 100%; height: 227px; overflow: visible; border-radius: 0; background: transparent; isolation: isolate; }
+    .trace-source-thumb::before, .trace-source-thumb::after { position: absolute; width: 92.93%; height: 197px; border: 1px solid #cecde0; background: #fff; content: ""; }
+    .trace-source-thumb::before { z-index: 0; top: 29px; left: 7.07%; }
+    .trace-source-thumb::after { z-index: 1; top: 15px; left: 3.535%; }
+    .trace-source-frame { position: absolute; z-index: 2; top: 0; left: 0; width: 92.93%; height: 195px; padding: 12px; border: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
+    .trace-source-media { position: relative; width: 100%; height: 100%; overflow: hidden; background: #f5f6fa; }
+    .trace-source-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: none; opacity: .18; }
     .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: 0 0 0 999px rgba(17,19,21,.045); transition: inset .2s ease, width .2s ease, height .2s ease; }
     .trace-document-scanner { position: absolute; z-index: 3; top: 0; right: 0; left: 0; height: 20%; overflow: visible; opacity: 0; pointer-events: none; transform: translate3d(0,-120%,0); animation: trace-document-scan 4.2s linear infinite; will-change: transform, opacity; }
     .trace-document-scanner::before { position: absolute; inset: 0; content: ""; background: linear-gradient(180deg,transparent,color-mix(in srgb, var(--trace-accent-soft) 8%, transparent) 38%,color-mix(in srgb, var(--trace-accent-light) 22%, transparent) 78%,color-mix(in srgb, var(--trace-accent) 12%, transparent) 94%,transparent); }
     .trace-document-scanner::after { position: absolute; right: 0; bottom: 5%; left: 0; height: 1px; content: ""; background: linear-gradient(90deg,transparent,color-mix(in srgb, var(--trace-accent) 28%, transparent) 10%,color-mix(in srgb, var(--trace-accent-soft) 96%, white) 48%,color-mix(in srgb, var(--trace-accent) 48%, transparent) 78%,transparent); box-shadow: 0 -4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent),0 2px 8px rgba(255,255,255,.5); }
     @keyframes trace-document-scan { 0% { opacity: 0; transform: translate3d(0,-120%,0); } 7% { opacity: .76; } 88% { opacity: .76; } 100% { opacity: 0; transform: translate3d(0,500%,0); } }
-    .trace-summary-card { position: relative; z-index: 3; width: 100%; min-height: 112px; padding: 17px 18px; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
+    .trace-summary-card { position: relative; z-index: 3; width: 92.93%; min-height: 104px; padding: 0; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
     .trace-demo.is-trace-visible .trace-summary-card { transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-source-card { opacity: 1; clip-path: none; transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-summary-card { opacity: 1; visibility: visible; transform: none; }
-    .trace-summary-label { display: flex; align-items: center; margin-bottom: 10px; color: var(--trace-accent); font: 800 9px/1 var(--trace-mono); letter-spacing: .04em; text-transform: none; }
-    .trace-summary { margin: 0; font-family: var(--trace-mono); font-size: clamp(12px,1.02vw,14px); font-weight: 600; line-height: 1.5; letter-spacing: -.02em; }
+    .trace-summary-label { display: flex; height: 24px; margin: 0; padding: 4px 0 4px 17px; align-items: center; background: linear-gradient(#7281b3,#7281b3) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; }
+    .trace-summary { min-height: 80px; margin: 0; padding: 16px; color: rgba(0,0,0,.6); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 24px; letter-spacing: 0; }
     .trace-source-card, .trace-summary-card { overflow: visible; isolation: isolate; border: 0; border-radius: var(--trace-card-radius); background: transparent; box-shadow: none; }
     .trace-source-card::before, .trace-summary-card::before { position: absolute; z-index: 0; border: 0; content: ""; }
-    .trace-source-card::before { inset: 0; border-radius: inherit; background: var(--trace-accent); box-shadow: 0 18px 42px rgba(20,22,24,.18), 0 4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent); }
+    .trace-source-card::before { display: none; }
     .trace-source-card::after { display: none; content: none; }
-    .trace-summary-card::before { inset: 0; border-radius: inherit; background: #fbfcfd; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--trace-accent) 12%, transparent), 0 8px 20px rgba(20,22,24,.05); }
+    .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .trace-source-card .trace-pixel-reveal, .trace-summary-card .trace-pixel-reveal { border-radius: var(--trace-card-radius); clip-path: inset(0 round var(--trace-card-radius)); }
@@ -234,21 +266,29 @@
     .trace-demo[data-region="margin"] .trace-source-card { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
     .trace-demo[data-region="chart"] .trace-source-card { --region-x: 1.5%; --region-y: 18%; --region-w: 47.5%; --region-h: 72%; }
     @media (max-width: 1023px) {
-      .hero-visual .trace-demo { aspect-ratio: 3 / 4; }
+      .hero-visual .trace-demo { aspect-ratio: auto; }
       .trace-content-box { inset: 0; width: auto; transform: none; }
-      .trace-content-box .trace-document-page { width: 42.4%; }
-      .trace-document-page[data-slot="primary"] { top: 25%; left: 7%; width: 70%; height: 68%; }
-      .trace-page-inner { padding: 7% 5%; }
+      .trace-content-box::before { top: 7.78%; left: 5.97%; }
+      .trace-content-box .trace-document-page { width: 40.56%; height: 132.5%; }
+      .trace-document-page[data-slot="primary"] { top: 12.9%; left: 5.97%; }
+      .trace-page-inner { padding: 7% 8% 6.5%; }
       .trace-document-page h3 { font-size: clamp(18px,4vw,30px); }
       .trace-document-page .trace-record-copy { font-size: clamp(9px,1.75vw,13px); }
-      .trace-card-stack { top: 3%; left: 4%; width: 44%; }
-      .trace-summary-card { min-height: 104px; }
-      .trace-document-page[data-slot="secondary-one"] { top: 25%; left: 79%; width: 9%; height: 68%; }
-      .trace-document-page[data-slot="secondary-two"] { top: 25%; left: 89%; width: 8%; height: 68%; }
+      .trace-card-stack { top: 7.78%; left: 55%; width: 27.5%; gap: clamp(32px,5.5vw,50px); }
+      .trace-folder-tab, [data-trace-coordinate] { white-space: nowrap; }
+      [data-trace-coordinate] { font-size: 9px; }
+      .trace-summary-card { min-height: 130px; }
+      .trace-document-page[data-slot="secondary-one"] { top: 14.4%; left: 7.52%; }
+      .trace-document-page[data-slot="secondary-two"] { top: 15.9%; left: 9.07%; }
     }
     @media (max-width: 560px) {
+      .trace-content-box::before { top: 59%; left: 5%; }
+      .trace-card-stack { top: 3%; left: 5%; width: 90%; gap: 24px; }
+      [data-trace-coordinate] { font-size: 13px; }
+      .trace-summary-card { width: 72%; min-height: 120px; }
+      .trace-summary { min-height: 92px; padding: 12px 14px; }
       .trace-document-page:not([data-slot="primary"]) { display: none; }
-      .trace-document-page[data-slot="primary"] { left: 5%; width: 90%; height: 70%; }
+      .trace-document-page[data-slot="primary"] { top: 65%; left: 5%; width: 90%; height: 95%; }
       .trace-summary { font-size: 10px; }
     }
     @media (prefers-reduced-motion: reduce) {
@@ -1180,7 +1220,7 @@
     #main > :not(#top),
     body > .footer,
     body > .toast { display: none !important; }
-    #main { width: 100%; height: 100%; outline: 0; }
+    #main { width: 100%; height: 100%; padding: 0; outline: 0; }
     #top.hero { display: block; width: 100%; max-width: none; height: 100%; min-height: 0; margin: 0; padding: 0; overflow: hidden; }
     #top .hero-visual { width: 100%; height: 100%; margin: 0; border: 0; }
     #top .hero-visual .document-stage { width: 100%; height: 100%; min-height: 0; max-height: none; aspect-ratio: auto; }
@@ -1293,48 +1333,37 @@
           <div class="trace-content-box" data-trace-content-box>
           <article class="trace-document-page trace-ai-document is-primary" data-trace-page data-document="report" data-slot="primary" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="true" aria-labelledby="trace-document-title">
             <div class="trace-page-inner">
-            <h3 id="trace-document-title"><span>Revenue performance</span></h3>
-            <div class="trace-doc-rule" aria-hidden="true"></div>
-            <div class="trace-doc-meta" aria-label="Document metadata">
-              <strong>Q4 2025 market report</strong><span>Page 12 / 48</span>
-            </div>
-            <div class="trace-doc-records">
-              <div class="trace-doc-record"><span class="trace-record-index">[01]</span><p class="trace-record-copy"><span class="trace-record-label">Revenue / growth</span>Enterprise software revenue reached <button class="trace-source-mark" data-source-id="revenue" type="button">$4.8B, up 18.4% year over year</button>, supported by continued demand for cloud, security, and data platforms.</p></div>
-              <div class="trace-doc-record"><span class="trace-record-index">[02]</span><p class="trace-record-copy"><span class="trace-record-label">Regional performance</span><button class="trace-source-mark" data-source-id="table" type="button">APAC grew 21.6% and Europe grew 19.4%</button>. North America remained the largest contributor to revenue.</p></div>
-              <div class="trace-doc-record"><span class="trace-record-index">[03]</span><p class="trace-record-copy"><span class="trace-record-label">Operating margin</span>Operating income rose to $1.1B as disciplined cost management lifted <button class="trace-source-mark" data-source-id="margin" type="button">operating margin to 22.9%</button>.</p></div>
-              <div class="trace-doc-record"><span class="trace-record-index">[04]</span><p class="trace-record-copy"><span class="trace-record-label">Trend / visual evidence</span><button class="trace-source-mark" data-source-id="chart" type="button">Revenue increased in every reported quarter since Q4 2023</button>, preserving the upward trend in the original chart.</p></div>
-            </div>
-            <div class="trace-doc-footer"><span>Source-linked</span><span>Visual evidence preserved</span></div>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <div class="trace-doc-rule" aria-hidden="true"></div>
+              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
+              <h3 id="trace-document-title"><span>Revenue performance</span></h3>
+              <div class="trace-doc-records">
+                <div class="trace-doc-record"><p class="trace-record-copy">Enterprise software revenue reached <span class="trace-source-mark" data-source-id="revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, supported by continued demand for cloud, security, and data platforms. Regional performance remained broad-based, with <span class="trace-source-mark" data-source-id="table" role="button" tabindex="0">APAC growing 21.6% and Europe growing 19.4%</span>, while North America remained the largest contributor to revenue. Operating income rose to $1.1B as disciplined cost management lifted the <span class="trace-source-mark" data-source-id="margin" role="button" tabindex="0">operating margin to 22.9%</span>. The underlying trend also remained consistently positive, with <span class="trace-source-mark" data-source-id="chart" role="button" tabindex="0">revenue increasing in every reported quarter since Q4 2023</span>.</p></div>
+              </div>
             </div>
             <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
           </article>
           <article class="trace-document-page trace-secondary-document" data-trace-page data-document="regional" data-slot="secondary-one" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Regional performance document, click to bring forward">
             <div class="trace-page-inner">
-              <h3><span>Regional performance</span></h3>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
-              <div class="trace-doc-meta" aria-label="Document metadata"><strong>Q4 2025 market report</strong><span>Page 12 / 48</span></div>
+              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
+              <h3><span>Regional performance</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><span class="trace-record-index">[01]</span><p class="trace-record-copy"><span class="trace-record-label">Regional leaders</span><button class="trace-source-mark" data-source-id="regional-growth" type="button">APAC grew 21.6% and Europe grew 19.4%</button>, leading the year-over-year expansion.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[02]</span><p class="trace-record-copy"><span class="trace-record-label">North America</span>The largest region reached <button class="trace-source-mark" data-source-id="north-america" type="button">$2.302B with 18.4% growth</button>.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[03]</span><p class="trace-record-copy"><span class="trace-record-label">Total revenue</span>Reported revenue closed at <button class="trace-source-mark" data-source-id="regional-total" type="button">$4.8B versus $4.03B</button> in the prior year.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[04]</span><p class="trace-record-copy"><span class="trace-record-label">Portfolio signal</span><button class="trace-source-mark" data-source-id="regional-positive" type="button">Every reported region remained positive</button> across the period.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy"><span class="trace-source-mark" data-source-id="regional-growth" role="button" tabindex="0">APAC grew 21.6% and Europe grew 19.4%</span>, leading the year-over-year expansion. North America remained the largest region at <span class="trace-source-mark" data-source-id="north-america" role="button" tabindex="0">$2.302B with 18.4% growth</span>. In total, reported revenue closed at <span class="trace-source-mark" data-source-id="regional-total" role="button" tabindex="0">$4.8B versus $4.03B</span> in the prior year, and <span class="trace-source-mark" data-source-id="regional-positive" role="button" tabindex="0">every reported region remained positive</span> across the period.</p></div>
               </div>
-              <div class="trace-doc-footer"><span>Source-linked</span><span>Regional evidence preserved</span></div>
             </div>
             <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
           </article>
           <article class="trace-document-page trace-secondary-document" data-trace-page data-document="operating" data-slot="secondary-two" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Operating signals document, click to bring forward">
             <div class="trace-page-inner">
-              <h3><span>Operating signals</span></h3>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
-              <div class="trace-doc-meta" aria-label="Document metadata"><strong>Q4 2025 market report</strong><span>Page 12 / 48</span></div>
+              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
+              <h3><span>Operating signals</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><span class="trace-record-index">[01]</span><p class="trace-record-copy"><span class="trace-record-label">Revenue</span>Quarterly revenue reached <button class="trace-source-mark" data-source-id="operating-revenue" type="button">$4.8B, up 18.4% year over year</button>.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[02]</span><p class="trace-record-copy"><span class="trace-record-label">Operating income</span>Operating income increased to <button class="trace-source-mark" data-source-id="operating-income" type="button">$1.1B in Q4 2025</button>.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[03]</span><p class="trace-record-copy"><span class="trace-record-label">Margin expansion</span>Cost discipline lifted the <button class="trace-source-mark" data-source-id="operating-margin" type="button">operating margin to 22.9%</button>.</p></div>
-                <div class="trace-doc-record"><span class="trace-record-index">[04]</span><p class="trace-record-copy"><span class="trace-record-label">Trend evidence</span><button class="trace-source-mark" data-source-id="operating-trend" type="button">Revenue rose in each reported quarter since Q4 2023</button>.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy">Quarterly revenue reached <span class="trace-source-mark" data-source-id="operating-revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, while operating income increased to <span class="trace-source-mark" data-source-id="operating-income" role="button" tabindex="0">$1.1B in Q4 2025</span>. Cost discipline lifted the <span class="trace-source-mark" data-source-id="operating-margin" role="button" tabindex="0">operating margin to 22.9%</span>, and the accompanying chart shows that <span class="trace-source-mark" data-source-id="operating-trend" role="button" tabindex="0">revenue rose in each reported quarter since Q4 2023</span>.</p></div>
               </div>
-              <div class="trace-doc-footer"><span>Source-linked</span><span>Operating evidence preserved</span></div>
             </div>
             <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
           </article>
@@ -1343,8 +1372,8 @@
             <div class="trace-card-stack">
               <figure class="trace-source-card" data-trace-source-card>
                 <div class="trace-card-content">
-                  <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>PAGE 12 · PARAGRAPH B</span></figcaption>
-                  <div class="trace-source-thumb"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div>
+                  <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Page 12 Paragraph B</span></figcaption>
+                  <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                 </div>
                 <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
               </figure>
@@ -2771,73 +2800,73 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     revenue: {
       region: 'revenue',
       image: traceSourceAssets.revenue,
-      coordinate: { en: 'PAGE 12 · PARAGRAPH B', zh: '第 12 页 · 段落 B' },
+      coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     table: {
       region: 'table',
       image: traceSourceAssets.table,
-      coordinate: { en: 'PAGE 12 · TABLE 03', zh: '第 12 页 · 表格 03' },
+      coordinate: { en: 'Page 12 Table 03', zh: '第 12 页 · 表格 03' },
       summary: { en: 'Table 03 shows APAC growing 21.6% and Europe growing 19.4% year over year.', zh: '表格 03 显示，亚太地区同比增长 21.6%，欧洲同比增长 19.4%。' }
     },
     margin: {
       region: 'margin',
       image: traceSourceAssets.margin,
-      coordinate: { en: 'PAGE 12 · NOTE C', zh: '第 12 页 · 注释 C' },
+      coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Operating income reached $1.1B as the operating margin expanded to 22.9%.', zh: '营业利润达到 11 亿美元，营业利润率提升至 22.9%。' }
     },
     chart: {
       region: 'chart',
       image: traceSourceAssets.chart,
-      coordinate: { en: 'PAGE 12 · FIGURE 05', zh: '第 12 页 · 图表 05' },
+      coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 preserves the quarter-by-quarter visual evidence behind the sustained revenue trend.', zh: '图表 05 保留了收入持续增长趋势背后的逐季度视觉证据。' }
     },
     'regional-growth': {
       region: 'table',
       image: traceSourceAssets.table,
-      coordinate: { en: 'PAGE 12 · TABLE 03 · APAC / EUROPE', zh: '第 12 页 · 表格 03 · 亚太 / 欧洲' },
+      coordinate: { en: 'Page 12 Table 03 APAC / Europe', zh: '第 12 页 · 表格 03 · 亚太 / 欧洲' },
       summary: { en: 'APAC grew 21.6% and Europe grew 19.4%, leading regional year-over-year expansion.', zh: '亚太地区增长 21.6%，欧洲增长 19.4%，领跑各区域同比增幅。' }
     },
     'north-america': {
       region: 'table',
       image: traceSourceAssets.table,
-      coordinate: { en: 'PAGE 12 · TABLE 03 · NORTH AMERICA', zh: '第 12 页 · 表格 03 · 北美' },
+      coordinate: { en: 'Page 12 Table 03 North America', zh: '第 12 页 · 表格 03 · 北美' },
       summary: { en: 'North America remained the largest region at $2.302B, representing 18.4% year-over-year growth.', zh: '北美仍是最大区域，收入为 23.02 亿美元，同比增长 18.4%。' }
     },
     'regional-total': {
       region: 'table',
       image: traceSourceAssets.table,
-      coordinate: { en: 'PAGE 12 · TABLE 03 · TOTAL', zh: '第 12 页 · 表格 03 · 合计' },
+      coordinate: { en: 'Page 12 Table 03 Total', zh: '第 12 页 · 表格 03 · 合计' },
       summary: { en: 'Total regional revenue reached $4.8B, compared with $4.03B in Q4 2024.', zh: '区域收入合计达到 48 亿美元，去年同期为 40.3 亿美元。' }
     },
     'regional-positive': {
       region: 'table',
       image: traceSourceAssets.table,
-      coordinate: { en: 'PAGE 12 · TABLE 03 · YOY CHANGE', zh: '第 12 页 · 表格 03 · 同比变化' },
+      coordinate: { en: 'Page 12 Table 03 YoY change', zh: '第 12 页 · 表格 03 · 同比变化' },
       summary: { en: 'Every reported region posted positive year-over-year revenue growth in Q4 2025.', zh: '2025 年第四季度，所有披露区域的收入均实现同比正增长。' }
     },
     'operating-revenue': {
       region: 'revenue',
       image: traceSourceAssets.revenue,
-      coordinate: { en: 'PAGE 12 · PARAGRAPH B', zh: '第 12 页 · 段落 B' },
+      coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, up 18.4% year over year.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     'operating-income': {
       region: 'margin',
       image: traceSourceAssets.margin,
-      coordinate: { en: 'PAGE 12 · PARAGRAPH C', zh: '第 12 页 · 段落 C' },
+      coordinate: { en: 'Page 12 Paragraph C', zh: '第 12 页 · 段落 C' },
       summary: { en: 'Operating income increased to $1.1B in Q4 2025.', zh: '2025 年第四季度营业利润增长至 11 亿美元。' }
     },
     'operating-margin': {
       region: 'margin',
       image: traceSourceAssets.margin,
-      coordinate: { en: 'PAGE 12 · NOTE C', zh: '第 12 页 · 注释 C' },
+      coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Disciplined cost management lifted operating margin to 22.9%.', zh: '严格的成本管理将营业利润率提升至 22.9%。' }
     },
     'operating-trend': {
       region: 'chart',
       image: traceSourceAssets.chart,
-      coordinate: { en: 'PAGE 12 · FIGURE 05', zh: '第 12 页 · 图表 05' },
+      coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 shows revenue rising in every reported quarter from Q4 2023 through Q4 2025.', zh: '图表 05 显示，从 2023 年第四季度到 2025 年第四季度，收入每个披露季度均有增长。' }
     }
   };
@@ -3170,7 +3199,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   function makeTraceFlowPair(start, end, options) {
     if (!window.LeaderLine) return [];
     const shared = {
-      path: 'fluid',
+      path: 'straight',
       startPlug: 'behind',
       endPlug: 'behind',
       startSocket: options.startSocket,
@@ -3181,15 +3210,15 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     };
     const track = new LeaderLine(start, end, {
       ...shared,
-      color: tracePaletteRgba(600, .42, '#2858a5'),
-      size: 1.6
+      color: 'rgba(114, 129, 179, .52)',
+      size: 1,
+      dash: { len: 5, gap: 5 }
     });
     const flow = new LeaderLine(start, end, {
       ...shared,
-      color: tracePaletteHex(600, '#2858a5'),
-      size: 2.25,
-      gradient: { startColor: tracePaletteHex(400, '#6d80b6'), endColor: tracePaletteHex(600, '#2858a5') },
-      dash: { len: 2.2, gap: 6.4, animation: { duration: 720, timing: 'linear' } }
+      color: '#7281b3',
+      size: 1,
+      dash: { len: 5, gap: 5, animation: { duration: 720, timing: 'linear' } }
     });
     traceFlowLines.push(track, flow);
     return [track, flow];
@@ -3207,24 +3236,36 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     if (!traceDemo || !mark || !window.LeaderLine) return;
     const sourceCard = $('[data-trace-source-card]', traceDemo);
     const summaryCard = $('[data-trace-summary-card]', traceDemo);
+    const summaryBody = $('[data-trace-summary]', traceDemo);
     const aiDocument = $('[data-trace-page][data-slot="primary"]', traceDemo);
-    if (!sourceCard || !summaryCard || !aiDocument) return;
-    const summaryFlow = makeTraceFlowPair(sourceCard, summaryCard, {
+    if (!sourceCard || !summaryCard || !summaryBody || !aiDocument) return;
+    const sourceRect = sourceCard.getBoundingClientRect();
+    const summaryBodyRect = summaryBody.getBoundingClientRect();
+    const sourceExit = LeaderLine.pointAnchor({ element: sourceCard, x: sourceRect.width * .545, y: sourceRect.height });
+    const summaryEntry = LeaderLine.pointAnchor({ element: summaryBody, x: summaryBodyRect.width * .587, y: 0 });
+    traceFlowAnchors.push(sourceExit, summaryEntry);
+    const summaryFlow = makeTraceFlowPair(sourceExit, summaryEntry, {
       startSocket: 'bottom',
       endSocket: 'top',
       startGravity: [0, 12],
       endGravity: [0, -12]
     });
     const documentRect = aiDocument.getBoundingClientRect();
-    const summaryRect = summaryCard.getBoundingClientRect();
-    const documentEntryY = Math.max(26, Math.min(documentRect.height - 26, summaryRect.top - documentRect.top + summaryRect.height / 2));
-    const documentEntry = LeaderLine.pointAnchor({ element: aiDocument, x: 0, y: documentEntryY });
+    const isSideBySide = summaryBodyRect.left >= documentRect.right - 1;
+    const documentEntryY = isSideBySide
+      ? Math.max(26, Math.min(documentRect.height - 26, summaryBodyRect.top - documentRect.top + summaryBodyRect.height / 2))
+      : 0;
+    const documentEntry = LeaderLine.pointAnchor({
+      element: aiDocument,
+      x: isSideBySide ? documentRect.width : documentRect.width / 2,
+      y: documentEntryY
+    });
     traceFlowAnchors.push(documentEntry);
-    const answerFlow = makeTraceFlowPair(summaryCard, documentEntry, {
-      startSocket: 'right',
-      endSocket: 'left',
-      startGravity: [16, 0],
-      endGravity: [-16, 0]
+    const answerFlow = makeTraceFlowPair(summaryBody, documentEntry, {
+      startSocket: isSideBySide ? 'left' : 'bottom',
+      endSocket: isSideBySide ? 'right' : 'top',
+      startGravity: isSideBySide ? [-16, 0] : [0, 16],
+      endGravity: isSideBySide ? [16, 0] : [0, -16]
     });
     traceFlowLines.forEach(line => line.position());
     scheduleTraceFlow(summaryFlow, 400, 260);

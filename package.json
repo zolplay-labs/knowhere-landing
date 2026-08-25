@@ -8,6 +8,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource/poppins": "^5.2.7",
     "dialkit": "^1.4.3",
     "motion": "^12.23.12",
     "react": "^18.3.1",
