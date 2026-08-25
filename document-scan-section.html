@@ -3494,15 +3494,47 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   traceMarks.forEach(mark => {
     const id = mark.dataset.sourceId;
-    mark.addEventListener('mouseenter', event => { showTraceSource(id, mark); showTraceTarget(mark, event); });
+    mark.addEventListener('mouseenter', event => { showTraceSource(id, mark); showTraceTarget(mark, event); resetTraceAutoCycle(); });
     mark.addEventListener('mousemove', event => positionTraceTarget(mark, event));
     mark.addEventListener('mouseleave', hideTraceTarget);
-    mark.addEventListener('focus', event => { if (mark.matches(':focus-visible')) { showTraceSource(id, mark); showTraceTarget(mark, event); } });
+    mark.addEventListener('focus', event => { if (mark.matches(':focus-visible')) { showTraceSource(id, mark); showTraceTarget(mark, event); resetTraceAutoCycle(); } });
     mark.addEventListener('blur', hideTraceTarget);
     mark.addEventListener('click', () => {
-      if (matchMedia('(hover: none)').matches && traceActiveMark !== mark) showTraceSource(id, mark);
+      showTraceSource(id, mark);
+      resetTraceAutoCycle();
     });
   });
+  const traceReducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let traceAutoCycleVisible = true;
+  let traceAutoCycleTimer = 0;
+  function primaryTraceMarks() {
+    return traceDemo ? $$('.trace-document-page[data-slot="primary"] .trace-source-mark[data-source-id]', traceDemo) : [];
+  }
+  function stopTraceAutoCycle() {
+    clearTimeout(traceAutoCycleTimer);
+    traceAutoCycleTimer = 0;
+  }
+  function resetTraceAutoCycle() {
+    stopTraceAutoCycle();
+    if (!traceAutoCycleVisible || document.hidden || traceReducedMotion.matches) return;
+    traceAutoCycleTimer = setTimeout(() => {
+      const marks = primaryTraceMarks();
+      if (!marks.length) return;
+      const currentIndex = marks.indexOf(traceActiveMark);
+      const nextMark = marks[(currentIndex + 1 + marks.length) % marks.length];
+      showTraceSource(nextMark.dataset.sourceId, nextMark);
+      resetTraceAutoCycle();
+    }, 5200);
+  }
+  window.setTraceAutoCycleVisible = visible => {
+    traceAutoCycleVisible = Boolean(visible);
+    resetTraceAutoCycle();
+  };
+  traceDemo?.addEventListener('pointerdown', resetTraceAutoCycle, { passive: true });
+  traceDemo?.addEventListener('keydown', resetTraceAutoCycle);
+  document.addEventListener('visibilitychange', resetTraceAutoCycle);
+  traceReducedMotion.addEventListener?.('change', resetTraceAutoCycle);
+  resetTraceAutoCycle();
   function activateTraceSourceCard(card) {
     if (!card) return;
     stopTraceSourceStackEntrance();

@@ -339,6 +339,7 @@ if (!(root instanceof Element)) return () => {};
     'Submit a document': '提交文档', 'Send a URL or upload a file to the processing queue.': '发送 URL 或将文件上传至处理队列。',
     'Receive structured results': '接收结构化结果', 'Get structured JSON through webhook or polling.': '通过 Webhook 或轮询获取结构化 JSON。',
     'Start free trial': '免费试用', 'Book a demo': '预约演示',
+    'View details': '查看详情', 'Hide details': '收起详情', 'Drag to estimate': '拖动估算',
     'Need custom limits or deployment support?': '需要定制限额或部署支持？',
     'Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.': '与团队沟通定制速率限制、优先处理、部署选项、支持方式及 SLA 需求。',
     'Support requirements': '支持需求', 'SLA requirements': 'SLA 需求', 'Commercial terms': '商业条款',
@@ -417,6 +418,7 @@ if (!(root instanceof Element)) return () => {};
   }
   const languageToggles = $$('[data-language-toggle]');
   const scanFrame = $('.section-scan-frame iframe');
+  let scanFrameVisible = true;
   function syncScanFrameLanguage() {
     try {
       scanFrame?.contentWindow?.setKnowhereLanguage?.(activeLanguage);
@@ -425,6 +427,20 @@ if (!(root instanceof Element)) return () => {};
     }
   }
   scanFrame?.addEventListener('load', syncScanFrameLanguage);
+  function syncScanFrameAutoCycle() {
+    try {
+      scanFrame?.contentWindow?.setTraceAutoCycleVisible?.(scanFrameVisible);
+    } catch {
+      // The embedded demo can become cross-origin without blocking the parent page.
+    }
+  }
+  scanFrame?.addEventListener('load', syncScanFrameAutoCycle);
+  if (scanFrame && 'IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      scanFrameVisible = entries[0]?.isIntersecting ?? false;
+      syncScanFrameAutoCycle();
+    }, { threshold: .15 }).observe(scanFrame);
+  }
   function setLanguage(language, announce = true) {
     const isChinese = language === 'zh';
     activeLanguage = language;
@@ -526,10 +542,30 @@ if (!(root instanceof Element)) return () => {};
       if (onChange) onChange(tabs[index], index);
     }
     activate(Math.max(0, tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true')));
+    return { activate, tabs };
   }
   const tablists = $$('.tabs[role="tablist"]');
   setupTabs(tablists[0]);
-  setupTabs(tablists[1]);
+  let activeCodeIndex = 0;
+  const codeTabs = setupTabs(tablists[1], (_tab, index) => { activeCodeIndex = index; });
+
+  function setupAutoCycle(element, interval, advance, interactionEvents = ['pointerdown', 'keydown']) {
+    if (!element || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let timer = 0;
+    let visible = false;
+    const stop = () => { clearTimeout(timer); timer = 0; };
+    const schedule = () => {
+      stop();
+      if (!visible || document.hidden) return;
+      timer = setTimeout(() => { advance(); schedule(); }, interval);
+    };
+    interactionEvents.forEach(type => element.addEventListener(type, schedule, { passive: type !== 'keydown' }));
+    document.addEventListener('visibilitychange', schedule);
+    new IntersectionObserver(entries => {
+      visible = entries[0].isIntersecting;
+      schedule();
+    }, { threshold: .15 }).observe(element);
+  }
 
   const samples = {
     research: { title: 'Tesla Q4 2025 Update.pdf', type: 'pdf', summary: 'Quarterly update · 24 pages', text: 'A prepared example illustrating sections, tables, and source-region references.', outline: [['Market overview', 'Page 02'], ['Operating highlights', 'Page 07'], ['Financial tables', 'Page 12']], assets: ['image-1 · earnings chart', 'image-2 · delivery map', 'table-3 · regional summary'] },
@@ -646,6 +682,10 @@ if (!(root instanceof Element)) return () => {};
       showToast('Copy unavailable — select the code manually.');
     }
   });
+  setupAutoCycle($('.code-card'), 4600, () => {
+    activeCodeIndex = (activeCodeIndex + 1) % codeTabs.tabs.length;
+    codeTabs.activate(activeCodeIndex);
+  });
 
   $$('.faq-list details').forEach(details => {
     const summary = $('summary', details);
@@ -658,13 +698,20 @@ if (!(root instanceof Element)) return () => {};
   const comparisonHead = $('.comparison-scoreboard-head');
   const comparisonToggle = $('.comparison-toggle');
   const comparisonContent = $('#comparison-table');
-  comparisonHead?.addEventListener('click', () => {
-    const expanded = !comparisonScoreboard.classList.contains('is-expanded');
+  const comparisonToggleLabel = $('[data-comparison-toggle-label]', comparisonToggle);
+  function syncComparisonState(expanded) {
     comparisonScoreboard.classList.toggle('is-expanded', expanded);
     comparisonToggle.setAttribute('aria-expanded', String(expanded));
     comparisonContent.setAttribute('aria-hidden', String(!expanded));
+    comparisonToggleLabel.textContent = localizeText(expanded ? 'Hide details' : 'View details');
+  }
+  comparisonHead?.addEventListener('click', () => {
+    const expanded = !comparisonScoreboard.classList.contains('is-expanded');
+    syncComparisonState(expanded);
   });
-  comparisonContent?.setAttribute('aria-hidden', String(!comparisonScoreboard?.classList.contains('is-expanded')));
+  if (comparisonScoreboard && comparisonToggle && comparisonContent && comparisonToggleLabel) {
+    syncComparisonState(comparisonScoreboard.classList.contains('is-expanded'));
+  }
 
   const storyContent = {
     structure: { heading: 'Ingest the document', summary: 'Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.' },
@@ -907,7 +954,17 @@ function syncPricingCalculator() {
   pricingPages.setAttribute('aria-label', localizeText('Pages to process'));
   pricingPages.setAttribute('aria-valuetext', pageLabel);
 }
+let pricingDemoDirection = 1;
 pricingPages.addEventListener('input', syncPricingCalculator);
+setupAutoCycle($('#pricing'), 900, () => {
+  const minimum = Number(pricingPages.min);
+  const maximum = Number(pricingPages.max);
+  const next = Number(pricingPages.value) + pricingDemoDirection * 300;
+  if (next >= 2600 || next >= maximum) pricingDemoDirection = -1;
+  if (next <= 500 || next <= minimum) pricingDemoDirection = 1;
+  pricingPages.value = String(Math.min(maximum, Math.max(minimum, next)));
+  syncPricingCalculator();
+});
 pricingReady = true;
 syncPricingCalculator();
 

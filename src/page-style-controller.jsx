@@ -100,6 +100,7 @@ function paletteStyles(palette) {
 
 const CONTROLLER_LAYOUT_STYLES = `
   .dialkit-root {
+    --dialkit-font-family: var(--sans) !important;
     position: fixed;
     z-index: 2147483000;
     inset: 0;
@@ -108,6 +109,11 @@ const CONTROLLER_LAYOUT_STYLES = `
   }
   .dialkit-panel-inner:not([data-collapsed="true"]) {
     width: min(400px, calc(100vw - 32px)) !important;
+    border: 1px solid rgba(24, 24, 24, .16) !important;
+    border-radius: 4px !important;
+    background: #fff !important;
+    color: #181818 !important;
+    box-shadow: none !important;
   }
   .dialkit-panel[data-position="top-right"]:has(.dialkit-panel-inner:not([data-collapsed="true"])) {
     top: 80px;
@@ -128,15 +134,25 @@ const CONTROLLER_LAYOUT_STYLES = `
     align-self: stretch;
     padding: 0 10px;
     justify-content: space-between;
-    border: 1px solid rgba(255, 255, 255, .1);
-    border-radius: 6px;
-    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(24, 24, 24, .16);
+    border-radius: 4px;
+    background: #fff;
   }
   .dialkit-select-trigger:hover .dialkit-select-right,
   .dialkit-select-trigger[data-open="true"] .dialkit-select-right {
-    border-color: rgba(255, 255, 255, .2);
-    background: rgba(255, 255, 255, .08);
+    border-color: var(--main-600);
+    background: var(--main-50);
   }
+  .dialkit-panel button:focus-visible, .dialkit-panel [role="button"]:focus-visible {
+    outline: 2px solid var(--main-600) !important;
+    outline-offset: 2px;
+  }
+  .dialkit-panel-toolbar { display: none !important; }
+  .dialkit-folder-header, .dialkit-panel-header {
+    border-color: rgba(24, 24, 24, .1) !important;
+    background: #fff !important;
+  }
+  .dialkit-folder-title-root { font-size: 15px !important; font-weight: 500 !important; }
   .dialkit-select-value {
     min-width: 0;
     overflow: hidden;
@@ -286,7 +302,7 @@ export function PageStyleControls() {
   return (
     <>
       <style>{`:root{${paletteStyles(initialPalette)};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
-      <DialRoot position="top-right" defaultOpen={defaultOpen} theme="dark" productionEnabled />
+      <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" productionEnabled />
     </>
   )
 }

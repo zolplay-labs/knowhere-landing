@@ -5857,3 +5857,104 @@
     .converging-helix-controls {
       display: none !important;
     }
+
+/* Walkthrough feedback: shared grid, defensive sizing, and discoverable interactions. */
+.landing-page { width: 100%; min-width: 0; }
+.formats-grid, .formats-secondary-grid, .comparison-frame, .comparison-dashboard,
+.comparison-chart, .comparison-plot, .comparison-plot-body, .integration-grid,
+.code-card, .code-panels, .pricing-card, .enterprise-content { min-width: 0; max-width: 100%; }
+.section-heading, .pricing-heading { overflow-wrap: anywhere; }
+.section-heading > p, .pricing-heading > p, .format-feature h3, .format-feature p,
+.steps h3, .steps p, .enterprise-copy, .enterprise-metric-copy { overflow-wrap: anywhere; }
+pre, code { max-width: 100%; }
+.code-panels pre { width: 100%; overflow-x: auto; overscroll-behavior-inline: contain; white-space: pre; }
+.footer-divider { width: 100%; max-width: var(--content-max); margin-inline: auto; }
+.button { border-radius: 4px !important; }
+#top.hero-b-layout .hero-copy .button-row .button { border-radius: 4px; }
+#pricing, #comparison, .pricing-result-value, .pricing-facts, .pricing-file-limits,
+.comparison-chart, .comparison-scoreboard { font-variant-numeric: tabular-nums; }
+#integration .code-card {
+  position: relative;
+  z-index: 2;
+  display: block;
+  grid-column: 1 / -1;
+  margin-top: 32px;
+  background: var(--ink);
+  color: #fff;
+}
+#integration .code-head,
+#integration .code-panels pre,
+#integration .code-panels code { color: #fff; }
+#integration .mcp { margin-top: 0; }
+#comparison .comparison-toggle {
+  width: auto;
+  min-width: 118px;
+  height: 38px;
+  flex-basis: auto;
+  padding: 0 12px;
+  display: inline-flex;
+  gap: 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+#comparison .comparison-toggle::before { flex: 0 0 auto; }
+#pricing .pricing-drag-hint {
+  position: absolute;
+  z-index: 4;
+  top: 12px;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: .02em;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+#pricing .pricing-drag-hint i::before { content: "⠿"; color: var(--main-600); font-style: normal; font-size: 15px; }
+@media (max-width: 1500px) and (min-width: 768px) {
+  #formats .format-orbit-layout { grid-template-columns: minmax(0,1fr) minmax(300px,421px) minmax(0,1fr); gap: 20px; }
+  #formats .format-orbit-layout .format-orbit-stage { width: min(100%,421px); height: auto; min-height: 300px; aspect-ratio: 1; }
+  #formats .format-orbit-copy, #formats .format-orbit-copy--supported, #formats .format-orbit-copy--coming {
+    width: auto; max-width: 100%; margin-inline: 0; white-space: normal;
+  }
+  #formats .format-orbit-copy--supported p { width: auto; max-width: 100%; }
+  #formats .format-orbit-decoration { display: none; }
+}
+@media (min-width: 1200px) and (max-width: 1599px) {
+  #comparison .comparison-frame { left: auto; width: 100%; margin-inline: 0; transform: none; }
+  #comparison .comparison-plot { padding-inline: 68px; }
+  #comparison .comparison-axis-y--left { right: auto; left: 0; }
+  #comparison .comparison-axis-y--right { right: 0; left: auto; }
+  #comparison .comparison-axis-y--outer { display: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  #pricing .pricing-drag-hint i { animation: drag-hint 1.4s cubic-bezier(.77,0,.175,1) 1.2s 1 both; }
+  @keyframes drag-hint { 0%,100% { transform: translateX(0); } 45% { transform: translateX(5px); } }
+}
+@media (max-width: 900px) {
+  #capabilities .section-heading, #formats .section-heading, #comparison .section-heading,
+  #integration .section-heading, #pricing .pricing-heading { grid-template-columns: 1fr; }
+  #capabilities .section-heading > p:last-child:not(.section-no), #formats .section-heading > p:last-child:not(.section-no),
+  #comparison .section-heading > p:last-child:not(.section-no), #integration .section-heading > p:last-child:not(.section-no),
+  #pricing .pricing-heading > p:last-child:not(.section-no) { grid-column: 1; grid-row: 3; }
+  #pricing .pricing-file-limits { display: block; }
+  #pricing .pricing-file-limits-head { border-right: 0; border-bottom: 1px solid rgba(24,24,24,.14); }
+  #pricing .pricing-file-limits dl { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  #pricing .pricing-file-limits dl div:nth-child(2n) { border-right: 0; }
+}
+@media (max-width: 560px) {
+  #main h1, #main h2, #capabilities .section-heading h2, #formats .section-heading h2,
+  #comparison .section-heading h2, #integration .section-heading h2, #pricing .pricing-heading h2,
+  #enterprise h2, #faq .section-heading h2, #final-cta h2 { font-size: clamp(34px, 10vw, 44px); line-height: 1.08; }
+  .comparison-chart { padding-inline: 0; overflow-x: auto; }
+  .comparison-plot { min-width: 620px; }
+  #integration .integration-grid { padding: 20px; }
+  #integration .mcp { margin-inline: -20px; padding-inline: 20px; }
+  #comparison .comparison-toggle { min-width: 104px; padding-inline: 10px; }
+  #pricing .pricing-drag-hint { top: 8px; }
+}
