@@ -202,10 +202,10 @@
     .trace-doc-record { min-height: 0; display: block; padding: 0; border: 0; }
     .trace-doc-footer { display: none; }
     .trace-record-index { display: none; }
-    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 24px; letter-spacing: 0; }
+    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 180%; letter-spacing: 0; }
     .trace-record-label { display: none; }
-    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
-    .trace-source-mark.is-preview { background: color-mix(in srgb, var(--trace-accent-light) 20%, transparent); color: #111315; box-shadow: none; }
+    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: var(--main-50, #f5f6fa); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+    .trace-source-mark.is-preview { background: var(--main-50, #f5f6fa); color: #111315; box-shadow: none; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); outline: 0; }
     .trace-target-cursor { --trace-dot-x: 50%; --trace-dot-y: 50%; --trace-parallax-x: 0px; --trace-parallax-y: 0px; position: fixed; z-index: 120; top: 0; left: 0; width: 0; height: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .1s ease, visibility 0s .1s; }
     .trace-target-cursor.is-visible { opacity: 1; visibility: visible; transition-delay: 0s; }
@@ -228,22 +228,38 @@
     .trace-demo.is-trace-visible .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 49px; }
-    .trace-source-card { --region-x: 3%; --region-y: 22%; --region-w: 62%; --region-h: 32%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1); }
+    .trace-original-stack { position: relative; top: 20px; width: 100%; height: 283px; }
+    .trace-source-card { --region-x: 2.22%; --region-y: 21.7%; --region-w: 61.7%; --region-h: 32.7%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+    .trace-original-stack .trace-source-card { position: absolute; width: 92.93%; pointer-events: auto; cursor: pointer; transition: top .28s cubic-bezier(.22,1,.36,1), left .28s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+    .trace-source-card[data-source-slot="primary"] { z-index: 3; top: 0; left: 0; }
+    .trace-source-card[data-source-slot="secondary-one"] { z-index: 2; top: 20px; left: 28px; }
+    .trace-source-card[data-source-slot="secondary-two"] { z-index: 1; top: 40px; left: 56px; }
+    .trace-source-card[data-source-slot="secondary-one"] { --trace-stack-enter-x: -28px; --trace-stack-enter-y: -20px; }
+    .trace-source-card[data-source-slot="secondary-two"] { --trace-stack-enter-x: -56px; --trace-stack-enter-y: -40px; }
+    .trace-original-stack.is-source-stack-entering .trace-source-card:not([data-source-slot="primary"]) { pointer-events: none; animation: trace-source-stack-enter 220ms cubic-bezier(.23,1,.32,1) both; }
+    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-one"] { animation-delay: 378ms; }
+    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-two"] { animation-delay: 448ms; }
+    .trace-source-card:not([data-source-slot="primary"]).is-source-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
+    .trace-source-switch { position: absolute; z-index: 6; top: 0; right: 0; bottom: 0; width: 28px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+    .trace-source-card[data-source-slot="primary"] .trace-source-switch { pointer-events: none; visibility: hidden; }
+    .trace-source-switch:focus-visible { outline: 2px solid var(--trace-accent); outline-offset: 3px; }
     .trace-demo.is-trace-visible .trace-source-card { transform: none; }
     .trace-folder-tab { padding-left: 17px; background: linear-gradient(#7281b3,#7281b3) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; }
-    .trace-source-card figcaption { display: flex; width: 92.93%; height: 24px; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; padding: 4px 0; color: rgba(0,0,0,.6); font: 400 13px/20px var(--trace-mono); letter-spacing: 0; text-transform: none; }
-    .trace-source-thumb { position: relative; width: 100%; height: 227px; overflow: visible; border-radius: 0; background: transparent; isolation: isolate; }
-    .trace-source-thumb::before, .trace-source-thumb::after { position: absolute; width: 92.93%; height: 197px; border: 1px solid #cecde0; background: #fff; content: ""; }
-    .trace-source-thumb::before { z-index: 0; top: 29px; left: 7.07%; }
-    .trace-source-thumb::after { z-index: 1; top: 15px; left: 3.535%; }
-    .trace-source-frame { position: absolute; z-index: 2; top: 0; left: 0; width: 92.93%; height: 195px; padding: 12px; border: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
-    .trace-source-media { position: relative; width: 100%; height: 100%; overflow: hidden; background: #f5f6fa; }
-    .trace-source-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; filter: none; opacity: .18; }
-    .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: 0 0 0 999px rgba(17,19,21,.045); transition: inset .2s ease, width .2s ease, height .2s ease; }
+    .trace-source-card figcaption { position: absolute; z-index: 4; top: 16px; left: 16px; display: flex; width: calc(100% - 32px); height: 24px; align-items: center; justify-content: space-between; gap: 12px; margin: 0; padding: 4px 0; color: rgba(0,0,0,.6); font: 400 13px/20px var(--trace-mono); letter-spacing: 0; text-transform: none; }
+    .trace-source-thumb { position: relative; width: 100%; height: auto; padding-top: 48px; overflow: visible; border-radius: 0; background: transparent; isolation: isolate; }
+    .trace-source-thumb::before { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: 51px; background: url("assets/original-file-back-part.svg") 0 0 / 100% 51px no-repeat; content: ""; }
+    .trace-source-thumb::after { display: none; content: none; }
+    .trace-source-frame { position: relative; z-index: 2; width: 100%; height: 195px; padding: 12px; border: 1px solid #cecde0; background: #fff; box-shadow: none; }
+    .trace-source-media { position: relative; width: 100%; height: auto; overflow: hidden; background: #fff; }
+    .trace-source-thumb img { position: relative; display: block; width: 100%; height: 169px; object-fit: fill; object-position: center; filter: contrast(1.12) saturate(.9); mix-blend-mode: darken; opacity: 1; }
+    .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: none; transition: inset .2s ease, width .2s ease, height .2s ease; }
+    .trace-source-card[data-region="table"] .trace-source-region { background: rgba(255,255,255,.32); backdrop-filter: brightness(1.04) contrast(1.04); }
     .trace-document-scanner { position: absolute; z-index: 3; top: 0; right: 0; left: 0; height: 20%; overflow: visible; opacity: 0; pointer-events: none; transform: translate3d(0,-120%,0); animation: trace-document-scan 4.2s linear infinite; will-change: transform, opacity; }
+    .trace-source-card:not([data-source-slot="primary"]) .trace-document-scanner { animation: none; opacity: 0; transform: translate3d(0,-120%,0); will-change: auto; }
     .trace-document-scanner::before { position: absolute; inset: 0; content: ""; background: linear-gradient(180deg,transparent,color-mix(in srgb, var(--trace-accent-soft) 8%, transparent) 38%,color-mix(in srgb, var(--trace-accent-light) 22%, transparent) 78%,color-mix(in srgb, var(--trace-accent) 12%, transparent) 94%,transparent); }
     .trace-document-scanner::after { position: absolute; right: 0; bottom: 5%; left: 0; height: 1px; content: ""; background: linear-gradient(90deg,transparent,color-mix(in srgb, var(--trace-accent) 28%, transparent) 10%,color-mix(in srgb, var(--trace-accent-soft) 96%, white) 48%,color-mix(in srgb, var(--trace-accent) 48%, transparent) 78%,transparent); box-shadow: 0 -4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent),0 2px 8px rgba(255,255,255,.5); }
     @keyframes trace-document-scan { 0% { opacity: 0; transform: translate3d(0,-120%,0); } 7% { opacity: .76; } 88% { opacity: .76; } 100% { opacity: 0; transform: translate3d(0,500%,0); } }
+    @keyframes trace-source-stack-enter { from { opacity: 0; transform: translate3d(var(--trace-stack-enter-x),var(--trace-stack-enter-y),0); } to { opacity: 1; transform: translate3d(0,0,0); } }
     .trace-summary-card { position: relative; z-index: 3; width: 92.93%; min-height: 104px; padding: 0; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
     .trace-demo.is-trace-visible .trace-summary-card { transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-source-card { opacity: 1; clip-path: none; transform: none; }
@@ -257,14 +273,15 @@
     .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .trace-source-card .trace-pixel-reveal, .trace-summary-card .trace-pixel-reveal { border-radius: var(--trace-card-radius); clip-path: inset(0 round var(--trace-card-radius)); }
+    .trace-source-card .trace-pixel-reveal { clip-path: polygon(0 0,33.63% 0,36.58% 5.54%,100% 5.54%,100% 100%,0 100%); }
+    .trace-summary-card .trace-pixel-reveal { border-radius: var(--trace-card-radius); clip-path: inset(0 round var(--trace-card-radius)); }
     .trace-fork-dot { display: none; }
     .leader-line { z-index: 6 !important; pointer-events: none !important; }
     .leader-line path { stroke-linecap: round; stroke-linejoin: round; }
     .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-    .trace-demo[data-region="table"] .trace-source-card { --region-x: 2%; --region-y: 13%; --region-w: 72%; --region-h: 72%; }
-    .trace-demo[data-region="margin"] .trace-source-card { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
-    .trace-demo[data-region="chart"] .trace-source-card { --region-x: 1.5%; --region-y: 18%; --region-w: 47.5%; --region-h: 72%; }
+    .trace-source-card[data-region="table"] { --region-x: 2%; --region-y: 13%; --region-w: 72%; --region-h: 72%; }
+    .trace-source-card[data-region="margin"] { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
+    .trace-source-card[data-region="chart"] { --region-x: 1.5%; --region-y: 18%; --region-w: 47.5%; --region-h: 72%; }
     @media (max-width: 1023px) {
       .hero-visual .trace-demo { aspect-ratio: auto; }
       .trace-content-box { inset: 0; width: auto; transform: none; }
@@ -282,6 +299,10 @@
       .trace-document-page[data-slot="secondary-two"] { top: 15.9%; left: 9.07%; }
     }
     @media (max-width: 560px) {
+      .trace-original-stack { height: 275px; }
+      .trace-source-card[data-source-slot="secondary-one"] { --trace-stack-enter-x: -18px; --trace-stack-enter-y: -16px; top: 16px; left: 18px; }
+      .trace-source-card[data-source-slot="secondary-two"] { --trace-stack-enter-x: -36px; --trace-stack-enter-y: -32px; top: 32px; left: 36px; }
+      .trace-source-switch { width: 18px; }
       .trace-content-box::before { top: 59%; left: 5%; }
       .trace-card-stack { top: 3%; left: 5%; width: 90%; gap: 24px; }
       [data-trace-coordinate] { font-size: 13px; }
@@ -296,11 +317,13 @@
       .js .trace-demo:not(.is-stage-entered) .trace-content-box,
       .js .trace-demo:not(.is-stage-entered) .trace-dither-field { -webkit-mask-image: none; mask-image: none; }
       .trace-pixel-reveal, .trace-document-scanner { display: none; }
+      .trace-original-stack.is-source-stack-entering .trace-source-card:not([data-source-slot="primary"]) { animation: trace-source-stack-fade 120ms cubic-bezier(.23,1,.32,1) both; }
       .trace-decrypt-canvas { transition: none; }
       .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: none; mask-image: none; }
       .trace-target-cursor.is-locking .trace-target-frame { animation: none; }
       .trace-dither-field { opacity: 1; }
     }
+    @keyframes trace-source-stack-fade { from { opacity: 0; } to { opacity: 1; } }
     @media (max-width: 1023px) {
       :root { --gutter: 20px; --header-height: 68px; }
       .hero { width: 100%; margin-inline: auto; height: auto; min-height: 0; padding-top: 104px; padding-bottom: 64px; gap: 32px; grid-template-columns: 1fr; grid-template-rows: auto auto; }
@@ -1333,7 +1356,7 @@
           <div class="trace-content-box" data-trace-content-box>
           <article class="trace-document-page trace-ai-document is-primary" data-trace-page data-document="report" data-slot="primary" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="true" aria-labelledby="trace-document-title">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
               <p class="trace-doc-eyebrow">Q4 2025 market report</p>
               <h3 id="trace-document-title"><span>Revenue performance</span></h3>
@@ -1345,24 +1368,24 @@
           </article>
           <article class="trace-document-page trace-secondary-document" data-trace-page data-document="regional" data-slot="secondary-one" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Regional performance document, click to bring forward">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
               <p class="trace-doc-eyebrow">Q4 2025 market report</p>
               <h3><span>Regional performance</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><p class="trace-record-copy"><span class="trace-source-mark" data-source-id="regional-growth" role="button" tabindex="0">APAC grew 21.6% and Europe grew 19.4%</span>, leading the year-over-year expansion. North America remained the largest region at <span class="trace-source-mark" data-source-id="north-america" role="button" tabindex="0">$2.302B with 18.4% growth</span>. In total, reported revenue closed at <span class="trace-source-mark" data-source-id="regional-total" role="button" tabindex="0">$4.8B versus $4.03B</span> in the prior year, and <span class="trace-source-mark" data-source-id="regional-positive" role="button" tabindex="0">every reported region remained positive</span> across the period.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy"><span class="trace-source-mark" data-source-id="regional-growth" role="button" tabindex="0">APAC grew 21.6% and Europe grew 19.4%</span>, leading the year-over-year expansion across the business. The regional comparison places these markets at the front of the growth view. North America remained the largest contributing territory at <span class="trace-source-mark" data-source-id="north-america" role="button" tabindex="0">$2.302B with 18.4% growth</span>. The combined regional results are reflected in the overall total: reported revenue closed at <span class="trace-source-mark" data-source-id="regional-total" role="button" tabindex="0">$4.8B versus $4.03B</span> in the prior year. Viewed together, the figures show that <span class="trace-source-mark" data-source-id="regional-positive" role="button" tabindex="0">every reported region remained positive</span> across the period.</p></div>
               </div>
             </div>
             <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
           </article>
           <article class="trace-document-page trace-secondary-document" data-trace-page data-document="operating" data-slot="secondary-two" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Operating signals document, click to bring forward">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/knowhere-logo-new.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
               <p class="trace-doc-eyebrow">Q4 2025 market report</p>
               <h3><span>Operating signals</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><p class="trace-record-copy">Quarterly revenue reached <span class="trace-source-mark" data-source-id="operating-revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, while operating income increased to <span class="trace-source-mark" data-source-id="operating-income" role="button" tabindex="0">$1.1B in Q4 2025</span>. Cost discipline lifted the <span class="trace-source-mark" data-source-id="operating-margin" role="button" tabindex="0">operating margin to 22.9%</span>, and the accompanying chart shows that <span class="trace-source-mark" data-source-id="operating-trend" role="button" tabindex="0">revenue rose in each reported quarter since Q4 2023</span>.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy">Quarterly revenue reached <span class="trace-source-mark" data-source-id="operating-revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, establishing the top-line reference point for the period. In parallel, operating income increased to <span class="trace-source-mark" data-source-id="operating-income" role="button" tabindex="0">$1.1B in Q4 2025</span>. The relationship between revenue and income is also reflected in profitability, as cost discipline lifted the <span class="trace-source-mark" data-source-id="operating-margin" role="button" tabindex="0">operating margin to 22.9%</span>. The accompanying chart adds a longer-term view, showing that <span class="trace-source-mark" data-source-id="operating-trend" role="button" tabindex="0">revenue rose in each reported quarter since Q4 2023</span>.</p></div>
               </div>
             </div>
             <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
@@ -1370,13 +1393,32 @@
           <div class="trace-branches" data-trace-branches aria-live="polite">
             <span class="trace-fork-dot" data-trace-fork aria-hidden="true"></span>
             <div class="trace-card-stack">
-              <figure class="trace-source-card" data-trace-source-card>
-                <div class="trace-card-content">
-                  <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Page 12 Paragraph B</span></figcaption>
-                  <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
-                </div>
-                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
-              </figure>
+              <div class="trace-original-stack" data-trace-original-stack aria-label="Three linked original source documents">
+                <figure class="trace-source-card" data-trace-source-card data-source-document="report" data-source-id="revenue" data-source-slot="primary" data-region="revenue">
+                  <div class="trace-card-content">
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Text passage</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                  </div>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <button class="trace-source-switch" data-trace-source-switch type="button" tabindex="-1" aria-label="Show this supporting original document"></button>
+                </figure>
+                <figure class="trace-source-card" data-trace-source-card data-source-document="regional" data-source-id="table" data-source-slot="secondary-one" data-region="table">
+                  <div class="trace-card-content">
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Table</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-table.png" alt="Original regional revenue table"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                  </div>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
+                </figure>
+                <figure class="trace-source-card" data-trace-source-card data-source-document="supporting" data-source-id="chart" data-source-slot="secondary-two" data-region="chart">
+                  <div class="trace-card-content">
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Chart</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-chart.png" alt="Original supporting revenue chart"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                  </div>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
+                </figure>
+              </div>
               <aside class="trace-summary-card" data-trace-summary-card aria-label="AI summary of the selected source">
                 <div class="trace-card-content">
                   <span class="trace-summary-label">AI summary</span>
@@ -2256,7 +2298,9 @@ curl -X POST "[endpoint-to-be-confirmed]" \
 
   const traceDemo = $('[data-trace-demo]');
   const tracePages = traceDemo ? $$('[data-trace-page]', traceDemo) : [];
-  const traceMarks = traceDemo ? $$('[data-source-id]', traceDemo) : [];
+  const traceMarks = traceDemo ? $$('.trace-source-mark[data-source-id]', traceDemo) : [];
+  const traceSourceCards = traceDemo ? $$('[data-trace-source-card]', traceDemo) : [];
+  const traceOriginalStack = traceDemo ? $('[data-trace-original-stack]', traceDemo) : null;
   const traceTargetCursor = $('[data-trace-target-cursor]');
   const traceTargetFrame = $('[data-trace-target-frame]');
   const traceFinePointer = matchMedia('(hover: hover) and (pointer: fine)');
@@ -2799,72 +2843,84 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   const traceSummaries = {
     revenue: {
       region: 'revenue',
+      sourceCount: 3,
       image: traceSourceAssets.revenue,
       coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     table: {
       region: 'table',
+      sourceCount: 1,
       image: traceSourceAssets.table,
       coordinate: { en: 'Page 12 Table 03', zh: '第 12 页 · 表格 03' },
       summary: { en: 'Table 03 shows APAC growing 21.6% and Europe growing 19.4% year over year.', zh: '表格 03 显示，亚太地区同比增长 21.6%，欧洲同比增长 19.4%。' }
     },
     margin: {
       region: 'margin',
+      sourceCount: 2,
       image: traceSourceAssets.margin,
       coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Operating income reached $1.1B as the operating margin expanded to 22.9%.', zh: '营业利润达到 11 亿美元，营业利润率提升至 22.9%。' }
     },
     chart: {
       region: 'chart',
+      sourceCount: 3,
       image: traceSourceAssets.chart,
       coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 preserves the quarter-by-quarter visual evidence behind the sustained revenue trend.', zh: '图表 05 保留了收入持续增长趋势背后的逐季度视觉证据。' }
     },
     'regional-growth': {
       region: 'table',
+      sourceCount: 3,
       image: traceSourceAssets.table,
       coordinate: { en: 'Page 12 Table 03 APAC / Europe', zh: '第 12 页 · 表格 03 · 亚太 / 欧洲' },
       summary: { en: 'APAC grew 21.6% and Europe grew 19.4%, leading regional year-over-year expansion.', zh: '亚太地区增长 21.6%，欧洲增长 19.4%，领跑各区域同比增幅。' }
     },
     'north-america': {
       region: 'table',
+      sourceCount: 1,
       image: traceSourceAssets.table,
       coordinate: { en: 'Page 12 Table 03 North America', zh: '第 12 页 · 表格 03 · 北美' },
       summary: { en: 'North America remained the largest region at $2.302B, representing 18.4% year-over-year growth.', zh: '北美仍是最大区域，收入为 23.02 亿美元，同比增长 18.4%。' }
     },
     'regional-total': {
       region: 'table',
+      sourceCount: 2,
       image: traceSourceAssets.table,
       coordinate: { en: 'Page 12 Table 03 Total', zh: '第 12 页 · 表格 03 · 合计' },
       summary: { en: 'Total regional revenue reached $4.8B, compared with $4.03B in Q4 2024.', zh: '区域收入合计达到 48 亿美元，去年同期为 40.3 亿美元。' }
     },
     'regional-positive': {
       region: 'table',
+      sourceCount: 3,
       image: traceSourceAssets.table,
       coordinate: { en: 'Page 12 Table 03 YoY change', zh: '第 12 页 · 表格 03 · 同比变化' },
       summary: { en: 'Every reported region posted positive year-over-year revenue growth in Q4 2025.', zh: '2025 年第四季度，所有披露区域的收入均实现同比正增长。' }
     },
     'operating-revenue': {
       region: 'revenue',
+      sourceCount: 2,
       image: traceSourceAssets.revenue,
       coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
       summary: { en: 'Revenue reached $4.8B in Q4 2025, up 18.4% year over year.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
     },
     'operating-income': {
       region: 'margin',
+      sourceCount: 1,
       image: traceSourceAssets.margin,
       coordinate: { en: 'Page 12 Paragraph C', zh: '第 12 页 · 段落 C' },
       summary: { en: 'Operating income increased to $1.1B in Q4 2025.', zh: '2025 年第四季度营业利润增长至 11 亿美元。' }
     },
     'operating-margin': {
       region: 'margin',
+      sourceCount: 2,
       image: traceSourceAssets.margin,
       coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
       summary: { en: 'Disciplined cost management lifted operating margin to 22.9%.', zh: '严格的成本管理将营业利润率提升至 22.9%。' }
     },
     'operating-trend': {
       region: 'chart',
+      sourceCount: 3,
       image: traceSourceAssets.chart,
       coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
       summary: { en: 'Figure 05 shows revenue rising in every reported quarter from Q4 2023 through Q4 2025.', zh: '图表 05 显示，从 2023 年第四季度到 2025 年第四季度，收入每个披露季度均有增长。' }
@@ -2877,19 +2933,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   let traceFlowLines = [];
   let traceFlowAnchors = [];
   let traceFlowTimers = [];
+  let traceFlowResizeTimer = 0;
+  let traceSourceStackTimer = 0;
   const animateInitialTraceStage = false;
   let traceStageEntered = traceDemo?.classList.contains('is-stage-entered') ?? false;
   let traceStageAnimation = 0;
   function playTraceStageEntrance() {
     if (!traceDemo) return;
     if (traceStageEntered) {
-      syncTracePreview(false);
+      syncTracePreview();
       return;
     }
     if (!animateInitialTraceStage) {
       traceStageEntered = true;
       traceDemo.classList.add('is-stage-entered');
-      syncTracePreview(false);
+      syncTracePreview();
       return;
     }
     const canvas = $('[data-trace-stage-reveal]', traceDemo);
@@ -3019,7 +3077,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
         }
         context.clearRect(0, 0, width, height);
         traceDemo.classList.add('is-stage-entered');
-        syncTracePreview(false);
+        syncTracePreview();
       }
     };
     cancelAnimationFrame(traceStageAnimation);
@@ -3029,12 +3087,96 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     if (!traceDemo) return null;
     return $('[data-trace-page][data-slot="primary"] .trace-source-mark', traceDemo);
   }
-  function renderTraceSourceContent(source) {
-    if (!traceDemo || !source) return;
+  function getVisibleTraceSourceCards() {
+    return traceSourceCards.filter(card => !card.hidden);
+  }
+  function stopTraceSourceStackEntrance() {
+    clearTimeout(traceSourceStackTimer);
+    traceSourceStackTimer = 0;
+    traceOriginalStack?.classList.remove('is-source-stack-entering');
+  }
+  function playTraceSourceStackEntrance() {
+    stopTraceSourceStackEntrance();
+    const rearCardCount = getVisibleTraceSourceCards().length - 1;
+    if (!traceOriginalStack || rearCardCount < 1) return;
+    void traceOriginalStack.offsetWidth;
+    traceOriginalStack.classList.add('is-source-stack-entering');
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const totalDuration = reducedMotion ? 120 : 598 + (rearCardCount > 1 ? 70 : 0);
+    traceSourceStackTimer = setTimeout(stopTraceSourceStackEntrance, totalDuration + 20);
+  }
+  function bringTraceSourceCardForward(card) {
+    if (!card || card.dataset.sourceSlot === 'primary') return;
+    const slotOrder = { primary: 0, 'secondary-one': 1, 'secondary-two': 2 };
+    const otherCards = getVisibleTraceSourceCards()
+      .filter(item => item !== card)
+      .sort((a, b) => slotOrder[a.dataset.sourceSlot] - slotOrder[b.dataset.sourceSlot]);
+    card.dataset.sourceSlot = 'primary';
+    $('[data-trace-source-switch]', card).tabIndex = -1;
+    otherCards.forEach((item, index) => {
+      item.dataset.sourceSlot = index === 0 ? 'secondary-one' : 'secondary-two';
+      $('[data-trace-source-switch]', item).tabIndex = 0;
+    });
+  }
+  function getPrimaryTraceSourceCard() {
+    return getVisibleTraceSourceCards().find(card => card.dataset.sourceSlot === 'primary') || null;
+  }
+  function getTraceSourceTypeLabel(source) {
+    const labels = {
+      revenue: { en: 'Text passage', zh: '一段文字' },
+      table: { en: 'Table', zh: '表格' },
+      margin: { en: 'Metric note', zh: '指标注释' },
+      chart: { en: 'Chart', zh: '图表' }
+    };
+    const label = labels[source.region] || labels.revenue;
+    return label[activeLanguage] || label.en;
+  }
+  function getTraceSourceVariantIds(id, source) {
+    const supportingIds = {
+      revenue: ['revenue', 'table', 'chart'],
+      table: ['table', 'revenue', 'chart'],
+      margin: ['margin', 'revenue', 'chart'],
+      chart: ['chart', 'revenue', 'table']
+    }[source.region] || ['revenue', 'table', 'chart'];
+    const seenImages = new Set();
+    return [id, ...supportingIds.filter(item => item !== id)]
+      .filter(item => {
+        const image = traceSummaries[item]?.image;
+        if (!image || seenImages.has(image)) return false;
+        seenImages.add(image);
+        return true;
+      })
+      .slice(0, Math.min(source.sourceCount, traceSourceCards.length));
+  }
+  function renderTraceSourceContent(id, source) {
+    if (!traceDemo || !source) return null;
     traceDemo.dataset.region = source.region;
-    $('[data-trace-coordinate]', traceDemo).textContent = source.coordinate[activeLanguage] || source.coordinate.en;
+    const variantIds = getTraceSourceVariantIds(id, source);
+    traceSourceCards.forEach((card, index) => {
+      const variantId = variantIds[index];
+      const variant = traceSummaries[variantId];
+      const switchButton = $('[data-trace-source-switch]', card);
+      card.hidden = !variant;
+      card.classList.remove('is-source-hovered');
+      if (!variant) {
+        switchButton.tabIndex = -1;
+        return;
+      }
+      card.dataset.sourceSlot = index === 0 ? 'primary' : index === 1 ? 'secondary-one' : 'secondary-two';
+      switchButton.tabIndex = index === 0 ? -1 : 0;
+      card.dataset.region = variant.region;
+      card.dataset.sourceId = variantId;
+      $('[data-trace-coordinate]', card).textContent = getTraceSourceTypeLabel(variant);
+      $('[data-trace-source-image]', card).src = variant.image;
+    });
+    $('[data-trace-original-stack]', traceDemo).setAttribute(
+      'aria-label',
+      activeLanguage === 'zh'
+        ? `${variantIds.length} 个关联的原始来源文档`
+        : `${variantIds.length} linked original source ${variantIds.length === 1 ? 'document' : 'documents'}`
+    );
     $('[data-trace-summary]', traceDemo).textContent = source.summary[activeLanguage] || source.summary.en;
-    $('[data-trace-source-image]', traceDemo).src = source.image;
+    return getPrimaryTraceSourceCard();
   }
   function syncTracePreview(playPixels = true) {
     if (!traceDemo || traceActiveId || !traceStageEntered || !traceDemo.classList.contains('is-stage-entered')) return;
@@ -3078,8 +3220,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceTargetCursor.classList.remove('is-visible', 'is-locking');
     traceTargetMark = null;
   }
-  function clearTracePixels() {
-    $$('[data-trace-pixel-reveal]', traceDemo).forEach(canvas => {
+  function clearTracePixels(includeSummary = true) {
+    const selector = includeSummary
+      ? '[data-trace-pixel-reveal]'
+      : '[data-trace-source-card] [data-trace-pixel-reveal]';
+    $$(selector, traceDemo).forEach(canvas => {
       const animation = tracePixelAnimations.get(canvas);
       if (animation) cancelAnimationFrame(animation);
       tracePixelAnimations.delete(canvas);
@@ -3088,9 +3233,14 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       if (context) context.clearRect(0, 0, canvas.width, canvas.height);
     });
   }
-  function playTracePixels() {
+  function playTracePixels(includeSummary = true, maskContent = true) {
     if (!traceDemo || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    $$('[data-trace-pixel-reveal]', traceDemo).forEach(canvas => {
+    const primarySourceCard = getPrimaryTraceSourceCard();
+    const canvases = [
+      ...(primarySourceCard ? $$('[data-trace-pixel-reveal]', primarySourceCard) : []),
+      ...(includeSummary ? $$('[data-trace-summary-card] [data-trace-pixel-reveal]', traceDemo) : [])
+    ];
+    canvases.forEach(canvas => {
       const previous = tracePixelAnimations.get(canvas);
       if (previous) cancelAnimationFrame(previous);
       const rect = canvas.getBoundingClientRect();
@@ -3131,7 +3281,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
           });
         }
       }
-      card.style.setProperty('--trace-particle-mask', 'linear-gradient(transparent,transparent)');
+      if (maskContent) card.style.setProperty('--trace-particle-mask', 'linear-gradient(transparent,transparent)');
       const startedAt = performance.now() + delay;
       let lastMaskUpdate = -Infinity;
       const renderPixels = now => {
@@ -3159,7 +3309,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
             maskContext.fillRect(pixel.x - cellSize / 2, pixel.y - cellSize / 2, cellSize, cellSize);
           });
           maskContext.globalAlpha = 1;
-          card.style.setProperty('--trace-particle-mask', `url(${maskCanvas.toDataURL('image/png')})`);
+          if (maskContent) card.style.setProperty('--trace-particle-mask', `url(${maskCanvas.toDataURL('image/png')})`);
           lastMaskUpdate = elapsed;
         }
         const fade = elapsed < duration ? 1 : Math.max(0, 1 - (elapsed - duration) / 78);
@@ -3180,7 +3330,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
         if (elapsed < duration + 78) {
           tracePixelAnimations.set(canvas, requestAnimationFrame(renderPixels));
         } else {
-          card.style.setProperty('--trace-particle-mask', 'linear-gradient(#000,#000)');
+          if (maskContent) card.style.setProperty('--trace-particle-mask', 'linear-gradient(#000,#000)');
           context.clearRect(0, 0, width, height);
           tracePixelAnimations.delete(canvas);
         }
@@ -3199,9 +3349,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   function makeTraceFlowPair(start, end, options) {
     if (!window.LeaderLine) return [];
     const shared = {
-      path: 'straight',
-      startPlug: 'behind',
-      endPlug: 'behind',
+      path: 'grid',
       startSocket: options.startSocket,
       endSocket: options.endSocket,
       startSocketGravity: options.startGravity,
@@ -3212,12 +3360,20 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       ...shared,
       color: 'rgba(114, 129, 179, .52)',
       size: 1,
+      startPlug: 'disc',
+      endPlug: 'disc',
+      startPlugColor: '#7281b3',
+      endPlugColor: '#7281b3',
+      startPlugSize: 1.5,
+      endPlugSize: 1.5,
       dash: { len: 5, gap: 5 }
     });
     const flow = new LeaderLine(start, end, {
       ...shared,
       color: '#7281b3',
       size: 1,
+      startPlug: 'behind',
+      endPlug: 'behind',
       dash: { len: 5, gap: 5, animation: { duration: 720, timing: 'linear' } }
     });
     traceFlowLines.push(track, flow);
@@ -3234,15 +3390,29 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   function createTraceFlowLines(mark) {
     clearTraceFlowLines();
     if (!traceDemo || !mark || !window.LeaderLine) return;
-    const sourceCard = $('[data-trace-source-card]', traceDemo);
-    const summaryCard = $('[data-trace-summary-card]', traceDemo);
+    const visibleSourceCards = getVisibleTraceSourceCards();
+    const sourceCard = visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-two')
+      || visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-one')
+      || visibleSourceCards.find(card => card.dataset.sourceSlot === 'primary');
     const summaryBody = $('[data-trace-summary]', traceDemo);
-    const aiDocument = $('[data-trace-page][data-slot="primary"]', traceDemo);
-    if (!sourceCard || !summaryCard || !summaryBody || !aiDocument) return;
+    let outputDocument = tracePages.find(page => page.dataset.slot === 'secondary-two');
+    if (!sourceCard || !summaryBody || !outputDocument) return;
+    const stageRect = traceDemo.getBoundingClientRect();
+    const stagePoint = (x, y) => LeaderLine.pointAnchor({
+      element: traceDemo,
+      x: x - stageRect.left,
+      y: y - stageRect.top
+    });
     const sourceRect = sourceCard.getBoundingClientRect();
+    const sourceTransform = getComputedStyle(sourceCard).transform;
+    const sourceMatrix = sourceTransform === 'none' ? null : new DOMMatrixReadOnly(sourceTransform);
+    const sourceFinalLeft = sourceRect.left - (sourceMatrix?.m41 || 0);
+    const sourceFinalBottom = sourceRect.bottom - (sourceMatrix?.m42 || 0);
     const summaryBodyRect = summaryBody.getBoundingClientRect();
-    const sourceExit = LeaderLine.pointAnchor({ element: sourceCard, x: sourceRect.width * .545, y: sourceRect.height });
-    const summaryEntry = LeaderLine.pointAnchor({ element: summaryBody, x: summaryBodyRect.width * .587, y: 0 });
+    const sourceCenterX = sourceFinalLeft + sourceRect.width / 2;
+    const summaryEntryX = Math.max(0, Math.min(summaryBodyRect.width, sourceCenterX - summaryBodyRect.left));
+    const sourceExit = stagePoint(sourceCenterX, sourceFinalBottom);
+    const summaryEntry = stagePoint(summaryBodyRect.left + summaryEntryX, summaryBodyRect.top);
     traceFlowAnchors.push(sourceExit, summaryEntry);
     const summaryFlow = makeTraceFlowPair(sourceExit, summaryEntry, {
       startSocket: 'bottom',
@@ -3250,18 +3420,27 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       startGravity: [0, 12],
       endGravity: [0, -12]
     });
-    const documentRect = aiDocument.getBoundingClientRect();
-    const isSideBySide = summaryBodyRect.left >= documentRect.right - 1;
-    const documentEntryY = isSideBySide
-      ? Math.max(26, Math.min(documentRect.height - 26, summaryBodyRect.top - documentRect.top + summaryBodyRect.height / 2))
-      : 0;
-    const documentEntry = LeaderLine.pointAnchor({
-      element: aiDocument,
-      x: isSideBySide ? documentRect.width : documentRect.width / 2,
-      y: documentEntryY
-    });
-    traceFlowAnchors.push(documentEntry);
-    const answerFlow = makeTraceFlowPair(summaryBody, documentEntry, {
+    const outputDocumentRect = outputDocument.getBoundingClientRect();
+    if (!outputDocumentRect.width || !outputDocumentRect.height) {
+      traceFlowLines.forEach(line => line.position());
+      scheduleTraceFlow(summaryFlow, 400, 260);
+      return;
+    }
+    const isSideBySide = summaryBodyRect.left >= outputDocumentRect.right - 1;
+    const summaryCenterY = summaryBodyRect.top + summaryBodyRect.height / 2;
+    const summaryCenterX = summaryBodyRect.left + summaryBodyRect.width / 2;
+    const documentEntryY = Math.max(24, Math.min(outputDocumentRect.height - 24, summaryCenterY - outputDocumentRect.top));
+    const documentEntryX = Math.max(24, Math.min(outputDocumentRect.width - 24, summaryCenterX - outputDocumentRect.left));
+    const summaryExit = stagePoint(
+      isSideBySide ? summaryBodyRect.left : summaryCenterX,
+      isSideBySide ? summaryCenterY : summaryBodyRect.bottom
+    );
+    const documentEntry = stagePoint(
+      isSideBySide ? outputDocumentRect.right : outputDocumentRect.left + documentEntryX,
+      isSideBySide ? outputDocumentRect.top + documentEntryY : outputDocumentRect.top
+    );
+    traceFlowAnchors.push(summaryExit, documentEntry);
+    const answerFlow = makeTraceFlowPair(summaryExit, documentEntry, {
       startSocket: isSideBySide ? 'left' : 'bottom',
       endSocket: isSideBySide ? 'right' : 'top',
       startGravity: isSideBySide ? [-16, 0] : [0, 16],
@@ -3273,6 +3452,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   function showTraceSource(id, mark, shouldPlayPixels = true) {
     if (!traceDemo || !traceSummaries[id]) return;
+    clearTracePixels();
     traceActiveId = id;
     traceActiveMark = mark;
     const source = traceSummaries[id];
@@ -3282,16 +3462,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       mark.classList.toggle('is-active', active);
       mark.classList.remove('is-preview');
     });
-    renderTraceSourceContent(source);
-    $$('[data-trace-pixel-reveal]', traceDemo).forEach(canvas => canvas.parentElement?.style.removeProperty('--trace-particle-mask'));
+    renderTraceSourceContent(id, source);
+    if (shouldPlayPixels) {
+      playTracePixels();
+      playTraceSourceStackEntrance();
+    } else {
+      stopTraceSourceStackEntrance();
+    }
     traceDemo.classList.add('is-trace-visible');
     requestAnimationFrame(() => {
       createTraceFlowLines(mark);
-      if (shouldPlayPixels) playTracePixels();
     });
   }
   function hideTraceSource(restorePreview = true) {
     if (!traceDemo) return;
+    stopTraceSourceStackEntrance();
     clearTracePixels();
     clearTraceFlowLines();
     traceDemo.classList.remove('is-trace-visible');
@@ -3309,6 +3494,30 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     mark.addEventListener('blur', hideTraceTarget);
     mark.addEventListener('click', () => {
       if (matchMedia('(hover: none)').matches && traceActiveMark !== mark) showTraceSource(id, mark);
+    });
+  });
+  function activateTraceSourceCard(card) {
+    if (!card) return;
+    stopTraceSourceStackEntrance();
+    clearTracePixels(false);
+    bringTraceSourceCardForward(card);
+    requestAnimationFrame(() => {
+      playTracePixels(false, false);
+    });
+  }
+  traceSourceCards.forEach(card => {
+    const switchButton = $('[data-trace-source-switch]', card);
+    switchButton.addEventListener('pointerenter', () => {
+      card.classList.toggle('is-source-hovered', card.dataset.sourceSlot !== 'primary');
+    });
+    switchButton.addEventListener('pointerleave', () => card.classList.remove('is-source-hovered'));
+    switchButton.addEventListener('focus', () => {
+      card.classList.toggle('is-source-hovered', card.dataset.sourceSlot !== 'primary');
+    });
+    switchButton.addEventListener('blur', () => card.classList.remove('is-source-hovered'));
+    switchButton.addEventListener('click', () => {
+      activateTraceSourceCard(card);
+      switchButton.blur();
     });
   });
   function activateTracePage(page) {
@@ -3342,7 +3551,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     });
   });
   addEventListener('resize', () => {
-    if (traceActiveMark) traceFlowLines.forEach(line => line.requestPosition?.() || line.position());
+    clearTimeout(traceFlowResizeTimer);
+    traceFlowResizeTimer = setTimeout(() => {
+      if (traceActiveMark) createTraceFlowLines(traceActiveMark);
+    }, 120);
     if (traceTargetMark) positionTraceTarget(traceTargetMark);
   });
   addEventListener('scroll', () => { if (traceTargetMark) positionTraceTarget(traceTargetMark); }, true);
