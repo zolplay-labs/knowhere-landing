@@ -400,6 +400,27 @@ function initializeHeroCanvas(root, cleanups) {
       return `rgb(${fromRgb.map((value, index) => Math.round(value + (toRgb[index] - value) * progress)).join(',')})`;
     }
 
+    function hexWithAlpha(color, alpha) {
+      const [red, green, blue] = [1, 3, 5].map(index => parseInt(color.slice(index, index + 2), 16));
+      return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+    }
+
+    function drawSelectedPointerField() {
+      if (selectedLayer === null || pointerX < 0 || pointerY < 0 || !finePointer) return;
+      const radius = width < 768 ? 96 : 140;
+      const strength = reducedMotion ? .18 : .42;
+      const color = LAYER_COLORS[selectedLayer];
+      const gradient = ctx.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, radius);
+      gradient.addColorStop(0, hexWithAlpha(color, strength));
+      gradient.addColorStop(.48, hexWithAlpha(color, strength * .52));
+      gradient.addColorStop(.78, hexWithAlpha(color, strength * .18));
+      gradient.addColorStop(1, hexWithAlpha(color, 0));
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(pointerX, pointerY, radius, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
     function drawModeMorph(layout, time) {
       if (morphStarted < 0 && selectedLayer === null) return;
       const state = morphState(time);
@@ -455,7 +476,7 @@ function initializeHeroCanvas(root, cleanups) {
       const visibility = presentation.visibility;
       const rightInset = width < 768 ? 12 : 18;
       const cardWidth = Math.min(273, width - rightInset * 2);
-      const cardHeight = 106;
+      const cardHeight = 95;
       const rightLimit = width - cardWidth - rightInset;
       const targetX = Math.min(bounds.maxX + cell * 4.4, rightLimit);
       const targetY = Math.max(layout.topY + cell, shapeCenterY - cardHeight / 2);
@@ -466,10 +487,13 @@ function initializeHeroCanvas(root, cleanups) {
       const lineWidth = Math.max(20, lineEnd - lineStart) * visibility;
 
       ctx.save();
-      ctx.globalAlpha = visibility;
       ctx.fillStyle = color;
-      ctx.fillRect(lineStart, shapeCenterY + .5, lineWidth, 1);
-      ctx.fillRect(lineStart - 2, shapeCenterY - 1.5, 4, 4);
+      const connectorY = Math.round(shapeCenterY / cell) * cell + 1;
+      for (let lineX = lineStart; lineX < lineStart + lineWidth; lineX += cell) {
+        const column = Math.round(lineX / cell);
+        ctx.globalAlpha = (.46 + hash(column, layerIndex + 1621) * .18) * visibility;
+        ctx.fillRect(column * cell + 1, connectorY, cell - 3, cell - 3);
+      }
 
       ctx.translate(cardX + cardWidth / 2, cardY + cardHeight / 2);
       const scale = .94 + visibility * .06;
@@ -483,28 +507,28 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.lineWidth = 1;
       ctx.strokeRect(.5, .5, cardWidth - 1, cardHeight - 1);
 
-      const textX = 12;
+      const textX = 16;
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
       ctx.fillStyle = '#4e5d88';
-      ctx.font = '500 18px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(displayLabel(layer.label), textX, 12);
+      ctx.font = '500 14px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(displayLabel(layer.label), textX, 16);
       ctx.fillStyle = '#181818';
-      ctx.font = '400 15px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(layer.detail, textX, 36);
+      ctx.font = '400 13px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(layer.detail, textX, 40);
 
-      const statusY = 70;
+      const statusY = 66;
       ctx.globalAlpha = .4 * visibility;
       ctx.fillStyle = '#000';
       ctx.fillText('Live data pass', textX, statusY);
       const statusColors = ['#ced3e7', '#8191c0', '#a1aed1', '#dce0ee', '#dce0ee', '#dce0ee', '#dce0ee'];
-      const statusStartX = cardWidth - 114;
+      const statusStartX = cardWidth - 118;
       statusColors.forEach((statusColor, index) => {
         const phase = ((time * 1.15 - index * .11) % 1 + 1) % 1;
         const pulse = phase < .3 ? Math.sin(phase / .3 * Math.PI) : 0;
         ctx.globalAlpha = (.18 + pulse * .7) * visibility;
         ctx.fillStyle = statusColor;
-        ctx.fillRect(statusStartX + index * 16, statusY + 9, 6, 6);
+        ctx.fillRect(statusStartX + index * 16, statusY + 7, 6, 6);
       });
       ctx.restore();
     }
@@ -523,8 +547,8 @@ function initializeHeroCanvas(root, cleanups) {
       morphStarted = reducedMotion ? animationTime - MORPH_DURATION : animationTime;
       selectedLayer = nextLayer;
       if (hoveredLayer === layerIndex) {
-        const action = nextLayer === layerIndex ? 'Click to return to data funnel' : 'Click to view pixel form';
-        tooltip.textContent = action;
+        if (nextLayer === layerIndex) tooltip.classList.remove('is-visible');
+        else tooltip.textContent = `${LAYERS[layerIndex].label} · Click to view pixel form`;
       }
     }
 
@@ -833,10 +857,13 @@ function initializeHeroCanvas(root, cleanups) {
         const boundaryActive = hoveredLayer === stageIndex || hoveredLayer === stageIndex - 1;
         const railX = stageCenter - stageWidth / 2 - cell;
         if (!isFullWidthStage) {
-          ctx.globalAlpha = (boundaryActive ? .32 : .16) * funnelOpacity;
-          ctx.fillStyle = STAGE_COLORS[stageIndex];
-          ctx.fillRect(railX, y + cell * .72, stageWidth + cell * 2, boundaryActive ? 2 : 1);
+          if (!boundaryActive) {
+            ctx.globalAlpha = .16 * funnelOpacity;
+            ctx.fillStyle = STAGE_COLORS[stageIndex];
+            ctx.fillRect(railX, y + cell * .72, stageWidth + cell * 2, 1);
+          }
           ctx.globalAlpha = (boundaryActive ? .68 : .38) * funnelOpacity;
+          ctx.fillStyle = STAGE_COLORS[stageIndex];
           ctx.fillRect(railX, y + cell * .48, cell * .45, cell * .45);
           ctx.fillRect(railX + stageWidth + cell * 1.55, y + cell * .48, cell * .45, cell * .45);
         }
@@ -887,7 +914,9 @@ function initializeHeroCanvas(root, cleanups) {
         stageTracks[stageIndex].forEach(trackId => {
           const position = layout.positions[stageIndex].get(trackId);
           const x = position.x;
-          const y = layout.topY + layout.stageGap * stageIndex + position.y;
+          const boundaryActive = hoveredLayer === stageIndex || hoveredLayer === stageIndex - 1;
+          const boundaryOffset = boundaryActive ? (trackId % 2 ? -cell : cell) : 0;
+          const y = layout.topY + layout.stageGap * stageIndex + position.y + boundaryOffset;
           const nodeSpeed = .09 + hash(trackId + 227, stageIndex + 431) * .13;
           const stagePhase = ((time * nodeSpeed + hash(trackId + 251, stageIndex + 457)) % 1 + 1) % 1;
           const stageGlow = !reducedMotion && stagePhase < .22
@@ -898,7 +927,7 @@ function initializeHeroCanvas(root, cleanups) {
           drawPixel(
             x,
             y,
-            (Math.max(.9, unitAlpha * dataAlpha) + stageGlow + heatAt(x, y) * .3)
+            (Math.max(.9, unitAlpha * dataAlpha) + stageGlow + heatAt(x, y) * .3 + (boundaryActive ? .12 : 0))
               * tone.alpha * reveal * funnelOpacity,
             tone.color
           );
@@ -1004,7 +1033,7 @@ function initializeHeroCanvas(root, cleanups) {
           }
 
           const variation = .62 + hash(column + 811, row + layerIndex * 53) * .38;
-          ctx.globalAlpha = envelope * variation * .16;
+          ctx.globalAlpha = envelope * variation * .2;
           ctx.fillRect(column * cell + 1, row * cell + 1, cell - 3, cell - 3);
         }
       }
@@ -1042,8 +1071,11 @@ function initializeHeroCanvas(root, cleanups) {
         tooltip.classList.remove('is-visible');
         return;
       }
-      const action = selectedLayer === hoveredLayer ? 'Click to return to data funnel' : 'Click to view pixel form';
-      tooltip.textContent = action;
+      if (selectedLayer === hoveredLayer) {
+        tooltip.classList.remove('is-visible');
+        return;
+      }
+      tooltip.textContent = `${LAYERS[hoveredLayer].label} · Click to view pixel form`;
       tooltip.style.left = `${Math.min(innerWidth - 240, clientX)}px`;
       tooltip.style.top = `${Math.min(innerHeight - 70, clientY)}px`;
       tooltip.classList.add('is-visible');
@@ -1064,6 +1096,7 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.fillRect(0, 0, width, height);
       ctx.save();
       drawGrid();
+      drawSelectedPointerField();
       drawScanTrail();
       drawHoverGridFlow(layout, milliseconds / 1000);
       if (lowerTextureVisible) drawConvergingDivider();
@@ -1115,6 +1148,8 @@ function initializeHeroCanvas(root, cleanups) {
       hoveredLayer = null;
       hoverFlowLayer = null;
       hero.classList.remove('is-data-layer-hovered');
+      pointerX = -1;
+      pointerY = -1;
       previousX = -1;
       previousY = -1;
       tooltip.classList.remove('is-visible');

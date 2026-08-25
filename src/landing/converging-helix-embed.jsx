@@ -21,6 +21,7 @@ const DEFAULT_SETTINGS = {
   speed: 1,
   strands: 7,
   turns: 2.25,
+  yPosition: 0,
 }
 const SETTINGS_STORAGE_KEY = 'knowhere:converging-helix-settings'
 let animationLoad = null
@@ -71,6 +72,7 @@ function loadSavedSettings() {
       speed: number(saved.speed, DEFAULT_SETTINGS.speed, 0, 4),
       strands: Math.round(number(saved.strands, DEFAULT_SETTINGS.strands, 1, 16)),
       turns: number(saved.turns, DEFAULT_SETTINGS.turns, 0.25, 8),
+      yPosition: number(saved.yPosition, DEFAULT_SETTINGS.yPosition, -200, 200),
     }
   } catch {
     return DEFAULT_SETTINGS
@@ -234,7 +236,7 @@ export function ConvergingHelixTuner({ children }) {
     <div className="converging-helix-workbench">
       <div className="converging-helix-stage">
         <div className="final-cta-art" aria-hidden="true">
-          <div className="converging-helix-pair">
+          <div className="converging-helix-pair" style={{ '--converging-helix-y': `${settings.yPosition}px` }}>
             <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--left" mirror={false} />
             <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--right" mirror />
           </div>
@@ -257,6 +259,7 @@ export function ConvergingHelixTuner({ children }) {
             <RangeControl label="Horizontal span" min={0.5} max={1.3} step={0.01} value={settings.horizontalSpan} onChange={value => setValue('horizontalSpan', value)} />
             <RangeControl label="Center gap" min={0} max={320} step={4} value={settings.centerGap} suffix="px" onChange={value => setValue('centerGap', value)} />
             <RangeControl label="Overall size" min={0.5} max={1.5} step={0.01} value={settings.scale} suffix="×" onChange={value => setValue('scale', value)} />
+            <RangeControl label="Y position" min={-200} max={200} step={1} value={settings.yPosition} suffix="px" onChange={value => setValue('yPosition', value)} />
             <RangeControl label="Strands" min={1} max={16} value={settings.strands} onChange={value => setValue('strands', value)} />
             <RangeControl label="Opacity" min={0} max={1} step={0.01} value={settings.opacity} onChange={value => setValue('opacity', value)} />
             <RangeControl label="X / Pitch" min={-180} max={180} step={0.01} value={settings.rotation[0]} suffix="°" onChange={value => setRotation(0, value)} />

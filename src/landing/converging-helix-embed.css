@@ -35,6 +35,7 @@
   z-index: 1;
   overflow: hidden;
   pointer-events: none;
+  transform: translateY(var(--converging-helix-y, 0));
 }
 
 .converging-helix-embed {
