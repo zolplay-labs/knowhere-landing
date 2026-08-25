@@ -5666,3 +5666,31 @@
         aspect-ratio: auto;
       }
     }
+
+    /* Keep the page's vertical rhythm consistent across every content section. */
+    #playground,
+    .capabilities-scroll-track,
+    .formats-scroll-track,
+    #comparison,
+    #integration,
+    #pricing,
+    #enterprise,
+    #faq,
+    #final-cta {
+      margin-top: 20px;
+    }
+
+    #playground .section-heading,
+    #capabilities .section-heading,
+    #formats .section-heading,
+    #comparison .section-heading,
+    #integration .section-heading,
+    #pricing .pricing-heading {
+      margin-bottom: 60px;
+    }
+
+    @media (max-width: 767px) {
+      #faq {
+        gap: 60px;
+      }
+    }
