@@ -839,7 +839,10 @@ if (!(root instanceof Element)) return () => {};
     '#main .format-chips',
     '#main .tabs',
     '#main summary'
-  ].join(',')).filter(element => !element.closest('[hidden], #top, #playground'));
+  ].join(',')).filter(element => (
+    !element.closest('[hidden], #top, #playground')
+    && !element.matches('#enterprise .enterprise-metric')
+  ));
   const reducedTextMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   enteringText.forEach(element => element.classList.add('text-enter'));
   if (reducedTextMotion || !('IntersectionObserver' in window)) {

@@ -4206,28 +4206,220 @@
       justify-content: flex-start;
     }
 
-    #enterprise .enterprise-metric-visual img {
+    #enterprise .enterprise-metric-visual svg {
       display: block;
       width: auto;
       max-width: 100%;
       height: auto;
       max-height: 144px;
-      object-fit: contain;
-      object-position: left top;
+      overflow: visible;
     }
 
     @media (min-width: 768px) {
-      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual img,
-      #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual img {
+      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg,
+      #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg {
         max-height: 152px;
       }
 
-      #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual img {
+      #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual svg {
         max-height: 132px;
       }
 
-      #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual img {
+      #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg {
         max-height: 128px;
+      }
+    }
+
+    #enterprise .enterprise-metric:nth-child(1) { --enterprise-visual-delay: 0ms; }
+    #enterprise .enterprise-metric:nth-child(2) { --enterprise-visual-delay: 45ms; }
+    #enterprise .enterprise-metric:nth-child(3) { --enterprise-visual-delay: 90ms; }
+    #enterprise .enterprise-metric:nth-child(4) { --enterprise-visual-delay: 135ms; }
+    #enterprise .enterprise-metric:nth-child(5) { --enterprise-visual-delay: 180ms; }
+    #enterprise .enterprise-metric:nth-child(6) { --enterprise-visual-delay: 225ms; }
+
+    #enterprise .enterprise-illustration-base > * {
+      vector-effect: non-scaling-stroke;
+    }
+
+    #enterprise .enterprise-draw {
+      stroke-dasharray: 900;
+      stroke-dashoffset: 0;
+    }
+
+    #enterprise.is-visible .enterprise-illustration {
+      animation: enterprise-visual-enter 420ms cubic-bezier(.22, 1, .36, 1) var(--enterprise-visual-delay) both;
+    }
+
+    #enterprise.is-visible .enterprise-draw {
+      animation: enterprise-line-draw 720ms cubic-bezier(.22, 1, .36, 1) var(--enterprise-visual-delay) both;
+    }
+
+    #enterprise.is-visible .enterprise-draw--late {
+      animation-delay: calc(var(--enterprise-visual-delay) + 35ms);
+    }
+
+    #enterprise.is-visible .enterprise-draw--later {
+      animation-delay: calc(var(--enterprise-visual-delay) + 70ms);
+    }
+
+    #enterprise .enterprise-motion-layer {
+      stroke: var(--main-600);
+      opacity: 0;
+      animation-play-state: paused;
+      transition: opacity 220ms cubic-bezier(.22, 1, .36, 1);
+    }
+
+    #enterprise .enterprise-motion-ring {
+      transform-box: view-box;
+    }
+
+    #enterprise .enterprise-motion-ring--limits {
+      transform-origin: 160px 160px;
+      animation: enterprise-ring-spin 14s linear infinite paused;
+    }
+
+    #enterprise .enterprise-motion-ring--sla {
+      transform-origin: 160px 160px;
+      animation: enterprise-ring-breathe 4.8s ease-in-out infinite alternate paused;
+    }
+
+    #enterprise .enterprise-motion-dash--priority {
+      animation: enterprise-dash-flow 1.8s linear infinite paused;
+    }
+
+    #enterprise .enterprise-motion-dash--deployment {
+      animation: enterprise-dash-flow 3.6s linear infinite paused;
+    }
+
+    #enterprise .enterprise-motion-dash--support {
+      animation: enterprise-dash-flow 2.4s linear infinite paused;
+    }
+
+    #enterprise .enterprise-motion-dash--commercial {
+      animation: enterprise-dash-flow 2s linear infinite paused;
+    }
+
+    #enterprise .enterprise-priority-satellite,
+    #enterprise .enterprise-deployment-layer,
+    #enterprise .enterprise-support-circle {
+      transition: transform 220ms cubic-bezier(.22, 1, .36, 1);
+    }
+
+    #enterprise .enterprise-motion-commercial-scan path {
+      opacity: .2;
+      animation: enterprise-commercial-tier 2.8s ease-in-out infinite alternate paused;
+    }
+
+    #enterprise .enterprise-motion-commercial-scan path:last-child {
+      animation-delay: -1.4s;
+    }
+
+    @keyframes enterprise-visual-enter {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes enterprise-line-draw {
+      from { stroke-dashoffset: 900; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes enterprise-ring-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes enterprise-ring-breathe {
+      from { transform: rotate(-4deg); }
+      to { transform: rotate(4deg); }
+    }
+
+    @keyframes enterprise-dash-flow {
+      to { stroke-dashoffset: -24; }
+    }
+
+    @keyframes enterprise-commercial-tier {
+      from { opacity: .18; }
+      to { opacity: .8; }
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      #enterprise .enterprise-metric:hover .enterprise-motion-layer {
+        opacity: .72;
+        animation-play-state: running;
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-motion-commercial-scan path {
+        animation-play-state: running;
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-priority-satellite--left,
+      #enterprise .enterprise-metric:hover .enterprise-priority-satellite--right {
+        transform: translateY(-3px);
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-priority-satellite--bottom {
+        transform: translateY(3px);
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-deployment-layer--top {
+        transform: translateY(-4px);
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-deployment-layer--bottom {
+        transform: translateY(4px);
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-support-circle--left {
+        transform: translateX(3px);
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-support-circle--right {
+        transform: translateX(-3px);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #enterprise.is-visible .enterprise-illustration,
+      #enterprise.is-visible .enterprise-draw,
+      #enterprise .enterprise-motion-layer,
+      #enterprise .enterprise-motion-commercial-scan path {
+        animation: none;
+      }
+
+      #enterprise .enterprise-draw {
+        stroke-dashoffset: 0;
+      }
+
+      #enterprise .enterprise-priority-satellite,
+      #enterprise .enterprise-deployment-layer,
+      #enterprise .enterprise-support-circle {
+        transform: none;
+      }
+
+      #enterprise .enterprise-metric:hover .enterprise-priority-satellite,
+      #enterprise .enterprise-metric:hover .enterprise-deployment-layer,
+      #enterprise .enterprise-metric:hover .enterprise-support-circle {
+        transform: none;
+      }
+
+      #enterprise .enterprise-motion-layer,
+      #enterprise .enterprise-metric:hover .enterprise-motion-layer {
+        animation-play-state: paused;
+      }
+
+      #enterprise .enterprise-illustration {
+        opacity: 1;
+        transition: opacity 120ms ease-out !important;
+      }
+
+      @media (hover: hover) and (pointer: fine) {
+        #enterprise .enterprise-metric:hover .enterprise-illustration {
+          opacity: .82;
+        }
+
+        #enterprise .enterprise-metric:hover .enterprise-motion-layer {
+          opacity: 0;
+        }
       }
     }
 
@@ -4334,7 +4526,7 @@
         flex-basis: 112px;
       }
 
-      #enterprise .enterprise-metric-visual img {
+      #enterprise .enterprise-metric-visual svg {
         max-height: 112px;
       }
     }
