@@ -893,7 +893,19 @@
     }
     #top.hero-b-layout { --hero-grid-tail: clamp(128px, 10vw, 148px); --hero-scan-extension: clamp(360px, 28vw, 430px); position: relative; isolation: isolate; align-items: start; overflow: visible; background: #fdfcfc; }
     #top.hero-b-layout::before { position: absolute; z-index: 3; top: 0; right: 50%; bottom: calc(-1 * var(--hero-grid-tail) - var(--hero-scan-extension)); left: 50%; width: 100vw; background-color: #fdfcfc; background-image: linear-gradient(rgba(28,28,26,.026) 1px, transparent 1px), linear-gradient(90deg, rgba(28,28,26,.026) 1px, transparent 1px), radial-gradient(circle, rgba(28,28,26,.022) 0 .7px, transparent .8px); background-position: 0 0; background-size: 6px 6px, 6px 6px, 18px 18px; content: ""; pointer-events: none; transform: translateX(-50%); will-change: clip-path, opacity; animation: hero-scan-curtain 1.12s .08s cubic-bezier(.42,0,.58,1) both; }
-    #top.hero-b-layout::after { display: none; content: ""; }
+    #top.hero-b-layout::after {
+      position: absolute;
+      z-index: 2;
+      right: 50%;
+      bottom: 0;
+      left: 50%;
+      width: 100vw;
+      height: 40px;
+      background: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0) 100%);
+      content: "";
+      pointer-events: none;
+      transform: translateX(-50%);
+    }
     #hero-b-pixel-field { position: absolute; z-index: 0; top: 0; left: 50%; width: 100vw; height: 100%; display: block; pointer-events: none; transform: translateX(-50%); }
     #top.hero-b-layout .hero-copy,
     #top.hero-b-layout .hero-visual { z-index: 1; }
@@ -2976,9 +2988,9 @@
       gap: 1.5px;
       color: rgba(0, 0, 0, .4);
       font-family: var(--figma-mono);
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 400;
-      line-height: 12px;
+      line-height: 14px;
     }
 
     #comparison .comparison-axis-y strong {
@@ -3217,7 +3229,7 @@
 
     #formats .section-heading {
       min-height: 82px;
-      margin: 0 0 60px;
+      margin: 0 0 40px;
       row-gap: 10px;
     }
 
@@ -3234,7 +3246,7 @@
       }
 
       #comparison .comparison-axis-y {
-        font-size: 9px;
+        font-size: 11px;
       }
 
       #comparison .comparison-axis-y--left {
@@ -4059,6 +4071,8 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
+      align-self: stretch;
+      justify-content: space-between;
     }
 
     #enterprise h2 {
@@ -4072,6 +4086,7 @@
       line-height: 56px;
       letter-spacing: -.2px;
       text-wrap: wrap;
+      white-space: pre-line;
     }
 
     #enterprise .lede {
@@ -4088,7 +4103,7 @@
     #enterprise .sales-link {
       width: 115px;
       min-height: 38px;
-      margin: 50px 0 0;
+      margin: 0;
       padding: 6px 10px;
       border: 0;
       border-radius: 2px;
@@ -4390,11 +4405,22 @@
     }
 
     #enterprise .enterprise-metric strong {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       color: #181818;
       font-size: 22px;
       font-weight: 400;
       line-height: 28px;
       letter-spacing: -.2px;
+    }
+
+    #enterprise .enterprise-metric strong::before {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      background: var(--main-600);
+      content: "";
     }
 
     #enterprise .enterprise-metric p {
@@ -4456,6 +4482,10 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+      }
+
+      #enterprise .enterprise-copy-detail {
+        gap: 28px;
       }
 
       #enterprise .enterprise-metrics {
@@ -5254,6 +5284,18 @@
       transform: none;
     }
 
+    #playground .section-scan-frame::after {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 60px;
+      background: linear-gradient(to top, #fff 0%, rgba(255, 255, 255, 0) 100%);
+      content: "";
+      pointer-events: none;
+    }
+
     #playground .section-scan-frame iframe {
       display: block;
       width: 100%;
@@ -5449,8 +5491,12 @@
     }
 
     #integration .steps li > span {
-      background: rgba(0, 0, 0, .9);
-      transition: background-color 180ms ease;
+      border: 0;
+      background: transparent;
+      box-shadow: none;
+      color: var(--ink);
+      font-size: 13px;
+      transition: color 180ms ease;
     }
 
     #integration .steps li:hover {
@@ -5458,7 +5504,8 @@
     }
 
     #integration .steps li:hover > span {
-      background: var(--main-600);
+      background: transparent;
+      color: var(--main-600);
     }
 
     #integration .steps li::after,
@@ -5640,18 +5687,85 @@
     }
 
     #integration .integration-plinth {
-      width: 544px;
-      height: auto;
+      width: 630px;
+      height: 410px;
       aspect-ratio: auto;
       align-self: center;
       overflow: visible;
       background: transparent;
     }
 
+    #integration .catenoid-field-workbench,
+    #integration .catenoid-field-embed {
+      height: 100%;
+    }
+
+    #integration .catenoid-field-embed {
+      aspect-ratio: auto;
+    }
+
+    @media (min-width: 768px) {
+      #integration .integration-grid::before {
+        position: absolute;
+        z-index: 0;
+        top: 0;
+        bottom: -25px;
+        left: 80px;
+        width: 1px;
+        background: rgba(0, 0, 0, .06);
+        content: "";
+        pointer-events: none;
+      }
+
+      #integration .integration-grid::after {
+        position: absolute;
+        z-index: 4;
+        inset: 0;
+        background:
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px) 0 25px / 100% 1px no-repeat,
+          repeating-linear-gradient(90deg, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px) 0 431px / 100% 1px no-repeat;
+        content: "";
+        pointer-events: none;
+      }
+
+      #integration .integration-plinth::before {
+        position: absolute;
+        z-index: 3;
+        top: -23px;
+        right: 0;
+        bottom: -104px;
+        left: auto;
+        width: 1px;
+        background: rgba(0, 0, 0, .06);
+        content: "";
+        pointer-events: none;
+      }
+
+      #integration .mcp::after {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        width: calc(100% + 162px);
+        height: 1px;
+        background: repeating-linear-gradient(90deg, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px);
+        content: "";
+        pointer-events: none;
+        transform: translateX(-50%);
+      }
+    }
+
     @media (min-width: 768px) and (max-width: 1199px) {
+      #integration .integration-grid::before {
+        left: 40px;
+      }
+
+      #integration .mcp::after {
+        width: calc(100% + 82px);
+      }
+
       #integration .integration-plinth {
         width: calc(100% - 40px);
-        height: auto;
+        height: 410px;
       }
     }
 
@@ -5663,7 +5777,7 @@
       #integration .integration-plinth {
         width: 100%;
         height: auto;
-        aspect-ratio: auto;
+        aspect-ratio: 630 / 410;
       }
     }
 
@@ -5677,7 +5791,11 @@
     #enterprise,
     #faq,
     #final-cta {
-      margin-top: 20px;
+      margin-top: 60px;
+    }
+
+    #enterprise {
+      margin-top: 100px;
     }
 
     #playground .section-heading,
@@ -5689,8 +5807,53 @@
       margin-bottom: 60px;
     }
 
+    #formats .section-heading {
+      margin-bottom: 40px;
+    }
+
     @media (max-width: 767px) {
       #faq {
         gap: 60px;
       }
+    }
+
+    button,
+    .button,
+    input[type="button"],
+    input[type="submit"],
+    input[type="reset"] {
+      border-radius: 4px !important;
+    }
+
+    #playground .section-heading > p:last-child,
+    #capabilities .narrative-grid h3,
+    #capabilities .narrative-grid p,
+    #capabilities .narrative-grid span,
+    #formats .formats-secondary-grid h3,
+    #formats .formats-secondary-grid p,
+    #formats .formats-secondary-grid span,
+    #comparison .comparison-metric-labels span,
+    #integration .section-heading > p:last-child,
+    #integration .steps h3,
+    #integration .steps p,
+    #integration .steps li > span,
+    #pricing .pricing-facts dt,
+    #pricing .pricing-facts dd,
+    #enterprise .lede {
+      font-weight: 400;
+    }
+
+    #integration .steps li > span {
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+    #integration .steps h3 {
+      font-size: 18px;
+      line-height: 27px;
+    }
+
+    .catenoid-field-controls,
+    .converging-helix-controls {
+      display: none !important;
     }

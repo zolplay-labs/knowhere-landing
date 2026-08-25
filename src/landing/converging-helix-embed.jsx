@@ -242,6 +242,11 @@ export function ConvergingHelixTuner({ children }) {
           </div>
         </div>
         {children}
+        <ul className="converging-helix-benefits" aria-label="Trial benefits">
+          <li>Free 14-day trial</li>
+          <li>No credit card required</li>
+          <li>Cancel anytime</li>
+        </ul>
       </div>
       <details className="converging-helix-controls">
         <summary><span>Adjust Converging Helix</span><small>{settings.strands} strands · {settings.speed}×</small></summary>

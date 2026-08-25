@@ -12,8 +12,8 @@ export function LandingPage() {
     const root = rootRef.current
     if (!root) return undefined
 
-    const cleanupInteractions = initializeLandingInteractions(root)
     const cleanupCanvases = initializeLandingCanvases(root)
+    const cleanupInteractions = initializeLandingInteractions(root)
     return () => {
       cleanupCanvases()
       cleanupInteractions()
@@ -216,7 +216,6 @@ export function LandingPage() {
             </div>
           </div>
         </div>
-        <div className="divider-hatch divider-hatch--bottom" aria-hidden="true" />
         <div className="comparison-scoreboard" role="group" aria-label="Document understanding capability matrix">
           <div className="comparison-scoreboard-head"><strong>Capability matrix</strong><div className="comparison-scoreboard-head-actions"><button className="comparison-toggle" type="button" aria-expanded="false" aria-controls="comparison-table"><span className="sr-only">Toggle comparison details</span></button></div></div>
           <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="true"><div className="comparison-scoreboard-grid">
@@ -229,6 +228,7 @@ export function LandingPage() {
               <div className="scoreboard-cell scoreboard-feature">Page-native visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
+        <div className="divider-hatch divider-hatch--bottom" aria-hidden="true" />
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
@@ -259,7 +259,7 @@ export function LandingPage() {
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
         <p className="section-no enterprise-label">&gt;_ENTERPRISE</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p></div></div>
+        <div className="enterprise-copy"><h2 id="enterprise-title">{'Need custom limits\nor\ndeployment support?'}</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -268,7 +268,6 @@ export function LandingPage() {
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="sla" /></div><div className="enterprise-metric-copy"><strong>SLA requirements</strong><p>Define your uptime and service-level needs.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="commercial" /></div><div className="enterprise-metric-copy"><strong>Commercial terms</strong><p>Discuss billing and terms for your usage.</p></div></li>
         </ul>
-        <a className="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a>
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
@@ -284,7 +283,7 @@ export function LandingPage() {
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
       <ConvergingHelixTuner>
-        <div id="final-cta-copy"><p className="section-no">ENTERPRISE</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
+        <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
         <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
       </ConvergingHelixTuner>
     </section>

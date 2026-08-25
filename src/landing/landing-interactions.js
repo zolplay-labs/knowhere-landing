@@ -680,6 +680,7 @@ if (!(root instanceof Element)) return () => {};
     });
   }
   const capabilitiesTrack = $('.capabilities-scroll-track');
+  const storyStepList = $('.story-steps');
   const storyCardStack = $('.story-card-stack');
   const storyCards = $$('.story-card');
   const storySteps = $$('.story-step');
@@ -695,13 +696,23 @@ if (!(root instanceof Element)) return () => {};
     });
     if (focus) step.focus();
   }
+  function storyMarker(index) {
+    if (matchMedia('(max-width: 767px)').matches || !storyStepList) return 40;
+    const stickyTop = parseFloat(getComputedStyle(storyStepList).top) || 80;
+    const card = storyCards[index];
+    if (index === storyCards.length - 1 && card) {
+      return stickyTop + storyStepList.offsetHeight - card.offsetHeight;
+    }
+    return stickyTop + (storySteps[index]?.offsetTop || 0);
+  }
+  function storyScrollTarget(index) {
+    const card = storyCards[index];
+    return card ? scrollY + card.getBoundingClientRect().top - storyMarker(index) : scrollY;
+  }
   function scrollToStory(index) {
     activateStory(index, true);
-    const card = storyCards[index];
-    if (!card) return;
-    const marker = matchMedia('(max-width: 767px)').matches ? 40 : 80;
-    const top = scrollY + card.getBoundingClientRect().top - marker;
-    scrollTo({ top, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (!storyCards[index]) return;
+    scrollTo({ top: storyScrollTarget(index), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   }
   storySteps.forEach((step, index) => {
     step.addEventListener('click', () => scrollToStory(index));
@@ -717,18 +728,28 @@ if (!(root instanceof Element)) return () => {};
   function syncStoryToScroll() {
     capabilitiesTrack?.style.removeProperty('height');
     storyCardStack?.style.removeProperty('height');
-    const marker = matchMedia('(max-width: 767px)').matches ? 40 : 80;
+    storyCardStack?.style.removeProperty('transform');
+    storyCards.forEach(card => card.style.removeProperty('transform'));
+    const targets = storyCards.map((card, index) => scrollY + card.getBoundingClientRect().top - storyMarker(index));
     let activeIndex = 0;
     storyCards.forEach((card, index) => {
-      card.style.removeProperty('transform');
-      if (card.getBoundingClientRect().top <= marker) activeIndex = index;
+      if (scrollY >= targets[index] - 0.5) activeIndex = index;
     });
     syncHeaderState();
     activateStory(activeIndex);
-    const activeTop = storyCards[activeIndex]?.getBoundingClientRect().top ?? marker;
-    const nextTop = storyCards[activeIndex + 1]?.getBoundingClientRect().top ?? activeTop + (storyCards[activeIndex]?.getBoundingClientRect().height || 1) + 24;
-    const progress = Math.max(0, Math.min(100, ((marker - activeTop) / Math.max(1, nextTop - activeTop)) * 100));
+    const activeTarget = targets[activeIndex] ?? scrollY;
+    const nextTarget = targets[activeIndex + 1];
+    const progress = nextTarget === undefined
+      ? 100
+      : Math.max(0, Math.min(100, ((scrollY - activeTarget) / Math.max(1, nextTarget - activeTarget)) * 100));
     storySteps.forEach((step, index) => step.style.setProperty('--story-progress', index === activeIndex ? `${progress}%` : '0%'));
+    if (activeIndex === storyCards.length - 1 && !matchMedia('(max-width: 767px)').matches) {
+      const holdDistance = Math.min(
+        parseFloat(getComputedStyle(storyCardStack).paddingBottom) || 0,
+        Math.max(0, scrollY - activeTarget),
+      );
+      storyCardStack.style.transform = `translate3d(0, ${holdDistance}px, 0)`;
+    }
   }
   addEventListener('scroll', syncStoryToScroll, { passive: true });
   addEventListener('resize', syncStoryToScroll);
@@ -2382,7 +2403,7 @@ syncPricingCalculator();
 
     const canvas = document.querySelector('[data-format-globe]');
     const stage = canvas?.closest('.format-orbit-stage--thread-globe');
-    if (!canvas || !stage) return;
+    if (!canvas || !stage || canvas.dataset.formatGlobeOwned === 'true') return;
 
     const context = canvas.getContext('2d');
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;

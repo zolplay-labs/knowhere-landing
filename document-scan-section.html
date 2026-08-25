@@ -206,7 +206,10 @@
     .trace-record-label { display: none; }
     .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: var(--main-50, #f5f6fa); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
     .trace-source-mark.is-preview { background: var(--main-50, #f5f6fa); color: #111315; box-shadow: none; }
-    .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); outline: 0; }
+    .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; outline: 0; }
+    .trace-source-mark:hover, .trace-source-mark:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); }
+    .trace-source-mark.is-active { box-shadow: none; }
+    .trace-source-mark.is-active:focus-visible { box-shadow: inset 0 0 0 1px rgba(255,255,255,.9); }
     .trace-target-cursor { --trace-dot-x: 50%; --trace-dot-y: 50%; --trace-parallax-x: 0px; --trace-parallax-y: 0px; position: fixed; z-index: 120; top: 0; left: 0; width: 0; height: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .1s ease, visibility 0s .1s; }
     .trace-target-cursor.is-visible { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-target-frame { position: absolute; inset: 0; transform: translate3d(var(--trace-parallax-x),var(--trace-parallax-y),0); }
@@ -237,8 +240,8 @@
     .trace-source-card[data-source-slot="secondary-one"] { --trace-stack-enter-x: -28px; --trace-stack-enter-y: -20px; }
     .trace-source-card[data-source-slot="secondary-two"] { --trace-stack-enter-x: -56px; --trace-stack-enter-y: -40px; }
     .trace-original-stack.is-source-stack-entering .trace-source-card:not([data-source-slot="primary"]) { pointer-events: none; animation: trace-source-stack-enter 220ms cubic-bezier(.23,1,.32,1) both; }
-    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-one"] { animation-delay: 378ms; }
-    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-two"] { animation-delay: 448ms; }
+    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-one"] { animation-delay: var(--trace-source-stack-delay, 800ms); }
+    .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-two"] { animation-delay: calc(var(--trace-source-stack-delay, 800ms) + 70ms); }
     .trace-source-card:not([data-source-slot="primary"]).is-source-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
     .trace-source-switch { position: absolute; z-index: 6; top: 0; right: 0; bottom: 0; width: 28px; padding: 0; border: 0; background: transparent; cursor: pointer; }
     .trace-source-card[data-source-slot="primary"] .trace-source-switch { pointer-events: none; visibility: hidden; }
@@ -269,7 +272,7 @@
     .trace-source-card, .trace-summary-card { overflow: visible; isolation: isolate; border: 0; border-radius: var(--trace-card-radius); background: transparent; box-shadow: none; }
     .trace-source-card::before, .trace-summary-card::before { position: absolute; z-index: 0; border: 0; content: ""; }
     .trace-source-card::before { display: none; }
-    .trace-source-card::after { display: none; content: none; }
+    .trace-source-card::after { position: absolute; z-index: 3; inset: 48px 0 0; display: block; border: 1px solid #cecde0; content: ""; pointer-events: none; }
     .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -278,7 +281,7 @@
     .trace-fork-dot { display: none; }
     .leader-line { z-index: 6 !important; pointer-events: none !important; }
     .leader-line path { stroke-linecap: round; stroke-linejoin: round; }
-    .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+    .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-source-card::after, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
     .trace-source-card[data-region="table"] { --region-x: 2%; --region-y: 13%; --region-w: 72%; --region-h: 72%; }
     .trace-source-card[data-region="margin"] { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
     .trace-source-card[data-region="chart"] { --region-x: 1.5%; --region-y: 18%; --region-w: 47.5%; --region-h: 72%; }
@@ -319,7 +322,7 @@
       .trace-pixel-reveal, .trace-document-scanner { display: none; }
       .trace-original-stack.is-source-stack-entering .trace-source-card:not([data-source-slot="primary"]) { animation: trace-source-stack-fade 120ms cubic-bezier(.23,1,.32,1) both; }
       .trace-decrypt-canvas { transition: none; }
-      .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: none; mask-image: none; }
+      .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-source-card::after, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: none; mask-image: none; }
       .trace-target-cursor.is-locking .trace-target-frame { animation: none; }
       .trace-dither-field { opacity: 1; }
     }
@@ -1399,7 +1402,7 @@
                     <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Text passage</span></figcaption>
                     <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
-                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" tabindex="-1" aria-label="Show this supporting original document"></button>
                 </figure>
                 <figure class="trace-source-card" data-trace-source-card data-source-document="regional" data-source-id="table" data-source-slot="secondary-one" data-region="table">
@@ -1407,7 +1410,7 @@
                     <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Table</span></figcaption>
                     <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-table.png" alt="Original regional revenue table"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
-                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
                 </figure>
                 <figure class="trace-source-card" data-trace-source-card data-source-document="supporting" data-source-id="chart" data-source-slot="secondary-two" data-region="chart">
@@ -1415,7 +1418,7 @@
                     <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Chart</span></figcaption>
                     <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-chart.png" alt="Original supporting revenue chart"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
-                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="300" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
+                  <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
                 </figure>
               </div>
@@ -1424,7 +1427,7 @@
                   <span class="trace-summary-label">AI summary</span>
                   <p class="trace-summary" data-trace-summary>Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.</p>
                 </div>
-                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="364" data-pixel-duration="225" data-pixel-colors="#fdfcfc,main-600,main-800" aria-hidden="true"></canvas>
+                <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="400" data-pixel-duration="800" data-pixel-colors="#fdfcfc,main-600,main-800" aria-hidden="true"></canvas>
               </aside>
             </div>
           </div>
@@ -3099,10 +3102,14 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     stopTraceSourceStackEntrance();
     const rearCardCount = getVisibleTraceSourceCards().length - 1;
     if (!traceOriginalStack || rearCardCount < 1) return;
+    const primaryReveal = getPrimaryTraceSourceCard()?.querySelector('[data-trace-pixel-reveal]');
+    const primaryRevealDuration = Number(primaryReveal?.dataset.pixelDuration || 0);
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const stackDelay = reducedMotion ? 0 : primaryRevealDuration;
+    traceOriginalStack.style.setProperty('--trace-source-stack-delay', `${stackDelay}ms`);
     void traceOriginalStack.offsetWidth;
     traceOriginalStack.classList.add('is-source-stack-entering');
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const totalDuration = reducedMotion ? 120 : 598 + (rearCardCount > 1 ? 70 : 0);
+    const totalDuration = reducedMotion ? 120 : stackDelay + 220 + (rearCardCount > 1 ? 70 : 0);
     traceSourceStackTimer = setTimeout(stopTraceSourceStackEntrance, totalDuration + 20);
   }
   function bringTraceSourceCardForward(card) {

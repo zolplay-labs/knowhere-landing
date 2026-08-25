@@ -28,7 +28,27 @@
 
 #final-cta .converging-helix-stage > .final-cta-art {
   inset: 0 !important;
-  background-image: none !important;
+  background-image:
+    radial-gradient(ellipse 46% 82% at 50% 50%, rgba(255, 255, 255, .14), rgba(255, 255, 255, .035) 48%, transparent 74%),
+    linear-gradient(90deg, transparent calc(50% - .5px), rgba(255, 255, 255, .11) 50%, transparent calc(50% + .5px)),
+    linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px) !important;
+  background-position: center, center, left top, left top !important;
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px !important;
+  box-shadow: inset 0 0 120px rgba(19, 29, 64, .3);
+}
+
+#final-cta .converging-helix-stage > .final-cta-art::before {
+  position: absolute;
+  z-index: 0;
+  inset: 48px;
+  border: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+  background-position: left top;
+  background-size: 16px 16px;
+  content: "";
 }
 
 .converging-helix-pair {
@@ -38,19 +58,48 @@
   transform: translateY(var(--converging-helix-y, 0));
 }
 
+.converging-helix-benefits {
+  position: absolute;
+  z-index: 2;
+  bottom: 9px;
+  left: 50%;
+  width: min(620px, calc(100% - 120px));
+  min-height: 30px;
+  margin: 0;
+  padding: 0 18px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+  color: rgba(255, 255, 255, .76);
+  font: 400 15px/20px var(--mono);
+  list-style: none;
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.converging-helix-benefits li {
+  text-align: center;
+  white-space: nowrap;
+}
+
+html.js #final-cta .converging-helix-benefits li {
+  opacity: 1;
+  transform: none;
+}
+
 .converging-helix-embed {
   overflow: hidden;
   isolation: isolate;
 }
 
 .converging-helix-embed--left {
-  -webkit-mask-image: linear-gradient(90deg, #000 0 42%, transparent 54%);
-  mask-image: linear-gradient(90deg, #000 0 42%, transparent 54%);
+  -webkit-mask-image: linear-gradient(90deg, #000 0 4%, transparent 36%);
+  mask-image: linear-gradient(90deg, #000 0 4%, transparent 36%);
 }
 
 .converging-helix-embed--right {
-  -webkit-mask-image: linear-gradient(270deg, #000 0 42%, transparent 54%);
-  mask-image: linear-gradient(270deg, #000 0 42%, transparent 54%);
+  -webkit-mask-image: linear-gradient(270deg, #000 0 4%, transparent 36%);
+  mask-image: linear-gradient(270deg, #000 0 4%, transparent 36%);
 }
 
 .converging-helix-embed__canvas {
@@ -179,22 +228,35 @@
 
 @media (max-width: 767px) {
   .converging-helix-stage {
-    min-height: 400px;
+    min-height: 440px;
   }
 
   .converging-helix-pair {
     inset-inline: -28%;
     width: 156%;
+    opacity: .58;
+  }
+
+  #final-cta .converging-helix-stage > #final-cta-copy {
+    width: calc(100% - 48px);
+  }
+
+  .converging-helix-benefits {
+    bottom: 8px;
+    width: calc(100% - 32px);
+    padding-inline: 6px;
+    font-size: 8px;
+    line-height: 12px;
   }
 
   .converging-helix-embed--left {
-    -webkit-mask-image: linear-gradient(90deg, #000 0 36%, transparent 48%);
-    mask-image: linear-gradient(90deg, #000 0 36%, transparent 48%);
+    -webkit-mask-image: linear-gradient(90deg, #000 0 2%, transparent 24%);
+    mask-image: linear-gradient(90deg, #000 0 2%, transparent 24%);
   }
 
   .converging-helix-embed--right {
-    -webkit-mask-image: linear-gradient(270deg, #000 0 36%, transparent 48%);
-    mask-image: linear-gradient(270deg, #000 0 36%, transparent 48%);
+    -webkit-mask-image: linear-gradient(270deg, #000 0 2%, transparent 24%);
+    mask-image: linear-gradient(270deg, #000 0 2%, transparent 24%);
   }
 
   #final-cta .converging-helix-controls {

@@ -272,12 +272,12 @@
       context.fillStyle = rgba(this.colors.accent, 0.4);
       context.textBaseline = 'top';
       ['API KEY / ACTIVE', 'AUTH / BEARER', 'REQUEST / POST', 'QUEUE / READY'].forEach((label, index) => {
-        context.fillText(this.hyperText(label, index), this.width * (compact ? 0.15 : 0.055), this.height * 0.25 + index * (fontSize + 4));
+        context.fillText(this.hyperText(label, index), this.width * (compact ? 0.1 : 0.035), this.height * 0.22 + index * (fontSize + 4));
       });
       context.fillStyle = rgba(this.colors.accent, 0.34);
       context.textAlign = 'right';
       ['DOCUMENT / PDF', 'UPLOAD / COMPLETE', 'WEBHOOK / READY', 'RESULT / JSON'].forEach((label, index) => {
-        context.fillText(label, this.width * (compact ? 0.9 : 0.945), this.height * 0.72 + 16 + index * (fontSize + 4));
+        context.fillText(label, this.width * (compact ? 0.94 : 0.965), this.height * 0.78 - 16 + index * (fontSize + 4));
       });
       context.restore();
     }
@@ -293,17 +293,15 @@
           side: 'left',
           anchorX: centerX - fieldScale * 0.08,
           baseY: centerY - fieldScale * 0.48,
-          boxX: this.width * 0.055,
-          boxWidth: this.width * 0.28,
+          boxX: this.width * (23 / 630),
           labels: ['sk-proj-demo_4f8a9c2d_XX', 'sk-live-demo_71b3e840_XX'],
           phaseOffset: 0
         },
         {
           side: 'right',
           anchorX: centerX + fieldScale * 0.08,
-          baseY: centerY - fieldScale * 0.05,
-          boxX: this.width * 0.7,
-          boxWidth: this.width * 0.245,
+          baseY: centerY - fieldScale * 0.18,
+          boxX: this.width * (442 / 630),
           labels: ['quarterly-report.pdf', 'invoice-2026-08.xlsx'],
           phaseOffset: 2000
         }
@@ -312,7 +310,7 @@
       context.save();
       context.translate(0, 20);
       context.lineWidth = 1;
-      guides.forEach(({ side, anchorX, baseY, boxX, boxWidth, labels, phaseOffset }) => {
+      guides.forEach(({ side, anchorX, baseY, boxX, labels, phaseOffset }) => {
         const elapsed = this.reduceMotion ? CALLOUT_ENTER_MS : this.calloutElapsed - phaseOffset;
         if (elapsed < 0) return;
         const cycleIndex = this.reduceMotion ? 0 : Math.floor(elapsed / CALLOUT_CYCLE_MS);
@@ -328,12 +326,10 @@
           return;
         }
         const visibility = erase > 0 ? 1 - erase : reveal;
-        const preferredFontSize = clamp(this.width * 0.022, 8, 14);
-        context.font = `500 ${preferredFontSize}px "Geist Sans", "Helvetica Neue", Arial, sans-serif`;
-        const measuredWidth = context.measureText(label).width;
-        const fontSize = Math.max(6, preferredFontSize * Math.min(1, (boxWidth - 16) / measuredWidth));
-        const lineHeight = Math.ceil(fontSize * 1.25);
-        const labelHeight = lineHeight + 12;
+        const fontSize = this.width < 520 ? 11 : 13;
+        context.font = `500 ${fontSize}px Poppins, "Helvetica Neue", Arial, sans-serif`;
+        const boxWidth = Math.min(context.measureText(label).width + 20, this.width - boxX - 20);
+        const labelHeight = fontSize + 19;
         const anchorY = baseY + (cycleIndex % 2) * (labelHeight + 6);
         const boxEdge = boxX < anchorX ? boxX + boxWidth : boxX;
         const direction = boxEdge < anchorX ? -1 : 1;
@@ -364,7 +360,7 @@
         context.clip();
         context.fillStyle = this.colors.accent;
         context.fillRect(boxX, anchorY - labelHeight / 2, boxWidth, labelHeight);
-        context.font = `500 ${fontSize}px "Geist Sans", "Helvetica Neue", Arial, sans-serif`;
+        context.font = `500 ${fontSize}px Poppins, "Helvetica Neue", Arial, sans-serif`;
         context.fillStyle = this.colors.background;
         context.textAlign = 'center';
         context.textBaseline = 'middle';

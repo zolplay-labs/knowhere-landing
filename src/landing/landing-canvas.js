@@ -117,6 +117,8 @@ function initializeHeroCanvas(root, cleanups) {
     let morphStarted = -1;
     let pointerX = -1;
     let pointerY = -1;
+    let pointerFieldX = -1;
+    let pointerFieldY = -1;
     let previousX = -1;
     let previousY = -1;
     let visible = true;
@@ -400,25 +402,39 @@ function initializeHeroCanvas(root, cleanups) {
       return `rgb(${fromRgb.map((value, index) => Math.round(value + (toRgb[index] - value) * progress)).join(',')})`;
     }
 
-    function hexWithAlpha(color, alpha) {
-      const [red, green, blue] = [1, 3, 5].map(index => parseInt(color.slice(index, index + 2), 16));
-      return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
-    }
-
-    function drawSelectedPointerField() {
+    function drawSelectedPointerField(time, delta) {
       if (selectedLayer === null || pointerX < 0 || pointerY < 0 || !finePointer) return;
-      const radius = width < 768 ? 96 : 140;
-      const strength = reducedMotion ? .18 : .42;
+      const radius = width < 768 ? 128 : 180;
+      const strength = reducedMotion ? .22 : .5;
       const color = LAYER_COLORS[selectedLayer];
-      const gradient = ctx.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, radius);
-      gradient.addColorStop(0, hexWithAlpha(color, strength));
-      gradient.addColorStop(.48, hexWithAlpha(color, strength * .52));
-      gradient.addColorStop(.78, hexWithAlpha(color, strength * .18));
-      gradient.addColorStop(1, hexWithAlpha(color, 0));
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.arc(pointerX, pointerY, radius, 0, Math.PI * 2);
-      ctx.fill();
+      if (pointerFieldX < 0 || pointerFieldY < 0) {
+        pointerFieldX = pointerX;
+        pointerFieldY = pointerY;
+      }
+      const follow = reducedMotion ? 1 : 1 - Math.pow(.86, delta * 60);
+      pointerFieldX += (pointerX - pointerFieldX) * follow;
+      pointerFieldY += (pointerY - pointerFieldY) * follow;
+      const minX = Math.max(0, Math.floor((pointerFieldX - radius) / cell) * cell);
+      const maxX = Math.min(width, Math.ceil((pointerFieldX + radius) / cell) * cell);
+      const minY = Math.max(0, Math.floor((pointerFieldY - radius) / cell) * cell);
+      const maxY = Math.min(height, Math.ceil((pointerFieldY + radius) / cell) * cell);
+      ctx.save();
+      ctx.fillStyle = color;
+      for (let y = minY; y <= maxY; y += cell) {
+        for (let x = minX; x <= maxX; x += cell) {
+          const centerX = x + cell / 2;
+          const centerY = y + cell / 2;
+          const distance = Math.hypot(centerX - pointerFieldX, centerY - pointerFieldY);
+          if (distance >= radius) continue;
+          const falloff = 1 - distance / radius;
+          const wave = reducedMotion
+            ? .8
+            : .58 + .42 * (Math.sin(time * 3.2 - distance * .05 + (x + y) * .035) * .5 + .5);
+          ctx.globalAlpha = strength * falloff * falloff * wave;
+          ctx.fillRect(x + 1, y + 1, cell - 2, cell - 2);
+        }
+      }
+      ctx.restore();
     }
 
     function drawModeMorph(layout, time) {
@@ -1096,7 +1112,7 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.fillRect(0, 0, width, height);
       ctx.save();
       drawGrid();
-      drawSelectedPointerField();
+      drawSelectedPointerField(time, delta);
       drawScanTrail();
       drawHoverGridFlow(layout, milliseconds / 1000);
       if (lowerTextureVisible) drawConvergingDivider();
@@ -1150,6 +1166,8 @@ function initializeHeroCanvas(root, cleanups) {
       hero.classList.remove('is-data-layer-hovered');
       pointerX = -1;
       pointerY = -1;
+      pointerFieldX = -1;
+      pointerFieldY = -1;
       previousX = -1;
       previousY = -1;
       tooltip.classList.remove('is-visible');
@@ -1212,6 +1230,7 @@ function initializeFormatGlobe(root, cleanups) {
     const canvas = root.querySelector('[data-format-globe]');
     const stage = canvas?.closest('.format-orbit-stage--thread-globe');
     if (!canvas || !stage) return;
+    canvas.dataset.formatGlobeOwned = 'true';
 
     const context = canvas.getContext('2d');
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1223,15 +1242,34 @@ function initializeFormatGlobe(root, cleanups) {
     ];
     const movingDashRingIndex = 2;
     const formatLabels = ['.docx', '.pdf', '.jpg', '.pptx', '.xlsx', '.csv', '.png', '.md', '.json', '.txt'];
-    const formatLabelColors = ['#6D80B6', '#9E9773', '#939D81', '#7C85A8', '#7C9BEE', '#9CB2AF', '#96B0CB'];
+    const formatIconPaths = {
+      '.csv': '/assets/file-icons/table.svg',
+      '.docx': '/assets/file-icons/word.svg',
+      '.jpg': '/assets/file-icons/image.svg',
+      '.json': '/assets/file-icons/json.svg',
+      '.md': '/assets/file-icons/markdown.svg',
+      '.pdf': '/assets/file-icons/pdf.svg',
+      '.png': '/assets/file-icons/image.svg',
+      '.pptx': '/assets/file-icons/powerpoint.svg',
+      '.txt': '/assets/file-icons/document.svg',
+      '.xlsx': '/assets/file-icons/table.svg'
+    };
     const particles = Array.from({ length: 10 }, (_, index) => ({
       ring: index % ringRotations.length,
       phase: (index * 0.61803398875) % 1,
       speed: 0.012 + (index % 4) * 0.003,
       radius: index % 5 === 0 ? 3.4 : 2.1,
-      label: formatLabels[index],
-      color: formatLabelColors[index % formatLabelColors.length]
+      label: formatLabels[index]
     }));
+    const formatIconImages = new Map(Object.entries(formatIconPaths).map(([label, source]) => {
+      const image = new Image();
+      image.src = source;
+      return [label, image];
+    }));
+    const whiteIconCanvas = document.createElement('canvas');
+    whiteIconCanvas.width = 16;
+    whiteIconCanvas.height = 16;
+    const whiteIconContext = whiteIconCanvas.getContext('2d');
 
     let width = 1;
     let height = 1;
@@ -1303,8 +1341,13 @@ function initializeFormatGlobe(root, cleanups) {
       return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
     }
 
+    function mainColor() {
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--main-600').trim();
+      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#6D80B6';
+    }
+
     function activeLabelColorWithAlpha(alpha) {
-      return colorWithAlpha(particles[activeLabelIndex].color, alpha);
+      return colorWithAlpha(mainColor(), alpha);
     }
 
     function rotate(point, rotation) {
@@ -1461,7 +1504,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.beginPath();
         context.arc(particle.x, particle.y, isHovered ? 4.8 : particle.radius, 0, Math.PI * 2);
         context.fillStyle = isColored
-          ? colorWithAlpha(particle.color, (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
+          ? colorWithAlpha(mainColor(), (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
           : `rgba(24, 24, 24, ${(0.22 + (particle.z + 1) * 0.20) * particle.introAlpha})`;
         context.fill();
       });
@@ -1484,13 +1527,13 @@ function initializeFormatGlobe(root, cleanups) {
         context.font = '500 15px Fellix-TRIAL, "ABC Schengen Greek Variable Trial", sans-serif';
         context.textBaseline = 'middle';
         const textWidth = context.measureText(particle.label).width;
-        const labelWidth = textWidth + 12;
+        const labelWidth = textWidth + 36;
         const preferredX = particle.x + 10;
         const labelX = preferredX + labelWidth > width - 4
           ? particle.x - labelWidth - 10
           : preferredX;
         const labelY = Math.max(4, Math.min(height - 28, particle.y - 12));
-        context.fillStyle = particle.color;
+        context.fillStyle = mainColor();
         context.fillRect(labelX, labelY, labelWidth, 24);
         const frameX = labelX - 2;
         const frameY = labelY - 2;
@@ -1510,11 +1553,22 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(frameX + frameWidth - cornerLength, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - cornerLength);
-        context.strokeStyle = particle.color;
+        context.strokeStyle = mainColor();
         context.lineWidth = 1;
         context.stroke();
+        const icon = formatIconImages.get(particle.label);
+        if (whiteIconContext && icon?.complete && icon.naturalWidth > 0) {
+          whiteIconContext.clearRect(0, 0, 16, 16);
+          whiteIconContext.globalCompositeOperation = 'source-over';
+          whiteIconContext.drawImage(icon, 0, 0, 16, 16);
+          whiteIconContext.globalCompositeOperation = 'source-in';
+          whiteIconContext.fillStyle = '#fff';
+          whiteIconContext.fillRect(0, 0, 16, 16);
+          whiteIconContext.globalCompositeOperation = 'source-over';
+          context.drawImage(whiteIconCanvas, labelX + 4, labelY + 4, 16, 16);
+        }
         context.fillStyle = '#fff';
-        context.fillText(particle.label, labelX + 6, labelY + 12);
+        context.fillText(particle.label, labelX + 27, labelY + 12);
         context.restore();
       }
 
@@ -1523,7 +1577,7 @@ function initializeFormatGlobe(root, cleanups) {
 
       if (activeLabelParticle) {
         stage.dataset.activeFormatLabel = activeLabelParticle.label;
-        stage.dataset.activeFormatColor = activeLabelParticle.color;
+        stage.dataset.activeFormatColor = mainColor();
       } else {
         delete stage.dataset.activeFormatLabel;
         delete stage.dataset.activeFormatColor;
@@ -1629,6 +1683,7 @@ function initializeFormatGlobe(root, cleanups) {
       stopAnimation();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
+      delete canvas.dataset.formatGlobeOwned;
       delete stage.dataset.activeFormatLabel;
       delete stage.dataset.activeFormatColor;
       stage.style.removeProperty('cursor');
