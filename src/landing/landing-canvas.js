@@ -41,7 +41,6 @@ function initializeHeroCanvas(root, cleanups) {
       interactionStrength: .19,
       fadeStart: .58,
       fadeSoftness: .28,
-      gridOpacity: .022,
       paperColor: '#fff',
       seed: 17
     });
@@ -55,7 +54,6 @@ function initializeHeroCanvas(root, cleanups) {
       mainColor(400)
     ];
     const LAYER_COLORS = STAGE_COLORS.slice(1);
-    let mainTextureColor = mainColor(400);
     let heroInkColor = mainColor(800);
     let heroShadowColor = mainColor(900);
     const syncMainPalette = () => {
@@ -63,7 +61,6 @@ function initializeHeroCanvas(root, cleanups) {
         STAGE_COLORS[index] = mainColor(stop);
         if (index > 0) LAYER_COLORS[index - 1] = STAGE_COLORS[index];
       });
-      mainTextureColor = mainColor(400);
       heroInkColor = mainColor(800);
       heroShadowColor = mainColor(900);
     };
@@ -73,7 +70,7 @@ function initializeHeroCanvas(root, cleanups) {
     }, { signal });
     const DATA = [
       { count: 168, width: 1 },
-      { count: 96, width: .46 },
+      { count: 96, width: .322 },
       { count: 64, width: .23 },
       { count: 36, width: .1 },
       { count: 14, width: .035 }
@@ -84,6 +81,7 @@ function initializeHeroCanvas(root, cleanups) {
       { label: 'LIGHTWEIGHT NOTES', detail: 'Page topic · chapter location' },
       { label: 'CHAPTER MAP', detail: 'Navigate · open source on demand' }
     ];
+    const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
     const unitCounts = DATA.map(stage => stage.count);
@@ -455,13 +453,10 @@ function initializeHeroCanvas(root, cleanups) {
       }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
       const shapeCenterY = (bounds.minY + bounds.maxY) / 2;
       const visibility = presentation.visibility;
-      const cardWidth = width < 768 ? 188 : 244;
-      const cardHeight = width < 768 ? 82 : 96;
       const rightInset = width < 768 ? 12 : 18;
-      const rightLimit = Math.min(
-        width - cardWidth - rightInset,
-        layout.visualLeft + layout.visualWidth - cardWidth - 12
-      );
+      const cardWidth = Math.min(273, width - rightInset * 2);
+      const cardHeight = 106;
+      const rightLimit = width - cardWidth - rightInset;
       const targetX = Math.min(bounds.maxX + cell * 4.4, rightLimit);
       const targetY = Math.max(layout.topY + cell, shapeCenterY - cardHeight / 2);
       const cardX = targetX + (1 - visibility) * cell * 3.2;
@@ -481,45 +476,36 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.scale(scale, scale);
       ctx.translate(-cardWidth / 2, -cardHeight / 2);
 
-      ctx.globalAlpha = .97 * visibility;
-      ctx.fillStyle = SETTINGS.paperColor;
+      ctx.globalAlpha = visibility;
+      ctx.fillStyle = '#fff';
       ctx.fillRect(0, 0, cardWidth, cardHeight);
-      ctx.globalAlpha = .075 * visibility;
-      ctx.fillStyle = color;
-      ctx.fillRect(1, 1, cardWidth - 2, cardHeight - 2);
-
-      ctx.globalAlpha = .68 * visibility;
-      ctx.strokeStyle = color;
+      ctx.strokeStyle = '#cecde0';
       ctx.lineWidth = 1;
       ctx.strokeRect(.5, .5, cardWidth - 1, cardHeight - 1);
-      ctx.globalAlpha = .98 * visibility;
-      ctx.fillStyle = color;
-      ctx.fillRect(1, 1, 4, cardHeight - 2);
-      ctx.fillRect(cardWidth - 15, 11, 6, 6);
 
-      const textX = width < 768 ? 15 : 18;
-      ctx.textBaseline = 'alphabetic';
-      ctx.globalAlpha = .54 * visibility;
-      ctx.font = '600 8px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(`LAYER 0${layerIndex + 1} / 04 · ACTIVE VIEW`, textX, 18);
-
+      const textX = 12;
+      ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
-      ctx.font = `600 ${width < 768 ? 11 : 12}px "ABC Schengen Greek Variable Trial", Arial, sans-serif`;
-      ctx.fillText(layer.label, textX, width < 768 ? 38 : 42);
-      ctx.globalAlpha = .68 * visibility;
-      ctx.font = '500 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(layer.detail, textX, width < 768 ? 54 : 59);
+      ctx.fillStyle = '#4e5d88';
+      ctx.font = '500 18px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(displayLabel(layer.label), textX, 12);
+      ctx.fillStyle = '#181818';
+      ctx.font = '400 15px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(layer.detail, textX, 36);
 
-      const statusY = cardHeight - 14;
-      ctx.globalAlpha = .48 * visibility;
-      ctx.font = '600 7px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText('LIVE DATA PASS', textX, statusY + 2);
-      for (let index = 0; index < 7; index += 1) {
+      const statusY = 70;
+      ctx.globalAlpha = .4 * visibility;
+      ctx.fillStyle = '#000';
+      ctx.fillText('Live data pass', textX, statusY);
+      const statusColors = ['#ced3e7', '#8191c0', '#a1aed1', '#dce0ee', '#dce0ee', '#dce0ee', '#dce0ee'];
+      const statusStartX = cardWidth - 114;
+      statusColors.forEach((statusColor, index) => {
         const phase = ((time * 1.15 - index * .11) % 1 + 1) % 1;
         const pulse = phase < .3 ? Math.sin(phase / .3 * Math.PI) : 0;
         ctx.globalAlpha = (.18 + pulse * .7) * visibility;
-        ctx.fillRect(cardWidth - 16 - index * 8, statusY - 4, 4, 4);
-      }
+        ctx.fillStyle = statusColor;
+        ctx.fillRect(statusStartX + index * 16, statusY + 9, 6, 6);
+      });
       ctx.restore();
     }
 
@@ -538,7 +524,7 @@ function initializeHeroCanvas(root, cleanups) {
       selectedLayer = nextLayer;
       if (hoveredLayer === layerIndex) {
         const action = nextLayer === layerIndex ? 'Click to return to data funnel' : 'Click to view pixel form';
-        tooltip.textContent = `${LAYERS[layerIndex].label} · ${action}`;
+        tooltip.textContent = action;
       }
     }
 
@@ -592,9 +578,12 @@ function initializeHeroCanvas(root, cleanups) {
       return easeOutCubic(threshold / .18);
     }
 
-    function drawGrid(time) {
+    function drawGrid() {
       const gridEntrance = reducedMotion ? 1 : .2 + easeOutCubic(intro * 1.65) * .8;
-      ctx.strokeStyle = `${mainColor(800)}${Math.round(SETTINGS.gridOpacity * gridEntrance * 255).toString(16).padStart(2, '0')}`;
+      const gridGradient = ctx.createLinearGradient(0, 0, 0, height);
+      gridGradient.addColorStop(0, `rgba(0, 0, 0, ${.04 * gridEntrance})`);
+      gridGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.strokeStyle = gridGradient;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = 0; x <= width; x += cell) {
@@ -606,18 +595,6 @@ function initializeHeroCanvas(root, cleanups) {
         ctx.lineTo(width, y + .5);
       }
       ctx.stroke();
-
-      ctx.fillStyle = mainTextureColor;
-      for (let row = 0; row < rows; row += 3) {
-        for (let column = 0; column < cols; column += 3) {
-          const texture = hash(column + 2111, row + 2131);
-          if (texture < .72) continue;
-          const wave = reducedMotion ? 0 : Math.sin(column * .13 + row * .17 + time * .12) * .5 + .5;
-          ctx.globalAlpha = (.008 + texture * .012 + wave * .006) * gridEntrance;
-          ctx.fillRect(column * cell + 1, row * cell + 1, 1, 1);
-        }
-      }
-      ctx.globalAlpha = 1;
     }
 
     const SCAN_TRAIL_ROWS = 8;
@@ -951,50 +928,43 @@ function initializeHeroCanvas(root, cleanups) {
         const y = layout.topY + layout.stageGap * (layerIndex + layerProgress);
         const isSelected = selectedLayer === layerIndex;
         const isActive = hoveredLayer === layerIndex || isSelected;
-        const cardWidth = width < 768 ? 152 : 176;
-        const cardHeight = 48;
-        const cardX = Math.min(width - cardWidth - 16, layout.visualLeft + layout.visualWidth - cardWidth - 12);
-        const cardY = y - cardHeight / 2;
+        const labelWidth = Math.min(230, width - 24);
+        const labelX = Math.min(width - labelWidth - 16, layout.visualLeft + layout.visualWidth - labelWidth - 12);
         const funnelBoundaryX = stageTracks[layerIndex + 1].reduce((rightEdge, trackId) => {
           const point = pointOnSegment(layout, trackId, layerIndex, layerProgress);
           return Math.max(rightEdge, point.x);
         }, layout.centerX);
-        const lineEnd = cardX;
+        const lineEnd = labelX - 26;
         const lineStart = Math.min(funnelBoundaryX + cell * 1.25, lineEnd - 28);
         const labelReveal = entranceAt(layout, y, layerIndex + 701);
         const cardVisibility = layerCardVisibility(layerIndex, time);
-        const cardOffsetX = (1 - cardVisibility) * cell * 1.8;
+        const labelOffsetX = (1 - cardVisibility) * cell * 1.8;
+        const markerSize = 8;
 
-        ctx.globalAlpha = (isActive ? .72 : .2) * labelReveal * cardVisibility;
+        const lineLength = Math.max(28, lineEnd - lineStart) * cardVisibility;
+        const lineAlpha = (isActive ? .56 : .18) * labelReveal * cardVisibility;
+        const lineY = Math.round(y / cell) * cell + 1;
         ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
-        ctx.fillRect(lineStart, y + .5, Math.max(28, lineEnd - lineStart) * cardVisibility, 1);
-        ctx.fillRect(lineStart - 2, y - 1, 4, 4);
-
-        ctx.globalAlpha = .94 * labelReveal * cardVisibility;
-        ctx.fillStyle = SETTINGS.paperColor;
-        ctx.fillRect(cardX + cardOffsetX, cardY, cardWidth, cardHeight);
-        if (isActive) {
-          ctx.globalAlpha = (isSelected ? .11 : .07) * labelReveal * cardVisibility;
-          ctx.fillStyle = LAYER_COLORS[layerIndex];
-          ctx.fillRect(cardX + cardOffsetX + 1, cardY + 1, cardWidth - 2, cardHeight - 2);
+        for (let lineX = lineStart; lineX < lineStart + lineLength; lineX += cell) {
+          const column = Math.round(lineX / cell);
+          ctx.globalAlpha = lineAlpha * (.74 + hash(column, layerIndex + 743) * .26);
+          ctx.fillRect(column * cell + 1, lineY, cell - 3, cell - 3);
         }
-        ctx.globalAlpha = (isSelected ? .62 : isActive ? .46 : .14) * labelReveal * cardVisibility;
-        ctx.strokeStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
-        ctx.lineWidth = 1;
-        ctx.strokeRect(cardX + cardOffsetX + .5, cardY + .5, cardWidth - 1, cardHeight - 1);
-        ctx.globalAlpha = (isSelected ? .96 : isActive ? .78 : .34) * labelReveal * cardVisibility;
-        ctx.fillStyle = LAYER_COLORS[layerIndex];
-        ctx.fillRect(cardX + cardOffsetX + 1, cardY + 1, 3, cardHeight - 2);
 
-        const textX = cardX + cardOffsetX + 14;
+        const markerX = labelX + labelOffsetX;
+        ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility;
+        ctx.fillStyle = LAYER_COLORS[layerIndex];
+        ctx.fillRect(markerX, y - markerSize / 2, markerSize, markerSize);
+
+        const titleX = markerX + 19;
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility;
         ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
-        ctx.font = '600 10px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-        ctx.fillText(layer.label, textX, cardY + 20);
-        ctx.globalAlpha = (isActive ? .76 : .52) * labelReveal * cardVisibility;
-        ctx.font = '500 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-        ctx.fillText(layer.detail, textX, cardY + 35);
+        ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.fillText(layer.label, titleX, y + 5);
+        ctx.globalAlpha = (isActive ? .76 : .68) * labelReveal * cardVisibility;
+        ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.fillText(layer.detail, markerX, y + 31);
       });
       drawShapeAnnotation(layout, time);
       ctx.restore();
@@ -1013,7 +983,7 @@ function initializeHeroCanvas(root, cleanups) {
 
       if (reducedMotion && hoveredLayer === null) return false;
       if (!reducedMotion && (age < 0 || age > duration)) return false;
-      ctx.fillStyle = LAYER_COLORS[layerIndex];
+      ctx.fillStyle = mixHexColor(LAYER_COLORS[layerIndex], heroShadowColor, .2);
 
       for (let row = firstRow; row <= lastRow; row += 1) {
         for (let column = 0; column < cols; column += 1) {
@@ -1073,7 +1043,7 @@ function initializeHeroCanvas(root, cleanups) {
         return;
       }
       const action = selectedLayer === hoveredLayer ? 'Click to return to data funnel' : 'Click to view pixel form';
-      tooltip.textContent = `${LAYERS[hoveredLayer].label} · ${action}`;
+      tooltip.textContent = action;
       tooltip.style.left = `${Math.min(innerWidth - 240, clientX)}px`;
       tooltip.style.top = `${Math.min(innerHeight - 70, clientY)}px`;
       tooltip.classList.add('is-visible');
@@ -1093,7 +1063,7 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.fillStyle = SETTINGS.paperColor;
       ctx.fillRect(0, 0, width, height);
       ctx.save();
-      // Keep the page background solid; the funnel and scan layers render separately.
+      drawGrid();
       drawScanTrail();
       drawHoverGridFlow(layout, milliseconds / 1000);
       if (lowerTextureVisible) drawConvergingDivider();

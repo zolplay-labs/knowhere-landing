@@ -911,7 +911,7 @@
     #top.hero-b-layout.is-data-layer-hovered { cursor: pointer; }
     .hero-b-chart { width: 100%; min-width: 0; }
     .hero-b-chart-shell { width: 100%; height: auto; aspect-ratio: 300 / 276; }
-    .hero-b-pixel-tooltip { position: fixed; z-index: 120; max-width: 230px; padding: 8px 10px; border: 1px solid rgba(28,28,26,.26); background: rgba(253,252,252,.96); color: #1c1c1a; font: 600 9px/1.35 var(--mono); letter-spacing: .06em; text-transform: uppercase; pointer-events: none; opacity: 0; transform: translate(12px,12px); transition: opacity .12s ease; }
+    .hero-b-pixel-tooltip { position: fixed; z-index: 120; max-width: 230px; padding: 4px 8px; border: 1px solid #cecde0; background: #fff; color: rgba(0,0,0,.4); font: 500 12px/16px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif; white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(12px,12px); transition: opacity .12s ease; }
     .hero-b-pixel-tooltip.is-visible { opacity: 1; }
     @keyframes hero-scan-curtain {
       0% { clip-path: inset(0 0 0 0); opacity: 1; }
