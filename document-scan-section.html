@@ -234,7 +234,7 @@
     .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 49px; }
     .trace-original-stack { position: relative; top: 20px; width: 100%; height: 283px; }
     .trace-source-card { --region-x: 2.22%; --region-y: 21.7%; --region-w: 61.7%; --region-h: 32.7%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
-    .trace-original-stack .trace-source-card { position: absolute; width: 92.93%; pointer-events: auto; cursor: pointer; transition: top .28s cubic-bezier(.22,1,.36,1), left .28s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+    .trace-original-stack .trace-source-card { position: absolute; width: 92.93%; pointer-events: auto; cursor: default; transition: top .28s cubic-bezier(.22,1,.36,1), left .28s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
     .trace-source-card[data-source-slot="primary"] { z-index: 3; top: 0; left: 0; }
     .trace-source-card[data-source-slot="secondary-one"] { z-index: 2; top: 20px; left: 28px; }
     .trace-source-card[data-source-slot="secondary-two"] { z-index: 1; top: 40px; left: 56px; }
@@ -244,7 +244,7 @@
     .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-one"] { animation-delay: var(--trace-source-stack-delay, 800ms); }
     .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-two"] { animation-delay: calc(var(--trace-source-stack-delay, 800ms) + 70ms); }
     .trace-source-card:not([data-source-slot="primary"]).is-source-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
-    .trace-source-switch { position: absolute; z-index: 6; top: 0; right: 0; bottom: 0; width: 28px; padding: 0; border: 0; background: transparent; cursor: pointer; }
+    .trace-source-switch { position: absolute; z-index: 6; top: 0; right: 0; bottom: 0; width: 28px; padding: 0; border: 0; background: transparent; cursor: default; }
     .trace-source-card[data-source-slot="primary"] .trace-source-switch { pointer-events: none; visibility: hidden; }
     .trace-source-switch:focus-visible { outline: 2px solid var(--trace-accent); outline-offset: 3px; }
     .trace-demo.is-trace-visible .trace-source-card { transform: none; }
@@ -2939,6 +2939,13 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   let traceFlowTimers = [];
   let traceFlowResizeTimer = 0;
   let traceSourceStackTimer = 0;
+  let traceSourceLayoutTimer = 0;
+  let traceAutoTimer = 0;
+  let traceAutoCycleVisible = false;
+  let traceAutoMarkId = null;
+  let traceAutoFileSwitches = 0;
+  const traceAutoFileDelay = 3000;
+  const traceAutoMarkDelay = 5000;
   const animateInitialTraceStage = false;
   let traceStageEntered = traceDemo?.classList.contains('is-stage-entered') ?? false;
   let traceStageAnimation = 0;
@@ -3102,7 +3109,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   function playTraceSourceStackEntrance() {
     stopTraceSourceStackEntrance();
     const rearCardCount = getVisibleTraceSourceCards().length - 1;
-    if (!traceOriginalStack || rearCardCount < 1) return;
+    if (!traceOriginalStack || rearCardCount < 1) return 0;
     const primaryReveal = getPrimaryTraceSourceCard()?.querySelector('[data-trace-pixel-reveal]');
     const primaryRevealDuration = Number(primaryReveal?.dataset.pixelDuration || 0);
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3112,6 +3119,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceOriginalStack.classList.add('is-source-stack-entering');
     const totalDuration = reducedMotion ? 120 : stackDelay + 220 + (rearCardCount > 1 ? 70 : 0);
     traceSourceStackTimer = setTimeout(stopTraceSourceStackEntrance, totalDuration + 20);
+    return totalDuration + 20;
   }
   function bringTraceSourceCardForward(card) {
     if (!card || card.dataset.sourceSlot === 'primary') return;
@@ -3354,6 +3362,20 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceFlowAnchors.forEach(anchor => anchor.remove());
     traceFlowAnchors = [];
   }
+  function settleTraceSourceLayout(delay = 300, animate = false) {
+    clearTimeout(traceSourceLayoutTimer);
+    traceDemo?.classList.add('is-source-layout-settling');
+    traceSourceLayoutTimer = setTimeout(() => {
+      traceSourceLayoutTimer = 0;
+      traceDemo?.classList.remove('is-source-layout-settling');
+      if (traceActiveMark) createTraceFlowLines(traceActiveMark, animate);
+    }, delay);
+  }
+  function stopTraceSourceLayoutSettling() {
+    clearTimeout(traceSourceLayoutTimer);
+    traceSourceLayoutTimer = 0;
+    traceDemo?.classList.remove('is-source-layout-settling');
+  }
   function makeTraceFlowPair(start, end, options) {
     if (!window.LeaderLine) return [];
     const shared = {
@@ -3387,17 +3409,19 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceFlowLines.push(track, flow);
     return [track, flow];
   }
-  function scheduleTraceFlow(lines, delay, duration) {
+  function scheduleTraceFlow(lines, delay, duration, animate = true) {
     if (!lines.length) return;
     const timer = setTimeout(() => {
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      lines.forEach(line => line.show(reducedMotion ? 'none' : 'draw', reducedMotion ? undefined : { duration, timing: 'ease-in-out' }));
+      const shouldDraw = animate && !reducedMotion;
+      lines.forEach(line => line.show(shouldDraw ? 'draw' : 'none', shouldDraw ? { duration, timing: 'ease-in-out' } : undefined));
     }, delay);
     traceFlowTimers.push(timer);
   }
-  function createTraceFlowLines(mark) {
+  function createTraceFlowLines(mark, animate = true) {
     clearTraceFlowLines();
     if (!traceDemo || !mark || !window.LeaderLine) return;
+    if (traceDemo.classList.contains('is-source-layout-settling')) return;
     const visibleSourceCards = getVisibleTraceSourceCards();
     const sourceCard = visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-two')
       || visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-one')
@@ -3412,14 +3436,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       y: y - stageRect.top
     });
     const sourceRect = sourceCard.getBoundingClientRect();
-    const sourceTransform = getComputedStyle(sourceCard).transform;
-    const sourceMatrix = sourceTransform === 'none' ? null : new DOMMatrixReadOnly(sourceTransform);
-    const sourceFinalLeft = sourceRect.left - (sourceMatrix?.m41 || 0);
-    const sourceFinalBottom = sourceRect.bottom - (sourceMatrix?.m42 || 0);
     const summaryBodyRect = summaryBody.getBoundingClientRect();
-    const sourceCenterX = sourceFinalLeft + sourceRect.width / 2;
+    const sourceCenterX = sourceRect.left + sourceRect.width / 2;
     const summaryEntryX = Math.max(0, Math.min(summaryBodyRect.width, sourceCenterX - summaryBodyRect.left));
-    const sourceExit = stagePoint(sourceCenterX, sourceFinalBottom);
+    const sourceExit = stagePoint(sourceCenterX, sourceRect.bottom);
     const summaryEntry = stagePoint(summaryBodyRect.left + summaryEntryX, summaryBodyRect.top);
     traceFlowAnchors.push(sourceExit, summaryEntry);
     const summaryFlow = makeTraceFlowPair(sourceExit, summaryEntry, {
@@ -3431,7 +3451,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     const outputDocumentRect = outputDocument.getBoundingClientRect();
     if (!outputDocumentRect.width || !outputDocumentRect.height) {
       traceFlowLines.forEach(line => line.position());
-      scheduleTraceFlow(summaryFlow, 400, 260);
+      scheduleTraceFlow(summaryFlow, animate ? 400 : 0, 260, animate);
       return;
     }
     const isSideBySide = summaryBodyRect.left >= outputDocumentRect.right - 1;
@@ -3455,12 +3475,14 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       endGravity: isSideBySide ? [16, 0] : [0, -16]
     });
     traceFlowLines.forEach(line => line.position());
-    scheduleTraceFlow(summaryFlow, 400, 260);
-    scheduleTraceFlow(answerFlow, 790, 340);
+    scheduleTraceFlow(summaryFlow, animate ? 400 : 0, 260, animate);
+    scheduleTraceFlow(answerFlow, animate ? 790 : 0, 340, animate);
   }
   function showTraceSource(id, mark, shouldPlayPixels = true) {
     if (!traceDemo || !traceSummaries[id]) return;
+    const markChanged = traceActiveId !== id;
     clearTracePixels();
+    clearTraceFlowLines();
     traceActiveId = id;
     traceActiveMark = mark;
     const source = traceSummaries[id];
@@ -3471,20 +3493,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       mark.classList.remove('is-preview');
     });
     renderTraceSourceContent(id, source);
+    let stackEntranceDuration = 0;
     if (shouldPlayPixels) {
       playTracePixels();
-      playTraceSourceStackEntrance();
+      stackEntranceDuration = playTraceSourceStackEntrance();
     } else {
       stopTraceSourceStackEntrance();
     }
     traceDemo.classList.add('is-trace-visible');
-    requestAnimationFrame(() => {
-      createTraceFlowLines(mark);
-    });
+    settleTraceSourceLayout(stackEntranceDuration || 300, markChanged);
+    if (markChanged) resetTraceAutoCycleForMark(id);
   }
   function hideTraceSource(restorePreview = true) {
     if (!traceDemo) return;
     stopTraceSourceStackEntrance();
+    stopTraceSourceLayoutSettling();
     clearTracePixels();
     clearTraceFlowLines();
     traceDemo.classList.remove('is-trace-visible');
@@ -3495,10 +3518,17 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   traceMarks.forEach(mark => {
     const id = mark.dataset.sourceId;
-    mark.addEventListener('mouseenter', event => { showTraceSource(id, mark); showTraceTarget(mark, event); });
+    mark.addEventListener('mouseenter', event => {
+      if (traceActiveMark !== mark) showTraceSource(id, mark);
+      showTraceTarget(mark, event);
+    });
     mark.addEventListener('mousemove', event => positionTraceTarget(mark, event));
     mark.addEventListener('mouseleave', hideTraceTarget);
-    mark.addEventListener('focus', event => { if (mark.matches(':focus-visible')) { showTraceSource(id, mark); showTraceTarget(mark, event); } });
+    mark.addEventListener('focus', event => {
+      if (!mark.matches(':focus-visible')) return;
+      if (traceActiveMark !== mark) showTraceSource(id, mark);
+      showTraceTarget(mark, event);
+    });
     mark.addEventListener('blur', hideTraceTarget);
     mark.addEventListener('click', () => {
       if (matchMedia('(hover: none)').matches && traceActiveMark !== mark) showTraceSource(id, mark);
@@ -3512,6 +3542,59 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     requestAnimationFrame(() => {
       playTracePixels(false, false);
     });
+  }
+  function stopTraceAutoCycle() {
+    clearTimeout(traceAutoTimer);
+    traceAutoTimer = 0;
+  }
+  function resetTraceAutoCycleForMark(id) {
+    traceAutoMarkId = id;
+    traceAutoFileSwitches = 0;
+    syncTraceAutoCycle();
+  }
+  function advanceTraceAutoFile() {
+    const cards = getVisibleTraceSourceCards();
+    if (cards.length < 2) return;
+    const currentIndex = cards.findIndex(card => card.dataset.sourceSlot === 'primary');
+    activateTraceSourceCard(cards[(currentIndex + 1) % cards.length]);
+  }
+  function advanceTraceAutoMark() {
+    const primaryPage = tracePages.find(page => page.dataset.slot === 'primary');
+    const marks = primaryPage ? $$('.trace-source-mark[data-source-id]', primaryPage) : [];
+    if (!marks.length) return;
+    const currentIndex = marks.findIndex(mark => mark === traceActiveMark);
+    const nextMark = marks[(currentIndex + 1) % marks.length];
+    showTraceSource(nextMark.dataset.sourceId, nextMark);
+  }
+  function scheduleTraceAutoCycle() {
+    clearTimeout(traceAutoTimer);
+    if (!traceAutoCycleVisible || document.hidden) return;
+    if (traceAutoMarkId !== traceActiveId) {
+      traceAutoMarkId = traceActiveId;
+      traceAutoFileSwitches = 0;
+    }
+    const scheduledMarkId = traceActiveId;
+    const fileCount = getVisibleTraceSourceCards().length;
+    const hasNextFile = fileCount > 1 && traceAutoFileSwitches < fileCount - 1;
+    const delay = fileCount > 1 ? traceAutoFileDelay : traceAutoMarkDelay;
+    traceAutoTimer = setTimeout(() => {
+      if (traceActiveId !== scheduledMarkId) {
+        scheduleTraceAutoCycle();
+        return;
+      }
+      if (hasNextFile) {
+        advanceTraceAutoFile();
+        traceAutoFileSwitches += 1;
+      } else {
+        advanceTraceAutoMark();
+      }
+      scheduleTraceAutoCycle();
+    }, delay);
+  }
+  function syncTraceAutoCycle() {
+    stopTraceAutoCycle();
+    if (!traceAutoCycleVisible || document.hidden) return;
+    scheduleTraceAutoCycle();
   }
   traceSourceCards.forEach(card => {
     const switchButton = $('[data-trace-source-switch]', card);
@@ -3574,14 +3657,17 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   });
   if ('IntersectionObserver' in window) {
     const traceEntranceObserver = new IntersectionObserver(entries => {
-      if (!entries[0]?.isIntersecting) return;
-      traceEntranceObserver.disconnect();
-      playTraceStageEntrance();
+      traceAutoCycleVisible = Boolean(entries[0]?.isIntersecting);
+      if (traceAutoCycleVisible) playTraceStageEntrance();
+      syncTraceAutoCycle();
     }, { threshold: .18 });
     traceEntranceObserver.observe(traceDemo);
   } else {
+    traceAutoCycleVisible = true;
     playTraceStageEntrance();
+    syncTraceAutoCycle();
   }
+  document.addEventListener('visibilitychange', syncTraceAutoCycle);
   languageToggles.forEach(button => button.addEventListener('click', () => {
     if (traceActiveId && traceActiveMark) showTraceSource(traceActiveId, traceActiveMark);
     else syncTracePreview();
