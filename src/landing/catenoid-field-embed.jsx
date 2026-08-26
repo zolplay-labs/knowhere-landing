@@ -13,6 +13,44 @@ const DEFAULT_COLORS = {
 const DEFAULT_FIELD_LAYOUT = { x: 0, y: 13, scale: 1.5 }
 const DEFAULT_TEXT_LAYOUT = { x: 1, y: -5, scale: 1 }
 const SETTINGS_STORAGE_KEY = 'knowhere:catenoid-field-settings'
+const PYTHON_CODE = `# pip install knowhere-python-sdk
+import knowhere
+
+client = knowhere.Knowhere(api_key="sk_...")
+
+result = client.parse(url="https://arxiv.org/pdf/1706.03762.pdf")
+
+print(result.statistics.total_chunks)
+print(result.full_markdown[:200])`
+const NODE_CODE = `// npm install @ontos-ai/knowhere-sdk
+import Knowhere from "@ontos-ai/knowhere-sdk";
+
+const client = new Knowhere({
+  apiKey: "sk_...",
+});
+
+const result = await client.parse({
+  url: "https://arxiv.org/pdf/1706.03762.pdf",
+});
+
+console.log("Text chunks:", result.textChunks.length);
+console.log(result.textChunks[0]?.content);`
+const CURL_CODE = `curl -X POST https://api.knowhereto.ai/v1/jobs \\
+  --oauth2-bearer "$KNOWHERE_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "source_type": "url",
+    "source_url": "https://arxiv.org/pdf/1706.03762.pdf",
+    "parsing_params": {
+      "model": "base",
+      "ocr_enabled": true
+    }
+  }'`
+const CODE_EXAMPLES = {
+  python: { label: 'Python', code: PYTHON_CODE },
+  node: { label: 'Node.js', code: NODE_CODE },
+  curl: { label: 'CURL', code: CURL_CODE },
+}
 let animationLoad = null
 
 function clamp(value, min, max) {
@@ -223,6 +261,121 @@ export function ColorControl({ label, onChange, value }) {
   )
 }
 
+function IntegrationCodeFrame() {
+  const [activeLanguage, setActiveLanguage] = useState('python')
+  const [copied, setCopied] = useState(false)
+  const [entered, setEntered] = useState(false)
+  const [visibleCharacterCount, setVisibleCharacterCount] = useState(0)
+  const frameRef = useRef(null)
+  const preRef = useRef(null)
+  const typingFrameRef = useRef(0)
+  const activeCode = CODE_EXAMPLES[activeLanguage].code
+
+  useEffect(() => {
+    const frame = frameRef.current
+    if (!frame) return undefined
+    const updateCornerOffsets = () => {
+      const { width, height } = frame.getBoundingClientRect()
+      const shiftX = width / 2
+      const shiftY = height / 2
+      const offsets = [
+        [shiftX, shiftY],
+        [-shiftX, shiftY],
+        [shiftX, -shiftY],
+        [-shiftX, -shiftY],
+      ]
+      frame.querySelectorAll('.integration-code-frame__corner').forEach((corner, index) => {
+        const [x, y] = offsets[index]
+        corner.style.setProperty('--corner-start', `translate(${x}px, ${y}px)`)
+      })
+    }
+    const resizeObserver = new ResizeObserver(updateCornerOffsets)
+    const intersectionObserver = new IntersectionObserver(entries => {
+      if (!entries[0].isIntersecting) return
+      setEntered(true)
+      intersectionObserver.disconnect()
+    }, { threshold: 0.2 })
+    updateCornerOffsets()
+    resizeObserver.observe(frame)
+    intersectionObserver.observe(frame)
+    return () => {
+      resizeObserver.disconnect()
+      intersectionObserver.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!entered) return undefined
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setVisibleCharacterCount(PYTHON_CODE.length)
+      return undefined
+    }
+
+    const start = performance.now()
+    const typeCode = now => {
+      const progress = clamp((now - start - 300) / 1200, 0, 1)
+      setVisibleCharacterCount(Math.floor(progress * PYTHON_CODE.length))
+      if (progress < 1) typingFrameRef.current = requestAnimationFrame(typeCode)
+    }
+    typingFrameRef.current = requestAnimationFrame(typeCode)
+    return () => cancelAnimationFrame(typingFrameRef.current)
+  }, [entered])
+
+  const selectLanguage = language => {
+    cancelAnimationFrame(typingFrameRef.current)
+    setActiveLanguage(language)
+    setVisibleCharacterCount(CODE_EXAMPLES[language].code.length)
+    setCopied(false)
+    preRef.current?.scrollTo({ top: 0 })
+  }
+
+  const copyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(activeCode)
+    } catch {
+      const textarea = document.createElement('textarea')
+      textarea.value = activeCode
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      textarea.remove()
+    }
+    setCopied(true)
+  }
+
+  return (
+    <div className={`integration-code-frame${entered ? ' is-entering' : ''}`} ref={frameRef}>
+      <span className="integration-code-frame__corner integration-code-frame__corner--top-left" aria-hidden="true" />
+      <span className="integration-code-frame__corner integration-code-frame__corner--top-right" aria-hidden="true" />
+      <span className="integration-code-frame__corner integration-code-frame__corner--bottom-left" aria-hidden="true" />
+      <span className="integration-code-frame__corner integration-code-frame__corner--bottom-right" aria-hidden="true" />
+      <div className="integration-code-frame__card">
+        <div className="integration-code-frame__header">
+          <div className="integration-code-frame__tabs" aria-label="SDK examples">
+            {Object.entries(CODE_EXAMPLES).map(([language, example]) => (
+              <button
+                type="button"
+                className={activeLanguage === language ? 'is-active' : undefined}
+                aria-pressed={activeLanguage === language}
+                onClick={() => selectLanguage(language)}
+                key={language}
+              >{example.label}</button>
+            ))}
+          </div>
+          <button className={`integration-code-frame__copy${copied ? ' is-copied' : ''}`} type="button" onClick={copyCode} aria-label={copied ? 'Code copied' : `Copy ${CODE_EXAMPLES[activeLanguage].label} code`}>
+            {copied ? 'Copied' : <img src="/assets/integration-copy-code.svg" alt="" />}
+          </button>
+        </div>
+        <pre ref={preRef} aria-hidden="true"><code><span>{activeCode.slice(0, visibleCharacterCount)}</span><span className="integration-code-frame__untyped">{activeCode.slice(visibleCharacterCount)}</span></code></pre>
+        <span className="sr-only">{activeCode}</span>
+        <span className="sr-only" aria-live="polite">{copied ? 'Code copied' : ''}</span>
+      </div>
+    </div>
+  )
+}
+
 /** Adds a local, collapsible tuning surface around the standalone artwork. */
 export function CatenoidFieldTuner() {
   const initialSettings = useMemo(loadSavedSettings, [])
@@ -322,6 +475,7 @@ export function CatenoidFieldTuner() {
         textOffsetY={textLayout.y}
         textScale={textLayout.scale}
       />
+      <IntegrationCodeFrame />
       <details
         ref={controlsRef}
         className="catenoid-field-controls"

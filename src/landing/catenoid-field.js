@@ -10,11 +10,6 @@
   const HYPER_CYCLE_MS = 4200;
   const HYPER_ACTIVE_MS = 650;
   const HYPER_GLYPHS = '01<>/{}[]+-=';
-  const CALLOUT_ENTER_MS = 600;
-  const CALLOUT_HOLD_MS = 3000;
-  const CALLOUT_EXIT_MS = 600;
-  const CALLOUT_GAP_MS = 2000;
-  const CALLOUT_CYCLE_MS = CALLOUT_ENTER_MS + CALLOUT_HOLD_MS + CALLOUT_EXIT_MS + CALLOUT_GAP_MS;
   const POINTER_EASE = 0.055;
   const DEFAULT_COLORS = {
     accent: '#77e1ca',
@@ -82,7 +77,6 @@
       this.lastFrameTime = null;
       this.autoYaw = 0;
       this.cycleElapsed = 0;
-      this.calloutElapsed = 0;
       this.rotation = { pitch: 0, yaw: 0, targetPitch: 0, targetYaw: 0 };
       this.settings = {
         autoRotate: true,
@@ -282,94 +276,6 @@
       context.restore();
     }
 
-    drawCalloutGuides() {
-      const context = this.context;
-      const fieldScale = Math.min(this.width, this.height) * 0.29 * this.settings.fieldScale;
-      const centerX = this.width * (0.5 + this.settings.fieldOffsetX / 100);
-      const centerY = this.height * (0.5 + this.settings.fieldOffsetY / 100);
-      const squareSize = clamp(Math.min(this.width, this.height) * 0.023, 8, 12);
-      const guides = [
-        {
-          side: 'left',
-          anchorX: centerX - fieldScale * 0.08,
-          baseY: centerY - fieldScale * 0.48,
-          boxX: this.width * (23 / 630),
-          labels: ['sk-proj-demo_4f8a9c2d_XX', 'sk-live-demo_71b3e840_XX'],
-          phaseOffset: 0
-        },
-        {
-          side: 'right',
-          anchorX: centerX + fieldScale * 0.08,
-          baseY: centerY - fieldScale * 0.18,
-          boxX: this.width * (442 / 630),
-          labels: ['quarterly-report.pdf', 'invoice-2026-08.xlsx'],
-          phaseOffset: 2000
-        }
-      ];
-
-      context.save();
-      context.translate(0, 20);
-      context.lineWidth = 1;
-      guides.forEach(({ side, anchorX, baseY, boxX, labels, phaseOffset }) => {
-        const elapsed = this.reduceMotion ? CALLOUT_ENTER_MS : this.calloutElapsed - phaseOffset;
-        if (elapsed < 0) return;
-        const cycleIndex = this.reduceMotion ? 0 : Math.floor(elapsed / CALLOUT_CYCLE_MS);
-        const cycleTime = this.reduceMotion ? CALLOUT_ENTER_MS : elapsed % CALLOUT_CYCLE_MS;
-        const label = labels[cycleIndex % labels.length];
-        let reveal = 1;
-        let erase = 0;
-        if (cycleTime < CALLOUT_ENTER_MS) reveal = easeInOut(cycleTime / CALLOUT_ENTER_MS);
-        else if (cycleTime < CALLOUT_ENTER_MS + CALLOUT_HOLD_MS) reveal = 1;
-        else if (cycleTime < CALLOUT_ENTER_MS + CALLOUT_HOLD_MS + CALLOUT_EXIT_MS) {
-          erase = easeInOut((cycleTime - CALLOUT_ENTER_MS - CALLOUT_HOLD_MS) / CALLOUT_EXIT_MS);
-        } else {
-          return;
-        }
-        const visibility = erase > 0 ? 1 - erase : reveal;
-        const fontSize = this.width < 520 ? 11 : 13;
-        context.font = `500 ${fontSize}px Poppins, "Helvetica Neue", Arial, sans-serif`;
-        const boxWidth = Math.min(context.measureText(label).width + 20, this.width - boxX - 20);
-        const labelHeight = fontSize + 19;
-        const anchorY = baseY + (cycleIndex % 2) * (labelHeight + 6);
-        const boxEdge = boxX < anchorX ? boxX + boxWidth : boxX;
-        const direction = boxEdge < anchorX ? -1 : 1;
-
-        context.globalAlpha = visibility;
-        context.strokeStyle = rgba(this.colors.accent, 0.54);
-        context.beginPath();
-        context.moveTo(boxEdge, anchorY + 0.5);
-        context.lineTo(anchorX + direction * squareSize / 2, anchorY + 0.5);
-        context.stroke();
-        context.fillStyle = this.colors.accent;
-        context.fillRect(anchorX - squareSize / 2, anchorY - squareSize / 2, squareSize, squareSize);
-
-        const visibleStart = side === 'left'
-          ? (erase > 0 ? erase : 0)
-          : 0;
-        const visibleEnd = side === 'left'
-          ? reveal
-          : (erase > 0 ? 1 - erase : 1);
-        const mirroredStart = side === 'right' && erase === 0 ? 1 - reveal : visibleStart;
-        const clippedWidth = Math.max(0, visibleEnd - mirroredStart) * boxWidth;
-        if (clippedWidth <= 0) return;
-
-        context.save();
-        context.globalAlpha = 1;
-        context.beginPath();
-        context.rect(boxX + mirroredStart * boxWidth, anchorY - labelHeight / 2, clippedWidth, labelHeight);
-        context.clip();
-        context.fillStyle = this.colors.accent;
-        context.fillRect(boxX, anchorY - labelHeight / 2, boxWidth, labelHeight);
-        context.font = `500 ${fontSize}px Poppins, "Helvetica Neue", Arial, sans-serif`;
-        context.fillStyle = this.colors.background;
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.fillText(label, boxX + boxWidth / 2, anchorY);
-        context.restore();
-      });
-      context.restore();
-    }
-
     samplePulsePosition(pulse, activation) {
       const random = seededRandom(1201 + pulse.index * 4099 + activation * 7919);
       const rings = this.paths.filter(path => path.type === 'ring' && path.fixedV === undefined);
@@ -426,7 +332,6 @@
           : clamp(0.2 + (item.averageDepth + 1) * 0.12, 0.18, 0.46);
         this.drawPath(item.points, item.reveal, depthOpacity * item.edgeOpacity, isRing ? 1.15 : 0.85);
       });
-      this.drawCalloutGuides();
       this.drawDataPulses(now);
     }
 
@@ -439,7 +344,6 @@
         this.autoYaw += delta * 0.00008 * this.settings.rotationSpeed;
       }
       this.cycleElapsed += delta * this.settings.cycleSpeed;
-      this.calloutElapsed += delta;
       this.rotation.pitch += (this.rotation.targetPitch - this.rotation.pitch) * POINTER_EASE;
       this.rotation.yaw += (this.rotation.targetYaw - this.rotation.yaw) * POINTER_EASE;
       this.render(now);
@@ -466,7 +370,6 @@
       this.introStart = this.visible ? now : null;
       this.autoYaw = 0;
       this.cycleElapsed = 0;
-      this.calloutElapsed = 0;
       this.rotation = { pitch: 0, yaw: 0, targetPitch: 0, targetYaw: 0 };
       this.dataPulses.forEach(pulse => { pulse.activation = -1; pulse.position = null; });
       this.resize();
