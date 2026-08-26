@@ -391,9 +391,6 @@
     .comparison-legend .markitdown-key { background: rgba(0,0,0,.08); }
     .comparison-dashboard { display: block; }
     .comparison-chart { min-height: 346px; padding: 28px 28px 20px; border-bottom: 0; background: transparent; }
-    .divider-hatch { position: relative; z-index: 2; width: 100vw; height: 16px; margin-left: calc(50% - 50vw); border: 0; background: repeating-linear-gradient(135deg, rgba(24,24,24,.14) 0 1px, transparent 1px 7px); }
-    .comparison-chart > .divider-hatch { margin-top: -28px; margin-bottom: 24px; }
-    .divider-hatch--bottom { margin-block: 0; }
     .comparison-chart-note { margin: 0; color: var(--muted); font: 12px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
     .comparison-metrics { display: grid; grid-template-columns: repeat(6, 1fr); align-items: end; gap: clamp(10px, 2vw, 26px); height: 250px; border: 0; }
     .comparison-metric { display: grid; grid-template-columns: repeat(5, minmax(7px, 1fr)); align-items: end; gap: 3px; height: 100%; }
@@ -624,7 +621,6 @@
       .comparison-chart-header, .comparison-dashboard { display: block; }
       .comparison-legend { justify-content: flex-start; margin-top: 16px; }
       .comparison-chart { min-height: 280px; padding: 20px 18px; border: 0; }
-      .comparison-chart > .divider-hatch { margin-top: -20px; margin-bottom: 20px; }
       .comparison-metrics { height: 190px; gap: 10px; }
       .comparison-metric-labels { gap: 10px; }
       .comparison-metric-labels span { font-size: 11px; }
@@ -906,7 +902,19 @@
       pointer-events: none;
       transform: translateX(-50%);
     }
-    #hero-b-pixel-field { position: absolute; z-index: 0; top: 0; left: 50%; width: 100vw; height: 100%; display: block; pointer-events: none; transform: translateX(-50%); }
+    #hero-b-pixel-field {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 50%;
+      width: 100vw;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+      transform: translateX(-50%);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    }
     #top.hero-b-layout .hero-copy,
     #top.hero-b-layout .hero-visual { z-index: 1; }
     html.js .site-header,
@@ -922,7 +930,13 @@
     }
     #top.hero-b-layout.is-data-layer-hovered { cursor: pointer; }
     .hero-b-chart { width: 100%; min-width: 0; }
-    .hero-b-chart-shell { width: 100%; height: auto; aspect-ratio: 300 / 276; }
+    .hero-b-chart-shell {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 300 / 276;
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, #000 82%, transparent 100%);
+    }
     .hero-b-pixel-tooltip { position: fixed; z-index: 120; width: max-content; max-width: calc(100vw - 24px); padding: 4px 8px; border: 1px solid #cecde0; background: #fff; color: rgba(0,0,0,.4); font: 500 12px/16px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif; white-space: nowrap; pointer-events: none; opacity: 0; transform: translate(12px,12px); transition: opacity .12s ease; }
     .hero-b-pixel-tooltip.is-visible { opacity: 1; }
     @keyframes hero-scan-curtain {
@@ -956,7 +970,7 @@
     #playground .section-heading > p:last-child { font-weight: 300; letter-spacing: 0; }
     .section-scan-frame {
       width: 100%;
-      height: clamp(500px, 37.15vw, 535px);
+      height: clamp(520px, calc(37.15vw + 20px), 555px);
       overflow: hidden;
       border: 1px solid rgba(24,24,24,.14);
       background: #fff;
@@ -964,7 +978,7 @@
     .section-scan-frame iframe { display: block; width: 100%; height: 100%; border: 0; }
     #playground > [hidden] { display: none !important; }
     @media (max-width: 767px) {
-      .section-scan-frame { height: 680px; margin-inline: calc(-1 * var(--gutter)); width: calc(100% + var(--gutter) + var(--gutter)); }
+      .section-scan-frame { height: 700px; margin-inline: calc(-1 * var(--gutter)); width: calc(100% + var(--gutter) + var(--gutter)); }
     }
     :root {
       --page-primary: var(--main-500, #96b0cb);
@@ -1470,12 +1484,6 @@
       padding: 0;
       border: 0;
       background: #fff;
-    }
-
-    #comparison .divider-hatch {
-      height: 11px;
-      background-size: 8px 8px;
-      opacity: .55;
     }
 
     #comparison .comparison-chart-header {
@@ -3119,11 +3127,6 @@
       }
     }
 
-    #comparison .divider-hatch--bottom {
-      margin-top: 24px;
-      margin-bottom: 24px;
-    }
-
     #comparison .comparison-scoreboard {
       margin-top: 0;
       border: 0;
@@ -3205,12 +3208,12 @@
     }
 
     #comparison .scoreboard-cell.scoreboard-knowhere {
-      background: #f5f6fa;
+      background: var(--main-50);
       color: #181818;
     }
 
     #comparison .scoreboard-cell.scoreboard-head-cell.scoreboard-knowhere {
-      background: #f5f6fa;
+      background: var(--main-50);
       color: #181818;
     }
 
@@ -4084,7 +4087,8 @@
       flex-direction: column;
       align-items: flex-start;
       align-self: stretch;
-      justify-content: space-between;
+      justify-content: flex-start;
+      gap: 16px;
     }
 
     #enterprise h2 {
@@ -4647,11 +4651,6 @@
         min-width: 656px;
       }
 
-      #comparison .comparison-chart > .divider-hatch {
-        width: 656px;
-        margin-left: 0;
-      }
-
       #comparison .comparison-legend {
         overflow: visible;
       }
@@ -4908,30 +4907,6 @@
       }
     }
 
-    /* Figma 409:6883 — full-width hatched rules framing comparison content. */
-    #comparison .divider-hatch {
-      left: 50%;
-      width: min(1450px, 100vw);
-      height: 11px;
-      margin-left: 0;
-      background:
-        repeating-linear-gradient(90deg, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px) top / 100% 1px no-repeat,
-        repeating-linear-gradient(90deg, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px) bottom / 100% 1px no-repeat,
-        repeating-linear-gradient(135deg, rgba(0, 0, 0, .1) 0 1px, transparent 1px 7px);
-      opacity: 1;
-      transform: translateX(-50%);
-    }
-
-    #comparison .comparison-chart > .divider-hatch {
-      margin-top: 0;
-      margin-bottom: 24px;
-    }
-
-    #comparison .divider-hatch--bottom {
-      margin-top: 24px;
-      margin-bottom: 24px;
-    }
-
     /* Figma 413:7451 — integration cards, hatch spacers, image, and MCP bar. */
     #integration.section.shell {
       padding-inline: 0;
@@ -5172,11 +5147,6 @@
       }
     }
 
-    /* Keep the comparison ornaments flush with the 1440px section frame. */
-    #comparison .divider-hatch {
-      width: min(calc(100% + 160px), 100vw);
-    }
-
     #comparison .comparison-scoreboard-head {
       position: relative;
       padding-inline: 10px;
@@ -5224,7 +5194,6 @@
     }
 
     @media (min-width: 768px) and (max-width: 1199px) {
-      #comparison .divider-hatch,
       #comparison .comparison-scoreboard-head::before,
       #comparison .comparison-scoreboard-head::after {
         width: min(calc(100% + 80px), 100vw);
@@ -5233,16 +5202,11 @@
     }
 
     @media (max-width: 767px) {
-      #comparison .divider-hatch,
       #comparison .comparison-scoreboard-head::before,
       #comparison .comparison-scoreboard-head::after {
         width: min(calc(100% + 40px), 100vw);
       }
 
-    }
-
-    #comparison .divider-hatch {
-      width: 100vw;
     }
 
     #comparison .comparison-scoreboard-head::before,
@@ -5823,6 +5787,23 @@
 
     #formats .section-heading {
       margin-bottom: 40px;
+    }
+
+    @media (min-width: 768px) {
+      #playground .section-heading h2,
+      #capabilities .section-heading h2,
+      #formats .section-heading h2,
+      #comparison .section-heading h2,
+      #integration .section-heading h2,
+      #pricing .pricing-heading h2,
+      #playground .section-heading > p:last-child:not(.section-no),
+      #capabilities .section-heading > p:last-child:not(.section-no),
+      #formats .section-heading > p:last-child:not(.section-no),
+      #comparison .section-heading > p:last-child:not(.section-no),
+      #integration .section-heading > p:last-child:not(.section-no),
+      #pricing .pricing-heading > p:last-child:not(.section-no) {
+        align-self: end;
+      }
     }
 
     @media (max-width: 767px) {

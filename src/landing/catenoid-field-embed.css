@@ -7,6 +7,20 @@
   isolation: isolate;
 }
 
+.catenoid-field-embed::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--page-primary) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--page-primary) 8%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, .72) 36%, transparent 78%);
+  mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, .72) 36%, transparent 78%);
+  content: "";
+  pointer-events: none;
+}
+
 .catenoid-field-embed::after {
   position: absolute;
   z-index: 2;

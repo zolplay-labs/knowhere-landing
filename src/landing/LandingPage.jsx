@@ -193,7 +193,6 @@ export function LandingPage() {
       <div className="comparison-frame" aria-label="Illustrative document pipeline comparison">
         <div className="comparison-dashboard">
           <div className="comparison-chart">
-            <div className="divider-hatch" aria-hidden="true" />
             <div className="comparison-chart-header">
               <p className="comparison-chart-note">Comparison performance</p>
               <div className="comparison-legend" aria-label="Compared document processing tools"><span><i />Raw Docs</span><span><i className="unstructured-key" />Unstructured</span><span><i className="knowhere-key" />Knowhere</span><span><i className="mineru-key" />MinerU</span><span><i className="markitdown-key" />Markitdown</span></div>
@@ -228,7 +227,6 @@ export function LandingPage() {
               <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
-        <div className="divider-hatch divider-hatch--bottom" aria-hidden="true" />
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">

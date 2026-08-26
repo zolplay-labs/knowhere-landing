@@ -463,8 +463,8 @@ export function CatenoidFieldTuner() {
     <div className="catenoid-field-workbench" ref={workbenchRef}>
       <CatenoidFieldEmbed
         viewRotation={viewRotation}
-        accentColor={colors.accentColor}
-        secondaryColor={colors.secondaryColor}
+        accentColor="var(--page-primary)"
+        secondaryColor="var(--page-primary)"
         backgroundColor={colors.backgroundColor}
         cycleSpeed={cycleSpeed}
         fieldOffsetX={fieldLayout.x}
