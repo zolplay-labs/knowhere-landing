@@ -48,7 +48,7 @@
   --integration-ease-in-out: cubic-bezier(.77, 0, .175, 1);
   position: absolute;
   z-index: 3;
-  top: calc(50% + 48px);
+  top: calc(50% + 24px);
   left: 50%;
   width: min(486px, calc(100% - 32px));
   height: 206px;

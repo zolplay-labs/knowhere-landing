@@ -6505,10 +6505,10 @@
 
       .site-header .nav.shell,
       .site-header.scrolled .nav.shell {
-        width: min(1440px, 100%);
-        max-width: 1440px;
+        width: var(--layout-grid-width);
+        max-width: var(--content-max);
         height: 67px;
-        padding-inline: 24px;
+        padding-inline: 0;
         gap: 0;
         border: 0;
         border-radius: 0;
@@ -6586,6 +6586,13 @@
       .site-header.over-dark .github-link,
       .site-header.over-dark .desktop-nav a {
         color: #1d1e22;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+      .site-header .nav.shell,
+      .site-header.scrolled .nav.shell {
+        width: var(--layout-grid-width);
       }
     }
 

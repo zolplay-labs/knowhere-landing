@@ -76,10 +76,10 @@ function initializeHeroCanvas(root, cleanups) {
       { count: 14, width: .035 }
     ];
     const LAYERS = [
-      { label: 'ORIGINAL DOCUMENT', detail: 'Pages · layouts · evidence' },
-      { label: 'PAGE IMAGES', detail: 'Full-page visual originals' },
-      { label: 'LIGHTWEIGHT NOTES', detail: 'Page topic · chapter location' },
-      { label: 'CHAPTER MAP', detail: 'Navigate · open source on demand' }
+      { label: 'ORIGINAL DOCUMENT', detail: 'The document stays intact.' },
+      { label: 'PAGE IMAGES', detail: 'Every page, ready to inspect.' },
+      { label: 'LIGHTWEIGHT NOTES', detail: 'Topics stay tied to their chapters.' },
+      { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
     ];
     const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
