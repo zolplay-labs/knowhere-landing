@@ -1080,7 +1080,7 @@ function initializeHeroCanvas(root, cleanups) {
         hoverFlowStarted = performance.now() / 1000;
       }
       hoveredLayer = nextHoveredLayer;
-      hero.classList.toggle('is-data-layer-hovered', hoveredLayer !== null);
+      hero.classList.toggle('is-data-layer-hovered', hoveredLayer !== null && hoveredLayer !== 0);
 
       hoveredTrack = null;
       if (hoveredLayer === null) {

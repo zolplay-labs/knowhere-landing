@@ -196,16 +196,17 @@
     .trace-doc-brand time { color: rgba(0,0,0,.9); font: inherit; }
     .trace-doc-eyebrow { margin: 0 0 -4px; color: rgba(0,0,0,.9); font: 400 15px/24px var(--trace-mono); }
     .trace-document-page h3 { max-width: 520px; margin: 0 0 12px; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 32px; font-weight: 500; line-height: 40px; letter-spacing: -.0063em; text-transform: none; }
+    .trace-document-page[data-document="regional"] h3 { font-size: 25px; line-height: 36px; letter-spacing: -.2px; }
     .trace-document-page h3 span { color: inherit; }
     .trace-doc-rule { height: 24px; flex: none; margin: 0; border: 0; }
     .trace-doc-records { min-height: 0; display: block; margin: 0; }
     .trace-doc-record { min-height: 0; display: block; padding: 0; border: 0; }
     .trace-doc-footer { display: none; }
     .trace-record-index { display: none; }
-    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 180%; letter-spacing: 0; }
+    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.6); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 180%; letter-spacing: 0; }
     .trace-record-label { display: none; }
-    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: var(--main-50, #f5f6fa); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
-    .trace-source-mark.is-preview { background: var(--main-50, #f5f6fa); color: #111315; box-shadow: none; }
+    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: #f5f6fa; color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+    .trace-source-mark.is-preview { background: #f5f6fa; color: #111315; box-shadow: none; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; outline: 0; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); }
     .trace-source-mark.is-active { box-shadow: none; }
