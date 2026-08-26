@@ -564,7 +564,7 @@ function initializeHeroCanvas(root, cleanups) {
       selectedLayer = nextLayer;
       if (hoveredLayer === layerIndex) {
         if (nextLayer === layerIndex) tooltip.classList.remove('is-visible');
-        else tooltip.textContent = `${LAYERS[layerIndex].label} · Click to view pixel form`;
+        else tooltip.textContent = 'Click to view pixel form';
       }
     }
 
@@ -1091,7 +1091,7 @@ function initializeHeroCanvas(root, cleanups) {
         tooltip.classList.remove('is-visible');
         return;
       }
-      tooltip.textContent = `${LAYERS[hoveredLayer].label} · Click to view pixel form`;
+      tooltip.textContent = 'Click to view pixel form';
       tooltip.style.left = `${Math.min(innerWidth - 240, clientX)}px`;
       tooltip.style.top = `${Math.min(innerHeight - 70, clientY)}px`;
       tooltip.classList.add('is-visible');

@@ -359,6 +359,9 @@ if (!(root instanceof Element)) return () => {};
     'EPUB, HTML, XML, MP4, MP3, and skills.md': 'EPUB、HTML、XML、MP4、MP3 和 skills.md',
     'is coming soon.': '。',
     'Raw Docs': '原始文档', 'token used': 'Token 用量', 'time used (s)': '耗时（秒）', 'agent loops': '智能体循环',
+    'time used': '耗时', 'first-time acc': '首次准确率', 'acc with user feedback': '含用户反馈的准确率', 'recall': '召回率',
+    'On a benchmark of 50 retrieval tasks across 500+ curated documents, Knowhere achieved significantly higher first-pass accuracy and recall than raw document pipelines, while using fewer tokens, fewer agent loops, and lower latency.': '在对 500 多份精选文档执行 50 项检索任务的基准测试中，Knowhere 的首次准确率和召回率显著高于原始文档管线，同时使用更少的 Token、更少的智能体循环，并实现更低的延迟。',
+    'Top-K boost ~10%+ in production': '生产环境中 Top-K 提升约 10%+', '50%+ token savings on graphs': '图谱构建节省 50%+ Token',
     'Read the MCP docs': '阅读 MCP 文档', 'Deployment options': '部署选项',
     '© 2026 Knowhere API. Allrights reserved': '© 2026 Knowhere API。保留所有权利。',
     'Main navigation': '主导航', 'Mobile navigation': '移动端导航', 'Footer links': '页脚链接',
@@ -1819,7 +1822,7 @@ syncPricingCalculator();
       selectedLayer = nextLayer;
       if (hoveredLayer === layerIndex) {
         const action = nextLayer === layerIndex ? 'Click to return to data funnel' : 'Click to view pixel form';
-        tooltip.textContent = `${LAYERS[layerIndex].label} · ${action}`;
+        tooltip.textContent = action;
       }
     }
 
@@ -2305,7 +2308,7 @@ syncPricingCalculator();
         return;
       }
       const action = selectedLayer === hoveredLayer ? 'Click to return to data funnel' : 'Click to view pixel form';
-      tooltip.textContent = `${LAYERS[hoveredLayer].label} · ${action}`;
+      tooltip.textContent = action;
       tooltip.style.left = `${Math.min(innerWidth - 240, clientX)}px`;
       tooltip.style.top = `${Math.min(innerHeight - 70, clientY)}px`;
       tooltip.classList.add('is-visible');
