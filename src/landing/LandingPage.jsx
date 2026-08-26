@@ -22,6 +22,7 @@ export function LandingPage() {
 
   return (
 <div className="landing-page" ref={rootRef}>
+  <div className="layout-grid-overlay" aria-hidden="true" />
   <a className="skip-link" href="#main">Skip to content</a>
   <header className="site-header" data-header>
     <nav className="nav shell" aria-label="Main navigation">

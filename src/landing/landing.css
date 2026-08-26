@@ -5884,3 +5884,346 @@
     .converging-helix-controls {
       display: none !important;
     }
+
+    /* Shared responsive page grid: 12 columns desktop, 8 tablet, 4 mobile. */
+    :root {
+      --layout-grid-columns: 12;
+      --layout-grid-gap: 20px;
+      --layout-grid-edge: 80px;
+      --layout-grid-width: min(var(--content-max), calc(100vw - var(--layout-grid-edge) * 2));
+    }
+
+    .layout-grid-overlay {
+      position: fixed;
+      z-index: 2147482000;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      display: none;
+      width: var(--layout-grid-width);
+      pointer-events: none;
+      transform: translateX(-50%);
+      background-image: repeating-linear-gradient(
+        to right,
+        rgb(255 0 0 / 2%) 0,
+        rgb(255 0 0 / 2%) calc((100% + var(--layout-grid-gap)) / var(--layout-grid-columns) - var(--layout-grid-gap)),
+        transparent calc((100% + var(--layout-grid-gap)) / var(--layout-grid-columns) - var(--layout-grid-gap)),
+        transparent calc((100% + var(--layout-grid-gap)) / var(--layout-grid-columns))
+      );
+    }
+
+    html[data-layout-grid] .layout-grid-overlay {
+      display: block;
+    }
+
+    #playground > .section-heading {
+      width: min(var(--content-max), calc(100% - var(--layout-grid-edge) * 2));
+    }
+
+    /* Align simple section headings to the shared 12-column grid. */
+    @media (min-width: 1200px) {
+      #top.hero-b-layout {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #top.hero-b-layout .hero-copy {
+        grid-column: 1 / span 4;
+        width: 100%;
+      }
+
+      #top.hero-b-layout .hero-copy h1,
+      #top.hero-b-layout .hero-copy .lede {
+        max-width: none;
+      }
+
+      #top.hero-b-layout .hero-visual {
+        grid-column: 5 / -1;
+        width: 100%;
+      }
+
+      #playground .section-heading,
+      #capabilities .section-heading,
+      #formats .section-heading,
+      #comparison .section-heading,
+      #integration .section-heading,
+      #pricing .pricing-heading,
+      #enterprise .enterprise-copy,
+      #faq {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #playground .section-heading .section-no,
+      #capabilities .section-heading .section-no,
+      #formats .section-heading .section-no,
+      #comparison .section-heading .section-no,
+      #integration .section-heading .section-no,
+      #pricing .pricing-heading .section-no,
+      #playground .section-heading h2,
+      #capabilities .section-heading h2,
+      #formats .section-heading h2,
+      #comparison .section-heading h2,
+      #integration .section-heading h2,
+      #pricing .pricing-heading h2 {
+        grid-column: 1 / span 7;
+        width: 100%;
+        max-width: none;
+      }
+
+      #playground .section-heading > p:last-child:not(.section-no),
+      #capabilities .section-heading > p:last-child:not(.section-no),
+      #formats .section-heading > p:last-child:not(.section-no),
+      #comparison .section-heading > p:last-child:not(.section-no),
+      #integration .section-heading > p:last-child:not(.section-no),
+      #pricing .pricing-heading > p:last-child:not(.section-no) {
+        grid-column: 8 / -1;
+      }
+
+      #enterprise h2 {
+        grid-column: 1 / span 7;
+        width: auto;
+      }
+
+      #enterprise .enterprise-copy-detail {
+        grid-column: 8 / -1;
+      }
+
+      #faq .section-heading {
+        grid-column: 1 / span 7;
+        width: auto;
+      }
+
+      #faq .faq-list {
+        grid-column: 8 / -1;
+      }
+
+      #final-cta-copy {
+        width: calc((var(--layout-grid-width) + var(--layout-grid-gap)) / 12 * 7 - var(--layout-grid-gap));
+        max-width: 100%;
+      }
+
+      #capabilities .narrative-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #capabilities .story-steps {
+        grid-column: 1 / span 3;
+        width: 100%;
+      }
+
+      #capabilities .story-card-stack {
+        grid-column: 5 / -1;
+      }
+
+      #capabilities .story-canvas {
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #capabilities .capability-media {
+        grid-column: 1 / span 4;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 3 / 2;
+      }
+
+      #capabilities .capability-copy {
+        grid-column: 5 / -1;
+        width: 100%;
+        padding: 0;
+      }
+
+      #capabilities .capability-copy p {
+        max-width: none;
+      }
+
+      #formats .formats-secondary-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: var(--layout-grid-gap);
+      }
+
+      #formats .formats-secondary-grid .format-feature {
+        --format-card-outline-offset: calc(var(--layout-grid-gap) / 2);
+        grid-column: span 4;
+        width: auto;
+        padding: var(--layout-grid-gap);
+      }
+
+      #formats .formats-secondary-grid .format-feature > div:last-child,
+      #formats .formats-secondary-grid .format-feature p {
+        width: 100%;
+      }
+
+      #formats .formats-secondary-grid .format-feature::before {
+        inset:
+          var(--format-card-outline-offset)
+          calc(-1 * var(--format-card-outline-offset))
+          calc(-1 * var(--format-card-outline-offset))
+          var(--format-card-outline-offset);
+      }
+
+      #comparison .comparison-scoreboard-head {
+        padding-inline: 0;
+      }
+
+      #comparison .comparison-scoreboard-grid {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #comparison .scoreboard-cell {
+        padding-inline: 0;
+      }
+
+      #comparison .scoreboard-cell:nth-child(3n + 1) {
+        grid-column: span 6;
+      }
+
+      #comparison .scoreboard-cell:nth-child(3n + 2),
+      #comparison .scoreboard-cell:nth-child(3n + 3) {
+        grid-column: span 3;
+      }
+
+      #integration .steps {
+        grid-column: 2;
+        width: 100%;
+        margin-left: 0;
+      }
+
+      #integration .steps li {
+        width: 100%;
+      }
+
+      #integration .integration-grid {
+        grid-template-columns:
+          var(--layout-grid-edge)
+          minmax(0, 1fr)
+          var(--layout-grid-gap)
+          minmax(0, 1fr)
+          var(--layout-grid-edge);
+        column-gap: 0;
+        background-color: #fff;
+        background-image:
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          repeating-linear-gradient(to right, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px),
+          linear-gradient(rgba(0, 0, 0, .06), rgba(0, 0, 0, .06)),
+          repeating-linear-gradient(to bottom, rgba(0, 0, 0, .06) 0 6px, transparent 6px 12px);
+        background-position:
+          left 25px,
+          left 143px,
+          left 168px,
+          left 287px,
+          left 312px,
+          left 431px,
+          var(--layout-grid-edge) top,
+          calc(50% - var(--layout-grid-gap) / 2) top;
+        background-size:
+          100% 1px,
+          calc(50% - var(--layout-grid-gap) / 2) 1px,
+          calc(50% - var(--layout-grid-gap) / 2) 1px,
+          calc(50% - var(--layout-grid-gap) / 2) 1px,
+          calc(50% - var(--layout-grid-gap) / 2) 1px,
+          100% 1px,
+          1px 100%,
+          1px 100%;
+        background-repeat: no-repeat;
+      }
+
+      #integration .integration-plinth {
+        grid-column: 4;
+        width: 100%;
+        margin-right: 0;
+      }
+
+      #integration .mcp {
+        grid-column: 2 / 5;
+        width: 100%;
+        margin-inline: 0;
+        padding-inline: 0;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #integration .mcp h3 {
+        grid-column: 1 / span 3;
+      }
+
+      #integration .mcp > p:not(.pending) {
+        grid-column: 4 / span 7;
+      }
+
+      #integration .mcp .text-link {
+        grid-column: 11 / -1;
+      }
+
+      #pricing .pricing-facts {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #pricing .pricing-facts > div {
+        position: relative;
+        grid-column: span 3;
+        width: 100%;
+        padding-left: 9px;
+      }
+
+      #pricing .pricing-facts > div::before {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 1px;
+        background: rgba(0, 0, 0, .1);
+        content: "";
+        pointer-events: none;
+      }
+
+      #pricing .pricing-range-control::before {
+        background-image: repeating-linear-gradient(
+          to right,
+          rgba(0, 0, 0, .1) 0 1px,
+          transparent 1px calc((100% + var(--layout-grid-gap)) / 4)
+        );
+      }
+
+      #enterprise .enterprise-metrics {
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        column-gap: var(--layout-grid-gap);
+      }
+
+      #enterprise .enterprise-metric {
+        grid-column: span 4;
+      }
+
+      #enterprise .enterprise-metric-visual {
+        width: calc((var(--layout-grid-width) + var(--layout-grid-gap)) / 12 * 2 - var(--layout-grid-gap));
+      }
+
+      #enterprise .enterprise-metric-visual svg {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+      :root {
+        --layout-grid-columns: 8;
+        --layout-grid-gap: 16px;
+        --layout-grid-edge: 40px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      :root {
+        --layout-grid-columns: 4;
+        --layout-grid-gap: 12px;
+        --layout-grid-edge: 20px;
+      }
+    }

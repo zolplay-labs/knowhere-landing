@@ -290,6 +290,9 @@ function applySettings(targetDocument, settings) {
 export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const params = useDialKit('Knowhere Landing', {
+    layout: {
+      showGrid: true,
+    },
     appearance: {
       fontFamily: {
         type: 'select',
@@ -328,6 +331,12 @@ export function PageStyleControls() {
   const palette = MAIN_PALETTES[params.appearance.mainColor]
     ? params.appearance.mainColor
     : DEFAULTS.palette
+
+  useEffect(() => {
+    document.documentElement.toggleAttribute('data-layout-grid', params.layout.showGrid)
+    return () => document.documentElement.removeAttribute('data-layout-grid')
+  }, [params.layout.showGrid])
+
   useEffect(() => {
     const settings = {
       font,
