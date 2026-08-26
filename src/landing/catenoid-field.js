@@ -7,9 +7,6 @@
   const PATH_STAGGER_MS = 40;
   const RING_CYCLE_MS = 5600;
   const DATA_PULSE_DELAY_MS = 900;
-  const HYPER_CYCLE_MS = 4200;
-  const HYPER_ACTIVE_MS = 650;
-  const HYPER_GLYPHS = '01<>/{}[]+-=';
   const POINTER_EASE = 0.055;
   const DEFAULT_COLORS = {
     accent: '#77e1ca',
@@ -85,10 +82,7 @@
         cycleSpeed: 1,
         fieldOffsetX: 0,
         fieldOffsetY: 0,
-        fieldScale: 1,
-        textOffsetX: 0,
-        textOffsetY: 0,
-        textScale: 1
+        fieldScale: 1
       };
       this.colors = { ...DEFAULT_COLORS };
       this.paths = this.createPaths();
@@ -196,7 +190,7 @@
       const scale = Math.min(this.width, this.height) * 0.29 * this.settings.fieldScale;
       return {
         x: this.width * (0.5 + this.settings.fieldOffsetX / 100) + x * perspective * scale,
-        y: this.height * (0.5 + this.settings.fieldOffsetY / 100) + y * perspective * scale,
+        y: this.height * (0.5 + this.settings.fieldOffsetY / 100) - 16 + y * perspective * scale,
         z
       };
     }
@@ -241,41 +235,6 @@
       context.stroke();
     }
 
-    hyperText(label, index) {
-      if (this.reduceMotion) return label;
-      const local = (this.cycleElapsed + index * 940) % HYPER_CYCLE_MS;
-      if (local >= HYPER_ACTIVE_MS) return label;
-      const settled = Math.floor((local / HYPER_ACTIVE_MS) * label.length);
-      return Array.from(label, (character, characterIndex) => {
-        if (characterIndex < settled || character === ' ') return character;
-        const glyphIndex = Math.floor(local / 55 + characterIndex * 3 + index * 5) % HYPER_GLYPHS.length;
-        return HYPER_GLYPHS[glyphIndex];
-      }).join('');
-    }
-
-    drawDecorativeText() {
-      const context = this.context;
-      const compact = this.width < 520;
-      const fontSize = (compact ? 7 : 8) * this.settings.textScale;
-      context.save();
-      context.translate(
-        this.width * this.settings.textOffsetX / 100,
-        this.height * this.settings.textOffsetY / 100 + 20
-      );
-      context.font = `600 ${fontSize}px ui-monospace, SFMono-Regular, Menlo, monospace`;
-      context.fillStyle = rgba(this.colors.accent, 0.4);
-      context.textBaseline = 'top';
-      ['API KEY / ACTIVE', 'AUTH / BEARER', 'REQUEST / POST', 'QUEUE / READY'].forEach((label, index) => {
-        context.fillText(this.hyperText(label, index), this.width * (compact ? 0.1 : 0.035), this.height * 0.22 + index * (fontSize + 4));
-      });
-      context.fillStyle = rgba(this.colors.accent, 0.34);
-      context.textAlign = 'right';
-      ['DOCUMENT / PDF', 'UPLOAD / COMPLETE', 'WEBHOOK / READY', 'RESULT / JSON'].forEach((label, index) => {
-        context.fillText(label, this.width * (compact ? 0.94 : 0.965), this.height * 0.78 - 16 + index * (fontSize + 4));
-      });
-      context.restore();
-    }
-
     samplePulsePosition(pulse, activation) {
       const random = seededRandom(1201 + pulse.index * 4099 + activation * 7919);
       const rings = this.paths.filter(path => path.type === 'ring' && path.fixedV === undefined);
@@ -313,7 +272,6 @@
       context.clearRect(0, 0, this.width, this.height);
       context.fillStyle = this.colors.background;
       context.fillRect(0, 0, this.width, this.height);
-      this.drawDecorativeText();
 
       const sampledPaths = this.paths.map((path, index) => {
         const movingRing = path.type === 'ring' && path.fixedV === undefined;
@@ -396,11 +354,11 @@
         const value = Number(options[key]);
         if (Number.isFinite(value)) this.settings[key] = clamp(value, 0, 4);
       });
-      ['fieldOffsetX', 'fieldOffsetY', 'textOffsetX', 'textOffsetY'].forEach(key => {
+      ['fieldOffsetX', 'fieldOffsetY'].forEach(key => {
         const value = Number(options[key]);
         if (Number.isFinite(value)) this.settings[key] = clamp(value, -50, 50);
       });
-      ['fieldScale', 'textScale'].forEach(key => {
+      ['fieldScale'].forEach(key => {
         const value = Number(options[key]);
         if (Number.isFinite(value)) this.settings[key] = clamp(value, 0.25, 2);
       });

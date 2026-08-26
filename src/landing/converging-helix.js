@@ -103,10 +103,10 @@
     }
 
     map([x, y]) {
-      const padding = Math.min(this.width, this.height) * 0.08;
-      const availableHeight = this.height - padding * 2;
+      const verticalPadding = Math.min(this.width, this.height) * 0.08;
+      const availableHeight = this.height - verticalPadding * 2;
       const center = this.width * 0.5;
-      const start = center - (center - padding) * this.options.horizontalSpan;
+      const start = center - center * this.options.horizontalSpan;
       const convergence = center - this.options.centerGap * 0.5;
       const sourceX = this.options.mirror ? -x : x;
       const horizontalProgress = (sourceX + 1) / 1.2;

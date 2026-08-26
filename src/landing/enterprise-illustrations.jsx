@@ -2,6 +2,7 @@ const sharedSvgProps = {
   className: 'enterprise-illustration',
   fill: 'none',
   focusable: 'false',
+  preserveAspectRatio: 'xMinYMid meet',
 }
 
 function Illustration({ type, viewBox, children }) {
@@ -16,7 +17,7 @@ function Illustration({ type, viewBox, children }) {
 
 function CustomLimitsIllustration() {
   return (
-    <Illustration type="limits" viewBox="38 38 244 244">
+    <Illustration type="limits" viewBox="48 38 234 244">
       <circle className="enterprise-draw" cx="160" cy="160" r="112" />
       <g className="enterprise-hover enterprise-hover--flow enterprise-hover--limits">
         <circle className="enterprise-dash" cx="160" cy="160" r="78" strokeDasharray="7 5" />
@@ -34,7 +35,7 @@ function CustomLimitsIllustration() {
 
 function PriorityProcessingIllustration() {
   return (
-    <Illustration type="priority" viewBox="38 37 244 276">
+    <Illustration type="priority" viewBox="48 37 234 276">
       <g className="enterprise-priority-core-motion enterprise-hover-accent">
         <path className="enterprise-draw enterprise-priority-core" d="M160 85 220 120 160 155 100 120 160 85ZM100 120v70l60 35 60-35v-70M160 155v70" />
       </g>
@@ -50,7 +51,7 @@ function PriorityProcessingIllustration() {
 
 function DeploymentOptionsIllustration() {
   return (
-    <Illustration type="deployment" viewBox="39 25 242 270">
+    <Illustration type="deployment" viewBox="49 25 232 270">
       <g className="enterprise-hover enterprise-hover--flow enterprise-hover--deployment">
         <path className="enterprise-dash" d="m160 35 111 64v122l-111 64L49 221V99L160 35Z" strokeDasharray="7 5" />
       </g>
@@ -64,7 +65,7 @@ function DeploymentOptionsIllustration() {
 
 function SupportRequirementsIllustration() {
   return (
-    <Illustration type="support" viewBox="30 68 260 212">
+    <Illustration type="support" viewBox="38 68 252 212">
       <g className="enterprise-support-circle-motion enterprise-support-circle-motion--left enterprise-hover-accent"><circle className="enterprise-draw" cx="112" cy="140" r="62" /></g>
       <g className="enterprise-support-circle-motion enterprise-support-circle-motion--right enterprise-hover-accent"><circle className="enterprise-draw enterprise-draw--late" cx="208" cy="140" r="62" /></g>
       <circle className="enterprise-draw enterprise-draw--later enterprise-node" cx="160" cy="140" r="10" />
@@ -79,7 +80,7 @@ function SupportRequirementsIllustration() {
 
 function SlaRequirementsIllustration() {
   return (
-    <Illustration type="sla" viewBox="33 33 254 254">
+    <Illustration type="sla" viewBox="43 33 244 254">
       <g className="enterprise-hover enterprise-hover--flow enterprise-hover--sla">
         <circle className="enterprise-dash" cx="160" cy="160" r="117" strokeDasharray="7 5" />
         <g className="enterprise-node-group">
@@ -97,7 +98,7 @@ function SlaRequirementsIllustration() {
 
 function CommercialTermsIllustration() {
   return (
-    <Illustration type="commercial" viewBox="32 47 268 204">
+    <Illustration type="commercial" viewBox="42 47 258 204">
       <g className="enterprise-commercial-tower-motion enterprise-hover-accent">
         <ellipse className="enterprise-draw" cx="120" cy="88" rx="78" ry="31" />
         <path className="enterprise-draw enterprise-draw--late" d="M42 88v122c0 17 35 31 78 31s78-14 78-31V88M42 130c0 17 35 31 78 31s78-14 78-31M42 171c0 17 35 31 78 31s78-14 78-31" />

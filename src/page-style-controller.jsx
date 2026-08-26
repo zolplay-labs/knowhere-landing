@@ -291,7 +291,7 @@ export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const params = useDialKit('Knowhere Landing', {
     layout: {
-      showGrid: true,
+      showGrid: false,
     },
     appearance: {
       fontFamily: {

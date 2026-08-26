@@ -618,6 +618,14 @@ function initializeHeroCanvas(root, cleanups) {
       return easeOutCubic(threshold / .18);
     }
 
+    function funnelFadeAt(layout, y) {
+      const start = layout.topY + layout.stageGap * 2.8;
+      const end = layout.topY + layout.stageGap * 4.5;
+      const progress = Math.max(0, Math.min(1, (y - start) / (end - start)));
+      const eased = progress * progress * (3 - 2 * progress);
+      return 1 - eased;
+    }
+
     function drawGrid() {
       const gridEntrance = reducedMotion ? 1 : .2 + easeOutCubic(intro * 1.65) * .8;
       const gridGradient = ctx.createLinearGradient(0, 0, 0, height);
@@ -839,7 +847,8 @@ function initializeHeroCanvas(root, cleanups) {
           ctx.globalAlpha = formationAlpha
             * (.2 + hash(trackId + 1901, trackIndex + stage * 17) * .16)
             * reveal
-            * funnelOpacity;
+            * funnelOpacity
+            * funnelFadeAt(layout, firstPoint.y);
           ctx.strokeStyle = LAYER_COLORS[stage];
           ctx.beginPath();
           for (let sample = 0; sample <= 8; sample += 1) {
@@ -872,13 +881,14 @@ function initializeHeroCanvas(root, cleanups) {
         const stageCenter = isFullWidthStage ? width / 2 : layout.centerX;
         const boundaryActive = hoveredLayer === stageIndex || hoveredLayer === stageIndex - 1;
         const railX = stageCenter - stageWidth / 2 - cell;
+        const stageFade = funnelFadeAt(layout, y);
         if (!isFullWidthStage) {
           if (!boundaryActive) {
-            ctx.globalAlpha = .16 * funnelOpacity;
+            ctx.globalAlpha = .16 * funnelOpacity * stageFade;
             ctx.fillStyle = STAGE_COLORS[stageIndex];
             ctx.fillRect(railX, y + cell * .72, stageWidth + cell * 2, 1);
           }
-          ctx.globalAlpha = (boundaryActive ? .68 : .38) * funnelOpacity;
+          ctx.globalAlpha = (boundaryActive ? .68 : .38) * funnelOpacity * stageFade;
           ctx.fillStyle = STAGE_COLORS[stageIndex];
           ctx.fillRect(railX, y + cell * .48, cell * .45, cell * .45);
           ctx.fillRect(railX + stageWidth + cell * 1.55, y + cell * .48, cell * .45, cell * .45);
@@ -918,7 +928,7 @@ function initializeHeroCanvas(root, cleanups) {
               point.x,
               point.y,
               (trailAlpha * (.6 + hash(trackId + 211, sample + 419) * .8) + pulse * .84)
-                * tone.alpha * reveal * funnelOpacity,
+                * tone.alpha * reveal * funnelOpacity * funnelFadeAt(layout, point.y),
               tone.color
             );
           }
@@ -944,7 +954,7 @@ function initializeHeroCanvas(root, cleanups) {
             x,
             y,
             (Math.max(.9, unitAlpha * dataAlpha) + stageGlow + heatAt(x, y) * .3 + (boundaryActive ? .12 : 0))
-              * tone.alpha * reveal * funnelOpacity,
+              * tone.alpha * reveal * funnelOpacity * funnelFadeAt(layout, y),
             tone.color
           );
           unitHitAreas.push({ x, y, trackId, stageIndex });
@@ -964,7 +974,8 @@ function initializeHeroCanvas(root, cleanups) {
         drawPixel(
           originX + side * distance * progress,
           dropoutY,
-          (1 - progress) * .28 * entranceAt(layout, dropoutY, trackId + 401) * funnelOpacity
+          (1 - progress) * .28 * entranceAt(layout, dropoutY, trackId + 401)
+            * funnelOpacity * funnelFadeAt(layout, dropoutY)
         );
       });
 
@@ -983,11 +994,12 @@ function initializeHeroCanvas(root, cleanups) {
         const lineStart = Math.min(funnelBoundaryX + cell * 1.25, lineEnd - 28);
         const labelReveal = entranceAt(layout, y, layerIndex + 701);
         const cardVisibility = layerCardVisibility(layerIndex, time);
+        const layerFade = funnelFadeAt(layout, y);
         const labelOffsetX = (1 - cardVisibility) * cell * 1.8;
         const markerSize = 8;
 
         const lineLength = Math.max(28, lineEnd - lineStart) * cardVisibility;
-        const lineAlpha = (isActive ? .56 : .18) * labelReveal * cardVisibility;
+        const lineAlpha = (isActive ? .56 : .18) * labelReveal * cardVisibility * layerFade;
         const lineY = Math.round(y / cell) * cell + 1;
         ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
         for (let lineX = lineStart; lineX < lineStart + lineLength; lineX += cell) {
@@ -997,17 +1009,17 @@ function initializeHeroCanvas(root, cleanups) {
         }
 
         const markerX = labelX + labelOffsetX;
-        ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility;
+        ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility * layerFade;
         ctx.fillStyle = LAYER_COLORS[layerIndex];
         ctx.fillRect(markerX, y - markerSize / 2, markerSize, markerSize);
 
         const titleX = markerX + 19;
         ctx.textBaseline = 'alphabetic';
-        ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility;
+        ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility * layerFade;
         ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
         ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
         ctx.fillText(layer.label, titleX, y + 5);
-        ctx.globalAlpha = (isActive ? .76 : .68) * labelReveal * cardVisibility;
+        ctx.globalAlpha = (isActive ? .76 : .68) * labelReveal * cardVisibility * layerFade;
         ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
         ctx.fillText(layer.detail, markerX, y + 31);
       });

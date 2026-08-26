@@ -345,7 +345,7 @@ if (!(root instanceof Element)) return () => {};
     'Receive structured results': '接收结构化结果', 'Retrieve structured JSON through webhooks or polling.': '通过 Webhook 或轮询获取结构化 JSON。',
     'Start free trial': '免费试用', 'Book a demo': '预约演示',
     'Need custom limits or deployment support?': '需要定制限额或部署支持？',
-    'Talk to our team about processing limits, deployment options, technical support, and SLA requirements.': '与团队沟通处理限额、部署选项、技术支持及 SLA 需求。',
+    'Custom limits, deployment, support, and SLAs.': '自定义限额、部署、支持及 SLA。',
     'Talk to our team': '联系我们的团队',
     'Support requirements': '支持需求', 'SLA requirements': 'SLA 需求', 'Commercial terms': '商业条款',
     'Discuss throughput limits for your production traffic.': '根据生产流量讨论合适的吞吐上限。',
@@ -356,9 +356,9 @@ if (!(root instanceof Element)) return () => {};
     'Discuss billing and terms for your usage.': '根据使用规模讨论结算方式与条款。',
     'Ready to build with better document context?': '准备好使用更好的文档上下文进行构建了吗？',
     'Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.': '连接你的智能体工作流，看看 Knowhere 如何处理纯文本管线容易遗漏的文档。',
-    '>_PRODUCT': '>_产品', '>_PROCESS': '>_流程', '>_SCOPE': '>_范围',
-    '>_COMPARISON / EVALUATION': '>_对比 / 评估', '>_INTEGRATION': '>_集成',
-    '>_PRICING': '>_价格', '>_ENTERPRISE': '>_企业版', '>_FAQ': '>_常见问题',
+    '>_Product': '>_产品', '>_Process': '>_流程', '>_Capabilities': '>_能力',
+    '>_Comparison': '>_对比', '>_Integration': '>_集成', '>_Pricing': '>_价格',
+    '>_Enterprise': '>_企业版', '>_Faq': '>_常见问题',
     'Works with common file formats, including': '支持常见文件格式，包括',
     'DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.': 'DOCX、PDF、JPG、PPTX、XLSX、CSV、PNG、MD、JSON 和 TXT。',
     'Support for': '即将支持',
@@ -891,7 +891,6 @@ if (!(root instanceof Element)) return () => {};
   }
 
 const pricingPages = $('#pricing-pages');
-const pricingRangeFill = $('[data-pricing-range-fill]');
 const pricingRangeHandle = $('[data-pricing-range-handle]');
 const pricingRangeBudget = $('[data-pricing-range-budget]');
 function syncPricingCalculator() {
@@ -910,13 +909,65 @@ function syncPricingCalculator() {
   $('[data-pricing-pdf]').textContent = documentLabel(pdfCount);
   $('[data-pricing-large]').textContent = documentLabel(largeDocumentCount);
   const progress = `${((pages - rangeMin) / (rangeMax - rangeMin)) * 100}%`;
-  pricingRangeFill.style.setProperty('--pricing-progress', progress);
   pricingRangeHandle.style.setProperty('--pricing-progress', progress);
   pricingRangeBudget.style.setProperty('--pricing-progress', progress);
   pricingPages.setAttribute('aria-label', localizeText('Pages to process'));
   pricingPages.setAttribute('aria-valuetext', pageLabel);
 }
 pricingPages.addEventListener('input', syncPricingCalculator);
+const pricingControlCard = pricingRangeHandle.closest('.pricing-control-card');
+let pricingDragPointer = null;
+let pricingDragOffset = 0;
+function syncPricingFromPointer(clientX) {
+  const bounds = pricingRangeHandle.parentElement.getBoundingClientRect();
+  const rangeMin = Number(pricingPages.min);
+  const rangeMax = Number(pricingPages.max);
+  const rangeStep = Number(pricingPages.step) || 1;
+  const ratio = Math.max(0, Math.min(1, (clientX - pricingDragOffset - bounds.left) / bounds.width));
+  const nextValue = rangeMin + Math.round(((rangeMax - rangeMin) * ratio) / rangeStep) * rangeStep;
+  pricingPages.value = String(nextValue);
+  pricingPages.dispatchEvent(new Event('input', { bubbles: true }));
+}
+pricingControlCard.addEventListener('pointerdown', event => {
+  if (event.button !== 0) return;
+  pricingDragPointer = event.pointerId;
+  if (pricingRangeHandle.contains(event.target)) {
+    const handleBounds = pricingRangeHandle.getBoundingClientRect();
+    pricingDragOffset = event.clientX - (handleBounds.left + handleBounds.width / 2);
+  } else {
+    pricingDragOffset = 0;
+    syncPricingFromPointer(event.clientX);
+  }
+  pricingRangeHandle.classList.add('is-dragging');
+  document.documentElement.classList.add('is-pricing-dragging');
+  pricingControlCard.setPointerCapture(event.pointerId);
+  pricingPages.focus({ preventScroll: true });
+  event.preventDefault();
+});
+pricingControlCard.addEventListener('pointermove', event => {
+  if (event.pointerId !== pricingDragPointer) return;
+  if (event.pointerType === 'mouse' && (event.buttons & 1) === 0) {
+    finishPricingDrag(event);
+    return;
+  }
+  event.preventDefault();
+  syncPricingFromPointer(event.clientX);
+});
+function finishPricingDrag(event) {
+  if (pricingDragPointer === null) return;
+  const pointerId = event?.pointerId ?? pricingDragPointer;
+  if (pointerId !== pricingDragPointer) return;
+  pricingDragPointer = null;
+  pricingRangeHandle.classList.remove('is-dragging');
+  document.documentElement.classList.remove('is-pricing-dragging');
+  if (pricingControlCard.hasPointerCapture(pointerId)) {
+    pricingControlCard.releasePointerCapture(pointerId);
+  }
+}
+pricingControlCard.addEventListener('pointerup', finishPricingDrag);
+pricingControlCard.addEventListener('pointercancel', finishPricingDrag);
+pricingControlCard.addEventListener('lostpointercapture', finishPricingDrag);
+addEventListener('blur', () => finishPricingDrag());
 pricingReady = true;
 syncPricingCalculator();
 

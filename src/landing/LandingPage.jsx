@@ -61,7 +61,7 @@ export function LandingPage() {
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
-      <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
+      <div className="section-heading"><p className="section-no">&gt;_Product</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
       </div>
@@ -93,7 +93,7 @@ export function LandingPage() {
     <div className="capabilities-scroll-track">
       <section className="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
         <div className="capabilities-sticky">
-          <div className="section-heading"><p className="section-no">&gt;_PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
+          <div className="section-heading"><p className="section-no">&gt;_Process</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
           <div className="narrative-grid">
             <div className="story-steps" role="tablist" aria-label="Data transformation stages">
               <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest documents</h3><p>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
@@ -125,7 +125,7 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">&gt;_SCOPE</p><h2 id="formats-title">Built for documents that plain text cannot capture.</h2></div>
+        <div className="section-heading"><p className="section-no">&gt;_Capabilities</p><h2 id="formats-title">Built for documents that plain text cannot capture.</h2></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
             <div className="format-orbit-layout">
@@ -187,7 +187,7 @@ export function LandingPage() {
     </div>
     <section className="section shell reveal" id="comparison" aria-labelledby="comparison-title">
       <div className="section-heading">
-        <p className="section-no">&gt;_COMPARISON / EVALUATION</p>
+        <p className="section-no">&gt;_Comparison</p>
         <h2 id="comparison-title">See how Knowhere handles complex documents differently.</h2>
         <p>Compare how different approaches handle document structure, complex layouts, visual context, and source tracing.</p>
       </div>
@@ -231,7 +231,7 @@ export function LandingPage() {
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div className="section-heading"><p className="section-no">&gt;_INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
+      <div className="section-heading"><p className="section-no">&gt;_Integration</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
       <div className="integration-grid">
         <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Create an API key</h3><p>Generate your API key from the developer dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a file URL or upload a supported document.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Retrieve structured JSON through webhooks or polling.</p></div></li></ol>
         <div className="integration-plinth">
@@ -243,11 +243,11 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
       <div className="pricing-card">
-        <div className="pricing-heading"><p className="section-no">&gt;_PRICING</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
+        <div className="pricing-heading"><p className="section-no">&gt;_Pricing</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
         <div className="pricing-calculator">
           <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
-          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control"><span className="pricing-range-fill" data-pricing-range-fill style={{'--pricing-progress': '4.0404%'}} aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true" /><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
+          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control"><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6 3 12 9 18V6ZM15 18 21 12 15 6V18Z" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
         </div>
         <section className="pricing-file-limits" aria-labelledby="pricing-file-limits-title">
           <div className="pricing-file-limits-head"><h3 id="pricing-file-limits-title">File Size Limits</h3><p>Need higher limits? Contact <a href="mailto:team@knowhereto.ai">team@knowhereto.ai</a><br />for enterprise pricing with custom limits.</p></div>
@@ -257,8 +257,8 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
-        <p className="section-no enterprise-label">&gt;_ENTERPRISE</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about processing limits, deployment options, technical support, and SLA requirements.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
+        <p className="section-no enterprise-label">&gt;_Enterprise</p>
+        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -270,7 +270,7 @@ export function LandingPage() {
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
-        <div className="section-heading"><p className="section-no">&gt;_FAQ</p><h2 id="faq-title">Frequently asked questions.</h2></div>
+        <div className="section-heading"><p className="section-no">&gt;_Faq</p><h2 id="faq-title">Frequently asked questions.</h2></div>
         <div className="faq-list">
           <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>

@@ -11,7 +11,6 @@ const DEFAULT_COLORS = {
   backgroundColor: '#FFFFFF',
 }
 const DEFAULT_FIELD_LAYOUT = { x: 0, y: 13, scale: 1.5 }
-const DEFAULT_TEXT_LAYOUT = { x: 1, y: -5, scale: 1 }
 const SETTINGS_STORAGE_KEY = 'knowhere:catenoid-field-settings'
 const PYTHON_CODE = `# pip install knowhere-python-sdk
 import knowhere
@@ -82,7 +81,6 @@ function loadSavedSettings() {
     rotationSpeed: DEFAULT_ROTATION_SPEED,
     colors: DEFAULT_COLORS,
     fieldLayout: DEFAULT_FIELD_LAYOUT,
-    textLayout: DEFAULT_TEXT_LAYOUT,
   }
 
   try {
@@ -108,11 +106,6 @@ function loadSavedSettings() {
         x: number(saved.fieldLayout?.x, defaults.fieldLayout.x, -30, 30),
         y: number(saved.fieldLayout?.y, defaults.fieldLayout.y, -30, 30),
         scale: number(saved.fieldLayout?.scale, defaults.fieldLayout.scale, 0.5, 2),
-      },
-      textLayout: {
-        x: number(saved.textLayout?.x, defaults.textLayout.x, -20, 20),
-        y: number(saved.textLayout?.y, defaults.textLayout.y, -20, 20),
-        scale: number(saved.textLayout?.scale, defaults.textLayout.scale, 0.5, 1.5),
       },
     }
   } catch {
@@ -157,9 +150,6 @@ export function CatenoidFieldEmbed({
   fieldScale = 1,
   rotationSpeed = 1,
   secondaryColor = 'var(--main-600)',
-  textOffsetX = 0,
-  textOffsetY = 0,
-  textScale = 1,
   viewRotation = DEFAULT_VIEW_ROTATION,
 }) {
   const canvasRef = useRef(null)
@@ -177,10 +167,7 @@ export function CatenoidFieldEmbed({
     fieldScale,
     rotationSpeed,
     secondary: secondaryColor,
-    textOffsetX,
-    textOffsetY,
-    textScale,
-  }), [accentColor, backgroundColor, cycleSpeed, fieldOffsetX, fieldOffsetY, fieldScale, rotationSpeed, secondaryColor, textOffsetX, textOffsetY, textScale])
+  }), [accentColor, backgroundColor, cycleSpeed, fieldOffsetX, fieldOffsetY, fieldScale, rotationSpeed, secondaryColor])
   const optionsRef = useRef(options)
 
   useEffect(() => {
@@ -384,7 +371,6 @@ export function CatenoidFieldTuner() {
   const [rotationSpeed, setRotationSpeed] = useState(initialSettings.rotationSpeed)
   const [colors, setColors] = useState(initialSettings.colors)
   const [fieldLayout, setFieldLayout] = useState(initialSettings.fieldLayout)
-  const [textLayout, setTextLayout] = useState(initialSettings.textLayout)
   const [settingsSaved, setSettingsSaved] = useState(false)
   const [panelPosition, setPanelPosition] = useState(null)
   const workbenchRef = useRef(null)
@@ -401,7 +387,6 @@ export function CatenoidFieldTuner() {
     setRotationSpeed(DEFAULT_ROTATION_SPEED)
     setColors(DEFAULT_COLORS)
     setFieldLayout(DEFAULT_FIELD_LAYOUT)
-    setTextLayout(DEFAULT_TEXT_LAYOUT)
   }
   const saveSettings = () => {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
@@ -410,7 +395,6 @@ export function CatenoidFieldTuner() {
       rotationSpeed,
       colors,
       fieldLayout,
-      textLayout,
     }))
     setSettingsSaved(true)
   }
@@ -457,7 +441,7 @@ export function CatenoidFieldTuner() {
 
   useEffect(() => {
     setSettingsSaved(false)
-  }, [viewRotation, cycleSpeed, rotationSpeed, colors, fieldLayout, textLayout])
+  }, [viewRotation, cycleSpeed, rotationSpeed, colors, fieldLayout])
 
   return (
     <div className="catenoid-field-workbench" ref={workbenchRef}>
@@ -471,9 +455,6 @@ export function CatenoidFieldTuner() {
         fieldOffsetY={fieldLayout.y}
         fieldScale={fieldLayout.scale}
         rotationSpeed={rotationSpeed}
-        textOffsetX={textLayout.x}
-        textOffsetY={textLayout.y}
-        textScale={textLayout.scale}
       />
       <IntegrationCodeFrame />
       <details
@@ -496,12 +477,6 @@ export function CatenoidFieldTuner() {
             <RangeControl label="Field X" min={-30} max={30} value={fieldLayout.x} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'x', value)} />
             <RangeControl label="Field Y" min={-30} max={30} value={fieldLayout.y} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'y', value)} />
             <RangeControl label="Field scale" min={0.5} max={2} step={0.05} value={fieldLayout.scale} suffix="×" onChange={value => setLayoutValue(setFieldLayout, 'scale', value)} />
-          </div>
-          <h3 className="catenoid-field-control-heading">Text layout</h3>
-          <div className="catenoid-field-control-grid">
-            <RangeControl label="Text X" min={-20} max={20} value={textLayout.x} suffix="%" onChange={value => setLayoutValue(setTextLayout, 'x', value)} />
-            <RangeControl label="Text Y" min={-20} max={20} value={textLayout.y} suffix="%" onChange={value => setLayoutValue(setTextLayout, 'y', value)} />
-            <RangeControl label="Text scale" min={0.5} max={1.5} step={0.05} value={textLayout.scale} suffix="×" onChange={value => setLayoutValue(setTextLayout, 'scale', value)} />
           </div>
           <div className="catenoid-field-color-grid">
             <ColorControl label="Accent" value={colors.accentColor} onChange={value => setColor('accentColor', value)} />

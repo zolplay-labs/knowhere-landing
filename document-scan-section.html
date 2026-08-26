@@ -153,8 +153,12 @@
     .trace-demo::before { display: none; content: ""; }
     .trace-dither-field { position: absolute; z-index: 0; inset: 0; width: 100%; height: 100%; opacity: .18; pointer-events: none; }
     .trace-stage-reveal { position: absolute; z-index: 12; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-    .js .trace-demo:not(.is-stage-entered) .trace-content-box,
-    .js .trace-demo:not(.is-stage-entered) .trace-dither-field { -webkit-mask-image: linear-gradient(transparent,transparent); mask-image: linear-gradient(transparent,transparent); }
+    .js .trace-demo:not(.is-stage-entered) .trace-source-card,
+    .js .trace-demo:not(.is-stage-entered) .trace-summary-card,
+    .js .trace-demo:not(.is-stage-entered) .trace-document-page { opacity: 0; transform: translate3d(0,8px,0); }
+    .js .trace-demo.is-chain-entering.is-chain-source .trace-source-card,
+    .js .trace-demo.is-chain-entering.is-chain-summary .trace-summary-card,
+    .js .trace-demo.is-chain-entering.is-chain-output .trace-document-page { opacity: 1; transform: none; transition: opacity 260ms cubic-bezier(.23,1,.32,1), transform 260ms cubic-bezier(.23,1,.32,1); }
     .trace-debug { position: fixed; z-index: 220; right: 16px; bottom: 16px; display: grid; gap: 8px; justify-items: end; font-family: var(--mono); }
     .trace-debug-toggle { appearance: none; display: inline-flex; align-items: center; gap: 7px; min-height: 28px; padding: 0 12px; border: 1px solid color-mix(in srgb, var(--trace-accent) 16%, transparent); border-radius: 4px; background: rgba(253,252,252,.92); color: #5f5e5c; font: 700 10px/1 var(--mono); letter-spacing: .08em; cursor: pointer; box-shadow: 0 2px 8px rgba(20,22,24,.06); }
     .trace-debug-toggle:hover, .trace-debug-toggle[aria-expanded="true"] { border-color: color-mix(in srgb, var(--trace-accent) 34%, transparent); color: #181818; }
@@ -174,15 +178,15 @@
     .trace-content-box { position: absolute; z-index: 1; top: 0; bottom: 0; left: 50%; width: min(var(--trace-layout-width), 100%); transform: translateX(-50%); }
     .trace-content-box::before { position: absolute; z-index: 8; top: 7.78%; left: .47%; min-height: 24px; padding: 4px 0 4px 17px; display: flex; align-items: center; background: linear-gradient(var(--page-primary),var(--page-primary)) left center / 7px 7px no-repeat; color: #181818; content: "AI Output"; font: 500 15px/24px var(--trace-mono); pointer-events: none; }
     .trace-document-page { position: absolute; top: 5.5%; width: 42.4%; height: 89%; padding: 0; overflow: hidden; border: 1px solid #cecde0; border-radius: 0; background: #fff; color: #17191b; font-family: var(--trace-mono); box-shadow: none; cursor: pointer; transform-origin: left top; transition: top .48s cubic-bezier(.22,1,.36,1), left .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1), box-shadow .25s ease, opacity .25s ease; }
-    .trace-content-box .trace-document-page { width: 51.456%; }
+    .trace-content-box .trace-document-page { width: calc(51.456% + 32px); }
     .trace-document-page[data-slot="primary"] { z-index: 5; top: 5.5%; left: 37.379%; cursor: default; }
     .trace-document-page[data-slot="secondary-one"] { z-index: 4; top: 7.4%; left: 42.961%; }
     .trace-document-page[data-slot="secondary-two"] { z-index: 3; top: 9.3%; left: 48.544%; }
     @media (min-width: 1024px) {
-      .trace-content-box .trace-document-page { width: 41.796875%; height: 88.6%; transform: none; }
+      .trace-content-box .trace-document-page { width: calc(41.796875% + 32px); height: 88.6%; transform: none; }
       .trace-document-page[data-slot="primary"] { top: 13.39%; left: .47%; }
-      .trace-document-page[data-slot="secondary-one"] { top: 15.82%; left: 1.8%; }
-      .trace-document-page[data-slot="secondary-two"] { top: 18.25%; left: 3.13%; }
+      .trace-document-page[data-slot="secondary-one"] { top: calc(13.39% + 20px); left: calc(.47% + 28px); }
+      .trace-document-page[data-slot="secondary-two"] { top: calc(13.39% + 40px); left: calc(.47% + 56px); }
     }
     .trace-document-page:not([data-slot="primary"]).is-page-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
     .trace-page-inner { position: relative; width: 100%; height: 100%; padding: 40px; display: flex; flex-direction: column; transform-origin: left top; transition: width .48s cubic-bezier(.22,1,.36,1), height .48s cubic-bezier(.22,1,.36,1), transform .48s cubic-bezier(.22,1,.36,1); }
@@ -232,8 +236,15 @@
     .trace-demo.is-trace-visible .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 49px; }
+    @media (min-width: 1024px) {
+      .trace-content-box::before { left: 46.436458%; }
+      .trace-document-page[data-slot="primary"] { left: 46.436458%; }
+      .trace-document-page[data-slot="secondary-one"] { left: calc(46.436458% + 28px); }
+      .trace-document-page[data-slot="secondary-two"] { left: calc(46.436458% + 56px); }
+      .trace-card-stack { left: .47%; }
+    }
     .trace-original-stack { position: relative; top: 20px; width: 100%; height: 283px; }
-    .trace-source-card { --region-x: 2.22%; --region-y: 21.7%; --region-w: 61.7%; --region-h: 32.7%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
+    .trace-source-card { --region-x: 2%; --region-y: 20%; --region-w: 63%; --region-h: 36%; position: relative; z-index: 3; width: 100%; margin: 0; padding: 0; transform: translateY(-6px); transition: transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
     .trace-original-stack .trace-source-card { position: absolute; width: 92.93%; pointer-events: auto; cursor: default; transition: top .28s cubic-bezier(.22,1,.36,1), left .28s cubic-bezier(.22,1,.36,1), transform .2s cubic-bezier(.22,1,.36,1), box-shadow .25s ease; }
     .trace-source-card[data-source-slot="primary"] { z-index: 3; top: 0; left: 0; }
     .trace-source-card[data-source-slot="secondary-one"] { z-index: 2; top: 20px; left: 28px; }
@@ -251,9 +262,9 @@
     .trace-folder-tab { padding-left: 17px; background: linear-gradient(var(--page-primary),var(--page-primary)) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; }
     .trace-source-card figcaption { position: absolute; z-index: 4; top: 16px; left: 16px; display: flex; width: calc(100% - 32px); height: 24px; align-items: center; justify-content: space-between; gap: 12px; margin: 0; padding: 4px 0; color: rgba(0,0,0,.6); font: 400 13px/20px var(--trace-mono); letter-spacing: 0; text-transform: none; }
     .trace-source-thumb { position: relative; width: 100%; height: auto; padding-top: 48px; overflow: visible; border-radius: 0; background: transparent; isolation: isolate; }
-    .trace-source-thumb::before { position: absolute; z-index: 0; top: 0; left: 0; width: 100%; height: 51px; background: url("assets/original-file-back-part.svg") 0 0 / 100% 51px no-repeat; content: ""; }
+    .trace-source-thumb::before { display: none; content: none; }
     .trace-source-thumb::after { display: none; content: none; }
-    .trace-source-frame { position: relative; z-index: 2; width: 100%; height: 195px; padding: 12px; border: 1px solid #cecde0; background: #fff; box-shadow: none; }
+    .trace-source-frame { position: relative; z-index: 2; width: 100%; height: 195px; padding: 12px; border: 1px solid transparent; background: #fff; box-shadow: none; }
     .trace-source-media { position: relative; width: 100%; height: auto; overflow: hidden; background: #fff; }
     .trace-source-thumb img { position: relative; display: block; width: 100%; height: 169px; object-fit: fill; object-position: center; filter: contrast(1.12) saturate(.9); mix-blend-mode: darken; opacity: 1; }
     .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: none; transition: inset .2s ease, width .2s ease, height .2s ease; }
@@ -272,8 +283,11 @@
     .trace-summary { min-height: 80px; margin: 0; padding: 16px; color: rgba(0,0,0,.6); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 24px; letter-spacing: 0; }
     .trace-source-card, .trace-summary-card { overflow: visible; isolation: isolate; border: 0; border-radius: var(--trace-card-radius); background: transparent; box-shadow: none; }
     .trace-source-card::before, .trace-summary-card::before { position: absolute; z-index: 0; border: 0; content: ""; }
-    .trace-source-card::before { display: none; }
+    .trace-source-card::before { top: 0; left: 0; display: block; width: 100%; height: 51px; background: url("assets/original-file-back-part.svg") 0 0 / 100% 51px no-repeat; }
     .trace-source-card::after { position: absolute; z-index: 3; inset: 48px 0 0; display: block; border: 1px solid #cecde0; content: ""; pointer-events: none; }
+    .trace-source-card.is-shell-entering::before,
+    .trace-source-card.is-shell-entering::after { animation: trace-source-shell-enter 500ms cubic-bezier(.23,1,.32,1) both; }
+    @keyframes trace-source-shell-enter { from { opacity: 0; } to { opacity: 1; } }
     .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
@@ -282,15 +296,15 @@
     .trace-fork-dot { display: none; }
     .leader-line { z-index: 6 !important; pointer-events: none !important; }
     .leader-line path { stroke-linecap: round; stroke-linejoin: round; }
-    .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-source-card::after, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
-    .trace-source-card[data-region="table"] { --region-x: 2%; --region-y: 13%; --region-w: 72%; --region-h: 72%; }
+    .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+    .trace-source-card[data-region="table"] { --region-x: 2%; --region-y: 10%; --region-w: 72%; --region-h: 75%; }
     .trace-source-card[data-region="margin"] { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
-    .trace-source-card[data-region="chart"] { --region-x: 1.5%; --region-y: 18%; --region-w: 47.5%; --region-h: 72%; }
+    .trace-source-card[data-region="chart"] { --region-x: 1.5%; --region-y: 13%; --region-w: 48%; --region-h: 80%; }
     @media (max-width: 1023px) {
       .hero-visual .trace-demo { aspect-ratio: auto; }
       .trace-content-box { inset: 0; width: auto; transform: none; }
       .trace-content-box::before { top: 7.78%; left: 5.97%; }
-      .trace-content-box .trace-document-page { width: 40.56%; height: 132.5%; }
+      .trace-content-box .trace-document-page { width: calc(40.56% + 32px); height: 132.5%; }
       .trace-document-page[data-slot="primary"] { top: 12.9%; left: 5.97%; }
       .trace-page-inner { padding: 7% 8% 6.5%; }
       .trace-document-page h3 { font-size: clamp(18px,4vw,30px); }
@@ -299,8 +313,8 @@
       .trace-folder-tab, [data-trace-coordinate] { white-space: nowrap; }
       [data-trace-coordinate] { font-size: 9px; }
       .trace-summary-card { min-height: 130px; }
-      .trace-document-page[data-slot="secondary-one"] { top: 14.4%; left: 7.52%; }
-      .trace-document-page[data-slot="secondary-two"] { top: 15.9%; left: 9.07%; }
+      .trace-document-page[data-slot="secondary-one"] { top: calc(12.9% + 20px); left: calc(5.97% + 28px); }
+      .trace-document-page[data-slot="secondary-two"] { top: calc(12.9% + 40px); left: calc(5.97% + 56px); }
     }
     @media (max-width: 560px) {
       .trace-original-stack { height: 275px; }
@@ -323,7 +337,7 @@
       .trace-pixel-reveal, .trace-document-scanner { display: none; }
       .trace-original-stack.is-source-stack-entering .trace-source-card:not([data-source-slot="primary"]) { animation: trace-source-stack-fade 120ms cubic-bezier(.23,1,.32,1) both; }
       .trace-decrypt-canvas { transition: none; }
-      .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-source-card::after, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: none; mask-image: none; }
+      .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: none; mask-image: none; }
       .trace-target-cursor.is-locking .trace-target-frame { animation: none; }
       .trace-dither-field { opacity: 1; }
     }
@@ -1354,7 +1368,7 @@
         <span class="hero-center-divider" aria-hidden="true"></span>
       </div>
       <div class="hero-visual" aria-label="Interactive illustration showing an AI answer linked back to its original page and visual region">
-        <div class="document-stage trace-demo is-stage-entered" data-trace-demo data-region="revenue" aria-label="AI-generated document with selectable source-linked statements">
+        <div class="document-stage trace-demo" data-trace-demo data-region="revenue" aria-label="AI-generated document with selectable source-linked statements">
           <canvas class="trace-dither-field" data-trace-dither-field aria-hidden="true"></canvas>
           <canvas class="trace-stage-reveal" data-trace-stage-reveal aria-hidden="true"></canvas>
           <div class="trace-content-box" data-trace-content-box>
@@ -2949,6 +2963,22 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   const animateInitialTraceStage = false;
   let traceStageEntered = traceDemo?.classList.contains('is-stage-entered') ?? false;
   let traceStageAnimation = 0;
+  let traceChainFallbackTimer = 0;
+  function revealTraceChainSummary() {
+    traceDemo?.classList.add('is-chain-summary');
+  }
+  function finishTraceChainEntrance() {
+    clearTimeout(traceChainFallbackTimer);
+    traceChainFallbackTimer = 0;
+    if (!traceDemo) return;
+    traceDemo.classList.add('is-chain-summary', 'is-chain-output');
+    requestAnimationFrame(() => {
+      traceDemo.classList.add('is-stage-entered');
+      setTimeout(() => {
+        traceDemo.classList.remove('is-chain-entering', 'is-chain-source', 'is-chain-summary', 'is-chain-output');
+      }, 280);
+    });
+  }
   function playTraceStageEntrance() {
     if (!traceDemo) return;
     if (traceStageEntered) {
@@ -2957,8 +2987,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     }
     if (!animateInitialTraceStage) {
       traceStageEntered = true;
-      traceDemo.classList.add('is-stage-entered');
-      syncTracePreview();
+      traceDemo.classList.add('is-chain-entering');
+      requestAnimationFrame(() => traceDemo.classList.add('is-chain-source'));
+      const entranceMark = getDefaultTraceMark();
+      if (entranceMark) showTraceSource(entranceMark.dataset.sourceId, entranceMark, false);
+      traceChainFallbackTimer = setTimeout(finishTraceChainEntrance, 1800);
       return;
     }
     const canvas = $('[data-trace-stage-reveal]', traceDemo);
@@ -3248,6 +3281,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       const context = canvas.getContext('2d');
       if (context) context.clearRect(0, 0, canvas.width, canvas.height);
     });
+    $$('[data-trace-source-card].is-shell-entering', traceDemo).forEach(card => card.classList.remove('is-shell-entering'));
+  }
+  function startTraceSourceShellEntrance(card) {
+    if (!card || card.classList.contains('is-shell-entering')) return;
+    card.classList.add('is-shell-entering');
   }
   function playTracePixels(includeSummary = true, maskContent = true) {
     if (!traceDemo || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -3274,6 +3312,9 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       maskCanvas.height = Math.round(height * dpr);
       const maskContext = maskCanvas.getContext('2d');
       if (!maskContext || !card) return;
+      if (card.matches('[data-trace-source-card]')) {
+        startTraceSourceShellEntrance(card);
+      }
       maskContext.setTransform(dpr, 0, 0, dpr, 0, 0);
       const colors = (canvas.dataset.pixelColors || 'main-400').split(',').map(color => {
         const paletteStop = color.trim().match(/^main-(\d+)$/)?.[1];
@@ -3409,25 +3450,36 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceFlowLines.push(track, flow);
     return [track, flow];
   }
-  function scheduleTraceFlow(lines, delay, duration, animate = true) {
+  function scheduleTraceFlow(lines, delay, duration, animate = true, onComplete) {
     if (!lines.length) return;
     const timer = setTimeout(() => {
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const shouldDraw = animate && !reducedMotion;
       lines.forEach(line => line.show(shouldDraw ? 'draw' : 'none', shouldDraw ? { duration, timing: 'ease-in-out' } : undefined));
+      if (onComplete) {
+        const completionTimer = setTimeout(onComplete, shouldDraw ? duration : 120);
+        traceFlowTimers.push(completionTimer);
+      }
     }, delay);
     traceFlowTimers.push(timer);
   }
   function createTraceFlowLines(mark, animate = true) {
     clearTraceFlowLines();
-    if (!traceDemo || !mark || !window.LeaderLine) return;
+    if (!traceDemo || !mark) return;
+    if (!window.LeaderLine) {
+      if (traceDemo.classList.contains('is-chain-entering')) {
+        revealTraceChainSummary();
+        setTimeout(finishTraceChainEntrance, 240);
+      }
+      return;
+    }
     if (traceDemo.classList.contains('is-source-layout-settling')) return;
     const visibleSourceCards = getVisibleTraceSourceCards();
     const sourceCard = visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-two')
       || visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-one')
       || visibleSourceCards.find(card => card.dataset.sourceSlot === 'primary');
     const summaryBody = $('[data-trace-summary]', traceDemo);
-    let outputDocument = tracePages.find(page => page.dataset.slot === 'secondary-two');
+    const outputDocument = tracePages.find(page => page.dataset.slot === 'primary');
     if (!sourceCard || !summaryBody || !outputDocument) return;
     const stageRect = traceDemo.getBoundingClientRect();
     const stagePoint = (x, y) => LeaderLine.pointAnchor({
@@ -3454,27 +3506,36 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       scheduleTraceFlow(summaryFlow, animate ? 400 : 0, 260, animate);
       return;
     }
-    const isSideBySide = summaryBodyRect.left >= outputDocumentRect.right - 1;
+    const summaryIsLeft = summaryBodyRect.right <= outputDocumentRect.left + 1;
+    const summaryIsRight = summaryBodyRect.left >= outputDocumentRect.right - 1;
+    const isSideBySide = summaryIsLeft || summaryIsRight;
     const summaryCenterY = summaryBodyRect.top + summaryBodyRect.height / 2;
     const summaryCenterX = summaryBodyRect.left + summaryBodyRect.width / 2;
     const documentEntryY = Math.max(24, Math.min(outputDocumentRect.height - 24, summaryCenterY - outputDocumentRect.top));
     const documentEntryX = Math.max(24, Math.min(outputDocumentRect.width - 24, summaryCenterX - outputDocumentRect.left));
     const summaryExit = stagePoint(
-      isSideBySide ? summaryBodyRect.left : summaryCenterX,
+      isSideBySide ? (summaryIsLeft ? summaryBodyRect.right : summaryBodyRect.left) : summaryCenterX,
       isSideBySide ? summaryCenterY : summaryBodyRect.bottom
     );
     const documentEntry = stagePoint(
-      isSideBySide ? outputDocumentRect.right : outputDocumentRect.left + documentEntryX,
+      isSideBySide ? (summaryIsLeft ? outputDocumentRect.left : outputDocumentRect.right) : outputDocumentRect.left + documentEntryX,
       isSideBySide ? outputDocumentRect.top + documentEntryY : outputDocumentRect.top
     );
     traceFlowAnchors.push(summaryExit, documentEntry);
     const answerFlow = makeTraceFlowPair(summaryExit, documentEntry, {
-      startSocket: isSideBySide ? 'left' : 'bottom',
-      endSocket: isSideBySide ? 'right' : 'top',
-      startGravity: isSideBySide ? [-16, 0] : [0, 16],
-      endGravity: isSideBySide ? [16, 0] : [0, -16]
+      startSocket: isSideBySide ? (summaryIsLeft ? 'right' : 'left') : 'bottom',
+      endSocket: isSideBySide ? (summaryIsLeft ? 'left' : 'right') : 'top',
+      startGravity: isSideBySide ? (summaryIsLeft ? [16, 0] : [-16, 0]) : [0, 16],
+      endGravity: isSideBySide ? (summaryIsLeft ? [-16, 0] : [16, 0]) : [0, -16]
     });
     traceFlowLines.forEach(line => line.position());
+    if (traceDemo.classList.contains('is-chain-entering')) {
+      scheduleTraceFlow(summaryFlow, 280, 320, true, () => {
+        revealTraceChainSummary();
+        scheduleTraceFlow(answerFlow, 160, 340, true, finishTraceChainEntrance);
+      });
+      return;
+    }
     scheduleTraceFlow(summaryFlow, animate ? 400 : 0, 260, animate);
     scheduleTraceFlow(answerFlow, animate ? 790 : 0, 340, animate);
   }
@@ -3539,6 +3600,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     stopTraceSourceStackEntrance();
     clearTracePixels(false);
     bringTraceSourceCardForward(card);
+    getVisibleTraceSourceCards().forEach(startTraceSourceShellEntrance);
     requestAnimationFrame(() => {
       playTracePixels(false, false);
     });
@@ -3598,6 +3660,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   traceSourceCards.forEach(card => {
     const switchButton = $('[data-trace-source-switch]', card);
+    card.addEventListener('animationend', event => {
+      if (event.animationName === 'trace-source-shell-enter' && event.pseudoElement === '::after') {
+        card.classList.remove('is-shell-entering');
+      }
+    });
     switchButton.addEventListener('pointerenter', () => {
       card.classList.toggle('is-source-hovered', card.dataset.sourceSlot !== 'primary');
     });
