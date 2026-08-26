@@ -198,8 +198,8 @@
     .trace-doc-brand-name { display: inline-flex; align-items: center; }
     .trace-doc-brand-logo { display: block; width: 93px; height: 14px; opacity: 1; }
     .trace-doc-brand time { color: rgba(0,0,0,.9); font: inherit; }
-    .trace-doc-eyebrow { margin: 0 0 -4px; color: rgba(0,0,0,.9); font: 400 15px/24px var(--trace-mono); }
-    .trace-document-page h3 { max-width: 520px; margin: 0 0 12px; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 32px; font-weight: 500; line-height: 40px; letter-spacing: -.0063em; text-transform: none; }
+    .trace-doc-eyebrow { margin: 0 0 -4px; color: rgba(0,0,0,.9); font: 400 13px/24px var(--trace-mono); }
+    .trace-document-page h3 { max-width: 520px; margin: 0 0 12px; color: rgba(0,0,0,.9); font-family: var(--trace-mono); font-size: 25px; font-weight: 500; line-height: 36px; letter-spacing: -.2px; text-transform: none; }
     .trace-document-page[data-document="regional"] h3 { font-size: 25px; line-height: 36px; letter-spacing: -.2px; }
     .trace-document-page h3 span { color: inherit; }
     .trace-doc-rule { height: 24px; flex: none; margin: 0; border: 0; }
@@ -286,7 +286,8 @@
     .trace-source-card::before { top: 0; left: 0; display: block; width: 100%; height: 51px; background: url("assets/original-file-back-part.svg") 0 0 / 100% 51px no-repeat; }
     .trace-source-card::after { position: absolute; z-index: 3; inset: 48px 0 0; display: block; border: 1px solid #cecde0; content: ""; pointer-events: none; }
     .trace-source-card.is-shell-entering::before,
-    .trace-source-card.is-shell-entering::after { animation: trace-source-shell-enter 500ms cubic-bezier(.23,1,.32,1) both; }
+    .trace-source-card.is-shell-entering::after,
+    .trace-summary-card.is-shell-entering::before { animation: trace-source-shell-enter 880ms linear both; }
     @keyframes trace-source-shell-enter { from { opacity: 0; } to { opacity: 1; } }
     .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
@@ -296,7 +297,7 @@
     .trace-fork-dot { display: none; }
     .leader-line { z-index: 6 !important; pointer-events: none !important; }
     .leader-line path { stroke-linecap: round; stroke-linejoin: round; }
-    .trace-demo.is-trace-visible .trace-source-card::before, .trace-demo.is-trace-visible .trace-summary-card::before, .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
+    .trace-demo.is-trace-visible .trace-card-content { -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); mask-image: var(--trace-particle-mask, linear-gradient(#000,#000)); -webkit-mask-size: 100% 100%; mask-size: 100% 100%; -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat; }
     .trace-source-card[data-region="table"] { --region-x: 2%; --region-y: 10%; --region-w: 72%; --region-h: 75%; }
     .trace-source-card[data-region="margin"] { --region-x: 2%; --region-y: 51%; --region-w: 63%; --region-h: 30%; }
     .trace-source-card[data-region="chart"] { --region-x: 1.5%; --region-y: 13%; --region-w: 48%; --region-h: 80%; }
@@ -2318,6 +2319,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   const tracePages = traceDemo ? $$('[data-trace-page]', traceDemo) : [];
   const traceMarks = traceDemo ? $$('.trace-source-mark[data-source-id]', traceDemo) : [];
   const traceSourceCards = traceDemo ? $$('[data-trace-source-card]', traceDemo) : [];
+  const traceSummaryCard = traceDemo ? $('[data-trace-summary-card]', traceDemo) : null;
   const traceOriginalStack = traceDemo ? $('[data-trace-original-stack]', traceDemo) : null;
   const traceTargetCursor = $('[data-trace-target-cursor]');
   const traceTargetFrame = $('[data-trace-target-frame]');
@@ -3281,9 +3283,9 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       const context = canvas.getContext('2d');
       if (context) context.clearRect(0, 0, canvas.width, canvas.height);
     });
-    $$('[data-trace-source-card].is-shell-entering', traceDemo).forEach(card => card.classList.remove('is-shell-entering'));
+    $$('[data-trace-source-card].is-shell-entering, [data-trace-summary-card].is-shell-entering', traceDemo).forEach(card => card.classList.remove('is-shell-entering'));
   }
-  function startTraceSourceShellEntrance(card) {
+  function startTraceShellEntrance(card) {
     if (!card || card.classList.contains('is-shell-entering')) return;
     card.classList.add('is-shell-entering');
   }
@@ -3312,8 +3314,8 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       maskCanvas.height = Math.round(height * dpr);
       const maskContext = maskCanvas.getContext('2d');
       if (!maskContext || !card) return;
-      if (card.matches('[data-trace-source-card]')) {
-        startTraceSourceShellEntrance(card);
+      if (card.matches('[data-trace-source-card], [data-trace-summary-card]')) {
+        startTraceShellEntrance(card);
       }
       maskContext.setTransform(dpr, 0, 0, dpr, 0, 0);
       const colors = (canvas.dataset.pixelColors || 'main-400').split(',').map(color => {
@@ -3600,7 +3602,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     stopTraceSourceStackEntrance();
     clearTracePixels(false);
     bringTraceSourceCardForward(card);
-    getVisibleTraceSourceCards().forEach(startTraceSourceShellEntrance);
+    getVisibleTraceSourceCards().forEach(startTraceShellEntrance);
     requestAnimationFrame(() => {
       playTracePixels(false, false);
     });
@@ -3677,6 +3679,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       activateTraceSourceCard(card);
       switchButton.blur();
     });
+  });
+  traceSummaryCard?.addEventListener('animationend', event => {
+    if (event.animationName === 'trace-source-shell-enter' && event.pseudoElement === '::before') {
+      traceSummaryCard.classList.remove('is-shell-entering');
+    }
   });
   function activateTracePage(page) {
     if (!traceDemo || !page) return;

@@ -136,7 +136,7 @@
   flex: 1;
   margin: 0;
   overflow: auto;
-  color: inherit;
+  color: rgba(0, 0, 0, .6);
   font: inherit;
   scrollbar-color: #8695c0 transparent;
   scrollbar-width: thin;
