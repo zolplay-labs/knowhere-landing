@@ -49,7 +49,7 @@ export function LandingPage() {
       <canvas id="hero-b-pixel-field" aria-hidden="true" />
       <div className="hero-copy">
         <h1 id="hero-title">Turn complex documents into context your agents can use.</h1>
-        <p className="lede">Knowhere preserves text, structure, visual context, and source links, so your agents can retrieve the right information and show where it came from.</p>
+        <p className="lede">Knowhere preserves structure, visual context, and source links, giving agents information they can navigate, retrieve, and verify.</p>
         <div className="button-row"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
       </div>
       <div className="hero-visual" aria-label="Interactive four-stage document processing pipeline from original document to RAG structure">
@@ -60,7 +60,7 @@ export function LandingPage() {
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
-      <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From messy files to agent-ready context.</h2><p>Knowhere turns PDFs, spreadsheets, presentations, scans, and other complex documents into structured, navigable data. Text, tables, formulas, page layouts, and visual regions stay connected, so agents can retrieve information without losing the document it came from.</p></div>
+      <div className="section-heading"><p className="section-no">&gt;_PRODUCT</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
       </div>
@@ -92,29 +92,29 @@ export function LandingPage() {
     <div className="capabilities-scroll-track">
       <section className="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
         <div className="capabilities-sticky">
-          <div className="section-heading"><p className="section-no">&gt;_PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps the important parts connected.</h2></div>
+          <div className="section-heading"><p className="section-no">&gt;_PROCESS</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
           <div className="narrative-grid">
             <div className="story-steps" role="tablist" aria-label="Data transformation stages">
-              <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest the document</h3><p>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-visual" className="story-step" data-story="visual" role="tab" aria-selected="false" aria-controls="story-panel-visual" tabIndex={-1}><span>02</span><h3>Capture text and visual context</h3><p>Read native text or apply OCR while preserving the original pages and visual regions.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-source" className="story-step" data-story="source" role="tab" aria-selected="false" aria-controls="story-panel-source" tabIndex={-1}><span>03</span><h3>Understand the structure</h3><p>Map headings, tables, formulas, layouts, and relationships across the document.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-relations" className="story-step" data-story="relations" role="tab" aria-selected="false" aria-controls="story-panel-relations" tabIndex={-1}><span>04</span><h3>Return traceable context</h3><p>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
+              <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest documents</h3><p>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
+              <div id="story-tab-visual" className="story-step" data-story="visual" role="tab" aria-selected="false" aria-controls="story-panel-visual" tabIndex={-1}><span>02</span><h3>Capture every page</h3><p>Extract text and visual regions while preserving the original page layout.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
+              <div id="story-tab-source" className="story-step" data-story="source" role="tab" aria-selected="false" aria-controls="story-panel-source" tabIndex={-1}><span>03</span><h3>Map document structure</h3><p>Identify headings, tables, formulas, layouts, and relationships across the document.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
+              <div id="story-tab-relations" className="story-step" data-story="relations" role="tab" aria-selected="false" aria-controls="story-panel-relations" tabIndex={-1}><span>04</span><h3>Return traceable context</h3><p>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
             </div>
             <div className="story-card-stack">
               <div className="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest the document</h3></div><p data-story-summary>Upload a PDF, DOCX, XLSX, presentation, image, or other supported format.</p></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest documents</h3></div><p data-story-summary>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p></div></div>
                 <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-ingest.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture text and visual context</h3></div><p data-story-summary>Read native text or apply OCR while preserving the original pages and visual regions.</p></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture every page</h3></div><p data-story-summary>Extract text and visual regions while preserving the original page layout.</p></div></div>
                 <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-visual.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Understand the structure</h3></div><p data-story-summary>Map headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Map document structure</h3></div><p data-story-summary>Identify headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
                 <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-structure.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Get structured JSON, a navigable document map, and source-linked pages for your agents.</p></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p></div></div>
                 <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-traceable.png" alt="" loading="lazy" decoding="async" /></div>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">&gt;_SCOPE</p><h2 id="formats-title">Core capabilities.</h2></div>
+        <div className="section-heading"><p className="section-no">&gt;_SCOPE</p><h2 id="formats-title">Built for documents that plain text cannot capture.</h2></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
             <div className="format-orbit-layout">
@@ -171,12 +171,12 @@ export function LandingPage() {
             <div className="formats-secondary-sticky">
               <div className="formats-secondary-viewport">
                 <div className="formats-secondary-grid">
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-file-search-line" /></div><div><h3>Page-native visual understanding</h3><p>Preserve original pages, layouts, diagrams, and spatial relationships so agents can inspect visual context beyond extracted text.</p></div></article>
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-node-tree" /></div><div><h3>Agent-ready structure</h3><p>Return hierarchical, progressive context instead of flat text, so agents can start with an outline and reveal details when needed.</p></div></article>
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-flask-line" /></div><div><h3>Formula and chemical recognition</h3><p>Extract mathematical formulas and chemical structures into structured formats that agents and downstream systems can reliably use.</p></div></article>
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-route-line" /></div><div><h3>Full provenance tracing</h3><p>Trace every extracted element back to its page and source region, making AI-generated answers easier to inspect and verify.</p></div></article>
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-server-line" /></div><div><h3>On-premise deployment</h3><p>Deploy Knowhere locally when document privacy, regulatory compliance, or long-term infrastructure control matters most.</p></div></article>
-                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-code-s-slash-line" /></div><div><h3>API-first integration</h3><p>Process documents through REST APIs, webhooks, SDKs, or MCP, returning structured results for agent workflows.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-file-search-line" /></div><div><h3>Page-native understanding</h3><p>Preserve layouts, diagrams, and spatial relationships so agents can inspect the original page when text is not enough.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-node-tree" /></div><div><h3>Agent-ready structure</h3><p>Turn flat text into hierarchical context that agents can scan first and expand when needed.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-flask-line" /></div><div><h3>Formula recognition</h3><p>Extract mathematical formulas and chemical structures in formats agents and downstream systems can use.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-route-line" /></div><div><h3>Source-level tracing</h3><p>Trace extracted content back to its page and source region for easier verification.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-server-line" /></div><div><h3>On-premise deployment</h3><p>Deploy Knowhere locally when document privacy, compliance requirements, or infrastructure control matters.</p></div></article>
+                  <article className="format-feature"><div className="format-feature-icon" aria-hidden="true"><i className="ri-code-s-slash-line" /></div><div><h3>API-first integration</h3><p>Connect Knowhere to existing workflows through REST APIs, webhooks, SDKs, or MCP.</p></div></article>
                 </div>
               </div>
             </div>
@@ -187,8 +187,8 @@ export function LandingPage() {
     <section className="section shell reveal" id="comparison" aria-labelledby="comparison-title">
       <div className="section-heading">
         <p className="section-no">&gt;_COMPARISON / EVALUATION</p>
-        <h2 id="comparison-title">How we compare.</h2>
-        <p>On a benchmark of 50 retrieval tasks across 500+ curated documents, Knowhere achieved significantly higher first-pass accuracy and recall than raw document pipelines, while using fewer tokens, fewer agent loops, and lower latency.</p>
+        <h2 id="comparison-title">See how Knowhere handles complex documents differently.</h2>
+        <p>Compare how different approaches handle document structure, complex layouts, visual context, and source tracing.</p>
       </div>
       <div className="comparison-frame" aria-label="Illustrative document pipeline comparison">
         <div className="comparison-dashboard">
@@ -220,28 +220,26 @@ export function LandingPage() {
           <div className="comparison-scoreboard-head"><strong>Capability matrix</strong><div className="comparison-scoreboard-head-actions"><button className="comparison-toggle" type="button" aria-expanded="true" aria-controls="comparison-table"><span className="sr-only">Toggle comparison details</span></button></div></div>
           <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="false"><div className="comparison-scoreboard-grid">
               <div className="scoreboard-cell scoreboard-head-cell">Feature</div><div className="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div className="scoreboard-cell scoreboard-head-cell">Others</div>
-              <div className="scoreboard-cell scoreboard-feature">Hierarchy construction</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Document hierarchy</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
               <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Table boundary detection</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Source traceability</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Hierarchical memory &amp; progressive disclosure</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Vectorless RAG &amp; hybrid RAG</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Top-K boost ~10%+ in production</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">50%+ token savings on graphs</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Table boundaries</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Source tracing</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Progressive context</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
         <div className="divider-hatch divider-hatch--bottom" aria-hidden="true" />
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div className="section-heading"><p className="section-no">&gt;_INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
+      <div className="section-heading"><p className="section-no">&gt;_INTEGRATION</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
       <div className="integration-grid">
-        <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
+        <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Create an API key</h3><p>Generate your API key from the developer dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a file URL or upload a supported document.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Retrieve structured JSON through webhooks or polling.</p></div></li></ol>
         <div className="integration-plinth">
           <CatenoidFieldTuner />
         </div>
         <div className="code-card"><div className="code-head"><span>Illustrative flow · interface details unconfirmed</span><button type="button" className="copy-code">Copy</button></div><div className="tabs compact" role="tablist" aria-label="Code examples"><button role="tab" id="code-python" aria-selected="true" aria-controls="code-panel-python">Python</button><button role="tab" id="code-node" aria-selected="false" aria-controls="code-panel-node" tabIndex={-1}>Node.js</button><button role="tab" id="code-curl" aria-selected="false" aria-controls="code-panel-curl" tabIndex={-1}>cURL</button></div><div className="code-panels"><pre role="tabpanel" tabIndex={0} id="code-panel-python" aria-labelledby="code-python"><code># Illustrative only — no real endpoint{"\n"}result = knowhere.process("sample.pdf"){"\n"}print(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-node" aria-labelledby="code-node"><code>// Illustrative only — no real endpoint{"\n"}const result = await knowhere.process("sample.pdf"){"\n"}console.log(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-curl" aria-labelledby="code-curl"><code># Illustrative only — no real endpoint{"\n"}curl -X POST "[endpoint-to-be-confirmed]" \{"\n"}{"  "}-F "file=@sample.pdf"</code></pre></div><p className="sr-only" aria-live="polite" data-copy-live /></div>
-        <div className="mcp"><h3>[ MCP ]</h3><p>Use Knowhere through MCP with Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
+        <div className="mcp"><h3>Use Knowhere through MCP</h3><p>Bring structured document context into Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
       </div>
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
@@ -261,7 +259,7 @@ export function LandingPage() {
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
         <p className="section-no enterprise-label">&gt;_ENTERPRISE</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">{'Need custom limits\nor\ndeployment support?'}</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about custom rate limits, priority processing, deployment options, support, and SLA requirements.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Contact Sales</a></div></div>
+        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Talk to our team about processing limits, deployment options, technical support, and SLA requirements.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -273,7 +271,7 @@ export function LandingPage() {
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
-        <div className="section-heading"><p className="section-no">&gt;_FAQ</p><h2 id="faq-title">Frequently Asked Questions</h2></div>
+        <div className="section-heading"><p className="section-no">&gt;_FAQ</p><h2 id="faq-title">Frequently asked questions.</h2></div>
         <div className="faq-list">
           <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
@@ -285,7 +283,7 @@ export function LandingPage() {
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
       <ConvergingHelixTuner>
-        <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Start with the API, connect your existing agent workflow, and see how Knowhere handles the documents that plain text pipelines miss.</p></div>
+        <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p></div>
         <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
       </ConvergingHelixTuner>
     </section>

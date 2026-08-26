@@ -3955,16 +3955,20 @@
         box-sizing: border-box;
         min-height: 541px;
         padding: 60px 80px;
-        grid-template-columns: 324px minmax(0, 1fr);
-        column-gap: 317px;
+        grid-template-columns: 430px minmax(0, 1fr);
+        column-gap: 211px;
         row-gap: 0;
         justify-content: start;
         align-items: start;
       }
 
       #faq .section-heading {
-        width: 324px;
+        width: 430px;
         margin: 0;
+      }
+
+      #faq .section-heading h2 {
+        max-width: 430px;
       }
 
       #faq .faq-list {
