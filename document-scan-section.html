@@ -207,10 +207,11 @@
     .trace-doc-record { min-height: 0; display: block; padding: 0; border: 0; }
     .trace-doc-footer { display: none; }
     .trace-record-index { display: none; }
-    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.6); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 180%; letter-spacing: 0; }
+    .trace-document-page .trace-record-copy { max-width: 46em; margin: 0; color: rgba(0,0,0,.72); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 185%; letter-spacing: 0; }
     .trace-record-label { display: none; }
-    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: var(--main-50); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
-    .trace-source-mark.is-preview { background: var(--main-50); color: #111315; box-shadow: none; }
+    .trace-source-mark { display: inline; padding: 1px 4px; appearance: none; border: 0; border-radius: 0; background: var(--main-100); color: #111315; font: inherit; font-weight: 400; text-align: inherit; box-shadow: none; box-decoration-break: clone; -webkit-box-decoration-break: clone; cursor: pointer; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
+    .trace-source-format-label { display: inline-flex; height: 20px; margin-right: 2px; margin-left: 5px; padding: 0 5px; align-items: center; border: 1px solid color-mix(in srgb, var(--trace-accent) 36%, #fff); background: color-mix(in srgb, var(--trace-accent-soft) 68%, #fff); color: var(--trace-accent); font-size: 11px; font-weight: 500; line-height: 18px; vertical-align: 1px; white-space: nowrap; pointer-events: none; }
+    .trace-source-mark.is-preview { background: var(--main-100); color: #111315; box-shadow: none; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible, .trace-source-mark.is-active { background: var(--trace-accent); color: #fff; outline: 0; }
     .trace-source-mark:hover, .trace-source-mark:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--trace-accent) 16%, transparent); }
     .trace-source-mark.is-active { box-shadow: none; }
@@ -235,7 +236,7 @@
     .trace-branches { position: absolute; z-index: 7; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .14s ease, visibility 0s .14s; }
     .trace-demo.is-trace-visible .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-branches { opacity: 1; visibility: visible; transition-delay: 0s; }
-    .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 49px; }
+    .trace-card-stack { position: absolute; z-index: 3; top: 7.78%; left: 55.625%; width: 30.9375%; display: grid; gap: 36px; }
     @media (min-width: 1024px) {
       .trace-content-box::before { left: 46.436458%; }
       .trace-document-page[data-slot="primary"] { left: 46.436458%; }
@@ -255,6 +256,37 @@
     .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-one"] { animation-delay: var(--trace-source-stack-delay, 800ms); }
     .trace-original-stack.is-source-stack-entering .trace-source-card[data-source-slot="secondary-two"] { animation-delay: calc(var(--trace-source-stack-delay, 800ms) + 70ms); }
     .trace-source-card:not([data-source-slot="primary"]).is-source-hovered { box-shadow: 0 18px 42px rgba(20,22,24,.1); }
+    .trace-source-card.is-source-disabled { filter: none; }
+    .trace-source-card.is-source-disabled .trace-source-switch { pointer-events: none; }
+    .trace-source-card.is-source-disabled::before { filter: grayscale(1) brightness(1.08); }
+    .trace-source-card.is-source-disabled::after,
+    .trace-source-card.is-source-disabled .trace-source-preview,
+    .trace-source-card.is-source-disabled .trace-source-mini-table th,
+    .trace-source-card.is-source-disabled .trace-source-mini-table td { border-color: #ececf2; }
+    .trace-source-card.is-source-disabled figcaption,
+    .trace-source-card.is-source-disabled .trace-folder-tab,
+    .trace-source-card.is-source-disabled .trace-source-preview,
+    .trace-source-card.is-source-disabled .trace-source-document-kicker,
+    .trace-source-card.is-source-disabled .trace-source-document-title,
+    .trace-source-card.is-source-disabled .trace-source-passage,
+    .trace-source-card.is-source-disabled .trace-source-document-note,
+    .trace-source-card.is-source-disabled .trace-source-table-title,
+    .trace-source-card.is-source-disabled .trace-source-chart-title,
+    .trace-source-card.is-source-disabled .trace-source-mini-table th,
+    .trace-source-card.is-source-disabled .trace-source-mini-table td,
+    .trace-source-card.is-source-disabled .trace-source-pie li,
+    .trace-source-card.is-source-disabled .trace-source-pie li strong { color: rgba(0,0,0,.26); }
+    .trace-source-card.is-source-disabled .trace-folder-tab { background-image: linear-gradient(#d9dbe2,#d9dbe2); }
+    .trace-source-card.is-source-disabled .trace-source-passage { border-left-color: #dedfe6; background: #fff; }
+    .trace-source-card.is-source-disabled .trace-source-chart { color: #c9ccd4; }
+    .trace-source-card.is-source-disabled .trace-source-chart-axis,
+    .trace-source-card.is-source-disabled .trace-source-pie svg text { fill: rgba(0,0,0,.26); }
+    .trace-source-card.is-source-disabled .trace-source-chart-grid { stroke: rgba(0,0,0,.06); }
+    .trace-source-card.is-source-disabled .trace-source-pie-segment--one,
+    .trace-source-card.is-source-disabled .trace-source-pie-segment--two,
+    .trace-source-card.is-source-disabled .trace-source-pie-segment--three,
+    .trace-source-card.is-source-disabled .trace-source-pie-segment--four { stroke: #d9dbe2; }
+    .trace-original-stack.is-evidence-filtered .trace-source-card.is-source-evidence::after { border-color: var(--trace-accent-light); }
     .trace-source-switch { position: absolute; z-index: 6; top: 0; right: 0; bottom: 0; width: 28px; padding: 0; border: 0; background: transparent; cursor: default; }
     .trace-source-card[data-source-slot="primary"] .trace-source-switch { pointer-events: none; visibility: hidden; }
     .trace-source-switch:focus-visible { outline: 2px solid var(--trace-accent); outline-offset: 3px; }
@@ -264,23 +296,70 @@
     .trace-source-thumb { position: relative; width: 100%; height: auto; padding-top: 48px; overflow: visible; border-radius: 0; background: transparent; isolation: isolate; }
     .trace-source-thumb::before { display: none; content: none; }
     .trace-source-thumb::after { display: none; content: none; }
-    .trace-source-frame { position: relative; z-index: 2; width: 100%; height: 195px; padding: 12px; border: 1px solid transparent; background: #fff; box-shadow: none; }
-    .trace-source-media { position: relative; width: 100%; height: auto; overflow: hidden; background: #fff; }
-    .trace-source-thumb img { position: relative; display: block; width: 100%; height: 169px; object-fit: fill; object-position: center; filter: contrast(1.12) saturate(.9); mix-blend-mode: darken; opacity: 1; }
-    .trace-source-region { position: absolute; top: var(--region-y); left: var(--region-x); width: var(--region-w); height: var(--region-h); border: 1px solid var(--trace-accent); background: color-mix(in srgb, var(--trace-accent) 7%, transparent); box-shadow: none; transition: inset .2s ease, width .2s ease, height .2s ease; }
-    .trace-source-card[data-region="table"] .trace-source-region { background: rgba(255,255,255,.32); backdrop-filter: brightness(1.04) contrast(1.04); }
+    .trace-source-frame { position: relative; z-index: 2; width: 100%; height: 195px; padding: 16px; border: 1px solid transparent; background: #fff; box-shadow: none; }
+    .trace-source-media { position: relative; width: 100%; height: 163px; overflow: hidden; background: #fff; }
+    .trace-source-thumb img, .trace-source-region { display: none; }
+    .trace-source-preview { height: 163px; padding: 16px; border: 1px solid rgba(0,0,0,.08); background: #fff; color: rgba(0,0,0,.72); font-size: 11px; line-height: 16px; }
+    .trace-source-document { height: 100%; overflow: hidden; }
+    .trace-source-document-kicker { margin: 0; color: rgba(0,0,0,.48); font-size: 11px; line-height: 14px; }
+    .trace-source-document-title { display: block; margin: 2px 0 6px; color: rgba(0,0,0,.9); font-size: 13px; font-weight: 500; line-height: 18px; }
+    .trace-source-passage { margin: 0; padding: 7px 10px; border-left: 2px solid var(--trace-accent-light); background: var(--main-50); color: rgba(0,0,0,.74); }
+    .trace-source-document-note { margin: 6px 0 0; color: rgba(0,0,0,.58); }
+    .trace-source-document strong { color: rgba(0,0,0,.88); font-weight: 500; }
+    .trace-source-table-title, .trace-source-chart-title { margin: 0 0 10px; color: var(--trace-accent-light); font-size: 11px; font-weight: 500; line-height: 16px; }
+    .trace-source-mini-table { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 11px; line-height: 12px; }
+    .trace-source-mini-table th, .trace-source-mini-table td { height: 25px; padding: 0 8px; border: 1px solid #cecde0; text-align: left; font-weight: 400; }
+    .trace-source-mini-table th { color: rgba(0,0,0,.82); font-weight: 500; }
+    .trace-source-chart { position: relative; height: 105px; }
+    .trace-source-chart svg { display: block; width: 100%; height: 105px; overflow: visible; color: var(--trace-accent-light); }
+    .trace-source-chart-grid { stroke: rgba(0,0,0,.1); stroke-width: 1; vector-effect: non-scaling-stroke; }
+    .trace-source-chart-axis { fill: rgba(0,0,0,.48); font: 400 11px var(--trace-mono); }
+    .trace-source-chart-area { fill: color-mix(in srgb, var(--trace-accent-light) 10%, transparent); }
+    .trace-source-chart-line { fill: none; stroke: currentColor; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+    .trace-source-chart-point { fill: #fff; stroke: currentColor; stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+    .trace-source-chart-end { fill: var(--trace-accent); font: 500 11px var(--trace-mono); }
+    .trace-source-pie { height: 105px; display: grid; grid-template-columns: 105px 1fr; align-items: center; gap: 14px; }
+    .trace-source-pie svg { width: 100px; height: 100px; overflow: visible; transform: rotate(-90deg); }
+    .trace-source-pie svg text { fill: rgba(0,0,0,.68); font: 500 11px var(--trace-mono); transform: rotate(90deg); transform-origin: 50px 50px; }
+    .trace-source-pie-track, .trace-source-pie-segment { fill: none; stroke-width: 12; }
+    .trace-source-pie-track { stroke: rgba(0,0,0,.06); }
+    .trace-source-pie-segment { transform-origin: 50px 50px; }
+    .trace-source-pie-segment--one { stroke: var(--trace-accent); stroke-dasharray: 64 36; }
+    .trace-source-pie-segment--two { stroke: var(--trace-accent-light); stroke-dasharray: 22 78; stroke-dashoffset: -64; }
+    .trace-source-pie-segment--three { stroke: #aeb7c8; stroke-dasharray: 9 91; stroke-dashoffset: -86; }
+    .trace-source-pie-segment--four { stroke: #d7dbe3; stroke-dasharray: 5 95; stroke-dashoffset: -95; }
+    .trace-source-pie ul { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; }
+    .trace-source-pie li { display: grid; grid-template-columns: 7px 1fr auto; align-items: center; gap: 6px; color: rgba(0,0,0,.58); font-size: 11px; line-height: 14px; }
+    .trace-source-pie li i { width: 7px; height: 7px; background: var(--trace-accent); }
+    .trace-source-pie li:nth-child(2) i { background: var(--trace-accent-light); }
+    .trace-source-pie li:nth-child(3) i { background: #aeb7c8; }
+    .trace-source-pie li:nth-child(4) i { background: #d7dbe3; }
+    .trace-source-pie li strong { color: rgba(0,0,0,.82); font-weight: 500; }
     .trace-document-scanner { position: absolute; z-index: 3; top: 0; right: 0; left: 0; height: 20%; overflow: visible; opacity: 0; pointer-events: none; transform: translate3d(0,-120%,0); animation: trace-document-scan 4.2s linear infinite; will-change: transform, opacity; }
     .trace-source-card:not([data-source-slot="primary"]) .trace-document-scanner { animation: none; opacity: 0; transform: translate3d(0,-120%,0); will-change: auto; }
     .trace-document-scanner::before { position: absolute; inset: 0; content: ""; background: linear-gradient(180deg,transparent,color-mix(in srgb, var(--trace-accent-soft) 8%, transparent) 38%,color-mix(in srgb, var(--trace-accent-light) 22%, transparent) 78%,color-mix(in srgb, var(--trace-accent) 12%, transparent) 94%,transparent); }
     .trace-document-scanner::after { position: absolute; right: 0; bottom: 5%; left: 0; height: 1px; content: ""; background: linear-gradient(90deg,transparent,color-mix(in srgb, var(--trace-accent) 28%, transparent) 10%,color-mix(in srgb, var(--trace-accent-soft) 96%, white) 48%,color-mix(in srgb, var(--trace-accent) 48%, transparent) 78%,transparent); box-shadow: 0 -4px 12px color-mix(in srgb, var(--trace-accent) 12%, transparent),0 2px 8px rgba(255,255,255,.5); }
     @keyframes trace-document-scan { 0% { opacity: 0; transform: translate3d(0,-120%,0); } 7% { opacity: .76; } 88% { opacity: .76; } 100% { opacity: 0; transform: translate3d(0,500%,0); } }
     @keyframes trace-source-stack-enter { from { opacity: 0; transform: translate3d(var(--trace-stack-enter-x),var(--trace-stack-enter-y),0); } to { opacity: 1; transform: translate3d(0,0,0); } }
-    .trace-summary-card { position: relative; z-index: 3; width: 92.93%; min-height: 104px; padding: 0; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
+    .trace-summary-card { position: relative; z-index: 3; width: 92.93%; min-height: 218px; padding: 0; color: #151719; transform: translateY(-6px); transition: transform .2s .52s cubic-bezier(.22,1,.36,1); }
     .trace-demo.is-trace-visible .trace-summary-card { transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-source-card { opacity: 1; clip-path: none; transform: none; }
     .trace-demo.is-trace-preview:not(.is-trace-visible) .trace-summary-card { opacity: 1; visibility: visible; transform: none; }
-    .trace-summary-label { display: flex; height: 24px; margin: 0; padding: 4px 0 4px 17px; align-items: center; background: linear-gradient(var(--page-primary),var(--page-primary)) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; }
-    .trace-summary { min-height: 80px; margin: 0; padding: 16px; color: rgba(0,0,0,.6); font-family: var(--trace-mono); font-size: 15px; font-weight: 400; line-height: 24px; letter-spacing: 0; }
+    .trace-summary-label { display: flex; min-height: 24px; margin: 0; padding: 4px 0 4px 17px; align-items: center; background: linear-gradient(var(--page-primary),var(--page-primary)) left center / 7px 7px no-repeat; color: #181818; font: 500 15px/24px var(--trace-mono); letter-spacing: 0; text-transform: none; transform: translateY(14px); }
+    .trace-hierarchy { position: relative; min-height: 182px; margin: 14px 0 0; padding: 16px 24px 14px; color: rgba(0,0,0,.6); font-family: var(--trace-mono); }
+    .trace-hierarchy-topic { position: relative; z-index: 2; min-height: 22px; display: flex; padding: 0; align-items: center; justify-content: flex-start; border: 0; background: transparent; color: rgba(0,0,0,.9); font-size: 15px; font-weight: 500; line-height: 22px; text-align: left; }
+    .trace-hierarchy-topic::before { content: none; }
+    .trace-hierarchy-list { position: relative; display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+    .trace-hierarchy-list::before { content: none; }
+    .trace-hierarchy-node { position: relative; min-height: 34px; display: flex; padding: 6px 10px; align-items: center; gap: 10px; border: 1px solid #cecde0; background: #fff; color: rgba(0,0,0,.58); font-size: 11px; font-weight: 400; line-height: 18px; transition: border-color .16s ease, background-color .16s ease, color .16s ease; }
+    .trace-hierarchy-node::before { content: none; }
+    .trace-hierarchy-node::after { content: none; }
+    .trace-hierarchy-node.is-active { border-color: var(--trace-accent-light); background: var(--main-50); color: rgba(0,0,0,.9); }
+    .trace-hierarchy-node.is-evidence-muted { opacity: .28; }
+    .trace-hierarchy-icon { width: 20px; height: 20px; flex: none; color: var(--trace-accent-light); }
+    .trace-hierarchy-content { min-width: 0; width: 100%; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px; }
+    [data-trace-hierarchy-label] { min-width: 0; overflow: hidden; color: inherit; text-overflow: ellipsis; white-space: nowrap; }
+    .trace-hierarchy-detail { color: rgba(0,0,0,.42); font-size: 11px; text-align: right; white-space: nowrap; }
     .trace-source-card, .trace-summary-card { overflow: visible; isolation: isolate; border: 0; border-radius: var(--trace-card-radius); background: transparent; box-shadow: none; }
     .trace-source-card::before, .trace-summary-card::before { position: absolute; z-index: 0; border: 0; content: ""; }
     .trace-source-card::before { top: 0; left: 0; display: block; width: 100%; height: 51px; background: url("assets/original-file-back-part.svg") 0 0 / 100% 51px no-repeat; }
@@ -289,7 +368,7 @@
     .trace-source-card.is-shell-entering::after,
     .trace-summary-card.is-shell-entering::before { animation: trace-source-shell-enter 880ms linear both; }
     @keyframes trace-source-shell-enter { from { opacity: 0; } to { opacity: 1; } }
-    .trace-summary-card::before { inset: 24px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
+    .trace-summary-card::before { inset: 46px 0 0; border-radius: 0; background: #fff; box-shadow: inset 0 0 0 1px #cecde0; }
     .trace-card-content { position: relative; z-index: 1; }
     .trace-pixel-reveal { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; pointer-events: none; }
     .trace-source-card .trace-pixel-reveal { clip-path: polygon(0 0,33.63% 0,36.58% 5.54%,100% 5.54%,100% 100%,0 100%); }
@@ -312,8 +391,8 @@
       .trace-document-page .trace-record-copy { font-size: clamp(9px,1.75vw,13px); }
       .trace-card-stack { top: 7.78%; left: 55%; width: 27.5%; gap: clamp(32px,5.5vw,50px); }
       .trace-folder-tab, [data-trace-coordinate] { white-space: nowrap; }
-      [data-trace-coordinate] { font-size: 9px; }
-      .trace-summary-card { min-height: 130px; }
+      [data-trace-coordinate] { font-size: 11px; }
+      .trace-summary-card { min-height: 218px; }
       .trace-document-page[data-slot="secondary-one"] { top: calc(12.9% + 20px); left: calc(5.97% + 28px); }
       .trace-document-page[data-slot="secondary-two"] { top: calc(12.9% + 40px); left: calc(5.97% + 56px); }
     }
@@ -325,11 +404,12 @@
       .trace-content-box::before { top: 59%; left: 5%; }
       .trace-card-stack { top: 3%; left: 5%; width: 90%; gap: 24px; }
       [data-trace-coordinate] { font-size: 13px; }
-      .trace-summary-card { width: 72%; min-height: 120px; }
-      .trace-summary { min-height: 92px; padding: 12px 14px; }
+      .trace-summary-card { width: 72%; min-height: 218px; }
+      .trace-hierarchy { min-height: 182px; padding-inline: 16px; }
       .trace-document-page:not([data-slot="primary"]) { display: none; }
       .trace-document-page[data-slot="primary"] { top: 65%; left: 5%; width: 90%; height: 95%; }
-      .trace-summary { font-size: 10px; }
+      .trace-hierarchy-topic { font-size: 13px; }
+      .trace-hierarchy-node { font-size: 11px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .trace-stage-reveal { display: none; }
@@ -1373,41 +1453,41 @@
           <canvas class="trace-dither-field" data-trace-dither-field aria-hidden="true"></canvas>
           <canvas class="trace-stage-reveal" data-trace-stage-reveal aria-hidden="true"></canvas>
           <div class="trace-content-box" data-trace-content-box>
-          <article class="trace-document-page trace-ai-document is-primary" data-trace-page data-document="report" data-slot="primary" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="true" aria-labelledby="trace-document-title">
+          <article class="trace-document-page trace-ai-document is-primary" data-trace-page data-document="renewal" data-slot="primary" data-map-caption="SOURCE MAP · AGREEMENT" role="button" tabindex="0" aria-pressed="true" aria-labelledby="trace-document-title">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2025-04-24">24/04/2025</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
-              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
-              <h3 id="trace-document-title"><span>Revenue performance</span></h3>
+              <p class="trace-doc-eyebrow">Vendor contract review · FY2026</p>
+              <h3 id="trace-document-title"><span>Renewal decision brief</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><p class="trace-record-copy">Enterprise software revenue reached <span class="trace-source-mark" data-source-id="revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, supported by continued demand for cloud, security, and data platforms. Regional performance remained broad-based, with <span class="trace-source-mark" data-source-id="table" role="button" tabindex="0">APAC growing 21.6% and Europe growing 19.4%</span>, while North America remained the largest contributor to revenue. Operating income rose to $1.1B as disciplined cost management lifted the <span class="trace-source-mark" data-source-id="margin" role="button" tabindex="0">operating margin to 22.9%</span>. The underlying trend also remained consistently positive, with <span class="trace-source-mark" data-source-id="chart" role="button" tabindex="0">revenue increasing in every reported quarter since Q4 2023</span>.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy">The current agreement renews for another twelve months unless written notice is delivered by <span class="trace-source-mark" data-source-id="renewal-notice" role="button" tabindex="0">30 September 2025</span>. The FY2026 schedule sets the <span class="trace-source-mark" data-source-id="renewal-pricing" role="button" tabindex="0">platform fee at $420,000 with a 4.5% uplift</span> for 1,200 contracted seats. The service schedule provides credits when <span class="trace-source-mark" data-source-id="renewal-sla" role="button" tabindex="0">monthly availability falls below 99.9%</span>. Workspace telemetry shows <span class="trace-source-mark" data-source-id="renewal-usage" role="button" tabindex="0">active-seat utilization averaging 78% over the last six months</span>, leaving room to reduce the committed tier before renewal. A right-sized renewal preserves support while aligning commitment with adoption. Finance should confirm notice timing and seat reallocation before approval.</p></div>
               </div>
             </div>
-            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
+            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/source-revenue.png" alt=""></div>
           </article>
-          <article class="trace-document-page trace-secondary-document" data-trace-page data-document="regional" data-slot="secondary-one" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Regional performance document, click to bring forward">
+          <article class="trace-document-page trace-secondary-document" data-trace-page data-document="implementation" data-slot="secondary-one" data-map-caption="SOURCE MAP · PROJECT PLAN" role="button" tabindex="0" aria-pressed="false" aria-label="Implementation readiness document, click to bring forward">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2025-05-08">08/05/2025</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
-              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
-              <h3><span>Regional performance</span></h3>
+              <p class="trace-doc-eyebrow">Customer onboarding · Phase 2</p>
+              <h3><span>Implementation readiness</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><p class="trace-record-copy"><span class="trace-source-mark" data-source-id="regional-growth" role="button" tabindex="0">APAC grew 21.6% and Europe grew 19.4%</span>, leading the year-over-year expansion across the business. The regional comparison places these markets at the front of the growth view. North America remained the largest contributing territory at <span class="trace-source-mark" data-source-id="north-america" role="button" tabindex="0">$2.302B with 18.4% growth</span>. The combined regional results are reflected in the overall total: reported revenue closed at <span class="trace-source-mark" data-source-id="regional-total" role="button" tabindex="0">$4.8B versus $4.03B</span> in the prior year. Viewed together, the figures show that <span class="trace-source-mark" data-source-id="regional-positive" role="button" tabindex="0">every reported region remained positive</span> across the period.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy">The statement of work targets <span class="trace-source-mark" data-source-id="launch-date" role="button" tabindex="0">production launch on 18 August after two acceptance gates</span>. The rollout tracker shows <span class="trace-source-mark" data-source-id="launch-tracker" role="button" tabindex="0">14 of 17 workstreams on plan</span>; identity mapping, legal review, and user acceptance testing remain open. The migration forecast covers <span class="trace-source-mark" data-source-id="launch-volume" role="button" tabindex="0">2.4 million records across 86 workspaces</span>, peaking at roughly 310,000 records per day. Final acceptance requires <span class="trace-source-mark" data-source-id="launch-acceptance" role="button" tabindex="0">99.5% reconciliation and no severity-one defects</span>. Remaining work is concentrated in owner approvals, not platform dependencies. Two reconciliation checkpoints keep the target achievable without compressing testing.</p></div>
               </div>
             </div>
-            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
+            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/source-table.png" alt=""></div>
           </article>
-          <article class="trace-document-page trace-secondary-document" data-trace-page data-document="operating" data-slot="secondary-two" data-map-caption="SOURCE MAP · PAGE 12" role="button" tabindex="0" aria-pressed="false" aria-label="Operating signals document, click to bring forward">
+          <article class="trace-document-page trace-secondary-document" data-trace-page data-document="security" data-slot="secondary-two" data-map-caption="SOURCE MAP · CONTROL EVIDENCE" role="button" tabindex="0" aria-pressed="false" aria-label="Security evidence document, click to bring forward">
             <div class="trace-page-inner">
-              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2023-11-16">16/11/2023</time></header>
+              <header class="trace-doc-brand"><span class="trace-doc-brand-name"><img class="trace-doc-brand-logo" src="assets/figma-document-logo.svg" alt="Knowhere"></span><time datetime="2025-06-19">19/06/2025</time></header>
               <div class="trace-doc-rule" aria-hidden="true"></div>
-              <p class="trace-doc-eyebrow">Q4 2025 market report</p>
-              <h3><span>Operating signals</span></h3>
+              <p class="trace-doc-eyebrow">Enterprise security review · 2025</p>
+              <h3><span>Evidence and open controls</span></h3>
               <div class="trace-doc-records">
-                <div class="trace-doc-record"><p class="trace-record-copy">Quarterly revenue reached <span class="trace-source-mark" data-source-id="operating-revenue" role="button" tabindex="0">$4.8B, up 18.4% year over year</span>, establishing the top-line reference point for the period. In parallel, operating income increased to <span class="trace-source-mark" data-source-id="operating-income" role="button" tabindex="0">$1.1B in Q4 2025</span>. The relationship between revenue and income is also reflected in profitability, as cost discipline lifted the <span class="trace-source-mark" data-source-id="operating-margin" role="button" tabindex="0">operating margin to 22.9%</span>. The accompanying chart adds a longer-term view, showing that <span class="trace-source-mark" data-source-id="operating-trend" role="button" tabindex="0">revenue rose in each reported quarter since Q4 2023</span>.</p></div>
+                <div class="trace-doc-record"><p class="trace-record-copy">The architecture standard requires <span class="trace-source-mark" data-source-id="security-encryption" role="button" tabindex="0">AES-256 at rest and TLS 1.3 in transit</span> for production data. The residency matrix maps <span class="trace-source-mark" data-source-id="security-residency" role="button" tabindex="0">EU tenants to Frankfurt and Dublin, with backups retained in-region</span>. The latest SOC 2 report records <span class="trace-source-mark" data-source-id="security-findings" role="button" tabindex="0">three medium findings, two remediated and one due 31 July</span>. Its incident appendix shows <span class="trace-source-mark" data-source-id="security-incidents" role="button" tabindex="0">64% of alerts were access-policy events, with no confirmed data exposure</span>. The remaining item is limited to quarterly access-certification evidence. No critical exceptions were identified, and the residual work can close through the existing remediation plan before enterprise review.</p></div>
               </div>
             </div>
-            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/q4-market-update-source.png" alt=""></div>
+            <div class="trace-page-texture trace-map-strip" aria-hidden="true"><img src="assets/source-chart.png" alt=""></div>
           </article>
           <div class="trace-branches" data-trace-branches aria-live="polite">
             <span class="trace-fork-dot" data-trace-fork aria-hidden="true"></span>
@@ -1415,33 +1495,49 @@
               <div class="trace-original-stack" data-trace-original-stack aria-label="Three linked original source documents">
                 <figure class="trace-source-card" data-trace-source-card data-source-document="report" data-source-id="revenue" data-source-slot="primary" data-region="revenue">
                   <div class="trace-card-content">
-                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Text passage</span></figcaption>
-                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original Q4 2025 market report page"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>PDF</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-revenue.png" alt="Original master service agreement excerpt"><div class="trace-source-preview" data-trace-source-preview aria-hidden="true"></div><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
                   <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" tabindex="-1" aria-label="Show this supporting original document"></button>
                 </figure>
                 <figure class="trace-source-card" data-trace-source-card data-source-document="regional" data-source-id="table" data-source-slot="secondary-one" data-region="table">
                   <div class="trace-card-content">
-                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Table</span></figcaption>
-                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-table.png" alt="Original regional revenue table"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>XLSX</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-table.png" alt="Original regional revenue table"><div class="trace-source-preview" data-trace-source-preview aria-hidden="true"></div><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
                   <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
                 </figure>
                 <figure class="trace-source-card" data-trace-source-card data-source-document="supporting" data-source-id="chart" data-source-slot="secondary-two" data-region="chart">
                   <div class="trace-card-content">
-                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>Chart</span></figcaption>
-                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-chart.png" alt="Original supporting revenue chart"><span class="trace-source-region" aria-hidden="true"></span><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
+                    <figcaption><span class="trace-folder-tab">Original file</span><span data-trace-coordinate>CSV</span></figcaption>
+                    <div class="trace-source-thumb"><div class="trace-source-frame"><div class="trace-source-media"><img data-trace-source-image src="assets/source-chart.png" alt="Original supporting revenue chart"><div class="trace-source-preview" data-trace-source-preview aria-hidden="true"></div><span class="trace-document-scanner" aria-hidden="true"></span></div></div></div>
                   </div>
                   <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="0" data-pixel-duration="800" data-pixel-colors="main-100,main-400,main-600" aria-hidden="true"></canvas>
                   <button class="trace-source-switch" data-trace-source-switch type="button" aria-label="Show this supporting original document"></button>
                 </figure>
               </div>
-              <aside class="trace-summary-card" data-trace-summary-card aria-label="AI summary of the selected source">
+              <aside class="trace-summary-card" data-trace-summary-card aria-label="Cross-document hierarchy for the selected source">
                 <div class="trace-card-content">
-                  <span class="trace-summary-label">AI summary</span>
-                  <p class="trace-summary" data-trace-summary>Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.</p>
+                  <span class="trace-summary-label">Cross-document hierarchy</span>
+                  <div class="trace-hierarchy" data-trace-summary>
+                    <div class="trace-hierarchy-topic" data-trace-hierarchy-topic>Renewal decision brief</div>
+                    <ul class="trace-hierarchy-list">
+                      <li class="trace-hierarchy-node is-active" data-trace-hierarchy-index="0">
+                        <svg class="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z"/></svg>
+                        <span class="trace-hierarchy-content"><span data-trace-hierarchy-label>Master service agreement.pdf</span><span class="trace-hierarchy-detail" data-trace-hierarchy-detail>8.2 and 11.4</span></span>
+                      </li>
+                      <li class="trace-hierarchy-node" data-trace-hierarchy-index="1">
+                        <svg class="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.85858 2.87732L15.4293 1.0815C15.7027 1.04245 15.9559 1.2324 15.995 1.50577C15.9983 1.52919 16 1.55282 16 1.57648V22.4235C16 22.6996 15.7761 22.9235 15.5 22.9235C15.4763 22.9235 15.4527 22.9218 15.4293 22.9184L2.85858 21.1226C2.36593 21.0522 2 20.6303 2 20.1327V3.86727C2 3.36962 2.36593 2.9477 2.85858 2.87732ZM4 4.73457V19.2654L14 20.694V3.30599L4 4.73457ZM17 19H20V4.99997H17V2.99997H21C21.5523 2.99997 22 3.44769 22 3.99997V20C22 20.5523 21.5523 21 21 21H17V19ZM10.2 12L13 16H10.6L9 13.7143L7.39999 16H5L7.8 12L5 7.99997H7.39999L9 10.2857L10.6 7.99997H13L10.2 12Z"/></svg>
+                        <span class="trace-hierarchy-content"><span data-trace-hierarchy-label>Pricing schedule.xlsx</span><span class="trace-hierarchy-detail" data-trace-hierarchy-detail>FY26 rates</span></span>
+                      </li>
+                      <li class="trace-hierarchy-node" data-trace-hierarchy-index="2">
+                        <svg class="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 21V23H11V21H3C2.44772 21 2 20.5523 2 20V6H22V20C22 20.5523 21.5523 21 21 21H13ZM4 19H20V8H4V19ZM13 10H18V12H13V10ZM13 14H18V16H13V14ZM9 10V13H12C12 14.6569 10.6569 16 9 16C7.34315 16 6 14.6569 6 13C6 11.3431 7.34315 10 9 10ZM2 3H22V5H2V3Z"/></svg>
+                        <span class="trace-hierarchy-content"><span data-trace-hierarchy-label>Seat utilization.csv</span><span class="trace-hierarchy-detail" data-trace-hierarchy-detail>6-month trend</span></span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
                 <canvas class="trace-pixel-reveal" data-trace-pixel-reveal data-pixel-delay="400" data-pixel-duration="800" data-pixel-colors="#fdfcfc,main-600,main-800" aria-hidden="true"></canvas>
               </aside>
@@ -2861,93 +2957,23 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     $$('[data-trace-source-asset]').map(image => [image.dataset.traceSourceAsset, image.src])
   );
   const traceSummaries = {
-    revenue: {
-      region: 'revenue',
-      sourceCount: 3,
-      image: traceSourceAssets.revenue,
-      coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
-      summary: { en: 'Revenue reached $4.8B in Q4 2025, representing 18.4% year-over-year growth.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
-    },
-    table: {
-      region: 'table',
-      sourceCount: 1,
-      image: traceSourceAssets.table,
-      coordinate: { en: 'Page 12 Table 03', zh: '第 12 页 · 表格 03' },
-      summary: { en: 'Table 03 shows APAC growing 21.6% and Europe growing 19.4% year over year.', zh: '表格 03 显示，亚太地区同比增长 21.6%，欧洲同比增长 19.4%。' }
-    },
-    margin: {
-      region: 'margin',
-      sourceCount: 2,
-      image: traceSourceAssets.margin,
-      coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
-      summary: { en: 'Operating income reached $1.1B as the operating margin expanded to 22.9%.', zh: '营业利润达到 11 亿美元，营业利润率提升至 22.9%。' }
-    },
-    chart: {
-      region: 'chart',
-      sourceCount: 3,
-      image: traceSourceAssets.chart,
-      coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
-      summary: { en: 'Figure 05 preserves the quarter-by-quarter visual evidence behind the sustained revenue trend.', zh: '图表 05 保留了收入持续增长趋势背后的逐季度视觉证据。' }
-    },
-    'regional-growth': {
-      region: 'table',
-      sourceCount: 3,
-      image: traceSourceAssets.table,
-      coordinate: { en: 'Page 12 Table 03 APAC / Europe', zh: '第 12 页 · 表格 03 · 亚太 / 欧洲' },
-      summary: { en: 'APAC grew 21.6% and Europe grew 19.4%, leading regional year-over-year expansion.', zh: '亚太地区增长 21.6%，欧洲增长 19.4%，领跑各区域同比增幅。' }
-    },
-    'north-america': {
-      region: 'table',
-      sourceCount: 1,
-      image: traceSourceAssets.table,
-      coordinate: { en: 'Page 12 Table 03 North America', zh: '第 12 页 · 表格 03 · 北美' },
-      summary: { en: 'North America remained the largest region at $2.302B, representing 18.4% year-over-year growth.', zh: '北美仍是最大区域，收入为 23.02 亿美元，同比增长 18.4%。' }
-    },
-    'regional-total': {
-      region: 'table',
-      sourceCount: 2,
-      image: traceSourceAssets.table,
-      coordinate: { en: 'Page 12 Table 03 Total', zh: '第 12 页 · 表格 03 · 合计' },
-      summary: { en: 'Total regional revenue reached $4.8B, compared with $4.03B in Q4 2024.', zh: '区域收入合计达到 48 亿美元，去年同期为 40.3 亿美元。' }
-    },
-    'regional-positive': {
-      region: 'table',
-      sourceCount: 3,
-      image: traceSourceAssets.table,
-      coordinate: { en: 'Page 12 Table 03 YoY change', zh: '第 12 页 · 表格 03 · 同比变化' },
-      summary: { en: 'Every reported region posted positive year-over-year revenue growth in Q4 2025.', zh: '2025 年第四季度，所有披露区域的收入均实现同比正增长。' }
-    },
-    'operating-revenue': {
-      region: 'revenue',
-      sourceCount: 2,
-      image: traceSourceAssets.revenue,
-      coordinate: { en: 'Page 12 Paragraph B', zh: '第 12 页 · 段落 B' },
-      summary: { en: 'Revenue reached $4.8B in Q4 2025, up 18.4% year over year.', zh: '2025 年第四季度收入达到 48 亿美元，同比增长 18.4%。' }
-    },
-    'operating-income': {
-      region: 'margin',
-      sourceCount: 1,
-      image: traceSourceAssets.margin,
-      coordinate: { en: 'Page 12 Paragraph C', zh: '第 12 页 · 段落 C' },
-      summary: { en: 'Operating income increased to $1.1B in Q4 2025.', zh: '2025 年第四季度营业利润增长至 11 亿美元。' }
-    },
-    'operating-margin': {
-      region: 'margin',
-      sourceCount: 2,
-      image: traceSourceAssets.margin,
-      coordinate: { en: 'Page 12 Note C', zh: '第 12 页 · 注释 C' },
-      summary: { en: 'Disciplined cost management lifted operating margin to 22.9%.', zh: '严格的成本管理将营业利润率提升至 22.9%。' }
-    },
-    'operating-trend': {
-      region: 'chart',
-      sourceCount: 3,
-      image: traceSourceAssets.chart,
-      coordinate: { en: 'Page 12 Figure 05', zh: '第 12 页 · 图表 05' },
-      summary: { en: 'Figure 05 shows revenue rising in every reported quarter from Q4 2023 through Q4 2025.', zh: '图表 05 显示，从 2023 年第四季度到 2025 年第四季度，收入每个披露季度均有增长。' }
-    }
+    'renewal-notice': { group: 'renewal', sourceDocument: 'agreement', evidenceDocuments: ['agreement'], hierarchyIndex: 0, region: 'revenue', format: 'PDF', image: traceSourceAssets.revenue },
+    'renewal-pricing': { group: 'renewal', sourceDocument: 'pricing', evidenceDocuments: ['pricing'], hierarchyIndex: 1, region: 'table', format: 'XLSX', image: traceSourceAssets.table },
+    'renewal-sla': { group: 'renewal', sourceDocument: 'agreement', evidenceDocuments: ['agreement'], hierarchyIndex: 0, region: 'margin', format: 'PDF', image: traceSourceAssets.margin },
+    'renewal-usage': { group: 'renewal', sourceDocument: 'usage', evidenceDocuments: ['usage'], hierarchyIndex: 2, region: 'chart', format: 'CSV', image: traceSourceAssets.chart },
+    'launch-date': { group: 'launch', sourceDocument: 'sow', evidenceDocuments: ['sow', 'tracker'], hierarchyIndex: 0, region: 'revenue', format: 'DOCX', image: traceSourceAssets.revenue },
+    'launch-tracker': { group: 'launch', sourceDocument: 'tracker', evidenceDocuments: ['tracker'], hierarchyIndex: 1, region: 'table', format: 'XLSX', image: traceSourceAssets.table },
+    'launch-volume': { group: 'launch', sourceDocument: 'forecast', evidenceDocuments: ['forecast'], hierarchyIndex: 2, region: 'chart', format: 'CSV', image: traceSourceAssets.chart },
+    'launch-acceptance': { group: 'launch', sourceDocument: 'sow', evidenceDocuments: ['sow', 'tracker'], hierarchyIndex: 0, region: 'margin', format: 'DOCX', image: traceSourceAssets.margin },
+    'security-encryption': { group: 'security', sourceDocument: 'architecture', evidenceDocuments: ['architecture'], hierarchyIndex: 0, region: 'revenue', format: 'PDF', image: traceSourceAssets.revenue },
+    'security-residency': { group: 'security', sourceDocument: 'residency', evidenceDocuments: ['residency'], hierarchyIndex: 1, region: 'table', format: 'XLSX', image: traceSourceAssets.table },
+    'security-findings': { group: 'security', sourceDocument: 'audit', evidenceDocuments: ['audit'], hierarchyIndex: 2, region: 'margin', format: 'PDF', image: traceSourceAssets.margin },
+    'security-incidents': { group: 'security', sourceDocument: 'audit', evidenceDocuments: ['audit'], hierarchyIndex: 2, region: 'chart', format: 'PDF', image: traceSourceAssets.chart }
   };
   let traceActiveId = null;
   let traceActiveMark = null;
+  let traceLockedMark = null;
+  let traceEvidenceMode = 'default';
   let traceTargetMark = null;
   const tracePixelAnimations = new Map();
   let traceFlowLines = [];
@@ -2956,12 +2982,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   let traceFlowResizeTimer = 0;
   let traceSourceStackTimer = 0;
   let traceSourceLayoutTimer = 0;
+  let traceSourceFlowAnimation = 0;
   let traceAutoTimer = 0;
   let traceAutoCycleVisible = false;
-  let traceAutoMarkId = null;
-  let traceAutoFileSwitches = 0;
   const traceAutoFileDelay = 3000;
-  const traceAutoMarkDelay = 5000;
   const animateInitialTraceStage = false;
   let traceStageEntered = traceDemo?.classList.contains('is-stage-entered') ?? false;
   let traceStageAnimation = 0;
@@ -2992,7 +3016,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       traceDemo.classList.add('is-chain-entering');
       requestAnimationFrame(() => traceDemo.classList.add('is-chain-source'));
       const entranceMark = getDefaultTraceMark();
-      if (entranceMark) showTraceSource(entranceMark.dataset.sourceId, entranceMark, false);
+      if (entranceMark) showTraceSource(entranceMark.dataset.sourceId, entranceMark, false, 'default');
       traceChainFallbackTimer = setTimeout(finishTraceChainEntrance, 1800);
       return;
     }
@@ -3008,7 +3032,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     }
     traceStageEntered = true;
     const entranceMark = getDefaultTraceMark();
-    if (entranceMark) showTraceSource(entranceMark.dataset.sourceId, entranceMark, true);
+    if (entranceMark) showTraceSource(entranceMark.dataset.sourceId, entranceMark, true, 'default');
     const rect = traceDemo.getBoundingClientRect();
     const width = Math.max(1, Math.round(rect.width));
     const height = Math.max(1, Math.round(rect.height));
@@ -3166,67 +3190,178 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     $('[data-trace-source-switch]', card).tabIndex = -1;
     otherCards.forEach((item, index) => {
       item.dataset.sourceSlot = index === 0 ? 'secondary-one' : 'secondary-two';
-      $('[data-trace-source-switch]', item).tabIndex = 0;
+      $('[data-trace-source-switch]', item).tabIndex = item.classList.contains('is-source-disabled') ? -1 : 0;
     });
+    trackTraceFlowDuringSourceTransition();
   }
   function getPrimaryTraceSourceCard() {
     return getVisibleTraceSourceCards().find(card => card.dataset.sourceSlot === 'primary') || null;
   }
-  function getTraceSourceTypeLabel(source) {
-    const labels = {
-      revenue: { en: 'Text passage', zh: '一段文字' },
-      table: { en: 'Table', zh: '表格' },
-      margin: { en: 'Metric note', zh: '指标注释' },
-      chart: { en: 'Chart', zh: '图表' }
-    };
-    const label = labels[source.region] || labels.revenue;
-    return label[activeLanguage] || label.en;
+  const traceDocumentContexts = {
+    renewal: {
+      topic: 'Renewal decision brief',
+      hierarchy: [
+        { source: 'Master service agreement.pdf', location: '8.2 and 11.4' },
+        { source: 'Pricing schedule.xlsx', location: 'FY26 rates' },
+        { source: 'Seat utilization.csv', location: '6-month trend' }
+      ]
+    },
+    launch: {
+      topic: 'Implementation readiness',
+      hierarchy: [
+        { source: 'Implementation SOW.docx', location: '4.1 and 7' },
+        { source: 'Rollout tracker.xlsx', location: 'Readiness' },
+        { source: 'Migration forecast.csv', location: 'Daily volume' }
+      ]
+    },
+    security: {
+      topic: 'Evidence and open controls',
+      hierarchy: [
+        { source: 'Security architecture.pdf', location: 'Chapter 3' },
+        { source: 'Residency matrix.xlsx', location: 'Regions' },
+        { source: 'SOC 2 Type II.pdf', location: 'Findings' }
+      ]
+    }
+  };
+  function getTraceSourceFormat(source) {
+    return source?.format || 'PDF';
   }
+  function getTraceSourcePreview(source) {
+    if (source.group === 'renewal') {
+      if (source.region === 'table') return { type: 'table', title: 'FY2026 commercial schedule', widths: [34,22,22,22], columns: ['Item','Qty','FY25','FY26'], rows: [['Platform seats','1,200','$402k','$420k'],['24×7 support','1','$48k','$50k'],['Total annual fee','—','$450k','$470k']] };
+      if (source.region === 'chart') return { type: 'line', title: 'Active-seat utilization (%)', chart: 'usage' };
+      if (source.region === 'margin') return { type: 'document', kicker: 'Service schedule · §11.4', title: 'Availability credits', copy: 'Monthly availability below 99.9% earns a 5% service credit; below 99.5% earns 10%.', note: 'Claims must be submitted within 30 days of the affected month.' };
+      return { type: 'document', kicker: 'Master service agreement · §8.2', title: 'Term and renewal', copy: 'The agreement renews automatically for successive twelve-month terms unless either party gives timely written notice.', note: 'Customer notice deadline: 30 September 2025.' };
+    }
+    if (source.group === 'launch') {
+      if (source.region === 'table') return { type: 'table', title: 'Rollout tracker · 14 / 17 on plan', widths: [30,24,24,22], columns: ['Workstream','Owner','Status','Due'], rows: [['Identity map','Eng','At risk','25 Jul'],['Legal review','Legal','Blocked','31 Jul'],['User testing','Ops','On plan','08 Aug']] };
+      if (source.region === 'chart') return { type: 'line', title: 'Forecast migration volume', chart: 'migration' };
+      if (source.region === 'margin') return { type: 'document', kicker: 'Implementation SOW · §7', title: 'Acceptance criteria', copy: 'Production acceptance requires at least 99.5% record reconciliation and zero unresolved severity-one defects.', note: 'Customer sign-off is due within three business days of validation.' };
+      return { type: 'document', kicker: 'Implementation SOW · §4.1', title: 'Delivery milestones', copy: 'Production launch is scheduled for 18 August after configuration review and migration validation.', note: 'Both acceptance gates require written customer approval.' };
+    }
+    if (source.region === 'table') return { type: 'table', title: 'Data residency control matrix', widths: [34,33,33], columns: ['Data class','Primary','Backup'], rows: [['EU customer','Frankfurt','Dublin'],['US customer','Virginia','Oregon'],['EU audit logs','Frankfurt','Dublin']] };
+    if (source.region === 'chart') return { type: 'pie', title: 'Incident alerts by category' };
+    if (source.region === 'margin') return { type: 'document', kicker: 'SOC 2 Type II · Finding register', title: 'Open control finding', copy: 'Three medium findings were recorded during the review period. Two are closed; one remains in remediation.', note: 'Owner: Security operations · Due: 31 July 2025.' };
+    return { type: 'document', kicker: 'Security architecture standard · §3', title: 'Encryption baseline', copy: 'Production data is encrypted with AES-256 at rest and TLS 1.3 for service-to-service traffic.', note: 'Keys are isolated by environment and rotated every 90 days.' };
+  }
+  function renderTraceLineChart(chart) {
+    if (chart === 'migration') {
+      return `<svg viewBox="0 0 300 105" role="img" aria-label="Migration volume peaks at 310 thousand records per day"><g class="trace-source-chart-grid"><line x1="36" y1="14" x2="294" y2="14"/><line x1="36" y1="50" x2="294" y2="50"/><line x1="36" y1="86" x2="294" y2="86"/></g><g class="trace-source-chart-axis"><text x="0" y="18">300k</text><text x="0" y="54">200k</text><text x="0" y="90">100k</text><text x="36" y="103">11 Aug</text><text x="164" y="103" text-anchor="middle">14 Aug</text><text x="294" y="103" text-anchor="end">16 Aug</text></g><path class="trace-source-chart-area" d="M40 90 L90 72 L140 44 L190 14 L240 22 L290 58 L290 90 L40 90 Z"/><polyline class="trace-source-chart-line" points="40,90 90,72 140,44 190,14 240,22 290,58"/><g><circle class="trace-source-chart-point" cx="40" cy="90" r="3"/><circle class="trace-source-chart-point" cx="90" cy="72" r="3"/><circle class="trace-source-chart-point" cx="140" cy="44" r="3"/><circle class="trace-source-chart-point" cx="190" cy="14" r="3"/><circle class="trace-source-chart-point" cx="240" cy="22" r="3"/><circle class="trace-source-chart-point" cx="290" cy="58" r="3"/></g><text class="trace-source-chart-end" x="198" y="13">310k</text></svg>`;
+    }
+    return `<svg viewBox="0 0 300 105" role="img" aria-label="Active-seat utilization averages 78 percent over six months"><g class="trace-source-chart-grid"><line x1="32" y1="14" x2="294" y2="14"/><line x1="32" y1="50" x2="294" y2="50"/><line x1="32" y1="86" x2="294" y2="86"/></g><g class="trace-source-chart-axis"><text x="0" y="18">80%</text><text x="0" y="54">75%</text><text x="0" y="90">70%</text><text x="32" y="103">Jan</text><text x="163" y="103" text-anchor="middle">Apr</text><text x="294" y="103" text-anchor="end">Jun</text></g><path class="trace-source-chart-area" d="M36 72 L87 61 L138 50 L189 43 L240 29 L290 36 L290 86 L36 86 Z"/><polyline class="trace-source-chart-line" points="36,72 87,61 138,50 189,43 240,29 290,36"/><g><circle class="trace-source-chart-point" cx="36" cy="72" r="3"/><circle class="trace-source-chart-point" cx="87" cy="61" r="3"/><circle class="trace-source-chart-point" cx="138" cy="50" r="3"/><circle class="trace-source-chart-point" cx="189" cy="43" r="3"/><circle class="trace-source-chart-point" cx="240" cy="29" r="3"/><circle class="trace-source-chart-point" cx="290" cy="36" r="3"/></g><text class="trace-source-chart-end" x="256" y="29">78%</text></svg>`;
+  }
+  function renderTraceSourcePreview(element, source) {
+    if (!element) return;
+    if (source.type === 'table') {
+      const columns = source.columns.map(column => `<th>${column}</th>`).join('');
+      const rows = source.rows.map(row => `<tr>${row.map(value => `<td>${value}</td>`).join('')}</tr>`).join('');
+      const widths = source.widths.map(width => `<col style="width:${width}%">`).join('');
+      element.innerHTML = `<p class="trace-source-table-title">${source.title}</p><table class="trace-source-mini-table"><colgroup>${widths}</colgroup><thead><tr>${columns}</tr></thead><tbody>${rows}</tbody></table>`;
+      return;
+    }
+    if (source.type === 'line') {
+      element.innerHTML = `<p class="trace-source-chart-title">${source.title}</p><div class="trace-source-chart">${renderTraceLineChart(source.chart)}</div>`;
+      return;
+    }
+    if (source.type === 'pie') {
+      element.innerHTML = `<p class="trace-source-chart-title">${source.title}</p><div class="trace-source-pie"><svg viewBox="0 0 100 100" role="img" aria-label="Access policy 64 percent, configuration 22 percent, malware 9 percent, other 5 percent"><circle class="trace-source-pie-track" cx="50" cy="50" r="38"/><circle class="trace-source-pie-segment trace-source-pie-segment--one" pathLength="100" cx="50" cy="50" r="38"/><circle class="trace-source-pie-segment trace-source-pie-segment--two" pathLength="100" cx="50" cy="50" r="38"/><circle class="trace-source-pie-segment trace-source-pie-segment--three" pathLength="100" cx="50" cy="50" r="38"/><circle class="trace-source-pie-segment trace-source-pie-segment--four" pathLength="100" cx="50" cy="50" r="38"/><text x="50" y="48" text-anchor="middle">0</text><text x="50" y="61" text-anchor="middle">exposures</text></svg><ul><li><i></i><span>Access policy</span><strong>64%</strong></li><li><i></i><span>Configuration</span><strong>22%</strong></li><li><i></i><span>Malware</span><strong>9%</strong></li><li><i></i><span>Other</span><strong>5%</strong></li></ul></div>`;
+      return;
+    }
+    element.innerHTML = `<article class="trace-source-document"><p class="trace-source-document-kicker">${source.kicker}</p><strong class="trace-source-document-title">${source.title}</strong><p class="trace-source-passage">${source.copy}</p><p class="trace-source-document-note">${source.note}</p></article>`;
+  }
+  traceMarks.forEach(mark => {
+    const label = document.createElement('span');
+    label.className = 'trace-source-format-label';
+    label.textContent = getTraceSourceFormat(traceSummaries[mark.dataset.sourceId]);
+    label.setAttribute('aria-hidden', 'true');
+    mark.after(label);
+  });
   function getTraceSourceVariantIds(id, source) {
-    const supportingIds = {
-      revenue: ['revenue', 'table', 'chart'],
-      table: ['table', 'revenue', 'chart'],
-      margin: ['margin', 'revenue', 'chart'],
-      chart: ['chart', 'revenue', 'table']
-    }[source.region] || ['revenue', 'table', 'chart'];
-    const seenImages = new Set();
-    return [id, ...supportingIds.filter(item => item !== id)]
-      .filter(item => {
-        const image = traceSummaries[item]?.image;
-        if (!image || seenImages.has(image)) return false;
-        seenImages.add(image);
-        return true;
-      })
-      .slice(0, Math.min(source.sourceCount, traceSourceCards.length));
+    const groupIds = Object.entries(traceSummaries)
+      .filter(([, candidate]) => candidate.group === source.group)
+      .sort(([, a], [, b]) => a.hierarchyIndex - b.hierarchyIndex)
+      .map(([candidateId]) => candidateId);
+    const representativeByDocument = new Map();
+    groupIds.forEach(candidateId => {
+      const sourceDocument = traceSummaries[candidateId].sourceDocument;
+      if (!representativeByDocument.has(sourceDocument)) representativeByDocument.set(sourceDocument, candidateId);
+    });
+    representativeByDocument.set(source.sourceDocument, id);
+    return [...representativeByDocument.values()].slice(0, traceSourceCards.length);
   }
-  function renderTraceSourceContent(id, source) {
+  function renderTraceSourceContent(id, source, mark) {
     if (!traceDemo || !source) return null;
     traceDemo.dataset.region = source.region;
+    const evidenceDocuments = traceEvidenceMode === 'mark' ? source.evidenceDocuments : null;
+    const evidenceSet = new Set(evidenceDocuments || []);
     const variantIds = getTraceSourceVariantIds(id, source);
+    const variantByDocument = new Map(
+      variantIds.map(variantId => [traceSummaries[variantId].sourceDocument, variantId])
+    );
+    const visibleCards = getVisibleTraceSourceCards();
+    const preservesDocumentCards = visibleCards.length === variantIds.length
+      && visibleCards.every(card => variantByDocument.has(card.dataset.sourceDocument));
+    traceOriginalStack?.classList.toggle('is-evidence-filtered', Boolean(evidenceDocuments));
     traceSourceCards.forEach((card, index) => {
-      const variantId = variantIds[index];
+      const variantId = preservesDocumentCards
+        ? variantByDocument.get(card.dataset.sourceDocument)
+        : variantIds[index];
       const variant = traceSummaries[variantId];
       const switchButton = $('[data-trace-source-switch]', card);
       card.hidden = !variant;
-      card.classList.remove('is-source-hovered');
+      card.classList.remove('is-source-hovered', 'is-source-disabled', 'is-source-evidence');
       if (!variant) {
         switchButton.tabIndex = -1;
+        switchButton.disabled = true;
         return;
       }
-      card.dataset.sourceSlot = index === 0 ? 'primary' : index === 1 ? 'secondary-one' : 'secondary-two';
-      switchButton.tabIndex = index === 0 ? -1 : 0;
+      const isEvidence = !evidenceDocuments || evidenceSet.has(variant.sourceDocument);
+      if (!preservesDocumentCards) {
+        card.dataset.sourceSlot = index === 0 ? 'primary' : index === 1 ? 'secondary-one' : 'secondary-two';
+      }
+      card.classList.toggle('is-source-evidence', isEvidence);
+      card.classList.toggle('is-source-disabled', !isEvidence);
+      card.setAttribute('aria-disabled', String(!isEvidence));
+      switchButton.disabled = !isEvidence;
+      switchButton.tabIndex = index === 0 || !isEvidence ? -1 : 0;
       card.dataset.region = variant.region;
       card.dataset.sourceId = variantId;
-      $('[data-trace-coordinate]', card).textContent = getTraceSourceTypeLabel(variant);
-      $('[data-trace-source-image]', card).src = variant.image;
+      card.dataset.sourceDocument = variant.sourceDocument;
+      const sourceImage = $('[data-trace-source-image]', card);
+      sourceImage.src = variant.image;
+      const preview = getTraceSourcePreview(variant);
+      sourceImage.alt = `Original source: ${preview.title}`;
+      $('[data-trace-coordinate]', card).textContent = getTraceSourceFormat(variant);
+      renderTraceSourcePreview($('[data-trace-source-preview]', card), preview);
     });
+    const primaryCard = getPrimaryTraceSourceCard();
+    if (evidenceDocuments && !evidenceSet.has(primaryCard?.dataset.sourceDocument)) {
+      const evidenceCard = getVisibleTraceSourceCards().find(card => card.dataset.sourceDocument === evidenceDocuments[0]);
+      if (evidenceCard) bringTraceSourceCardForward(evidenceCard);
+    }
     $('[data-trace-original-stack]', traceDemo).setAttribute(
       'aria-label',
       activeLanguage === 'zh'
         ? `${variantIds.length} 个关联的原始来源文档`
         : `${variantIds.length} linked original source ${variantIds.length === 1 ? 'document' : 'documents'}`
     );
-    $('[data-trace-summary]', traceDemo).textContent = source.summary[activeLanguage] || source.summary.en;
+    const context = traceDocumentContexts[source.group];
+    $('[data-trace-hierarchy-topic]', traceDemo).textContent = context.topic;
+    $$('[data-trace-hierarchy-index]', traceDemo).forEach((node, index) => {
+      const item = context.hierarchy[index];
+      $('[data-trace-hierarchy-label]', node).textContent = item.source;
+      $('[data-trace-hierarchy-detail]', node).textContent = item.location;
+    });
+    const evidenceHierarchyIndices = new Set(
+      Object.values(traceSummaries)
+        .filter(candidate => candidate.group === source.group && evidenceSet.has(candidate.sourceDocument))
+        .map(candidate => candidate.hierarchyIndex)
+    );
+    $$('[data-trace-hierarchy-index]', traceDemo).forEach(node => {
+      const isEvidence = evidenceHierarchyIndices.has(Number(node.dataset.traceHierarchyIndex));
+      node.classList.toggle('is-active', Boolean(evidenceDocuments) && isEvidence);
+      node.classList.toggle('is-evidence-muted', Boolean(evidenceDocuments) && !isEvidence);
+    });
     return getPrimaryTraceSourceCard();
   }
   function syncTracePreview(playPixels = true) {
@@ -3235,7 +3370,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     if (!defaultMark) return;
     traceDemo.classList.remove('is-trace-preview');
     traceMarks.forEach(mark => mark.classList.remove('is-preview'));
-    showTraceSource(defaultMark.dataset.sourceId, defaultMark, playPixels);
+    showTraceSource(defaultMark.dataset.sourceId, defaultMark, playPixels, 'default');
   }
   function positionTraceTarget(mark, event) {
     if (!traceTargetCursor || !mark) return;
@@ -3422,7 +3557,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   function makeTraceFlowPair(start, end, options) {
     if (!window.LeaderLine) return [];
     const shared = {
-      path: 'grid',
+      path: options.path || 'grid',
       startSocket: options.startSocket,
       endSocket: options.endSocket,
       startSocketGravity: options.startGravity,
@@ -3454,6 +3589,11 @@ curl -X POST "[endpoint-to-be-confirmed]" \
   }
   function scheduleTraceFlow(lines, delay, duration, animate = true, onComplete) {
     if (!lines.length) return;
+    if (!animate && delay === 0) {
+      lines.forEach(line => line.show('none'));
+      if (onComplete) onComplete();
+      return;
+    }
     const timer = setTimeout(() => {
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const shouldDraw = animate && !reducedMotion;
@@ -3464,6 +3604,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       }
     }, delay);
     traceFlowTimers.push(timer);
+  }
+  function trackTraceFlowDuringSourceTransition() {
+    cancelAnimationFrame(traceSourceFlowAnimation);
+    if (!traceActiveMark || !traceFlowLines.length) return;
+    createTraceFlowLines(traceActiveMark, false);
+    const startedAt = performance.now();
+    const update = now => {
+      createTraceFlowLines(traceActiveMark, false);
+      if (now - startedAt < 360) {
+        traceSourceFlowAnimation = requestAnimationFrame(update);
+      } else {
+        traceSourceFlowAnimation = 0;
+      }
+    };
+    traceSourceFlowAnimation = requestAnimationFrame(update);
   }
   function createTraceFlowLines(mark, animate = true) {
     clearTraceFlowLines();
@@ -3480,9 +3635,10 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     const sourceCard = visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-two')
       || visibleSourceCards.find(card => card.dataset.sourceSlot === 'secondary-one')
       || visibleSourceCards.find(card => card.dataset.sourceSlot === 'primary');
+    const summaryLabel = $('.trace-summary-label', traceDemo);
     const summaryBody = $('[data-trace-summary]', traceDemo);
     const outputDocument = tracePages.find(page => page.dataset.slot === 'primary');
-    if (!sourceCard || !summaryBody || !outputDocument) return;
+    if (!sourceCard || !summaryLabel || !summaryBody || !outputDocument) return;
     const stageRect = traceDemo.getBoundingClientRect();
     const stagePoint = (x, y) => LeaderLine.pointAnchor({
       element: traceDemo,
@@ -3490,17 +3646,20 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       y: y - stageRect.top
     });
     const sourceRect = sourceCard.getBoundingClientRect();
+    const summaryLabelRange = document.createRange();
+    summaryLabelRange.selectNodeContents(summaryLabel);
+    const summaryLabelTextRect = summaryLabelRange.getBoundingClientRect();
     const summaryBodyRect = summaryBody.getBoundingClientRect();
-    const sourceCenterX = sourceRect.left + sourceRect.width / 2;
-    const summaryEntryX = Math.max(0, Math.min(summaryBodyRect.width, sourceCenterX - summaryBodyRect.left));
-    const sourceExit = stagePoint(sourceCenterX, sourceRect.bottom);
-    const summaryEntry = stagePoint(summaryBodyRect.left + summaryEntryX, summaryBodyRect.top);
+    const summaryFlowX = summaryLabelTextRect.right + 24;
+    const sourceExit = stagePoint(summaryFlowX, sourceRect.bottom);
+    const summaryEntry = stagePoint(summaryFlowX, summaryBodyRect.top - 1.875);
     traceFlowAnchors.push(sourceExit, summaryEntry);
     const summaryFlow = makeTraceFlowPair(sourceExit, summaryEntry, {
+      path: 'straight',
       startSocket: 'bottom',
       endSocket: 'top',
-      startGravity: [0, 12],
-      endGravity: [0, -12]
+      startGravity: [0, 0],
+      endGravity: [0, 0]
     });
     const outputDocumentRect = outputDocument.getBoundingClientRect();
     if (!outputDocumentRect.width || !outputDocumentRect.height) {
@@ -3541,21 +3700,22 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     scheduleTraceFlow(summaryFlow, animate ? 400 : 0, 260, animate);
     scheduleTraceFlow(answerFlow, animate ? 790 : 0, 340, animate);
   }
-  function showTraceSource(id, mark, shouldPlayPixels = true) {
+  function showTraceSource(id, mark, shouldPlayPixels = true, evidenceMode = 'mark') {
     if (!traceDemo || !traceSummaries[id]) return;
-    const markChanged = traceActiveId !== id;
+    const stateChanged = traceActiveId !== id || traceEvidenceMode !== evidenceMode;
+    const hasFlowLines = traceFlowLines.length > 0;
     clearTracePixels();
-    clearTraceFlowLines();
     traceActiveId = id;
     traceActiveMark = mark;
+    traceEvidenceMode = evidenceMode;
     const source = traceSummaries[id];
     traceDemo.classList.remove('is-trace-preview');
     traceMarks.forEach(mark => {
-      const active = mark.dataset.sourceId === id;
+      const active = evidenceMode === 'mark' && mark.dataset.sourceId === id;
       mark.classList.toggle('is-active', active);
       mark.classList.remove('is-preview');
     });
-    renderTraceSourceContent(id, source);
+    renderTraceSourceContent(id, source, mark);
     let stackEntranceDuration = 0;
     if (shouldPlayPixels) {
       playTracePixels();
@@ -3564,8 +3724,25 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       stopTraceSourceStackEntrance();
     }
     traceDemo.classList.add('is-trace-visible');
-    settleTraceSourceLayout(stackEntranceDuration || 300, markChanged);
-    if (markChanged) resetTraceAutoCycleForMark(id);
+    if (hasFlowLines) traceFlowLines.forEach(line => line.show('none'));
+    else settleTraceSourceLayout(stackEntranceDuration || 300, stateChanged);
+    syncTraceAutoCycle();
+  }
+  function showTraceDefault(mark = getDefaultTraceMark()) {
+    if (!mark) return;
+    showTraceSource(mark.dataset.sourceId, mark, false, 'default');
+  }
+  function setTraceLockedMark(mark) {
+    traceLockedMark = mark;
+    traceMarks.forEach(item => item.setAttribute('aria-pressed', String(item === mark)));
+  }
+  function restoreTraceMarkState(page = tracePages.find(item => item.dataset.slot === 'primary')) {
+    const primaryPage = tracePages.find(item => item.dataset.slot === 'primary');
+    if (traceLockedMark?.closest('[data-trace-page]') === primaryPage) {
+      showTraceSource(traceLockedMark.dataset.sourceId, traceLockedMark, false, 'mark');
+      return;
+    }
+    showTraceDefault($('.trace-source-mark[data-source-id]', page || primaryPage));
   }
   function hideTraceSource(restorePreview = true) {
     if (!traceDemo) return;
@@ -3577,24 +3754,44 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     traceMarks.forEach(mark => mark.classList.remove('is-active'));
     traceActiveId = null;
     traceActiveMark = null;
+    traceEvidenceMode = 'default';
     if (restorePreview) syncTracePreview();
   }
   traceMarks.forEach(mark => {
     const id = mark.dataset.sourceId;
+    mark.setAttribute('aria-pressed', 'false');
     mark.addEventListener('mouseenter', event => {
-      if (traceActiveMark !== mark) showTraceSource(id, mark);
+      if (traceActiveMark !== mark || traceEvidenceMode !== 'mark') showTraceSource(id, mark, false, 'mark');
       showTraceTarget(mark, event);
     });
     mark.addEventListener('mousemove', event => positionTraceTarget(mark, event));
-    mark.addEventListener('mouseleave', hideTraceTarget);
+    mark.addEventListener('mouseleave', () => {
+      hideTraceTarget();
+      if (!mark.matches(':focus-visible')) restoreTraceMarkState(mark.closest('[data-trace-page]'));
+    });
     mark.addEventListener('focus', event => {
       if (!mark.matches(':focus-visible')) return;
-      if (traceActiveMark !== mark) showTraceSource(id, mark);
+      if (traceActiveMark !== mark || traceEvidenceMode !== 'mark') showTraceSource(id, mark, false, 'mark');
       showTraceTarget(mark, event);
     });
-    mark.addEventListener('blur', hideTraceTarget);
+    mark.addEventListener('blur', () => {
+      hideTraceTarget();
+      restoreTraceMarkState(mark.closest('[data-trace-page]'));
+    });
     mark.addEventListener('click', () => {
-      if (matchMedia('(hover: none)').matches && traceActiveMark !== mark) showTraceSource(id, mark);
+      setTraceLockedMark(mark);
+      showTraceSource(id, mark, false, 'mark');
+    });
+    mark.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        setTraceLockedMark(mark);
+        showTraceSource(id, mark, false, 'mark');
+      } else if (event.key === 'Escape' && traceLockedMark) {
+        event.preventDefault();
+        setTraceLockedMark(null);
+        showTraceDefault($('.trace-source-mark[data-source-id]', mark.closest('[data-trace-page]')));
+      }
     });
   });
   function activateTraceSourceCard(card) {
@@ -3602,58 +3799,31 @@ curl -X POST "[endpoint-to-be-confirmed]" \
     stopTraceSourceStackEntrance();
     clearTracePixels(false);
     bringTraceSourceCardForward(card);
-    getVisibleTraceSourceCards().forEach(startTraceShellEntrance);
-    requestAnimationFrame(() => {
-      playTracePixels(false, false);
-    });
   }
   function stopTraceAutoCycle() {
     clearTimeout(traceAutoTimer);
     traceAutoTimer = 0;
   }
-  function resetTraceAutoCycleForMark(id) {
-    traceAutoMarkId = id;
-    traceAutoFileSwitches = 0;
-    syncTraceAutoCycle();
+  function getAutoTraceSourceCards() {
+    return getVisibleTraceSourceCards().filter(card => card.classList.contains('is-source-evidence'));
   }
   function advanceTraceAutoFile() {
-    const cards = getVisibleTraceSourceCards();
+    const cards = getAutoTraceSourceCards();
     if (cards.length < 2) return;
-    const currentIndex = cards.findIndex(card => card.dataset.sourceSlot === 'primary');
-    activateTraceSourceCard(cards[(currentIndex + 1) % cards.length]);
-  }
-  function advanceTraceAutoMark() {
-    const primaryPage = tracePages.find(page => page.dataset.slot === 'primary');
-    const marks = primaryPage ? $$('.trace-source-mark[data-source-id]', primaryPage) : [];
-    if (!marks.length) return;
-    const currentIndex = marks.findIndex(mark => mark === traceActiveMark);
-    const nextMark = marks[(currentIndex + 1) % marks.length];
-    showTraceSource(nextMark.dataset.sourceId, nextMark);
+    const slotOrder = { primary: 0, 'secondary-one': 1, 'secondary-two': 2 };
+    const nextCard = cards
+      .filter(card => card.dataset.sourceSlot !== 'primary')
+      .sort((a, b) => slotOrder[a.dataset.sourceSlot] - slotOrder[b.dataset.sourceSlot])[0];
+    if (nextCard) activateTraceSourceCard(nextCard);
   }
   function scheduleTraceAutoCycle() {
     clearTimeout(traceAutoTimer);
     if (!traceAutoCycleVisible || document.hidden) return;
-    if (traceAutoMarkId !== traceActiveId) {
-      traceAutoMarkId = traceActiveId;
-      traceAutoFileSwitches = 0;
-    }
-    const scheduledMarkId = traceActiveId;
-    const fileCount = getVisibleTraceSourceCards().length;
-    const hasNextFile = fileCount > 1 && traceAutoFileSwitches < fileCount - 1;
-    const delay = fileCount > 1 ? traceAutoFileDelay : traceAutoMarkDelay;
+    if (getAutoTraceSourceCards().length < 2) return;
     traceAutoTimer = setTimeout(() => {
-      if (traceActiveId !== scheduledMarkId) {
-        scheduleTraceAutoCycle();
-        return;
-      }
-      if (hasNextFile) {
-        advanceTraceAutoFile();
-        traceAutoFileSwitches += 1;
-      } else {
-        advanceTraceAutoMark();
-      }
+      advanceTraceAutoFile();
       scheduleTraceAutoCycle();
-    }, delay);
+    }, traceAutoFileDelay);
   }
   function syncTraceAutoCycle() {
     stopTraceAutoCycle();
@@ -3685,8 +3855,13 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       traceSummaryCard.classList.remove('is-shell-entering');
     }
   });
+  traceSummaryCard?.addEventListener('transitionend', event => {
+    if (event.target !== traceSummaryCard || event.propertyName !== 'transform' || !traceActiveMark) return;
+    createTraceFlowLines(traceActiveMark, false);
+  });
   function activateTracePage(page) {
     if (!traceDemo || !page) return;
+    setTraceLockedMark(null);
     hideTraceSource(false);
     hideTraceTarget();
     const slotOrder = { primary: 0, 'secondary-one': 1, 'secondary-two': 2 };
@@ -3710,6 +3885,7 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       if (event.detail > 0) page.blur();
     });
     page.addEventListener('keydown', event => {
+      if (event.target.closest('.trace-source-mark')) return;
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();
       activateTracePage(page);
