@@ -996,10 +996,13 @@
 
     /* Figma 394:2508 — Section 2 onward. Copy and interaction markup stay unchanged. */
     :root {
+      --ink: var(--mist-white-900, #2E2E2C);
+      --muted: var(--mist-white-700, #888A82);
+      --soft: var(--mist-white-700, #888A82);
       --figma-primary: var(--main-600, #748ba3);
-      --figma-text-high: rgba(0, 0, 0, .9);
-      --figma-text-medium: rgba(0, 0, 0, .6);
-      --figma-text-low: rgba(0, 0, 0, .4);
+      --figma-text-high: var(--mist-white-900, #2E2E2C);
+      --figma-text-medium: var(--mist-white-700, #888A82);
+      --figma-text-low: var(--mist-white-700, #888A82);
       --figma-border-3: rgba(0, 0, 0, .03);
       --figma-border-6: rgba(0, 0, 0, .06);
       --figma-border-10: rgba(0, 0, 0, .1);
@@ -1292,10 +1295,20 @@
       content: none;
     }
 
-    #capabilities .capability-media canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
+    #story-panel-structure .capability-media {
+      background: url("/assets/capability-ingest.png") center / cover no-repeat;
+    }
+
+    #story-panel-visual .capability-media {
+      background: url("/assets/capability-capture.png") center / cover no-repeat;
+    }
+
+    #story-panel-source .capability-media {
+      background: url("/assets/capability-structure.png") center / cover no-repeat;
+    }
+
+    #story-panel-relations .capability-media {
+      background: url("/assets/capability-trace.png") center / cover no-repeat;
     }
 
     #capabilities .capability-copy {
@@ -2794,27 +2807,6 @@
         linear-gradient(270deg, rgba(25, 168, 139, 0) 2%, rgba(25, 168, 139, .5) 92%) border-box;
     }
 
-    #formats .format-orbit-decoration {
-      position: absolute;
-      z-index: 4;
-      height: 1px;
-      pointer-events: none;
-    }
-
-    #formats .format-orbit-decoration--supported {
-      top: 190px;
-      left: -83px;
-      width: 512px;
-      background: rgba(0, 0, 0, .2);
-    }
-
-    #formats .format-orbit-decoration--coming {
-      top: 230px;
-      left: 850px;
-      width: 509px;
-      background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, .2) 0 4px, transparent 4px 8px);
-    }
-
     #formats .format-orbit-stage--thread-globe > :not(.format-globe-canvas) {
       visibility: hidden;
       pointer-events: none;
@@ -3504,10 +3496,6 @@
       #formats .format-orbit-copy--coming {
         grid-column: 1;
         grid-row: 3;
-      }
-
-      #formats .format-orbit-decoration {
-        display: none;
       }
 
       #pricing .pricing-card {
@@ -7132,25 +7120,37 @@
 }
 
 #comparison .comparison-metric > i:nth-child(3)::after {
-  content: "knowhere";
+  content: attr(data-value);
   opacity: 1;
   transform: translate(-50%, calc(-100% - 10px)) rotate(-45deg);
 }
 
-@media (hover: hover) and (pointer: fine) {
-  #comparison .comparison-metric:hover > i:nth-child(3)::after {
-    content: attr(data-value);
-  }
-}
-
-/* Pricing handle uses the current main color with a white directional glyph. */
+/* Pricing handle and the selected ruler segment use design-system colors. */
 #pricing .pricing-range-handle {
   color: #fff;
 }
 
 #pricing .pricing-range-handle-visual {
   border-color: transparent;
-  background: var(--page-primary);
+  background: var(--mist-white-900);
+}
+
+#pricing .pricing-range-selection {
+  position: absolute;
+  z-index: 4;
+  inset: -116px 0 0;
+  border-bottom: 1px solid var(--mineral-green-500);
+  background-image:
+    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
+    repeating-linear-gradient(to right, #fafafa 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
+    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
+    repeating-linear-gradient(to right, #fafafa 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
+    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-minor-tick, 1.25%));
+  background-position: left bottom, left bottom, left bottom, left bottom, left bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 100%, 100% 100%, 100% 52px, 100% 52px, 100% 36px;
+  clip-path: inset(0 calc(100% - var(--pricing-progress, 0%)) 0 0);
+  pointer-events: none;
 }
 
 /* Enterprise action belongs beneath the illustration grid. */
@@ -7186,16 +7186,193 @@
 /* Comparison readability refinements. */
 #comparison .comparison-metric > i:not(:nth-child(3)) {
   filter: none;
-  opacity: 1;
-  background-image: linear-gradient(180deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .06));
+  opacity: 1 !important;
 }
 
-#comparison .comparison-legend i:not(.knowhere-key) {
-  background: rgba(0, 0, 0, .1);
+#comparison .comparison-metric > i:nth-child(1) { background-image: linear-gradient(180deg, rgba(0, 0, 0, .15), rgba(0, 0, 0, .075)); }
+#comparison .comparison-metric > i:nth-child(2) { background-image: linear-gradient(180deg, rgba(0, 0, 0, .05), rgba(0, 0, 0, .025)); }
+#comparison .comparison-metric > i:nth-child(4) { background-image: linear-gradient(180deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .05)); }
+#comparison .comparison-metric > i:nth-child(5) { background-image: linear-gradient(180deg, rgba(0, 0, 0, .08), rgba(0, 0, 0, .04)); }
+
+#comparison .comparison-legend span:nth-child(1) i { background: rgba(0, 0, 0, .15); }
+#comparison .comparison-legend span:nth-child(2) i { background: rgba(0, 0, 0, .05); }
+#comparison .comparison-legend span:nth-child(4) i { background: rgba(0, 0, 0, .1); }
+#comparison .comparison-legend span:nth-child(5) i { background: rgba(0, 0, 0, .08); }
+
+#integration .steps h3 {
+  font-weight: 500;
 }
 
-#comparison .comparison-metric > i:nth-child(3)::after {
-  transform: translate(-50%, calc(-100% - 36px)) rotate(-45deg);
+#integration .steps p {
+  padding-left: 38px;
+}
+
+/* Connect the numbered Integration steps into one vertical sequence. */
+#integration .steps .integration-step-number {
+  position: relative;
+  z-index: 2;
+}
+
+#integration .steps li:not(:last-child)::before {
+  content: none;
+}
+
+#integration .steps li:not(:last-child) .integration-step-number::after {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: 50%;
+  width: 1px;
+  height: 116px;
+  display: block;
+  background: repeating-linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--mineral-green-500) 55%, transparent) 0 4px,
+    transparent 4px 8px
+  );
+  content: "";
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+@media (min-width: 1200px) {
+  #enterprise .enterprise-metric {
+    width: auto;
+    justify-self: stretch;
+  }
+
+  #integration .integration-grid {
+    grid-template-columns: 681px minmax(0, 1fr);
+    grid-template-rows: 456px 56px;
+    align-items: stretch;
+  }
+
+  #integration .steps {
+    grid-column: 1;
+    grid-row: 1;
+    width: 601px;
+    height: 456px;
+    margin-left: 80px;
+    padding-block: 24px;
+    grid-template-rows: repeat(3, 120px);
+    gap: 24px;
+  }
+
+  #integration .mcp {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: calc(100% - 160px);
+    min-height: 56px;
+    margin-inline: 80px;
+    padding: 12px 24px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 24px;
+  }
+
+  #integration .mcp .text-link {
+    grid-column: auto;
+  }
+
+  #integration .integration-plinth {
+    grid-column: 2;
+    grid-row: 1;
+    width: 612px;
+    height: 408px;
+    min-height: 0;
+    margin-right: 80px;
+    align-self: center;
+    justify-self: end;
+  }
+
+  #integration .integration-plinth .catenoid-field-workbench,
+  #integration .integration-plinth .catenoid-field-embed {
+    height: 100%;
+    min-height: 0;
+  }
+
+  #integration .integration-plinth .catenoid-field-embed {
+    aspect-ratio: auto;
+  }
+}
+
+#integration .mcp-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#integration .mcp-copy h3,
+#integration .mcp-copy p {
+  margin: 0;
+}
+
+#integration .mcp-copy p {
+  color: rgba(0, 0, 0, .6);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+/* Global neutral text roles use the Mist White design-system scale. */
+#top h1,
+#playground .section-heading h2,
+#capabilities .section-heading h2,
+#capabilities .capability-copy h3,
+#formats .section-heading h2,
+#formats .format-feature h3,
+#formats .format-orbit-copy p,
+#comparison .section-heading h2,
+#comparison .comparison-metric-labels span,
+#comparison .comparison-scoreboard-head strong,
+#comparison .scoreboard-cell.scoreboard-head-cell,
+#comparison .scoreboard-cell.scoreboard-knowhere,
+#integration .section-heading h2,
+#integration .steps h3,
+#integration .mcp h3,
+#integration .code-head span,
+#integration .code-card code,
+#pricing .pricing-heading h2,
+#pricing .pricing-facts dd,
+#pricing .pricing-range-budget strong,
+#pricing .pricing-file-limits h3,
+#pricing label,
+#enterprise h2,
+#enterprise .enterprise-metric strong,
+#faq .section-heading h2,
+#faq summary,
+#final-cta .final-cta-shimmer,
+#top.hero-b-layout .hero-copy .button-row .button-secondary {
+  color: var(--mist-white-900) !important;
+}
+
+#top .lede,
+#playground .section-heading > p:last-child,
+#playground .sample-spine-num,
+#playground .sample-file-type,
+#capabilities .section-heading > p:last-child:not(.section-no),
+#capabilities .capability-copy p,
+#formats .section-heading > p:last-child:not(.section-no),
+#formats .format-feature p,
+#comparison .section-heading > p:last-child:not(.section-no),
+#comparison .comparison-axis-y,
+#comparison .comparison-axis-y strong,
+#comparison .scoreboard-cell.scoreboard-feature,
+#comparison .scoreboard-mark--limited,
+#integration .section-heading > p:last-child:not(.section-no),
+#integration .steps p,
+#integration .mcp-copy p,
+#pricing .pricing-heading > p:last-child:not(.section-no),
+#pricing .pricing-facts dt,
+#pricing .pricing-range-budget,
+#pricing .pricing-file-limits-head p,
+#enterprise .lede,
+#enterprise .enterprise-metric p,
+#faq details p,
+.footer-links a,
+.footer-copyright,
+.hero-b-pixel-tooltip {
+  color: var(--mist-white-700) !important;
 }
 
 @media (max-width: 767px) {
@@ -7220,5 +7397,245 @@
   #formats .section-heading h2 {
     font-size: 32px !important;
     line-height: 36px !important;
+  }
+}
+
+/* Pricing uses the same full-bleed surface color as Core capabilities. */
+#pricing.section.shell {
+  isolation: isolate;
+  background: transparent;
+  color: var(--mist-white-900, #2E2E2C);
+}
+
+#pricing.section.shell::before {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 100vw;
+  background: rgba(0, 0, 0, .02);
+  content: "";
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+#pricing .pricing-card,
+#pricing .pricing-calculator,
+#pricing .pricing-result-card,
+#pricing .pricing-control-card {
+  background: transparent;
+}
+
+#pricing .pricing-heading h2,
+#pricing .pricing-facts dd,
+#pricing .pricing-range-budget strong,
+#pricing .pricing-file-limits h3,
+#pricing .pricing-file-limits dd,
+#pricing label {
+  color: var(--mist-white-900, #2E2E2C) !important;
+}
+
+#pricing .pricing-heading > p:last-child:not(.section-no),
+#pricing .pricing-result-value small,
+#pricing .pricing-facts dt,
+#pricing .pricing-range-budget,
+#pricing .pricing-file-limits-head p,
+#pricing .pricing-file-limits dt {
+  color: var(--mist-white-700, #888A82) !important;
+}
+
+#pricing .pricing-heading .section-no,
+#pricing .pricing-file-limits-head a {
+  color: var(--mineral-green-500, #19A88B) !important;
+}
+
+#pricing .pricing-result-value strong,
+#pricing .pricing-result-value small {
+  color: var(--mist-white-900, #2E2E2C) !important;
+}
+
+#pricing .pricing-result-value {
+  background-color: var(--mineral-green-500, #19A88B);
+  background-image:
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
+    linear-gradient(var(--mineral-green-500), var(--mineral-green-500));
+}
+
+#pricing .pricing-range-control {
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(to right, rgba(0, 0, 0, .24) 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
+    repeating-linear-gradient(to right, #fafafa 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
+    repeating-linear-gradient(to right, rgba(0, 0, 0, .14) 0 1px, transparent 1px var(--pricing-minor-tick, 1.25%));
+  background-size: 100% 52px, 100% 52px, 100% 36px;
+}
+
+#pricing .pricing-range-control::before {
+  background-image:
+    repeating-linear-gradient(to right, rgba(0, 0, 0, .1) 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
+    repeating-linear-gradient(to right, #fafafa 0 1px, transparent 1px var(--pricing-major-tick, 25%));
+}
+
+#pricing .pricing-range-control::after {
+  background: rgba(0, 0, 0, .38);
+}
+
+#pricing .pricing-range-handle-visual {
+  border-color: transparent;
+}
+
+#pricing .pricing-file-limits {
+  border-color: rgba(0, 0, 0, .1);
+  background: var(--mist-white-200, #F9FAF5);
+}
+
+#pricing .pricing-file-limits dl > div {
+  border-color: rgba(0, 0, 0, .1);
+}
+
+#pricing .pricing-facts > div::before {
+  background: rgba(0, 0, 0, .1);
+}
+
+@media (max-width: 767px) {
+  #pricing .pricing-result-value {
+    border-left: 1px solid var(--mineral-green-500);
+    background-image: none;
+  }
+
+  #pricing .pricing-range-selection {
+    inset: 0;
+  }
+}
+
+/* Figma 657:5343 — Integration borders and MCP layout only. */
+@media (min-width: 1200px) {
+  #integration .integration-grid {
+    min-height: 500px;
+    grid-template-rows: 424px 76px;
+    background-color: #fff;
+    background-image:
+      linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)),
+      linear-gradient(rgba(0, 0, 0, .1), rgba(0, 0, 0, .1)),
+      linear-gradient(rgba(0, 0, 0, .2), rgba(0, 0, 0, .2));
+    background-position: 80px top, 680px top, calc(100% - 80px) top;
+    background-size: 1px 424px, 1px 424px, 1px 424px;
+    background-repeat: no-repeat;
+  }
+
+  #integration .integration-grid::before,
+  #integration .integration-grid::after {
+    position: absolute;
+    z-index: 5;
+    right: 16px;
+    left: 16px;
+    width: auto;
+    height: 1px;
+    display: block;
+    background: repeating-linear-gradient(
+      to right,
+      rgba(0, 0, 0, .2) 0 6px,
+      transparent 6px 12px
+    );
+    content: "";
+    pointer-events: none;
+  }
+
+  #integration .integration-grid::before {
+    top: 24px;
+    bottom: auto;
+  }
+
+  #integration .integration-grid::after {
+    top: 400px;
+  }
+
+  #integration .steps {
+    height: 376px;
+    margin-top: 24px;
+    padding: 0;
+    border-right: 1px solid rgba(0, 0, 0, .1);
+    border-left: 1px solid rgba(0, 0, 0, .1);
+    background-color: #fff;
+    background-image:
+      repeating-linear-gradient(to right, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px),
+      repeating-linear-gradient(to right, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px);
+    background-position: 84px 124px, 84px 252px;
+    background-size: calc(100% - 84px) 1px, calc(100% - 84px) 1px;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    grid-template-rows: repeat(3, 120px);
+    gap: 8px;
+  }
+
+  #integration .steps li {
+    width: 100%;
+    border: 0;
+  }
+
+  #integration .steps li::after,
+  #integration .steps li:not(:last-child)::after {
+    content: none;
+  }
+
+  #integration .steps li:not(:last-child)::before {
+    content: none;
+  }
+
+  #integration .steps h3 {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 24px;
+  }
+
+  #integration .steps .integration-step-number {
+    justify-self: center;
+  }
+
+  #integration .steps p {
+    padding-left: 60px;
+  }
+
+  #integration .steps li:not(:last-child) .integration-step-number::after {
+    height: 100px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--mineral-green-500) 0 7px,
+      transparent 7px 14px
+    );
+  }
+
+  #integration .integration-plinth::after,
+  #integration .integration-plinth::before,
+  #integration .mcp::after {
+    content: none;
+  }
+
+  #integration .integration-plinth {
+    height: 376px;
+    margin-top: 8px;
+    align-self: start;
+    transform: translate(-24px, 16px);
+  }
+
+  #integration .mcp {
+    height: 76px;
+    min-height: 76px;
+    border: 1px solid rgba(0, 0, 0, .1);
+    background: #fafafa;
+    grid-template-columns: 789px auto;
+    justify-content: space-between;
+  }
+
+  #integration .mcp .text-link {
+    padding: 6px 0;
+    border: 0;
   }
 }

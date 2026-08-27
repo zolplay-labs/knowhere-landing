@@ -333,9 +333,12 @@ function applySettings(targetDocument, settings) {
   }
   rootStyle.setProperty('--mist-white-50', colorHex['mist-white'][50])
   rootStyle.setProperty('--mist-white-100', colorHex['mist-white'][100])
+  rootStyle.setProperty('--mist-white-200', colorHex['mist-white'][200])
   rootStyle.setProperty('--mist-white-300', colorHex['mist-white'][300])
   rootStyle.setProperty('--mist-white-400', colorHex['mist-white'][400])
   rootStyle.setProperty('--mist-white-500', colorHex['mist-white'][500])
+  rootStyle.setProperty('--mist-white-700', colorHex['mist-white'][700])
+  rootStyle.setProperty('--mist-white-900', colorHex['mist-white'][900])
   rootStyle.setProperty('--mineral-green-400', colorHex['mineral-green'][400])
   rootStyle.setProperty('--mineral-green-500', colorHex['mineral-green'][500])
   rootStyle.setProperty('--mineral-green-600', colorHex['mineral-green'][600])
@@ -452,9 +455,6 @@ export function PageStyleControls() {
       lightweightNotesY: [120, -120, 120, 2],
       chapterMapY: [106, -120, 120, 2],
     },
-  }, {
-    id: 'hero-vortex',
-    persist: true,
   })
 
   const font = FONT_STACKS[params.appearance.fontFamily]
@@ -670,13 +670,6 @@ export function PageStyleControls() {
   }, [font, chineseFont, palette])
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-hero-texture', '')
-    window.dispatchEvent(new CustomEvent('hero-texture-change', {
-      detail: { visible: true },
-    }))
-  }, [])
-
-  useEffect(() => {
     const scanFrame = document.querySelector('.section-scan-frame iframe')
     const syncTextureVisibility = () => {
       try {
@@ -701,7 +694,7 @@ export function PageStyleControls() {
 
   return (
     <>
-      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
+      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-200:${colorHex['mist-white'][200]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mist-white-700:${colorHex['mist-white'][700]};--mist-white-900:${colorHex['mist-white'][900]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" productionEnabled />
       {vortexCopyTarget && createPortal(
         <button

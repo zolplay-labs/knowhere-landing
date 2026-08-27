@@ -116,7 +116,7 @@ html.js #final-cta .converging-helix-benefits li {
   border: 1px solid rgba(255, 255, 255, .22);
   border-radius: 3px;
   background: rgba(255, 255, 255, .96);
-  color: #181818;
+  color: var(--mist-white-900);
   text-align: left;
 }
 
@@ -125,7 +125,7 @@ html.js #final-cta .converging-helix-benefits li {
   padding: 9px 12px;
   gap: 12px;
   background: transparent;
-  color: #181818;
+  color: var(--mist-white-900);
   font: 500 13px/20px var(--sans);
 }
 
@@ -146,7 +146,7 @@ html.js #final-cta .converging-helix-benefits li {
 }
 
 #final-cta .converging-helix-controls > summary > span {
-  color: #181818;
+  color: var(--mist-white-900);
   font-size: 13px;
 }
 

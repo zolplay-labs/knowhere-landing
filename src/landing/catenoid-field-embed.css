@@ -137,7 +137,7 @@
   flex: 1;
   margin: 0;
   overflow: auto;
-  color: rgba(0, 0, 0, .6);
+  color: var(--mist-white-700);
   font: inherit;
   scrollbar-color: color-mix(in srgb, var(--mineral-green-500) 56%, transparent) transparent;
   scrollbar-width: thin;

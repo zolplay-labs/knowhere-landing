@@ -1,11 +1,8 @@
-import { initializeCapabilityWireframes } from './capability-wireframes'
-
 export function initializeLandingCanvases(root) {
   if (!(root instanceof Element)) return () => {};
 
   const cleanups = [];
   initializeHeroCanvas(root, cleanups);
-  initializeCapabilityWireframes(root, cleanups);
   initializeFormatGlobe(root, cleanups);
 
   let cleaned = false;
@@ -30,7 +27,6 @@ function initializeHeroCanvas(root, cleanups) {
     const controller = new AbortController();
     const { signal } = controller;
     let active = true;
-    let lowerTextureVisible = document.documentElement.hasAttribute('data-hero-texture');
 
     const SETTINGS = Object.freeze({
       cellSize: 6,
@@ -109,9 +105,6 @@ function initializeHeroCanvas(root, cleanups) {
         if (group && typeof group === 'object') Object.assign(vortexControls, group);
       });
     }, { signal });
-    window.addEventListener('hero-texture-change', event => {
-      lowerTextureVisible = Boolean(event.detail?.visible);
-    }, { signal });
     const DATA = [
       { count: 176, width: 1 },
       { count: 112, width: .56 },
@@ -128,6 +121,10 @@ function initializeHeroCanvas(root, cleanups) {
       { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
     ];
     const LABEL_Y_KEYS = ['originalDocumentY', 'pageImagesY', 'lightweightNotesY', 'chapterMapY'];
+    const HERO_COPY_ACCENTS = [
+      [.08, .14, .16], [.22, .09, .24], [.38, .2, .12], [.54, .12, .3], [.76, .22, .18],
+      [.12, .7, .22], [.3, .82, .14], [.5, .74, .28], [.7, .88, .18], [.9, .68, .24]
+    ];
     const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -148,7 +145,6 @@ function initializeHeroCanvas(root, cleanups) {
 
     let width = 0;
     let height = 0;
-    let scanExtension = 0;
     let dpr = 1;
     let cell = SETTINGS.cellSize;
     let cols = 0;
@@ -178,8 +174,6 @@ function initializeHeroCanvas(root, cleanups) {
     let redFlowStartedAt = null;
     const MORPH_DURATION = .46;
     const MORPH_POINT_COUNT = 680;
-    const scatterDefaults = { position: 76, spread: 12, density: 30, contrast: 50 };
-    const scatterControls = { ...scatterDefaults };
 
     const hash = (x, y) => {
       const value = Math.sin(x * 127.1 + y * 311.7 + SETTINGS.seed * .13) * 43758.5453;
@@ -190,9 +184,6 @@ function initializeHeroCanvas(root, cleanups) {
       const rect = canvas.getBoundingClientRect();
       width = Math.max(1, Math.round(rect.width));
       height = Math.max(1, Math.round(rect.height));
-      const heroHeight = Math.max(1, Math.round(hero.getBoundingClientRect().height));
-      const gridTail = width < 768 ? 90 : Math.min(148, Math.max(128, width * .1));
-      scanExtension = Math.max(0, height - heroHeight - gridTail);
       dpr = Math.min(devicePixelRatio || 1, 2);
       cell = SETTINGS.cellSize;
       canvas.width = Math.round(width * dpr);
@@ -223,7 +214,18 @@ function initializeHeroCanvas(root, cleanups) {
         : visualTop + Math.max(18, visualRect.height * .018);
       const stageGap = stageSpan / (LAYERS.length + .25) * vortexControls.stageSpacing;
       const heroBottom = heroRect.bottom - canvasRect.top;
-      return { centerX, maxWidth, topY, stageGap, heroBottom, visualLeft, visualWidth: visualRect.width, isDesktopLayout };
+      return {
+        centerX,
+        maxWidth,
+        topY,
+        stageGap,
+        heroBottom,
+        visualLeft,
+        visualTop,
+        visualWidth: visualRect.width,
+        visualHeight: visualRect.height,
+        isDesktopLayout
+      };
     }
 
     function pointAtStage(layout, trackId, stagePosition) {
@@ -443,7 +445,7 @@ function initializeHeroCanvas(root, cleanups) {
     function modeMorphPoints(layout, layerIndex) {
       if (layerIndex === null) return funnelMorphPoints(layout);
       const shape = PIXEL_SHAPES[layerIndex];
-      const centerY = layout.topY + layout.stageGap * 2.02;
+      const centerY = layout.visualTop + layout.visualHeight / 2;
       const shapeScale = width < 768 ? 1.48 : 1.68;
       const shapeCenterX = 17;
       const shapeCenterY = 18;
@@ -600,7 +602,7 @@ function initializeHeroCanvas(root, cleanups) {
       const cardWidth = Math.min(273, width - rightInset * 2);
       const cardHeight = 95;
       const rightLimit = width - cardWidth - rightInset;
-      const targetX = Math.min(bounds.maxX + cell * 4.4, rightLimit);
+      const targetX = rightLimit;
       const targetY = Math.max(layout.topY + cell, shapeCenterY - cardHeight / 2);
       const cardX = targetX + (1 - visibility) * cell * 3.2;
       const cardY = targetY + (1 - visibility) * cell * .8;
@@ -751,6 +753,17 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.stroke();
     }
 
+    function drawHeroCopyAccents(layout) {
+      ctx.fillStyle = primary500;
+      HERO_COPY_ACCENTS.forEach(([xRatio, yRatio, alpha]) => {
+        const x = Math.round(layout.visualLeft * xRatio / cell) * cell;
+        const y = Math.round((layout.visualTop + layout.visualHeight * yRatio) / cell) * cell;
+        ctx.globalAlpha = alpha;
+        ctx.fillRect(x + 1, y + 1, cell - 3, cell - 3);
+      });
+      ctx.globalAlpha = 1;
+    }
+
     const SCAN_TRAIL_ROWS = 8;
     const SCAN_TRANSIT = 0;
     const SCAN_HEAD_ALPHA = .72;
@@ -848,57 +861,6 @@ function initializeHeroCanvas(root, cleanups) {
             ctx.stroke();
           }
         }
-      }
-      ctx.globalAlpha = 1;
-    }
-
-    function drawConvergingDivider() {
-      const heroRect = hero.getBoundingClientRect();
-      const heroProgress = -heroRect.top / Math.max(1, heroRect.height);
-      const rawProgress = Math.max(0, Math.min(1, (heroProgress - .06) / .62));
-      const scrollProgress = reducedMotion
-        ? (rawProgress > 0 ? 1 : 0)
-        : rawProgress * rawProgress * (3 - 2 * rawProgress);
-      const dataHeight = height - scanExtension;
-      const dividerY = Math.floor((dataHeight - cell) / cell) * cell;
-      const squareCount = Math.ceil(width / cell) + 1;
-      const requestedScatterTop = Math.floor((dataHeight - 32) * scatterControls.position / 100 / cell) * cell + cell * 10 + 32 + 72;
-      const scatterTop = Math.min(dividerY - cell * 9, requestedScatterTop);
-      const scatterHeight = Math.max(cell * 2, Math.min(
-        cell * 8,
-        dividerY - scatterTop - cell,
-        Math.floor(dataHeight * scatterControls.spread / 100 / cell) * cell
-      ));
-      const scatterDensity = scatterControls.density / 100;
-      const scatterContrast = scatterControls.contrast / 100;
-      const lineY = Math.round((scatterTop + scatterHeight * .5) / cell) * cell;
-      const lineColumnCount = cols;
-      const lineStartX = 0;
-      const mergeProgress = easeOutCubic((scrollProgress - .58) / .34);
-
-      ctx.fillStyle = heroInkColor;
-      for (let index = 0; index < squareCount; index += 1) {
-        const prominence = hash(index + 61, 601);
-        if (prominence >= scatterDensity) continue;
-        const delay = hash(index + 17, 541) * .16;
-        const localProgress = easeOutCubic(Math.max(0, Math.min(1, (scrollProgress - delay) / (1 - delay))));
-        const startX = Math.floor(hash(index + 31, 563) * cols) * cell;
-        const startY = scatterTop + Math.floor(hash(index + 47, 587) * scatterHeight / cell) * cell;
-        const targetColumn = Math.round(index / Math.max(1, squareCount - 1) * (lineColumnCount - 1));
-        const targetX = lineStartX + targetColumn * cell;
-        const arc = Math.sin(localProgress * Math.PI)
-          * Math.sin(index * 1.17)
-          * cell * 1.4;
-        const x = Math.round((startX + (targetX - startX) * localProgress) / cell) * cell;
-        const y = Math.round((startY + (lineY - startY) * localProgress + arc) / cell) * cell;
-        const restingAlpha = scatterContrast * (.4 + hash(index + 79, 619) * .6);
-        ctx.globalAlpha = (restingAlpha * (1 - localProgress) + localProgress * .24) * (1 - mergeProgress);
-        ctx.fillRect(x, y, cell - 1, cell - 1);
-      }
-      for (let column = 0; column < lineColumnCount; column += 1) {
-        const tone = .16 + hash(column + 193, 641) * .04;
-        ctx.globalAlpha = mergeProgress * tone;
-        ctx.fillRect(lineStartX + column * cell + 1, lineY + 1, cell - 3, cell - 3);
       }
       ctx.globalAlpha = 1;
     }
@@ -1094,6 +1056,19 @@ function initializeHeroCanvas(root, cleanups) {
         const markerSize = 8;
 
         const markerX = labelX + labelOffsetX;
+        const stagePosition = (y - layout.topY) / layout.stageGap;
+        const vortexRightEdge = stageTracks[layerIndex + 1].reduce((edge, trackId) => (
+          Math.max(edge, pointAtStage(layout, trackId, stagePosition).x)
+        ), layout.centerX);
+        const connectorStartX = Math.min(markerX, vortexRightEdge + cell * 1.5);
+        ctx.fillStyle = LAYER_COLORS[layerIndex];
+        for (let lineX = connectorStartX; lineX < markerX; lineX += cell) {
+          const column = Math.round(lineX / cell);
+          ctx.globalAlpha = (.3 + hash(column, layerIndex + 1709) * .18)
+            * labelReveal * cardVisibility * layerFade;
+          ctx.fillRect(column * cell + 1, Math.round(y / cell) * cell + 1, cell - 3, cell - 3);
+        }
+
         ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility * layerFade;
         ctx.fillStyle = LAYER_COLORS[layerIndex];
         ctx.fillRect(markerX, y - markerSize / 2, markerSize, markerSize);
@@ -1205,10 +1180,10 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.fillRect(0, 0, width, height);
       ctx.save();
       drawGrid();
+      drawHeroCopyAccents(layout);
       drawSelectedPointerField(time, delta);
       drawScanTrail();
       drawHoverGridFlow(layout, milliseconds / 1000);
-      if (lowerTextureVisible) drawConvergingDivider();
       const funnelOpacity = funnelOpacityAt(animationTime);
       drawModeMorph(layout, animationTime);
       drawDataStream(layout, time, funnelOpacity);

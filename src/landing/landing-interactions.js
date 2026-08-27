@@ -881,6 +881,7 @@ if (!(root instanceof Element)) return () => {};
 const pricingPages = $('#pricing-pages');
 const pricingRangeHandle = $('[data-pricing-range-handle]');
 const pricingRangeBudget = $('[data-pricing-range-budget]');
+const pricingRangeControl = pricingRangeHandle.parentElement;
 function syncPricingCalculator() {
   const pages = Number(pricingPages.value);
   const amount = (pages / 100) * 1.5;
@@ -897,6 +898,7 @@ function syncPricingCalculator() {
   $('[data-pricing-pdf]').textContent = documentLabel(pdfCount);
   $('[data-pricing-large]').textContent = documentLabel(largeDocumentCount);
   const progress = `${((pages - rangeMin) / (rangeMax - rangeMin)) * 100}%`;
+  pricingRangeControl.style.setProperty('--pricing-progress', progress);
   pricingRangeHandle.style.setProperty('--pricing-progress', progress);
   pricingRangeBudget.style.setProperty('--pricing-progress', progress);
   pricingPages.setAttribute('aria-label', localizeText('Pages to process'));

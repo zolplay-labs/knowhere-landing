@@ -104,19 +104,19 @@ export function LandingPage() {
             <div className="story-card-stack">
               <div className="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest documents</h3></div><p data-story-summary>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Converging document streams"><canvas data-capability-wireframe="ingest" aria-hidden="true" /></div>
+                <div className="capability-media" role="img" aria-label="Converging document streams" />
               </div>
               <div className="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture every page</h3></div><p data-story-summary>Extract text and visual regions while preserving the original page layout.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Projected page capture field"><canvas data-capability-wireframe="capture" aria-hidden="true" /></div>
+                <div className="capability-media" role="img" aria-label="Projected page capture field" />
               </div>
               <div className="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Map document structure</h3></div><p data-story-summary>Identify headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Layered document structure grid"><canvas data-capability-wireframe="structure" aria-hidden="true" /></div>
+                <div className="capability-media" role="img" aria-label="Layered document structure grid" />
               </div>
               <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Traceable source relationship field"><canvas data-capability-wireframe="trace" aria-hidden="true" /></div>
+                <div className="capability-media" role="img" aria-label="Traceable source relationship field" />
               </div>
             </div>
           </div>
@@ -135,7 +135,6 @@ export function LandingPage() {
                 <p>Works with common file formats, including</p>
                 <p>DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.</p>
               </div>
-              <span className="format-orbit-decoration format-orbit-decoration--supported" aria-hidden="true" />
               <div className="format-orbit-stage format-orbit-stage--thread-globe" aria-label="Illustrative formats">
                 <canvas className="format-globe-canvas" data-format-globe aria-hidden="true" />
                 <span className="format-orbit-ring format-orbit-ring--inner" aria-hidden="true" />
@@ -163,7 +162,6 @@ export function LandingPage() {
                   </div>
                 </div>
               </div>
-              <span className="format-orbit-decoration format-orbit-decoration--coming" aria-hidden="true" />
               <div className="format-orbit-copy format-orbit-copy--coming">
                 <p>Support for</p>
                 <p>EPUB, HTML, XML, MP4, MP3, and skills.md is <span>coming soon.</span></p>
@@ -240,7 +238,7 @@ export function LandingPage() {
           <CatenoidFieldTuner />
         </div>
         <div className="code-card"><div className="code-head"><span>Illustrative flow · interface details unconfirmed</span><button type="button" className="copy-code">Copy</button></div><div className="tabs compact" role="tablist" aria-label="Code examples"><button role="tab" id="code-python" aria-selected="true" aria-controls="code-panel-python">Python</button><button role="tab" id="code-node" aria-selected="false" aria-controls="code-panel-node" tabIndex={-1}>Node.js</button><button role="tab" id="code-curl" aria-selected="false" aria-controls="code-panel-curl" tabIndex={-1}>cURL</button></div><div className="code-panels"><pre role="tabpanel" tabIndex={0} id="code-panel-python" aria-labelledby="code-python"><code># Illustrative only — no real endpoint{"\n"}result = knowhere.process("sample.pdf"){"\n"}print(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-node" aria-labelledby="code-node"><code>// Illustrative only — no real endpoint{"\n"}const result = await knowhere.process("sample.pdf"){"\n"}console.log(result.structure)</code></pre><pre role="tabpanel" tabIndex={0} id="code-panel-curl" aria-labelledby="code-curl"><code># Illustrative only — no real endpoint{"\n"}curl -X POST "[endpoint-to-be-confirmed]" \{"\n"}{"  "}-F "file=@sample.pdf"</code></pre></div><p className="sr-only" aria-live="polite" data-copy-live /></div>
-        <div className="mcp"><h3>Use Knowhere through MCP</h3><p>Bring structured document context into Cursor, VS Code, Claude, or Codex.</p><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
+        <div className="mcp"><div className="mcp-copy"><h3>Use Knowhere through MCP</h3><p>Bring structured document context into Cursor, VS Code, Claude, or Codex.</p></div><a href="https://docs.knowhereto.ai/mcp" className="text-link">Read the MCP docs <i className="ri-arrow-right-s-line" aria-hidden="true" /></a></div>
       </div>
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
@@ -249,7 +247,7 @@ export function LandingPage() {
         <div className="pricing-calculator">
           <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
-          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control"><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6 3 12 9 18V6ZM15 18 21 12 15 6V18Z" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
+          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control" style={{'--pricing-progress': '4.0404%'}}><span className="pricing-range-selection" aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6 3 12 9 18V6ZM15 18 21 12 15 6V18Z" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
         </div>
         <section className="pricing-file-limits" aria-labelledby="pricing-file-limits-title">
           <div className="pricing-file-limits-head"><h3 id="pricing-file-limits-title">File Size Limits</h3><p>Need higher limits? Contact <a href="mailto:team@knowhereto.ai">team@knowhereto.ai</a><br />for enterprise pricing with custom limits.</p></div>
