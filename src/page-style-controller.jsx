@@ -152,6 +152,18 @@ const CONTROLLER_LAYOUT_STYLES = `
     margin: 0;
     padding: 0;
     border-bottom-color: #c9c7c0;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .dialkit-panel[data-dragging="true"] .dialkit-panel-header {
+    cursor: grabbing;
+  }
+  .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header button,
+  .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header a,
+  .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header input,
+  .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header select {
+    cursor: pointer;
   }
   .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header .dialkit-folder-header-top {
     min-height: 54px;
@@ -321,6 +333,74 @@ export function PageStyleControls() {
       },
     },
   })
+  const vortexParams = useDialKit('Hero Vortex', {
+    motion: {
+      direction: {
+        type: 'select',
+        options: [
+          { value: 'clockwise', label: 'Clockwise' },
+          { value: 'counterclockwise', label: 'Counterclockwise' },
+        ],
+        default: 'clockwise',
+      },
+      flowSpeed: [0.018, 0, 0.12, 0.002],
+      rotationSpeed: [0.012, 0, 0.12, 0.002],
+      mouthSpeed: [0.018, 0, 0.2, 0.005],
+      twistPerStage: [1.25, 0.2, 2.4, 0.05],
+      middleTwist: [1.35, 0, 4, 0.05],
+      speedVariation: [0.015, 0, 0.2, 0.005],
+    },
+    shape: {
+      centerPosition: [0.4, 0.25, 0.55, 0.01],
+      fieldScale: [0.98, 0.7, 1.2, 0.01],
+      stageSpacing: [1, 0.8, 1.2, 0.01],
+      innerShell: [0.48, 0.1, 0.8, 0.01],
+      perspective: [0.28, 0, 0.6, 0.01],
+      orbitHeight: [0.2, 0.05, 0.4, 0.01],
+      cameraYaw: [0, -0.35, 0.35, 0.01],
+      cameraLift: [0, -400, 80, 5],
+      cameraRoll: [0, -12, 12, 1],
+      waistWidth: [0.055, 0.02, 0.15, 0.005],
+      firstExpansion: [0.28, 0.1, 0.5, 0.01],
+      finalExpansion: [0.68, 0.3, 1, 0.01],
+      fadeDistance: [120, 48, 240, 6],
+    },
+    particles: {
+      mouthEnabled: false,
+      mouthCount: [480, 120, 800, 20],
+      mouthDensity: [1, 0.2, 1.6, 0.05],
+      streamDensity: [1, 0.2, 1.8, 0.05],
+      ridgeFrequency: [3, 1, 6, 0.1],
+      ridgeStrength: [0.48, 0, 0.8, 0.02],
+      middleLayering: [0.52, 0, 1.2, 0.02],
+      depthDensity: [0.22, 0, 0.5, 0.01],
+      depthAlpha: [0.46, 0, 0.8, 0.01],
+      overallAlpha: [1, 0.2, 1.5, 0.05],
+    },
+    redParticleFlow: {
+      redFlowDuration: [7, 0.8, 20, 0.2],
+    },
+    outflow: {
+      enabled: true,
+      count: [44, 0, 120, 1],
+      speed: [0.03, 0, 0.2, 0.005],
+      baseSpread: [2.2, 0.5, 5, 0.1],
+      spreadGrowth: [5.2, 0, 10, 0.2],
+      turns: [1.2, 0.2, 3, 0.1],
+      alpha: [0.56, 0.1, 1.2, 0.02],
+    },
+    labels: {
+      allLabelsY: [0, -600, 600, 5],
+      hoverHeight: [150, 60, 300, 5],
+      originalDocumentY: [0, -120, 120, 2],
+      pageImagesY: [0, -120, 120, 2],
+      lightweightNotesY: [0, -120, 120, 2],
+      chapterMapY: [0, -120, 120, 2],
+    },
+  }, {
+    id: 'hero-vortex',
+    persist: true,
+  })
 
   const font = FONT_STACKS[params.appearance.fontFamily]
     ? params.appearance.fontFamily
@@ -336,6 +416,124 @@ export function PageStyleControls() {
     document.documentElement.toggleAttribute('data-layout-grid', params.layout.showGrid)
     return () => document.documentElement.removeAttribute('data-layout-grid')
   }, [params.layout.showGrid])
+
+  useEffect(() => {
+    const positionKey = 'knowhere-dialkit-panel-position'
+    let dragState = null
+
+    const panelInner = panel => panel?.querySelector('.dialkit-panel-inner')
+    const isExpanded = panel => panelInner(panel)?.dataset.collapsed !== 'true'
+    const readPosition = () => {
+      try {
+        const position = JSON.parse(localStorage.getItem(positionKey) || 'null')
+        return Number.isFinite(position?.x) && Number.isFinite(position?.y) ? position : null
+      } catch {
+        return null
+      }
+    }
+    const clampPosition = (panel, x, y) => {
+      const rect = panel.getBoundingClientRect()
+      return {
+        x: Math.max(8, Math.min(x, innerWidth - rect.width - 8)),
+        y: Math.max(8, Math.min(y, innerHeight - rect.height - 8)),
+      }
+    }
+    const applyPosition = (panel, position) => {
+      if (!panel || !position || !isExpanded(panel)) return
+      const clamped = clampPosition(panel, position.x, position.y)
+      panel.style.setProperty('inset', 'auto', 'important')
+      panel.style.setProperty('left', `${clamped.x}px`, 'important')
+      panel.style.setProperty('top', `${clamped.y}px`, 'important')
+      panel.style.setProperty('right', 'auto', 'important')
+      panel.style.setProperty('bottom', 'auto', 'important')
+      panel.style.setProperty('transform', 'none', 'important')
+    }
+    const clearPosition = panel => {
+      for (const property of ['inset', 'left', 'top', 'right', 'bottom', 'transform']) {
+        panel?.style.removeProperty(property)
+      }
+    }
+    const savePosition = panel => {
+      const rect = panel.getBoundingClientRect()
+      try {
+        localStorage.setItem(positionKey, JSON.stringify({ x: rect.left, y: rect.top }))
+      } catch {
+        // The panel remains draggable when browser storage is unavailable.
+      }
+    }
+    const onPointerDown = event => {
+      const header = event.target.closest?.('.dialkit-panel-header')
+      const panel = header?.closest('.dialkit-panel')
+      if (!panel || !isExpanded(panel)) return
+      if (event.target.closest('button, a, input, select, textarea, [role="button"]')) return
+
+      const rect = panel.getBoundingClientRect()
+      dragState = {
+        panel,
+        header,
+        pointerId: event.pointerId,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top,
+      }
+      header.setPointerCapture?.(event.pointerId)
+      panel.dataset.dragging = 'true'
+      event.preventDefault()
+    }
+    const onPointerMove = event => {
+      if (!dragState || event.pointerId !== dragState.pointerId) return
+      applyPosition(dragState.panel, {
+        x: event.clientX - dragState.offsetX,
+        y: event.clientY - dragState.offsetY,
+      })
+      savePosition(dragState.panel)
+    }
+    const finishDrag = event => {
+      if (!dragState) return
+      if (event.type.startsWith('pointer') && event.pointerId !== dragState.pointerId) return
+      const { panel, header, pointerId } = dragState
+      if (header.hasPointerCapture?.(pointerId)) header.releasePointerCapture(pointerId)
+      panel.removeAttribute('data-dragging')
+      dragState = null
+      savePosition(panel)
+    }
+    const syncPanelPosition = () => {
+      const panel = document.querySelector('.dialkit-panel')
+      if (!panel) return
+      if (isExpanded(panel)) applyPosition(panel, readPosition())
+      else clearPosition(panel)
+    }
+
+    document.addEventListener('pointerdown', onPointerDown)
+    window.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointerup', finishDrag)
+    window.addEventListener('pointercancel', finishDrag)
+    window.addEventListener('mouseup', finishDrag)
+    window.addEventListener('resize', syncPanelPosition)
+    const observer = new MutationObserver(syncPanelPosition)
+    observer.observe(document.body, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['data-collapsed'],
+    })
+    syncPanelPosition()
+
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown)
+      window.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointerup', finishDrag)
+      window.removeEventListener('pointercancel', finishDrag)
+      window.removeEventListener('mouseup', finishDrag)
+      window.removeEventListener('resize', syncPanelPosition)
+      observer.disconnect()
+    }
+  }, [])
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('hero-vortex-controls', {
+      detail: vortexParams,
+    }))
+  }, [vortexParams])
 
   useEffect(() => {
     const settings = {

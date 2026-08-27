@@ -31,49 +31,92 @@ function initializeHeroCanvas(root, cleanups) {
 
     const SETTINGS = Object.freeze({
       cellSize: 6,
-      fieldScale: 1,
-      densityThreshold: .14,
-      ambientStrength: 1.4,
-      randomness: .075,
-      motionSpeed: 1.22,
+      fieldScale: .98,
+      motionSpeed: 1.18,
       trailDecay: .925,
       brushRadius: 10,
       interactionStrength: .19,
-      fadeStart: .58,
-      fadeSoftness: .28,
       paperColor: '#fff',
       seed: 17
     });
-    const mainColor = stop => getComputedStyle(document.documentElement)
-      .getPropertyValue(`--main-${stop}`).trim();
-    const STAGE_COLORS = [
-      mainColor(800),
-      mainColor(700),
-      mainColor(600),
-      mainColor(500),
-      mainColor(400)
-    ];
+    const currentPrimary = () => getComputedStyle(document.documentElement)
+      .getPropertyValue('--page-primary').trim() || '#6D80B6';
+    const RED_FLOW_COLOR = '#FF634A';
+    let primary500 = currentPrimary();
+    const STAGE_COLORS = Array(5).fill(primary500);
     const LAYER_COLORS = STAGE_COLORS.slice(1);
-    let heroInkColor = mainColor(800);
-    let heroShadowColor = mainColor(900);
-    const syncMainPalette = () => {
-      [800, 700, 600, 500, 400].forEach((stop, index) => {
-        STAGE_COLORS[index] = mainColor(stop);
-        if (index > 0) LAYER_COLORS[index - 1] = STAGE_COLORS[index];
-      });
-      heroInkColor = mainColor(800);
-      heroShadowColor = mainColor(900);
+    let heroInkColor = primary500;
+    let heroShadowColor = primary500;
+    const syncPrimary = () => {
+      primary500 = currentPrimary();
+      STAGE_COLORS.fill(primary500);
+      LAYER_COLORS.fill(primary500);
+      heroInkColor = primary500;
+      heroShadowColor = primary500;
     };
-    window.addEventListener('main-palette-change', syncMainPalette, { signal });
+    window.addEventListener('main-palette-change', syncPrimary, { signal });
+    const vortexControls = {
+      direction: 'clockwise',
+      flowSpeed: .018,
+      rotationSpeed: .012,
+      mouthSpeed: .018,
+      twistPerStage: 1.25,
+      middleTwist: 1.35,
+      speedVariation: .015,
+      centerPosition: .4,
+      fieldScale: .98,
+      stageSpacing: 1,
+      innerShell: .48,
+      perspective: .28,
+      orbitHeight: .2,
+      cameraYaw: 0,
+      cameraLift: 0,
+      cameraRoll: 0,
+      waistWidth: .055,
+      firstExpansion: .28,
+      finalExpansion: .68,
+      fadeDistance: 120,
+      mouthEnabled: false,
+      mouthCount: 480,
+      mouthDensity: 1,
+      streamDensity: 1,
+      ridgeFrequency: 3,
+      ridgeStrength: .48,
+      middleLayering: .52,
+      depthDensity: .22,
+      depthAlpha: .46,
+      overallAlpha: 1,
+      redFlowDuration: 7,
+      enabled: true,
+      count: 44,
+      speed: .03,
+      baseSpread: 2.2,
+      spreadGrowth: 5.2,
+      turns: 1.2,
+      alpha: .56,
+      allLabelsY: 0,
+      hoverHeight: 150,
+      originalDocumentY: 0,
+      pageImagesY: 0,
+      lightweightNotesY: 0,
+      chapterMapY: 0
+    };
+    window.addEventListener('hero-vortex-controls', event => {
+      Object.values(event.detail || {}).forEach(group => {
+        if (group && typeof group === 'object') Object.assign(vortexControls, group);
+      });
+    }, { signal });
     window.addEventListener('hero-texture-change', event => {
       lowerTextureVisible = Boolean(event.detail?.visible);
     }, { signal });
     const DATA = [
-      { count: 168, width: 1 },
-      { count: 96, width: .322 },
-      { count: 64, width: .23 },
-      { count: 36, width: .1 },
-      { count: 14, width: .035 }
+      { count: 176, width: 1 },
+      { count: 112, width: .56 },
+      { count: 72, width: .34 },
+      { count: 40, width: .17 },
+      { count: 16, width: .055 },
+      { count: 48, width: .28 },
+      { count: 112, width: .68 }
     ];
     const LAYERS = [
       { label: 'ORIGINAL DOCUMENT', detail: 'The document stays intact.' },
@@ -81,6 +124,7 @@ function initializeHeroCanvas(root, cleanups) {
       { label: 'LIGHTWEIGHT NOTES', detail: 'Topics stay tied to their chapters.' },
       { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
     ];
+    const LABEL_Y_KEYS = ['originalDocumentY', 'pageImagesY', 'lightweightNotesY', 'chapterMapY'];
     const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -89,12 +133,15 @@ function initializeHeroCanvas(root, cleanups) {
       { length: Math.min(count, previous.length) },
       (_, index) => previous[Math.min(previous.length - 1, Math.floor((index + .5) * previous.length / count))]
     );
-    const stageTracks = [Array.from({ length: unitCounts[0] }, (_, index) => index)];
-    for (let stage = 1; stage < DATA.length; stage += 1) {
+    const allTracks = Array.from({ length: unitCounts[0] }, (_, index) => index);
+    const stageTracks = [allTracks];
+    for (let stage = 1; stage <= LAYERS.length; stage += 1) {
       stageTracks.push(selectEvenly(stageTracks[stage - 1], unitCounts[stage]));
     }
-    const lastStageByTrack = new Map(stageTracks[0].map(trackId => [trackId, 0]));
-    stageTracks.forEach((tracks, stage) => tracks.forEach(trackId => lastStageByTrack.set(trackId, stage)));
+    for (let stage = LAYERS.length + 1; stage < DATA.length; stage += 1) {
+      stageTracks.push(selectEvenly(allTracks, unitCounts[stage]));
+    }
+    const stageTrackSets = stageTracks.map(tracks => new Set(tracks));
 
     let width = 0;
     let height = 0;
@@ -104,7 +151,6 @@ function initializeHeroCanvas(root, cleanups) {
     let cols = 0;
     let rows = 0;
     let heat = new Float32Array(0);
-    let unitHitAreas = [];
     let hoveredTrack = null;
     let hoveredLayer = null;
     let hoverFlowLayer = null;
@@ -126,6 +172,7 @@ function initializeHeroCanvas(root, cleanups) {
     let lastFrame = 0;
     let frameId = 0;
     let animationTime = 0;
+    let redFlowStartedAt = null;
     const MORPH_DURATION = .46;
     const MORPH_POINT_COUNT = 680;
     const scatterDefaults = { position: 76, spread: 12, density: 30, contrast: 50 };
@@ -156,53 +203,110 @@ function initializeHeroCanvas(root, cleanups) {
     function buildLayout() {
       const canvasRect = canvas.getBoundingClientRect();
       const visualRect = visual.getBoundingClientRect();
+      const heroRect = hero.getBoundingClientRect();
       const visualLeft = visualRect.left - canvasRect.left;
       const visualTop = visualRect.top - canvasRect.top;
       const centerX = width < 1100
         ? visualLeft + visualRect.width * .5
-        : visualLeft + visualRect.width * .35;
+        : visualLeft + visualRect.width * vortexControls.centerPosition;
       const maxWidth = (width < 1100
         ? visualRect.width * .96
-        : Math.min(width * .92, 1080)) * SETTINGS.fieldScale;
+        : Math.min(width * .92, 1080)) * vortexControls.fieldScale;
       const stageSpan = Math.min(visualRect.height * .98, 580) * 1.2;
       const isDesktopLayout = width >= 768;
       const navHeight = header?.getBoundingClientRect().height || 68;
       const topY = isDesktopLayout
         ? navHeight + 2
         : visualTop + Math.max(18, visualRect.height * .018);
-      const stageGap = stageSpan / (DATA.length - 1);
-      const visualOrders = stageTracks.map(tracks => [...tracks]);
-      const positions = visualOrders.map((tracks, stage) => {
-        const isFullWidthStage = isDesktopLayout && stage === 0;
-        const stageWidth = isFullWidthStage ? width + cell * 2 : maxWidth * DATA[stage].width;
-        const stageCenter = isFullWidthStage ? width / 2 : centerX;
-        const jitter = SETTINGS.randomness * cell * 4;
-        const columns = Math.max(2, Math.min(tracks.length, Math.floor(stageWidth / cell)));
-        const layerRows = Math.max(1, Math.ceil(tracks.length / columns));
-        return new Map(tracks.map((trackId, rank) => [trackId, {
-          x: stageCenter - stageWidth / 2
-            + ((rank % columns) + .5) / columns * stageWidth
-            + Math.sin(trackId * .61 + stage * 1.73) * cell * .62
-            + (hash(trackId + 3, stage + 11) - .5) * jitter,
-          y: (Math.floor(rank / columns) - (layerRows - 1) / 2) * cell
-        }]));
-      });
-      return { centerX, maxWidth, topY, stageGap, positions, visualLeft, visualWidth: visualRect.width, isDesktopLayout };
+      const stageGap = stageSpan / (LAYERS.length + .25) * vortexControls.stageSpacing;
+      const heroBottom = heroRect.bottom - canvasRect.top;
+      return { centerX, maxWidth, topY, stageGap, heroBottom, visualLeft, visualWidth: visualRect.width, isDesktopLayout };
+    }
+
+    function pointAtStage(layout, trackId, stagePosition) {
+      const clampedStage = Math.max(0, Math.min(DATA.length - 1, stagePosition));
+      const lowerStage = Math.min(DATA.length - 2, Math.floor(clampedStage));
+      const stageMix = clampedStage - lowerStage;
+      const eased = stageMix * stageMix * (3 - 2 * stageMix);
+      const widthRatioAt = stageIndex => {
+        if (stageIndex === LAYERS.length) return vortexControls.waistWidth;
+        if (stageIndex === LAYERS.length + 1) return vortexControls.firstExpansion;
+        if (stageIndex === LAYERS.length + 2) return vortexControls.finalExpansion;
+        return DATA[stageIndex].width;
+      };
+      const widthRatioAtPosition = position => {
+        const waistStage = LAYERS.length;
+        if (position >= 2 && position <= waistStage) {
+          const startWidth = widthRatioAt(2);
+          const middleWidth = widthRatioAt(3);
+          const waistWidth = vortexControls.waistWidth;
+          const middleRatio = Math.max(.001, Math.min(.999,
+            (middleWidth - waistWidth) / Math.max(.001, startWidth - waistWidth)
+          ));
+          const exponent = Math.log(middleRatio) / Math.log(.5);
+          const remaining = (waistStage - position) / (waistStage - 2);
+          return waistWidth + (startWidth - waistWidth) * remaining ** exponent;
+        }
+        if (position > waistStage) {
+          const waistWidth = vortexControls.waistWidth;
+          const firstExpansion = vortexControls.firstExpansion;
+          const finalExpansion = vortexControls.finalExpansion;
+          const middleRatio = Math.max(.001, Math.min(.999,
+            (firstExpansion - waistWidth) / Math.max(.001, finalExpansion - waistWidth)
+          ));
+          const exponent = Math.log(middleRatio) / Math.log(.5);
+          const progress = (position - waistStage) / 2;
+          return waistWidth + (finalExpansion - waistWidth) * progress ** exponent;
+        }
+        return widthRatioAt(lowerStage)
+          + (widthRatioAt(lowerStage + 1) - widthRatioAt(lowerStage)) * eased;
+      };
+      const widthAtPosition = clampedStage < 1 && layout.isDesktopLayout
+        ? width + cell * 2 + (
+          layout.maxWidth * widthRatioAt(1) - width - cell * 2
+        ) * eased
+        : layout.maxWidth * widthRatioAtPosition(clampedStage);
+      const centerAt = stageIndex => stageIndex === 0 && layout.isDesktopLayout ? width / 2 : layout.centerX;
+      const radius = widthAtPosition * .5;
+      const localCenter = centerAt(lowerStage) + (centerAt(lowerStage + 1) - centerAt(lowerStage)) * eased;
+      const shell = vortexControls.innerShell
+        + hash(trackId + 17, 73) * (1 - vortexControls.innerShell);
+      const trackPhase = trackId / Math.max(1, unitCounts[0]) * Math.PI * 2;
+      const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
+      const rotation = reducedMotion ? 0 : animationTime * vortexControls.rotationSpeed;
+      const middleStart = 1.15;
+      const middleEnd = LAYERS.length + .15;
+      const middleLinear = Math.max(0, Math.min(1,
+        (clampedStage - middleStart) / (middleEnd - middleStart)
+      ));
+      const middleProgress = middleLinear * middleLinear * (3 - 2 * middleLinear);
+      const angle = trackPhase + direction * (
+        clampedStage * vortexControls.twistPerStage
+          + middleProgress * vortexControls.middleTwist
+          + rotation
+      );
+      const depth = (Math.sin(angle) + 1) * .5;
+      const perspective = 1 - vortexControls.perspective + depth * vortexControls.perspective;
+      const orbitHeight = Math.min(radius * vortexControls.orbitHeight, layout.stageGap * .3);
+      const radialX = Math.cos(angle) * radius * shell * perspective
+        + Math.sin(angle) * radius * shell * vortexControls.cameraYaw;
+      const depthY = Math.sin(angle) * orbitHeight * shell
+        + (depth - .5) * vortexControls.cameraLift;
+      const roll = vortexControls.cameraRoll * Math.PI / 180;
+      const rollCosine = Math.cos(roll);
+      const rollSine = Math.sin(roll);
+      return {
+        x: localCenter + radialX * rollCosine - depthY * rollSine,
+        y: layout.topY + layout.stageGap * clampedStage + radialX * rollSine + depthY * rollCosine,
+        depth,
+        shell,
+        angle,
+        stagePosition: clampedStage
+      };
     }
 
     function pointOnSegment(layout, trackId, stage, progress) {
-      const origin = layout.positions[stage].get(trackId);
-      const destination = layout.positions[stage + 1].get(trackId);
-      const eased = progress * progress * (3 - 2 * progress);
-      const bend = (hash(trackId + 37, stage + 211) - .5) * cell * 4.2;
-      const flutter = Math.sin(progress * Math.PI * 2 + hash(trackId + 61, stage + 229) * Math.PI * 2)
-        * cell * .45 * Math.sin(progress * Math.PI);
-      return {
-        x: origin.x + (destination.x - origin.x) * eased
-          + Math.sin(progress * Math.PI) * bend + flutter,
-        y: layout.topY + layout.stageGap * stage + origin.y
-          + (layout.stageGap + destination.y - origin.y) * progress
-      };
+      return pointAtStage(layout, trackId, stage + progress);
     }
 
     function createPixelShape(layerIndex) {
@@ -322,15 +426,14 @@ function initializeHeroCanvas(root, cleanups) {
 
     function funnelMorphPoints(layout) {
       const points = [];
-      stageTracks[0].forEach(trackId => {
-        const lastStage = lastStageByTrack.get(trackId);
-        for (let stage = 0; stage < lastStage; stage += 1) {
+      for (let stage = 0; stage < DATA.length - 1; stage += 1) {
+        stageTracks[stage + 1].forEach(trackId => {
           for (let sample = 0; sample < 4; sample += 1) {
             const point = pointOnSegment(layout, trackId, stage, sample / 4);
             points.push({ ...point, alpha: .56 + hash(trackId + 1409, stage * 7 + sample) * .38 });
           }
-        }
-      });
+        });
+      }
       return normalizeMorphPoints(points);
     }
 
@@ -600,8 +703,8 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.fillRect(
         Math.round(x / cell) * cell + 1,
         Math.round(y / cell) * cell + 1,
-        cell - 3,
-        cell - 3
+        cell - 2,
+        cell - 2
       );
     }
 
@@ -619,8 +722,8 @@ function initializeHeroCanvas(root, cleanups) {
     }
 
     function funnelFadeAt(layout, y) {
-      const start = layout.topY + layout.stageGap * 2.8;
-      const end = layout.topY + layout.stageGap * 4.5;
+      const start = layout.heroBottom - vortexControls.fadeDistance;
+      const end = layout.heroBottom - cell * 2;
       const progress = Math.max(0, Math.min(1, (y - start) / (end - start)));
       const eased = progress * progress * (3 - 2 * progress);
       return 1 - eased;
@@ -797,216 +900,195 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.globalAlpha = 1;
     }
 
-    function rotationalTone(layout, x, stagePosition, time, baseColor) {
-      const clampedStage = Math.max(0, Math.min(DATA.length - 1, stagePosition));
-      const lowerStage = Math.min(DATA.length - 2, Math.floor(clampedStage));
-      const stageMix = clampedStage - lowerStage;
-      const firstWidth = layout.isDesktopLayout ? width : layout.maxWidth;
-      const widthAt = stageIndex => stageIndex === 0
-        ? firstWidth
-        : layout.maxWidth * DATA[stageIndex].width;
-      const localWidth = widthAt(lowerStage) + (widthAt(lowerStage + 1) - widthAt(lowerStage)) * stageMix;
-      const firstCenter = layout.isDesktopLayout ? width / 2 : layout.centerX;
-      const localCenter = clampedStage < 1
-        ? firstCenter + (layout.centerX - firstCenter) * clampedStage
-        : layout.centerX;
-      const horizontal = Math.max(-1.25, Math.min(1.25, (x - localCenter) / Math.max(cell * 3, localWidth * .5)));
-      const rotation = time * .78 + clampedStage * 1.08;
-      const lightCenter = Math.sin(rotation) * .58;
-      const shadowCenter = -lightCenter * .88;
-      const highlight = Math.exp(-(((horizontal - lightCenter) / .34) ** 2));
-      const shadow = Math.exp(-(((horizontal - shadowCenter) / .48) ** 2));
-      const rim = Math.max(0, Math.abs(horizontal) - .7) / .55;
-      return {
-        alpha: Math.max(.56, Math.min(1.24, .68 + highlight * .54 - shadow * .08 - rim * .06)),
-        color: mixHexColor(baseColor, STAGE_COLORS[0], shadow * .045 + rim * .025)
-      };
+    function drawVortexMouth(layout, funnelOpacity) {
+      if (!vortexControls.mouthEnabled) return;
+      const particleCount = width < 768
+        ? Math.round(vortexControls.mouthCount * .46)
+        : Math.round(vortexControls.mouthCount);
+      const outerRadius = layout.isDesktopLayout ? width * .51 : layout.maxWidth * .47;
+      const innerRadius = outerRadius * .16;
+      const mouthY = layout.topY + cell * 4;
+      const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
+      const rotation = reducedMotion ? 0 : animationTime * vortexControls.mouthSpeed * direction;
+      const centerX = layout.isDesktopLayout ? width / 2 : layout.centerX;
+      const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+
+      for (let index = 0; index < particleCount; index += 1) {
+        const progress = (index + .5) / particleCount;
+        const radius = innerRadius + (outerRadius - innerRadius) * Math.sqrt(progress);
+        const angle = index * goldenAngle + direction * radius / outerRadius * 2.3 + rotation;
+        const depth = (Math.sin(angle) + 1) * .5;
+        const density = (.26 + depth * .62) * vortexControls.mouthDensity;
+        if (hash(index + 607, 977) > density) continue;
+        const x = centerX + Math.cos(angle) * radius * (.76 + depth * .24);
+        const y = mouthY + Math.sin(angle) * radius * .18;
+        const reveal = entranceAt(layout, y, index + 1049);
+        drawPixel(
+          x,
+          y,
+          (.16 + depth * .52) * reveal * funnelOpacity * vortexControls.overallAlpha,
+          primary500
+        );
+      }
     }
 
-    function drawStreamLineFormations(layout, time, funnelOpacity) {
-      if (reducedMotion || funnelOpacity <= .001) return;
+    function layerLabelY(layout, layerIndex) {
+      const layerProgress = layerIndex === 0 && layout.isDesktopLayout ? .72 : .5;
+      return layout.topY + layout.stageGap * (layerIndex + layerProgress)
+        + vortexControls.allLabelsY + vortexControls[LABEL_Y_KEYS[layerIndex]];
+    }
 
-      const cycleTime = (time + .5) % 8.4;
-      ctx.save();
-      ctx.lineWidth = 1;
-      ctx.lineCap = 'square';
+    function layerAtPoint(layout, x, y) {
+      const isInsidePipeline = x >= layout.visualLeft - cell * 2
+        && x <= width - 8;
+      if (!isInsidePipeline) return null;
 
-      for (let stage = 0; stage < DATA.length - 1; stage += 1) {
-        const localProgress = (cycleTime - (.7 + stage * .52)) / 1.4;
-        if (localProgress <= 0 || localProgress >= 1) continue;
+      let nearestLayer = null;
+      let nearestDistance = Infinity;
+      LAYERS.forEach((_, layerIndex) => {
+        const distance = Math.abs(y - layerLabelY(layout, layerIndex));
+        if (distance < nearestDistance) {
+          nearestLayer = layerIndex;
+          nearestDistance = distance;
+        }
+      });
+      return nearestDistance <= vortexControls.hoverHeight * .5 ? nearestLayer : null;
+    }
 
-        const formationAlpha = Math.sin(localProgress * Math.PI) ** 2;
-        const head = .1 + localProgress * .8;
-        const start = Math.max(.02, head - .19);
-        const end = Math.min(.98, head + .05);
-        const tracks = selectEvenly(stageTracks[stage + 1], Math.max(4, 10 - stage * 2));
+    function drawLayerOutflows(layout, time, funnelOpacity) {
+      if (width < 768 || !vortexControls.enabled || vortexControls.count < 1) return;
+      const labelWidth = Math.min(230, width - 24);
+      const labelX = width - labelWidth - Math.max(20, width * .018);
 
-        tracks.forEach((trackId, trackIndex) => {
-          const firstPoint = pointOnSegment(layout, trackId, stage, start);
-          const reveal = entranceAt(layout, firstPoint.y, trackId + stage * 181);
-          ctx.globalAlpha = formationAlpha
-            * (.2 + hash(trackId + 1901, trackIndex + stage * 17) * .16)
-            * reveal
-            * funnelOpacity
-            * funnelFadeAt(layout, firstPoint.y);
-          ctx.strokeStyle = LAYER_COLORS[stage];
-          ctx.beginPath();
-          for (let sample = 0; sample <= 8; sample += 1) {
-            const progress = start + (end - start) * sample / 8;
-            const point = pointOnSegment(layout, trackId, stage, progress);
-            if (sample === 0) ctx.moveTo(point.x, point.y);
-            else ctx.lineTo(point.x, point.y);
-          }
-          ctx.stroke();
-        });
-      }
+      LAYERS.forEach((_, layerIndex) => {
+        const y = layerLabelY(layout, layerIndex);
+        const stagePosition = (y - layout.topY) / layout.stageGap;
+        const rightEdge = stageTracks[layerIndex + 1].reduce((edge, trackId) => (
+          Math.max(edge, pointAtStage(layout, trackId, stagePosition).x)
+        ), layout.centerX);
+        const sourceX = Math.min(labelX - cell * 12, rightEdge + cell);
+        const endX = labelX - cell * 2.5;
+        const visibility = layerCardVisibility(layerIndex, time) * funnelFadeAt(layout, y) * funnelOpacity;
 
-      ctx.restore();
+        const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
+        for (let index = 0; index < Math.round(vortexControls.count); index += 1) {
+          const offset = hash(index + layerIndex * 37, 1087);
+          const progress = reducedMotion
+            ? offset
+            : (time * vortexControls.speed * (1 + layerIndex * .04) + offset) % 1;
+          const phase = index * 1.73
+            + direction * (progress * Math.PI * 2 * vortexControls.turns + layerIndex * .9);
+          const spread = cell * (vortexControls.baseSpread + progress * vortexControls.spreadGrowth);
+          const x = sourceX + (endX - sourceX) * progress + Math.cos(phase) * spread;
+          const particleY = y + Math.sin(phase) * spread * .72;
+          const envelope = Math.sin(progress * Math.PI);
+          drawPixel(
+            x,
+            particleY,
+            envelope * (.5 + hash(index + 733, layerIndex + 1103) * .5)
+              * vortexControls.alpha * visibility,
+            primary500
+          );
+        }
+      });
     }
 
     function drawDataStream(layout, time, funnelOpacity = 1) {
-      const dataAlpha = Math.max(.32, Math.min(1, SETTINGS.ambientStrength * .76));
-      const unitAlpha = Math.max(.46, Math.min(.96, 1.12 - SETTINGS.densityThreshold));
-      const trailAlpha = .05 + (SETTINGS.trailDecay - .75) / .22 * .08;
-      unitHitAreas = [];
+      const trailAlpha = .48 + (SETTINGS.trailDecay - .75) / .22 * .08;
+      const redFlowLength = .24;
+      const redFlowPause = .22;
+      if (redFlowStartedAt === null) redFlowStartedAt = time;
+      const activeDuration = Math.max(.2, vortexControls.redFlowDuration);
+      const cycleDuration = activeDuration * (1 + redFlowPause);
+      const cycleTime = (time - redFlowStartedAt) % cycleDuration;
+      const redFlowHead = reducedMotion
+        ? .62
+        : cycleTime >= activeDuration
+          ? 1 + redFlowLength
+          : cycleTime / activeDuration * (1 + redFlowLength);
 
       ctx.save();
       ctx.font = '600 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.textBaseline = 'bottom';
-
-      DATA.forEach((stage, stageIndex) => {
-        const y = layout.topY + layout.stageGap * stageIndex;
-        const isFullWidthStage = layout.isDesktopLayout && stageIndex === 0;
-        const stageWidth = isFullWidthStage ? width : layout.maxWidth * stage.width;
-        const stageCenter = isFullWidthStage ? width / 2 : layout.centerX;
-        const boundaryActive = hoveredLayer === stageIndex || hoveredLayer === stageIndex - 1;
-        const railX = stageCenter - stageWidth / 2 - cell;
-        const stageFade = funnelFadeAt(layout, y);
-        if (!isFullWidthStage) {
-          if (!boundaryActive) {
-            ctx.globalAlpha = .16 * funnelOpacity * stageFade;
-            ctx.fillStyle = STAGE_COLORS[stageIndex];
-            ctx.fillRect(railX, y + cell * .72, stageWidth + cell * 2, 1);
-          }
-          ctx.globalAlpha = (boundaryActive ? .68 : .38) * funnelOpacity * stageFade;
-          ctx.fillStyle = STAGE_COLORS[stageIndex];
-          ctx.fillRect(railX, y + cell * .48, cell * .45, cell * .45);
-          ctx.fillRect(railX + stageWidth + cell * 1.55, y + cell * .48, cell * .45, cell * .45);
-        }
-      });
-
-      drawStreamLineFormations(layout, time, funnelOpacity);
+      drawVortexMouth(layout, funnelOpacity);
 
       stageTracks[0].forEach(trackId => {
-        const lastStage = lastStageByTrack.get(trackId);
-        if (lastStage < 1) return;
-        for (let stage = 0; stage < lastStage; stage += 1) {
-          const layerColor = LAYER_COLORS[stage];
-          const sampleCount = Math.max(6, Math.round(layout.stageGap / cell));
-          for (let sample = 0; sample < sampleCount; sample += 1) {
-            const gapChance = stage === 0
-              ? .01 + hash(trackId + 83, stage + 271) * .03
-              : stage <= 2
-                ? .015 + hash(trackId + 83, stage + 271) * .035
-                : .02 + hash(trackId + 83, stage + 271) * .06;
-            if (hash(trackId * 97 + sample, stage + 293) < gapChance) continue;
-            const segmentProgress = sample / sampleCount;
-            const point = pointOnSegment(layout, trackId, stage, segmentProgress);
-            const streamProgress = (stage + segmentProgress) / lastStage;
-            const channelOffset = hash(trackId + 101, stage + 307);
-            const channelSpeed = .11 + hash(trackId + 127, stage + 331) * .24;
-            const pulseWindow = .1 + hash(trackId + 149, stage + 353) * .23;
-            const travelScale = .72 + hash(trackId + 173, stage + 379) * .55;
-            const phase = ((time * SETTINGS.motionSpeed * channelSpeed
-              - streamProgress * travelScale + channelOffset) % 1 + 1) % 1;
-            const pulse = !reducedMotion && phase < pulseWindow
-              ? Math.sin(phase / pulseWindow * Math.PI) * (.55 + hash(trackId + 197, sample + 397) * .45)
-              : 0;
-            const reveal = entranceAt(layout, point.y, trackId + stage * 109 + sample);
-            const tone = rotationalTone(layout, point.x, stage + segmentProgress, time, layerColor);
-            drawPixel(
-              point.x,
-              point.y,
-              (trailAlpha * (.6 + hash(trackId + 211, sample + 419) * .8) + pulse * .84)
-                * tone.alpha * reveal * funnelOpacity * funnelFadeAt(layout, point.y),
-              tone.color
-            );
-          }
-        }
-      });
-
-      DATA.forEach((stage, stageIndex) => {
-        if (stageIndex === 0) return;
-        stageTracks[stageIndex].forEach(trackId => {
-          const position = layout.positions[stageIndex].get(trackId);
-          const x = position.x;
-          const boundaryActive = hoveredLayer === stageIndex || hoveredLayer === stageIndex - 1;
-          const boundaryOffset = boundaryActive ? (trackId % 2 ? -cell : cell) : 0;
-          const y = layout.topY + layout.stageGap * stageIndex + position.y + boundaryOffset;
-          const nodeSpeed = .09 + hash(trackId + 227, stageIndex + 431) * .13;
-          const stagePhase = ((time * nodeSpeed + hash(trackId + 251, stageIndex + 457)) % 1 + 1) % 1;
-          const stageGlow = !reducedMotion && stagePhase < .22
-            ? Math.sin(stagePhase / .22 * Math.PI) * .16
-            : 0;
-          const reveal = entranceAt(layout, y, trackId + stageIndex * 137);
-          const tone = rotationalTone(layout, x, stageIndex, time, STAGE_COLORS[stageIndex]);
+        const totalStages = DATA.length - 1;
+        const trackPhase = trackId / Math.max(1, unitCounts[0]) * Math.PI * 2;
+        const redFlowPhaseDistance = Math.abs(Math.atan2(
+          Math.sin(trackPhase - Math.PI),
+          Math.cos(trackPhase - Math.PI)
+        ));
+        const sampleCount = Math.max(24, Math.round(layout.stageGap * totalStages / cell));
+        const flowOffset = reducedMotion
+          ? 0
+          : (time * vortexControls.flowSpeed * (
+            1 + (hash(trackId + 811, 1129) - .5) * 2 * vortexControls.speedVariation
+          )) % 1;
+        for (let sample = 0; sample < sampleCount; sample += 1) {
+          const gapChance = .035 + hash(trackId + 83, 271) * .065;
+          if (hash(trackId * 97 + sample, 293) < gapChance) continue;
+          const streamProgress = (sample / sampleCount + flowOffset) % 1;
+          const point = pointAtStage(layout, trackId, streamProgress * totalStages);
+          const destinationStage = Math.min(DATA.length - 1, Math.floor(point.stagePosition) + 1);
+          if (!stageTrackSets[destinationStage].has(trackId)) continue;
+          const redFlowProgress = point.stagePosition / totalStages;
+          const redFlowSegmentProgress = (
+            redFlowProgress - (redFlowHead - redFlowLength)
+          ) / redFlowLength;
+          const isInsideRedFlow = redFlowSegmentProgress >= 0
+            && redFlowSegmentProgress <= 1
+            && redFlowPhaseDistance < .24;
+          const redFlowTail = easeOutCubic(redFlowSegmentProgress / .3);
+          const redFlowHeadFade = 1 - easeOutCubic((redFlowSegmentProgress - .94) / .06);
+          const redFlowEnvelope = isInsideRedFlow ? redFlowTail * redFlowHeadFade : 0;
+          const redFlowFrontVisibility = point.depth <= .52
+            ? 0
+            : easeOutCubic((point.depth - .52) / .16);
+          const isRedFlow = redFlowEnvelope > .001 && redFlowFrontVisibility > .001;
+          const spiralRidge = ((Math.sin(
+            point.angle * vortexControls.ridgeFrequency + point.stagePosition * .72
+          ) + 1) * .5) ** 2;
+          const middleDistance = (point.stagePosition - 2.75) / 1.45;
+          const middleEnvelope = Math.exp(-(middleDistance ** 2));
+          const middleRidge = spiralRidge ** 2 * middleEnvelope * vortexControls.middleLayering;
+          const surfaceDensity = (.08 + point.depth * vortexControls.depthDensity
+            + spiralRidge * vortexControls.ridgeStrength + middleRidge
+            + (1 - point.shell) * .04)
+            * vortexControls.streamDensity;
+          if (!isRedFlow && hash(trackId * 131 + sample, 337) > surfaceDensity) continue;
+          const reveal = entranceAt(layout, point.y, trackId + sample);
+          const surfaceAlpha = .48 + point.depth * vortexControls.depthAlpha
+            + spiralRidge * .34 + middleRidge * .5;
+          const particleAlpha = isRedFlow
+            ? Math.max(
+              trailAlpha,
+              redFlowEnvelope * redFlowFrontVisibility * .94
+            )
+            : trailAlpha * (.55 + hash(trackId + 211, sample + 419) * .72);
           drawPixel(
-            x,
-            y,
-            (Math.max(.9, unitAlpha * dataAlpha) + stageGlow + heatAt(x, y) * .3 + (boundaryActive ? .12 : 0))
-              * tone.alpha * reveal * funnelOpacity * funnelFadeAt(layout, y),
-            tone.color
+            point.x,
+            point.y,
+            particleAlpha * surfaceAlpha * reveal * funnelOpacity * funnelFadeAt(layout, point.y)
+              * vortexControls.overallAlpha,
+            isRedFlow ? RED_FLOW_COLOR : primary500
           );
-          unitHitAreas.push({ x, y, trackId, stageIndex });
-        });
+        }
       });
 
-      stageTracks[0].forEach(trackId => {
-        const lastStage = lastStageByTrack.get(trackId);
-        if (lastStage >= DATA.length - 1) return;
-        const origin = layout.positions[lastStage].get(trackId);
-        const originX = origin.x;
-        const originY = layout.topY + layout.stageGap * lastStage + origin.y;
-        const side = trackId % 2 ? 1 : -1;
-        const progress = reducedMotion ? .62 : (time * (.1 + SETTINGS.motionSpeed * .06) + (trackId % 8) / 8) % 1;
-        const distance = cell * (6 + trackId % 4);
-        const dropoutY = originY + layout.stageGap * .48 * progress;
-        drawPixel(
-          originX + side * distance * progress,
-          dropoutY,
-          (1 - progress) * .28 * entranceAt(layout, dropoutY, trackId + 401)
-            * funnelOpacity * funnelFadeAt(layout, dropoutY)
-        );
-      });
+      drawLayerOutflows(layout, time, funnelOpacity);
 
-      LAYERS.forEach((layer, layerIndex) => {
-        const layerProgress = layerIndex === 0 && layout.isDesktopLayout ? .72 : .5;
-        const y = layout.topY + layout.stageGap * (layerIndex + layerProgress);
+      if (width >= 768) LAYERS.forEach((layer, layerIndex) => {
+        const y = layerLabelY(layout, layerIndex);
         const isSelected = selectedLayer === layerIndex;
         const isActive = hoveredLayer === layerIndex || isSelected;
         const labelWidth = Math.min(230, width - 24);
-        const labelX = Math.min(width - labelWidth - 16, layout.visualLeft + layout.visualWidth - labelWidth - 12);
-        const funnelBoundaryX = stageTracks[layerIndex + 1].reduce((rightEdge, trackId) => {
-          const point = pointOnSegment(layout, trackId, layerIndex, layerProgress);
-          return Math.max(rightEdge, point.x);
-        }, layout.centerX);
-        const lineEnd = labelX - 26;
-        const lineStart = Math.min(funnelBoundaryX + cell * 1.25, lineEnd - 28);
+        const labelX = width - labelWidth - Math.max(20, width * .018);
         const labelReveal = entranceAt(layout, y, layerIndex + 701);
         const cardVisibility = layerCardVisibility(layerIndex, time);
         const layerFade = funnelFadeAt(layout, y);
         const labelOffsetX = (1 - cardVisibility) * cell * 1.8;
         const markerSize = 8;
-
-        const lineLength = Math.max(28, lineEnd - lineStart) * cardVisibility;
-        const lineAlpha = (isActive ? .56 : .18) * labelReveal * cardVisibility * layerFade;
-        const lineY = Math.round(y / cell) * cell + 1;
-        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
-        for (let lineX = lineStart; lineX < lineStart + lineLength; lineX += cell) {
-          const column = Math.round(lineX / cell);
-          ctx.globalAlpha = lineAlpha * (.74 + hash(column, layerIndex + 743) * .26);
-          ctx.fillRect(column * cell + 1, lineY, cell - 3, cell - 3);
-        }
 
         const markerX = labelX + labelOffsetX;
         ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility * layerFade;
@@ -1029,8 +1111,9 @@ function initializeHeroCanvas(root, cleanups) {
 
     function drawGridFlowPass(layout, time, layerIndex, started) {
       if (layerIndex === null) return false;
-      const top = layout.topY + layout.stageGap * layerIndex + cell * .5;
-      const bottom = top + layout.stageGap - cell;
+      const centerY = layerLabelY(layout, layerIndex);
+      const top = centerY - vortexControls.hoverHeight * .5;
+      const bottom = centerY + vortexControls.hoverHeight * .5;
       const firstRow = Math.ceil(top / cell);
       const lastRow = Math.floor(bottom / cell);
       const centerColumn = layout.centerX / cell;
@@ -1079,14 +1162,9 @@ function initializeHeroCanvas(root, cleanups) {
 
     function updateHoveredTrack(x, y, clientX, clientY) {
       const layout = buildLayout();
-      const stagePosition = (y - layout.topY) / layout.stageGap;
-      const layerIndex = Math.floor(stagePosition);
-      const isInsidePipeline = x >= layout.visualLeft - cell * 2
-        && x <= layout.visualLeft + layout.visualWidth
-        && layerIndex >= 0
-        && layerIndex < LAYERS.length;
+      const layerIndex = layerAtPoint(layout, x, y);
       const visibleLayer = selectedLayer === null || selectedLayer === layerIndex;
-      const nextHoveredLayer = isInsidePipeline && visibleLayer ? layerIndex : null;
+      const nextHoveredLayer = layerIndex !== null && visibleLayer ? layerIndex : null;
       if (nextHoveredLayer !== null && nextHoveredLayer !== hoveredLayer) {
         hoverFlowLayer = nextHoveredLayer;
         hoverFlowStarted = performance.now() / 1000;
@@ -1191,12 +1269,8 @@ function initializeHeroCanvas(root, cleanups) {
       const localX = event.clientX - rect.left;
       const localY = event.clientY - rect.top;
       const layout = buildLayout();
-      const clickedLayer = Math.floor((localY - layout.topY) / layout.stageGap);
-      const clickedDataRegion = localX >= layout.visualLeft - cell * 2
-        && localX <= layout.visualLeft + layout.visualWidth
-        && clickedLayer >= 0
-        && clickedLayer < LAYERS.length;
-      if (clickedDataRegion) {
+      const clickedLayer = layerAtPoint(layout, localX, localY);
+      if (clickedLayer !== null) {
         toggleLayerShape(selectedLayer !== null ? selectedLayer : clickedLayer);
       }
     }, { signal });
