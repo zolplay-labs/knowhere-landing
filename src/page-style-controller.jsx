@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { DialRoot, useDialKit } from 'dialkit'
 import '@fontsource/poppins/400.css'
 import '@fontsource/poppins/500.css'
@@ -69,6 +70,28 @@ function saveSettings(settings) {
   } catch {
     // Styling still works when storage is unavailable.
   }
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return
+    } catch {
+      // Fall back for browsers that expose Clipboard API but deny the write.
+    }
+  }
+
+  const textarea = document.createElement('textarea')
+  textarea.value = text
+  textarea.setAttribute('readonly', '')
+  textarea.style.position = 'fixed'
+  textarea.style.opacity = '0'
+  document.body.appendChild(textarea)
+  textarea.select()
+  const copied = document.execCommand('copy')
+  textarea.remove()
+  if (!copied) throw new Error('Clipboard write failed')
 }
 
 function readableForeground(hex) {
@@ -249,6 +272,37 @@ const CONTROLLER_LAYOUT_STYLES = `
     outline: 2px solid var(--page-primary);
     outline-offset: 2px;
   }
+  .hero-vortex-controls-folder > .dialkit-folder-content > .dialkit-folder-inner >
+  .dialkit-panel-section-toolbar button[title="Copy parameters"] {
+    display: none;
+  }
+  .hero-vortex-copy-slot {
+    margin: 0 0 8px;
+  }
+  .hero-vortex-copy-button {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid #c9c7c0;
+    border-radius: 4px;
+    background: #f7f6f1;
+    color: #181818;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .hero-vortex-copy-button:hover {
+    border-color: #898887;
+    background: #fff;
+  }
+  .hero-vortex-copy-button[data-state="copied"] {
+    border-color: var(--page-primary);
+    background: color-mix(in srgb, var(--page-primary) 14%, #fff);
+  }
+  .hero-vortex-copy-button[data-state="error"] {
+    border-color: #b42318;
+    color: #b42318;
+  }
   .dialkit-select-option:focus-visible {
     outline: 2px solid var(--page-primary);
     outline-offset: -1px;
@@ -299,6 +353,9 @@ function applySettings(targetDocument, settings) {
 
 export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
+  const [vortexCopyTarget, setVortexCopyTarget] = useState(null)
+  const [copyState, setCopyState] = useState('idle')
+  const copyResetTimer = useRef(0)
   const params = useDialKit('Knowhere Landing', {
     layout: {
       showGrid: false,
@@ -339,61 +396,61 @@ export function PageStyleControls() {
           { value: 'clockwise', label: 'Clockwise' },
           { value: 'counterclockwise', label: 'Counterclockwise' },
         ],
-        default: 'clockwise',
+        default: 'counterclockwise',
       },
-      flowSpeed: [0.018, 0, 0.12, 0.002],
-      rotationSpeed: [0.012, 0, 0.12, 0.002],
-      mouthSpeed: [0.018, 0, 0.2, 0.005],
-      twistPerStage: [1.25, 0.2, 2.4, 0.05],
+      flowSpeed: [0.026, 0, 0.12, 0.002],
+      rotationSpeed: [0.03, 0, 0.12, 0.002],
+      mouthSpeed: [0.055, 0, 0.2, 0.005],
+      twistPerStage: [1.95, 0.2, 2.4, 0.05],
       middleTwist: [1.35, 0, 4, 0.05],
-      speedVariation: [0.015, 0, 0.2, 0.005],
+      speedVariation: [0.04, 0, 0.2, 0.005],
     },
     shape: {
-      centerPosition: [0.4, 0.25, 0.55, 0.01],
-      fieldScale: [0.98, 0.7, 1.2, 0.01],
-      stageSpacing: [1, 0.8, 1.2, 0.01],
-      innerShell: [0.48, 0.1, 0.8, 0.01],
-      perspective: [0.28, 0, 0.6, 0.01],
-      orbitHeight: [0.2, 0.05, 0.4, 0.01],
+      centerPosition: [0.55, 0.25, 0.55, 0.01],
+      fieldScale: [0.96, 0.7, 1.2, 0.01],
+      stageSpacing: [0.8, 0.8, 1.2, 0.01],
+      innerShell: [0.49, 0.1, 0.8, 0.01],
+      perspective: [0.11, 0, 0.6, 0.01],
+      orbitHeight: [0.15, 0.05, 0.4, 0.01],
       cameraYaw: [0, -0.35, 0.35, 0.01],
-      cameraLift: [0, -400, 80, 5],
+      cameraLift: [80, -400, 80, 5],
       cameraRoll: [0, -12, 12, 1],
-      waistWidth: [0.055, 0.02, 0.15, 0.005],
-      firstExpansion: [0.28, 0.1, 0.5, 0.01],
-      finalExpansion: [0.68, 0.3, 1, 0.01],
-      fadeDistance: [120, 48, 240, 6],
+      waistWidth: [0.095, 0.02, 0.15, 0.005],
+      firstExpansion: [0.29, 0.1, 0.5, 0.01],
+      finalExpansion: [1, 0.3, 1, 0.01],
+      fadeDistance: [108, 48, 240, 6],
     },
     particles: {
       mouthEnabled: false,
-      mouthCount: [480, 120, 800, 20],
-      mouthDensity: [1, 0.2, 1.6, 0.05],
-      streamDensity: [1, 0.2, 1.8, 0.05],
-      ridgeFrequency: [3, 1, 6, 0.1],
-      ridgeStrength: [0.48, 0, 0.8, 0.02],
+      mouthCount: [500, 120, 800, 20],
+      mouthDensity: [1.25, 0.2, 1.6, 0.05],
+      streamDensity: [0.85, 0.2, 1.8, 0.05],
+      ridgeFrequency: [2.4, 1, 6, 0.1],
+      ridgeStrength: [0.28, 0, 0.8, 0.02],
       middleLayering: [0.52, 0, 1.2, 0.02],
-      depthDensity: [0.22, 0, 0.5, 0.01],
-      depthAlpha: [0.46, 0, 0.8, 0.01],
-      overallAlpha: [1, 0.2, 1.5, 0.05],
+      depthDensity: [0.5, 0, 0.5, 0.01],
+      depthAlpha: [0.05, 0, 0.8, 0.01],
+      overallAlpha: [0.75, 0.2, 1.5, 0.05],
     },
     redParticleFlow: {
       redFlowDuration: [7, 0.8, 20, 0.2],
     },
     outflow: {
-      enabled: true,
-      count: [44, 0, 120, 1],
-      speed: [0.03, 0, 0.2, 0.005],
-      baseSpread: [2.2, 0.5, 5, 0.1],
-      spreadGrowth: [5.2, 0, 10, 0.2],
-      turns: [1.2, 0.2, 3, 0.1],
-      alpha: [0.56, 0.1, 1.2, 0.02],
+      enabled: false,
+      count: [33, 0, 120, 1],
+      speed: [0.02, 0, 0.2, 0.005],
+      baseSpread: [1.7, 0.5, 5, 0.1],
+      spreadGrowth: [4.4, 0, 10, 0.2],
+      turns: [1, 0.2, 3, 0.1],
+      alpha: [0.42, 0.1, 1.2, 0.02],
     },
     labels: {
-      allLabelsY: [0, -600, 600, 5],
+      allLabelsY: [50, -600, 600, 5],
       hoverHeight: [150, 60, 300, 5],
-      originalDocumentY: [0, -120, 120, 2],
-      pageImagesY: [0, -120, 120, 2],
-      lightweightNotesY: [0, -120, 120, 2],
-      chapterMapY: [0, -120, 120, 2],
+      originalDocumentY: [96, -120, 120, 2],
+      pageImagesY: [120, -120, 120, 2],
+      lightweightNotesY: [120, -120, 120, 2],
+      chapterMapY: [106, -120, 120, 2],
     },
   }, {
     id: 'hero-vortex',
@@ -409,6 +466,53 @@ export function PageStyleControls() {
   const palette = MAIN_PALETTES[params.appearance.mainColor]
     ? params.appearance.mainColor
     : DEFAULTS.palette
+
+  const copyAllVortexParameters = async () => {
+    clearTimeout(copyResetTimer.current)
+    try {
+      await copyText(JSON.stringify(vortexParams, null, 2))
+      setCopyState('copied')
+    } catch {
+      setCopyState('error')
+    }
+    copyResetTimer.current = window.setTimeout(() => setCopyState('idle'), 2000)
+  }
+
+  useEffect(() => {
+    let currentTarget = null
+    const syncCopyTarget = () => {
+      const vortexFolder = [...document.querySelectorAll('.dialkit-folder')].find(folder => (
+        folder.querySelector(':scope > .dialkit-folder-header .dialkit-folder-title')?.textContent
+          === 'Hero Vortex'
+      ))
+      const folderInner = vortexFolder?.querySelector(
+        ':scope > .dialkit-folder-content > .dialkit-folder-inner'
+      )
+      if (!folderInner) return
+
+      vortexFolder.classList.add('hero-vortex-controls-folder')
+      let target = folderInner.querySelector(':scope > .hero-vortex-copy-slot')
+      if (!target) {
+        target = document.createElement('div')
+        target.className = 'hero-vortex-copy-slot'
+        folderInner.querySelector(':scope > .dialkit-panel-section-toolbar')?.after(target)
+      }
+      if (target !== currentTarget) {
+        currentTarget = target
+        setVortexCopyTarget(target)
+      }
+    }
+
+    const observer = new MutationObserver(syncCopyTarget)
+    observer.observe(document.body, { subtree: true, childList: true })
+    syncCopyTarget()
+
+    return () => {
+      observer.disconnect()
+      clearTimeout(copyResetTimer.current)
+      currentTarget?.remove()
+    }
+  }, [])
 
   useEffect(() => {
     document.documentElement.toggleAttribute('data-layout-grid', params.layout.showGrid)
@@ -599,6 +703,21 @@ export function PageStyleControls() {
     <>
       <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" productionEnabled />
+      {vortexCopyTarget && createPortal(
+        <button
+          type="button"
+          className="hero-vortex-copy-button"
+          data-state={copyState}
+          onClick={copyAllVortexParameters}
+        >
+          {copyState === 'copied'
+            ? 'Copied all Hero parameters'
+            : copyState === 'error'
+              ? 'Copy failed — try again'
+              : 'Copy all Hero parameters'}
+        </button>,
+        vortexCopyTarget,
+      )}
     </>
   )
 }
