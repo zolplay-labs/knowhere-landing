@@ -6,8 +6,8 @@ const DEFAULT_VIEW_ROTATION = [-22, 0, 0]
 const DEFAULT_CYCLE_SPEED = 0.35
 const DEFAULT_ROTATION_SPEED = 1
 const DEFAULT_COLORS = {
-  accentColor: '#7486B9',
-  secondaryColor: '#6D80B6',
+  accentColor: '#19A88B',
+  secondaryColor: '#19A88B',
   backgroundColor: '#FFFFFF',
 }
 const DEFAULT_FIELD_LAYOUT = { x: 0, y: 13, scale: 1.5 }
@@ -98,8 +98,8 @@ function loadSavedSettings() {
       cycleSpeed: number(saved.cycleSpeed, defaults.cycleSpeed, 0, 2),
       rotationSpeed: number(saved.rotationSpeed, defaults.rotationSpeed, 0, 2),
       colors: {
-        accentColor: color(saved.colors?.accentColor, defaults.colors.accentColor),
-        secondaryColor: color(saved.colors?.secondaryColor, defaults.colors.secondaryColor),
+        accentColor: defaults.colors.accentColor,
+        secondaryColor: defaults.colors.secondaryColor,
         backgroundColor: color(saved.colors?.backgroundColor, defaults.colors.backgroundColor),
       },
       fieldLayout: {
@@ -141,7 +141,7 @@ function loadAnimation() {
 
 /** Renders the standalone 01 / Catenoid Field artwork without controls. */
 export function CatenoidFieldEmbed({
-  accentColor = 'var(--main-400)',
+  accentColor = 'var(--mineral-green-500)',
   backgroundColor = 'var(--main-950)',
   className,
   cycleSpeed = 1,
@@ -149,7 +149,7 @@ export function CatenoidFieldEmbed({
   fieldOffsetY = 0,
   fieldScale = 1,
   rotationSpeed = 1,
-  secondaryColor = 'var(--main-600)',
+  secondaryColor = 'var(--mineral-green-500)',
   viewRotation = DEFAULT_VIEW_ROTATION,
 }) {
   const canvasRef = useRef(null)
@@ -352,7 +352,7 @@ function IntegrationCodeFrame() {
             ))}
           </div>
           <button className={`integration-code-frame__copy${copied ? ' is-copied' : ''}`} type="button" onClick={copyCode} aria-label={copied ? 'Code copied' : `Copy ${CODE_EXAMPLES[activeLanguage].label} code`}>
-            {copied ? 'Copied' : <img src="/assets/integration-copy-code.svg" alt="" />}
+            {copied ? 'Copied' : <i className="ri-file-copy-line" aria-hidden="true" />}
           </button>
         </div>
         <pre ref={preRef} aria-hidden="true"><code><span>{activeCode.slice(0, visibleCharacterCount)}</span><span className="integration-code-frame__untyped">{activeCode.slice(visibleCharacterCount)}</span></code></pre>
@@ -447,8 +447,8 @@ export function CatenoidFieldTuner() {
     <div className="catenoid-field-workbench" ref={workbenchRef}>
       <CatenoidFieldEmbed
         viewRotation={viewRotation}
-        accentColor="var(--page-primary)"
-        secondaryColor="var(--page-primary)"
+        accentColor="var(--mineral-green-500)"
+        secondaryColor="var(--mineral-green-500)"
         backgroundColor={colors.backgroundColor}
         cycleSpeed={cycleSpeed}
         fieldOffsetX={fieldLayout.x}

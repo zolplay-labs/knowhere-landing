@@ -1,6 +1,40 @@
 # KNOWHERE Landing Page Design System Backup
 
 Snapshot date: 2026-08-19 (Asia/Shanghai)
+Current color-system update: 2026-08-27 (Asia/Shanghai)
+
+## Current approved color system
+
+This section is the current source of truth for product color decisions and supersedes the legacy Figma color ramps preserved later in this document. The machine-readable OKLCH and exact Hex tokens live in `src/colors.js`.
+
+The four approved `500` swatches are fixed brand decisions. The remaining `50–950` swatches use the same generated color ramps and must not be replaced with similarly named legacy colors.
+
+| Palette | Token | Approved `500` | Primary role |
+| --- | --- | --- | --- |
+| Mist White 雾白 | `mist-white` | `#F0F2E6` | Page background and warm neutral surface |
+| Mineral Green 矿物绿 | `mineral-green` | `#19A88B` | Brand, primary action, positive state, and data highlight |
+| Coral Signal 珊瑚红 | `coral-signal` | `#FF634A` | Attention, warning, error, and exceptional data point |
+| Deep Teal 深海青 | `deep-teal` | `#083B3A` | Primary text, dark surface, navigation, and high-contrast structure |
+
+Color ramps (`50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950`), light to dark:
+
+| Token | Hex values |
+| --- | --- |
+| `mist-white` | `#FFFFFF`, `#FCFCFA`, `#F9FAF5`, `#F6F7EF`, `#F3F5EA`, `#F0F2E6`, `#BBBCB3`, `#888A82`, `#595A55`, `#2E2E2C`, `#1B1C1A` |
+| `mineral-green` | `#CAFFEE`, `#7EFEDD`, `#27EFC6`, `#23D6B1`, `#1DBE9D`, `#19A88B`, `#12846C`, `#0A6351`, `#054437`, `#01251D`, `#011711` |
+| `coral-signal` | `#FFF0EF`, `#FFE1DF`, `#FFC7C3`, `#FFA79F`, `#FF897D`, `#FF634A`, `#DD3B00`, `#A42900`, `#731A00`, `#420B00`, `#2D0500` |
+| `deep-teal` | `#6DFDFA`, `#3BE8E4`, `#2FBAB8`, `#208C8A`, `#156462`, `#083B3A`, `#073231`, `#042626`, `#021D1D`, `#011110`, `#010909` |
+
+`mist-white/50` is explicitly normalized to `oklch(1 0 0)` / `#FFFFFF`. Generated OKLCH values may round back to a Hex value that differs by one channel step; the approved Hex value always wins at `500`.
+
+### Role constraints
+
+- Mineral Green is the main brand and action family. Use `500` for brand emphasis and `600–700` when stronger action contrast is required.
+- Coral Signal is reserved for attention, warning, error, and exceptional states. It is not an alternative primary brand color.
+- Deep Teal owns structural dark surfaces and high-contrast hierarchy.
+- Mist White owns warm neutral surfaces. A page may intentionally use pure white instead, but that implementation choice does not remove the approved Mist White family from the system.
+
+## Legacy snapshot sources
 
 Sources:
 

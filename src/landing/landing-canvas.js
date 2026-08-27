@@ -1,8 +1,11 @@
+import { initializeCapabilityWireframes } from './capability-wireframes'
+
 export function initializeLandingCanvases(root) {
   if (!(root instanceof Element)) return () => {};
 
   const cleanups = [];
   initializeHeroCanvas(root, cleanups);
+  initializeCapabilityWireframes(root, cleanups);
   initializeFormatGlobe(root, cleanups);
 
   let cleaned = false;
@@ -1427,13 +1430,13 @@ function initializeFormatGlobe(root, cleanups) {
       return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
     }
 
-    function mainColor() {
-      const color = getComputedStyle(document.documentElement).getPropertyValue('--main-600').trim();
-      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#6D80B6';
+    function formatBaseColor() {
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--mineral-green-500').trim();
+      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#19A88B';
     }
 
-    function activeLabelColorWithAlpha(alpha) {
-      return colorWithAlpha(mainColor(), alpha);
+    function formatBaseColorWithAlpha(alpha) {
+      return colorWithAlpha(formatBaseColor(), alpha);
     }
 
     function rotate(point, rotation) {
@@ -1476,7 +1479,7 @@ function initializeFormatGlobe(root, cleanups) {
       const tailLength = Math.max(0.001, reveal - tailStart);
 
       context.save();
-      context.shadowColor = activeLabelColorWithAlpha(0.55);
+      context.shadowColor = formatBaseColorWithAlpha(0.55);
       context.shadowBlur = 5;
       for (let index = firstSegment; index < lastSegment; index += 1) {
         const start = Math.max(index / segments, tailStart);
@@ -1489,7 +1492,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(pointA.x, pointA.y);
         context.lineTo(pointB.x, pointB.y);
         context.lineWidth = 1 + strength * 1.1;
-        context.strokeStyle = activeLabelColorWithAlpha((0.12 + strength * 0.88) * opacity);
+        context.strokeStyle = formatBaseColorWithAlpha((0.12 + strength * 0.88) * opacity);
         context.stroke();
       }
       context.restore();
@@ -1523,7 +1526,7 @@ function initializeFormatGlobe(root, cleanups) {
           context.setLineDash([7, 5]);
           context.lineDashOffset = reducedMotion ? 0 : -(elapsed * 0.028) % 12;
           context.lineWidth = 1.1;
-          context.strokeStyle = activeLabelColorWithAlpha(0.78);
+          context.strokeStyle = formatBaseColorWithAlpha(0.78);
           context.stroke();
           context.restore();
           drawTraceHead(ringIndex, ringRadius, introState.reveal, introState.headOpacity, elapsed, segments);
@@ -1549,7 +1552,7 @@ function initializeFormatGlobe(root, cleanups) {
           context.lineTo(pointB.x, pointB.y);
           context.lineWidth = colorStrength > 0 ? 1.25 : 0.75;
           context.strokeStyle = colorStrength > 0
-            ? activeLabelColorWithAlpha(0.18 + colorStrength * 0.78)
+            ? formatBaseColorWithAlpha(0.18 + colorStrength * 0.78)
             : `rgba(24, 24, 24, ${depthAlpha})`;
           context.stroke();
         }
@@ -1586,11 +1589,11 @@ function initializeFormatGlobe(root, cleanups) {
       particlePoints.forEach(particle => {
         if (particle.introAlpha <= 0) return;
         const isHovered = hoveredParticle?.index === particle.index;
-        const isColored = isHovered || particle.index === 0 || particle.index === 5;
+        const isColored = particle.index === 0 || particle.index === 5;
         context.beginPath();
         context.arc(particle.x, particle.y, isHovered ? 4.8 : particle.radius, 0, Math.PI * 2);
-        context.fillStyle = isColored
-          ? colorWithAlpha(mainColor(), (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
+        context.fillStyle = isHovered || isColored
+          ? colorWithAlpha(formatBaseColor(), (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
           : `rgba(24, 24, 24, ${(0.22 + (particle.z + 1) * 0.20) * particle.introAlpha})`;
         context.fill();
       });
@@ -1619,7 +1622,8 @@ function initializeFormatGlobe(root, cleanups) {
           ? particle.x - labelWidth - 10
           : preferredX;
         const labelY = Math.max(4, Math.min(height - 28, particle.y - 12));
-        context.fillStyle = mainColor();
+        const labelColor = formatBaseColor();
+        context.fillStyle = labelColor;
         context.fillRect(labelX, labelY, labelWidth, 24);
         const frameX = labelX - 2;
         const frameY = labelY - 2;
@@ -1639,7 +1643,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(frameX + frameWidth - cornerLength, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - 0.5);
         context.lineTo(frameX + frameWidth - 0.5, frameY + frameHeight - cornerLength);
-        context.strokeStyle = mainColor();
+        context.strokeStyle = labelColor;
         context.lineWidth = 1;
         context.stroke();
         const icon = formatIconImages.get(particle.label);
@@ -1663,7 +1667,7 @@ function initializeFormatGlobe(root, cleanups) {
 
       if (activeLabelParticle) {
         stage.dataset.activeFormatLabel = activeLabelParticle.label;
-        stage.dataset.activeFormatColor = mainColor();
+        stage.dataset.activeFormatColor = formatBaseColor();
       } else {
         delete stage.dataset.activeFormatLabel;
         delete stage.dataset.activeFormatColor;

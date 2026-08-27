@@ -4,36 +4,22 @@ import '@fontsource/poppins/400.css'
 import '@fontsource/poppins/500.css'
 import '@fontsource/poppins/600.css'
 import 'dialkit/styles.css'
+import { colorHex } from './colors'
 
 const STORAGE_KEY = 'knowhere-page-style'
-const PALETTE_VERSION = 3
+const PALETTE_VERSION = 5
 const FONT_VERSION = 3
 const MAIN_PALETTES = {
   'main-1': { 50: '#F5F6FA', 100: '#E9EBF3', 200: '#D5D9EA', 300: '#BFC6DF', 400: '#ACB5D6', 500: '#96A2CB', 600: '#6D80B6', 700: '#4E5D88', 800: '#343F5E', 900: '#1B2134', 950: '#101523' },
-  'main-2': { 50: '#F8F4E0', 100: '#F2E9B9', 200: '#DFD5A4', 300: '#C8BF92', 400: '#B4AC83', 500: '#9E9773', 600: '#7D775A', 700: '#5C5741', 800: '#3F3C2C', 900: '#222016', 950: '#15130C' },
-  'main-3': { 50: '#EEF7DF', 100: '#E2F1C7', 200: '#CCDAB4', 300: '#B9C6A3', 400: '#A7B293', 500: '#939D81', 600: '#747D66', 700: '#565C4B', 800: '#393D31', 900: '#20231B', 950: '#12140E' },
-  'main-4': { 50: '#F3F3F7', 100: '#E3E5EC', 200: '#C8CBDA', 300: '#B0B5CB', 400: '#969DB9', 500: '#7C85A8', 600: '#60698B', 700: '#484F69', 800: '#2F3446', 900: '#1A1D29', 950: '#11131C' },
-  'main-5': { 50: '#F1F3FD', 100: '#E6EAFB', 200: '#CDD6F8', 300: '#B3C2F5', 400: '#99AFF2', 500: '#7C9BEE', 600: '#4078E3', 700: '#2E59AB', 800: '#1D3C76', 900: '#0D2045', 950: '#06122C' },
-  'main-6': { 50: '#F0F8F7', 100: '#E0F1EF', 200: '#C7E2DF', 300: '#BAD4D1', 400: '#ABC3C0', 500: '#9CB2AF', 600: '#7B8C8A', 700: '#5B6867', 800: '#3B4443', 900: '#1F2524', 950: '#121616' },
-  'main-7': { 50: '#F4F7F9', 100: '#EAEEF4', 200: '#D4DEE9', 300: '#BFCEDE', 400: '#ADC0D6', 500: '#96B0CB', 600: '#748BA3', 700: '#536577', 800: '#374350', 900: '#1D242C', 950: '#11161C' },
+  'main-3': colorHex['mineral-green'],
 }
 const MAIN_COLOR_VALUES = {
   'main-1': '#6D80B6',
-  'main-2': '#9E9773',
-  'main-3': '#939D81',
-  'main-4': '#7C85A8',
-  'main-5': '#7C9BEE',
-  'main-6': '#9CB2AF',
-  'main-7': '#96B0CB',
+  'main-3': '#19A88B',
 }
 const MAIN_PALETTE_OPTIONS = [
   { value: 'main-1', label: 'Blue · Default' },
-  { value: 'main-2', label: 'Yellow' },
   { value: 'main-3', label: 'Green' },
-  { value: 'main-4', label: 'Indigo' },
-  { value: 'main-5', label: 'Electric Blue' },
-  { value: 'main-6', label: 'Teal' },
-  { value: 'main-7', label: 'Slate Blue' },
 ]
 const DEFAULTS = { font: 'poppins', chineseFont: 'frex-sans-gb', palette: 'main-1' }
 const FONT_STACKS = {
@@ -291,6 +277,18 @@ function applySettings(targetDocument, settings) {
   for (const [stop, color] of Object.entries(palette)) {
     rootStyle.setProperty(`--main-${stop}`, color)
   }
+  rootStyle.setProperty('--mist-white-50', colorHex['mist-white'][50])
+  rootStyle.setProperty('--mist-white-100', colorHex['mist-white'][100])
+  rootStyle.setProperty('--mist-white-300', colorHex['mist-white'][300])
+  rootStyle.setProperty('--mist-white-400', colorHex['mist-white'][400])
+  rootStyle.setProperty('--mist-white-500', colorHex['mist-white'][500])
+  rootStyle.setProperty('--mineral-green-400', colorHex['mineral-green'][400])
+  rootStyle.setProperty('--mineral-green-500', colorHex['mineral-green'][500])
+  rootStyle.setProperty('--mineral-green-600', colorHex['mineral-green'][600])
+  rootStyle.setProperty('--mineral-green-700', colorHex['mineral-green'][700])
+  rootStyle.setProperty('--mineral-green-900', colorHex['mineral-green'][900])
+  rootStyle.setProperty('--coral-signal-500', colorHex['coral-signal'][500])
+  rootStyle.setProperty('--deep-teal-500', colorHex['deep-teal'][500])
   rootStyle.setProperty('--accent', mainColor)
   rootStyle.setProperty('--page-primary', mainColor)
   rootStyle.setProperty('--page-primary-foreground', readableForeground(mainColor))
@@ -599,7 +597,7 @@ export function PageStyleControls() {
 
   return (
     <>
-      <style>{`:root{${paletteStyles(initialPalette)};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
+      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" productionEnabled />
     </>
   )

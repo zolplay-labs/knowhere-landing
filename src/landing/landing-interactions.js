@@ -663,18 +663,6 @@ if (!(root instanceof Element)) return () => {};
     syncExpanded();
   });
 
-  const comparisonScoreboard = $('.comparison-scoreboard');
-  const comparisonHead = $('.comparison-scoreboard-head');
-  const comparisonToggle = $('.comparison-toggle');
-  const comparisonContent = $('#comparison-table');
-  comparisonHead?.addEventListener('click', () => {
-    const expanded = !comparisonScoreboard.classList.contains('is-expanded');
-    comparisonScoreboard.classList.toggle('is-expanded', expanded);
-    comparisonToggle.setAttribute('aria-expanded', String(expanded));
-    comparisonContent.setAttribute('aria-hidden', String(!expanded));
-  });
-  comparisonContent?.setAttribute('aria-hidden', String(!comparisonScoreboard?.classList.contains('is-expanded')));
-
   const storyContent = {
     structure: { heading: 'Ingest documents', summary: 'Upload PDFs, spreadsheets, presentations, scans, and other supported formats.' },
     visual: { heading: 'Capture every page', summary: 'Extract text and visual regions while preserving the original page layout.' },

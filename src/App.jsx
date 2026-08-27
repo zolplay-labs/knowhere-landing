@@ -1,4 +1,5 @@
 import { Agentation } from 'agentation'
+import '@fontsource/atkinson-hyperlegible-next/400.css'
 import { LandingPage } from './landing/LandingPage'
 import './landing/landing.css'
 import { PageStyleControls } from './page-style-controller'

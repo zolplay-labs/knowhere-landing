@@ -61,7 +61,7 @@ export function LandingPage() {
     </section>
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
-      <div className="section-heading"><p className="section-no">&gt;_Product</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
+      <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
       </div>
@@ -93,7 +93,7 @@ export function LandingPage() {
     <div className="capabilities-scroll-track">
       <section className="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
         <div className="capabilities-sticky">
-          <div className="section-heading"><p className="section-no">&gt;_Process</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
+          <div className="section-heading"><p className="section-no">[ PROCESS ]</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
           <div className="narrative-grid">
             <div className="story-steps" role="tablist" aria-label="Data transformation stages">
               <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest documents</h3><p>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
@@ -104,19 +104,19 @@ export function LandingPage() {
             <div className="story-card-stack">
               <div className="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest documents</h3></div><p data-story-summary>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-ingest.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-media" role="img" aria-label="Converging document streams"><canvas data-capability-wireframe="ingest" aria-hidden="true" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture every page</h3></div><p data-story-summary>Extract text and visual regions while preserving the original page layout.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-visual.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-media" role="img" aria-label="Projected page capture field"><canvas data-capability-wireframe="capture" aria-hidden="true" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Map document structure</h3></div><p data-story-summary>Identify headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-structure.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-media" role="img" aria-label="Layered document structure grid"><canvas data-capability-wireframe="structure" aria-hidden="true" /></div>
               </div>
               <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
                 <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Data transformation image placeholder"><img src="/assets/capability-placeholder-traceable.png" alt="" loading="lazy" decoding="async" /></div>
+                <div className="capability-media" role="img" aria-label="Traceable source relationship field"><canvas data-capability-wireframe="trace" aria-hidden="true" /></div>
               </div>
             </div>
           </div>
@@ -125,10 +125,12 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">&gt;_Capabilities</p><h2 id="formats-title">Built for documents that plain text cannot capture.</h2></div>
+        <div className="section-heading"><p className="section-no">[ PROCESS ]</p><h2 id="formats-title">Core capabilities.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
             <div className="format-orbit-layout">
+              <span className="format-orbit-halo format-orbit-halo--supported" aria-hidden="true" />
+              <span className="format-orbit-halo format-orbit-halo--coming" aria-hidden="true" />
               <div className="format-orbit-copy format-orbit-copy--supported">
                 <p>Works with common file formats, including</p>
                 <p>DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.</p>
@@ -164,7 +166,7 @@ export function LandingPage() {
               <span className="format-orbit-decoration format-orbit-decoration--coming" aria-hidden="true" />
               <div className="format-orbit-copy format-orbit-copy--coming">
                 <p>Support for</p>
-                <p><span>EPUB, HTML, XML, MP4, MP3, and skills.md</span> is coming soon.</p>
+                <p>EPUB, HTML, XML, MP4, MP3, and skills.md is <span>coming soon.</span></p>
               </div>
             </div>
           </article>
@@ -187,7 +189,7 @@ export function LandingPage() {
     </div>
     <section className="section shell reveal" id="comparison" aria-labelledby="comparison-title">
       <div className="section-heading">
-        <p className="section-no">&gt;_Comparison</p>
+        <p className="section-no">[ COMPARISON ]</p>
         <h2 id="comparison-title">See how Knowhere handles complex documents differently.</h2>
         <p>Compare how different approaches handle document structure, complex layouts, visual context, and source tracing.</p>
       </div>
@@ -217,23 +219,23 @@ export function LandingPage() {
           </div>
         </div>
         <div className="comparison-scoreboard is-expanded" role="group" aria-label="Document understanding capability matrix">
-          <div className="comparison-scoreboard-head"><strong>Capability matrix</strong><div className="comparison-scoreboard-head-actions"><button className="comparison-toggle" type="button" aria-expanded="true" aria-controls="comparison-table"><span className="sr-only">Toggle comparison details</span></button></div></div>
+          <div className="comparison-scoreboard-head"><strong>Capability matrix</strong></div>
           <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="false"><div className="comparison-scoreboard-grid">
               <div className="scoreboard-cell scoreboard-head-cell">Feature</div><div className="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div className="scoreboard-cell scoreboard-head-cell">Others</div>
-              <div className="scoreboard-cell scoreboard-feature">Document hierarchy</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Table boundaries</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Source tracing</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-line" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Progressive context</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-line" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-line" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-line" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Document hierarchy</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Table boundaries</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Source tracing</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Progressive context</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />No</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-fill" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div className="section-heading"><p className="section-no">&gt;_Integration</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
+      <div className="section-heading"><p className="section-no">[ INTEGRATION ]</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
       <div className="integration-grid">
-        <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Create an API key</h3><p>Generate your API key from the developer dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a file URL or upload a supported document.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Retrieve structured JSON through webhooks or polling.</p></div></li></ol>
+        <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
         <div className="integration-plinth">
           <CatenoidFieldTuner />
         </div>
@@ -243,7 +245,7 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
       <div className="pricing-card">
-        <div className="pricing-heading"><p className="section-no">&gt;_Pricing</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
+        <div className="pricing-heading"><p className="section-no">[ PRICING ]</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
         <div className="pricing-calculator">
           <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
@@ -257,8 +259,8 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
-        <p className="section-no enterprise-label">&gt;_Enterprise</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
+        <p className="section-no enterprise-label">[ ENTERPRISE ]</p>
+        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -267,6 +269,7 @@ export function LandingPage() {
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="sla" /></div><div className="enterprise-metric-copy"><strong>SLA requirements</strong><p>Define your uptime and service-level needs.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="commercial" /></div><div className="enterprise-metric-copy"><strong>Commercial terms</strong><p>Discuss billing and terms for your usage.</p></div></li>
         </ul>
+        <a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a>
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
