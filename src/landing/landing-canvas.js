@@ -1127,17 +1127,28 @@ function initializeHeroCanvas(root, cleanups) {
       return nearestDistance <= vortexControls.hoverHeight * .5 ? nearestLayer : null;
     }
 
+    function layerRightEdge(layout, layerIndex, y) {
+      const stagePosition = (y - layout.topY) / layout.stageGap;
+      return stageTracks[layerIndex + 1].reduce((edge, trackId) => (
+        Math.max(edge, pointAtStage(layout, trackId, stagePosition, 0).x)
+      ), layout.centerX);
+    }
+
+    function layerLabelX(layout, labelWidth) {
+      return Math.min(
+        width - labelWidth - Math.max(20, width * .018),
+        layout.centerX + layout.maxWidth * .33
+      );
+    }
+
     function drawLayerOutflows(layout, time, funnelOpacity) {
       if (width < 768 || !vortexControls.enabled || vortexControls.count < 1) return;
       const labelWidth = Math.min(230, width - 24);
-      const labelX = width - labelWidth - Math.max(20, width * .018);
 
       LAYERS.forEach((_, layerIndex) => {
         const y = layerLabelY(layout, layerIndex);
-        const stagePosition = (y - layout.topY) / layout.stageGap;
-        const rightEdge = stageTracks[layerIndex + 1].reduce((edge, trackId) => (
-          Math.max(edge, pointAtStage(layout, trackId, stagePosition).x)
-        ), layout.centerX);
+        const labelX = layerLabelX(layout, labelWidth);
+        const rightEdge = layerRightEdge(layout, layerIndex, y);
         const sourceX = Math.min(labelX - cell * 12, rightEdge + cell);
         const endX = labelX - cell * 2.5;
         const visibility = layerCardVisibility(layerIndex, time) * funnelFadeAt(layout, y) * funnelOpacity;
@@ -1308,7 +1319,7 @@ function initializeHeroCanvas(root, cleanups) {
         const isSelected = selectedLayer === layerIndex;
         const isActive = hoveredLayer === layerIndex || isSelected;
         const labelWidth = Math.min(230, width - 24);
-        const labelX = width - labelWidth - Math.max(20, width * .018);
+        const labelX = layerLabelX(layout, labelWidth);
         const labelReveal = entranceAt(layout, y, layerIndex + 701);
         const cardVisibility = layerCardVisibility(layerIndex, time);
         const layerFade = funnelFadeAt(layout, y);
