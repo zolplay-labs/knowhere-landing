@@ -23,13 +23,13 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background-color: var(--mineral-green-900);
+  background-color: var(--mineral-green-700);
   isolation: isolate;
 }
 
 #final-cta .converging-helix-stage > .final-cta-art {
   inset: 0 !important;
-  background-color: var(--mineral-green-900) !important;
+  background-color: var(--mineral-green-700) !important;
   background-image:
     radial-gradient(ellipse 46% 82% at 50% 50%, rgba(255, 255, 255, .06), rgba(255, 255, 255, .015) 48%, transparent 74%),
     linear-gradient(90deg, transparent calc(50% - .5px), rgba(255, 255, 255, .06) 50%, transparent calc(50% + .5px)),
@@ -63,7 +63,7 @@
 .converging-helix-benefits {
   position: absolute;
   z-index: 2;
-  bottom: 9px;
+  bottom: 24px;
   left: 50%;
   width: min(620px, calc(100% - 120px));
   min-height: 30px;
@@ -78,6 +78,23 @@
   pointer-events: none;
   transform: translateX(-50%);
 }
+
+#final-cta .converging-helix-stage::before,
+#final-cta .converging-helix-stage::after {
+  position: absolute;
+  z-index: 4;
+  right: 0;
+  left: 0;
+  height: 9px;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) top / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) bottom / 100% 1px no-repeat;
+  content: "";
+  pointer-events: none;
+}
+
+#final-cta .converging-helix-stage::before { top: -9px; }
+#final-cta .converging-helix-stage::after { bottom: -9px; }
 
 .converging-helix-benefits li {
   text-align: center;
@@ -244,7 +261,7 @@ html.js #final-cta .converging-helix-benefits li {
   }
 
   .converging-helix-benefits {
-    bottom: 8px;
+    bottom: 20px;
     width: calc(100% - 32px);
     padding-inline: 6px;
     font-size: 8px;

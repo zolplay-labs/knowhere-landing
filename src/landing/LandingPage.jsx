@@ -49,7 +49,7 @@ export function LandingPage() {
     <section className="hero shell hero-b-layout" id="top" aria-labelledby="hero-title">
       <canvas id="hero-b-pixel-field" aria-hidden="true" />
       <div className="hero-copy">
-        <h1 id="hero-title">Turn complex documents into context your agents can use.</h1>
+        <h1 id="hero-title" data-heading-primary="agents can use">Turn complex documents into context your agents can use.</h1>
         <p className="lede">Knowhere preserves structure, visual context, and source links, giving agents information they can navigate, retrieve, and verify.</p>
         <div className="button-row"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
       </div>
@@ -295,7 +295,7 @@ export function LandingPage() {
         <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
       </div>
       <div className="footer-divider" aria-hidden="true" />
-      <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. Allrights reserved</p>
+      <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
     </div>
   </footer>
   <div className="toast" role="status" aria-live="polite" hidden><p data-toast-message /><button type="button" aria-label="Close notification">×</button></div>

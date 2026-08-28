@@ -44,6 +44,7 @@ function resolveOptions(options) {
     ...options,
     accent: resolveColor(options.accent),
     background: options.background === 'transparent' ? 'transparent' : resolveColor(options.background),
+    squareAccent: resolveColor(options.squareAccent),
   }
 }
 
@@ -111,6 +112,7 @@ export function ConvergingHelixEmbed({
   compression = DEFAULT_SETTINGS.compression,
   dashGap = DEFAULT_SETTINGS.dashGap,
   dashLength = DEFAULT_SETTINGS.dashLength,
+  dataSquareColor = 'var(--coral-signal-500)',
   decay = DEFAULT_SETTINGS.decay,
   horizontalSpan = DEFAULT_SETTINGS.horizontalSpan,
   lineWidth = DEFAULT_SETTINGS.lineWidth,
@@ -140,10 +142,11 @@ export function ConvergingHelixEmbed({
     rotation: rotation.map(value => value * Math.PI / 180),
     scale,
     showDataSquares,
+    squareAccent: dataSquareColor,
     speed,
     strands,
     turns,
-  }), [accentColor, amplitude, backgroundColor, centerGap, compression, dashGap, dashLength, decay, horizontalSpan, lineWidth, mirror, opacity, rotation, scale, showDataSquares, speed, strands, turns])
+  }), [accentColor, amplitude, backgroundColor, centerGap, compression, dashGap, dashLength, dataSquareColor, decay, horizontalSpan, lineWidth, mirror, opacity, rotation, scale, showDataSquares, speed, strands, turns])
   const optionsRef = useRef(options)
 
   useEffect(() => {

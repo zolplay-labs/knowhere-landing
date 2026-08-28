@@ -101,7 +101,8 @@ function CommercialTermsIllustration() {
     <Illustration type="commercial" viewBox="42 47 258 204">
       <g className="enterprise-commercial-tower-motion enterprise-hover-accent">
         <ellipse className="enterprise-draw" cx="120" cy="88" rx="78" ry="31" />
-        <path className="enterprise-draw enterprise-draw--late" d="M42 88v122c0 17 35 31 78 31s78-14 78-31V88M42 130c0 17 35 31 78 31s78-14 78-31M42 171c0 17 35 31 78 31s78-14 78-31" />
+        <path className="enterprise-draw enterprise-draw--late" d="M42 88v122c0 17 35 31 78 31s78-14 78-31V88" />
+        <path className="enterprise-draw enterprise-draw--late enterprise-commercial-separators" d="M42 130c0 17 35 31 78 31s78-14 78-31M42 171c0 17 35 31 78 31s78-14 78-31" />
       </g>
       <g className="enterprise-hover enterprise-hover--flow enterprise-hover--commercial">
         <ellipse className="enterprise-dash" cx="250" cy="163" rx="40" ry="18" strokeDasharray="7 5" />

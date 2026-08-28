@@ -66,9 +66,9 @@
     /* Landing page styles */
 :root {
       --accent: var(--ink);
-      --sans: "ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
-      --serif: "ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
-      --mono: "ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif;
+      --sans: "Geist Sans", "Helvetica Neue", Arial, sans-serif;
+      --serif: "Geist Sans", "Helvetica Neue", Arial, sans-serif;
+      --mono: "Geist Sans", "Helvetica Neue", Arial, sans-serif;
       --gutter: clamp(20px, 3vw, 32px);
       --content-max: 1280px;
     }
@@ -4145,6 +4145,7 @@
 
     #enterprise .enterprise-node {
       fill: #fff;
+      transition: stroke 500ms cubic-bezier(.23, 1, .32, 1);
     }
 
     #enterprise .enterprise-draw {
@@ -4180,7 +4181,9 @@
     #enterprise .enterprise-commercial-tower-motion {
       transform-box: fill-box;
       transform-origin: center;
-      transition: transform 1s cubic-bezier(.77, 0, .175, 1);
+      transition:
+        transform 1s cubic-bezier(.77, 0, .175, 1),
+        stroke 500ms cubic-bezier(.23, 1, .32, 1);
     }
 
     #enterprise .enterprise-hover-accent {
@@ -5852,8 +5855,13 @@
         width: 100%;
       }
 
-      #top.hero-b-layout .hero-copy h1,
+      #top.hero-b-layout .hero-copy h1 {
+        width: 590px;
+        max-width: none;
+      }
+
       #top.hero-b-layout .hero-copy .lede {
+        width: 590px;
         max-width: none;
       }
 
@@ -6852,6 +6860,7 @@
 }
 
 #top.hero-b-layout .hero-copy .button-row .button {
+  height: 40px;
   min-height: 40px !important;
   padding: 8px 16px;
   border: 1px solid #595a55;
@@ -7452,20 +7461,30 @@
 
 #pricing .pricing-result-value strong,
 #pricing .pricing-result-value small {
-  color: var(--mist-white-900, #2E2E2C) !important;
+  color: #fff !important;
 }
 
 #pricing .pricing-result-value {
   background-color: var(--mineral-green-500, #19A88B);
   background-image:
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500)),
-    linear-gradient(var(--mineral-green-500), var(--mineral-green-500));
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff);
+  background-position:
+    left 8px top 8px, left 8px top 8px,
+    right 8px top 8px, right 8px top 8px,
+    right 8px bottom 8px, right 8px bottom 8px,
+    left 8px bottom 8px, left 8px bottom 8px;
+  background-size:
+    12px 2px, 2px 12px,
+    12px 2px, 2px 12px,
+    12px 2px, 2px 12px,
+    12px 2px, 2px 12px;
 }
 
 #pricing .pricing-range-control {
@@ -7567,12 +7586,12 @@
     background-image:
       repeating-linear-gradient(to right, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px),
       repeating-linear-gradient(to right, rgba(0, 0, 0, .1) 0 6px, transparent 6px 12px);
-    background-position: 84px 124px, 84px 252px;
+    background-position: 84px 33.333%, 84px 66.667%;
     background-size: calc(100% - 84px) 1px, calc(100% - 84px) 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
-    grid-template-rows: repeat(3, 120px);
-    gap: 8px;
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
   }
 
   #integration .steps li {
@@ -7638,4 +7657,445 @@
     padding: 6px 0;
     border: 0;
   }
+}
+
+/* Latest review refinements: pricing surfaces and the grid-led footer. */
+#formats .format-orbit-copy,
+#formats .format-orbit-copy p,
+#formats .format-feature .format-orbit-copy p,
+#formats .format-feature .format-orbit-copy--supported p {
+  text-align: center;
+}
+
+#formats .format-orbit-copy--supported {
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  #formats .format-orbit-copy--supported {
+    transform: translate(61px, -49px);
+  }
+
+  #formats .format-orbit-copy--coming {
+    transform: translate(-57px, 49px);
+  }
+}
+
+#comparison .scoreboard-cell.scoreboard-head-cell,
+#comparison .scoreboard-cell.scoreboard-head-cell.scoreboard-knowhere {
+  background: rgba(0, 0, 0, .06);
+}
+
+@media (min-width: 768px) {
+  #pricing .pricing-result-value {
+    height: 72px;
+    width: calc(100% - 16px);
+    margin: 12px 8px;
+    padding: 4px 16px;
+    gap: 0;
+    background-color: var(--mineral-green-500, #19A88B);
+    background-image: none;
+  }
+
+  #pricing .pricing-result-value::before {
+    position: absolute;
+    inset: -8px;
+    background-image:
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500));
+    background-position:
+      left top, left top,
+      right top, right top,
+      right bottom, right bottom,
+      left bottom, left bottom;
+    background-size:
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px;
+    background-repeat: no-repeat;
+    content: "";
+    pointer-events: none;
+  }
+}
+
+#pricing .pricing-file-limits {
+  background: rgba(0, 0, 0, .03);
+}
+
+.footer {
+  width: min(1440px, 100%);
+  margin-inline: auto;
+  padding: 48px 80px 0;
+  overflow: visible;
+  background: var(--paper);
+}
+
+.footer-inner {
+  position: relative;
+  width: min(1280px, 100%);
+  margin-inline: auto;
+  padding: 9px 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 80px 9px 48px;
+  gap: 0;
+  background: transparent;
+}
+
+.footer-inner::before,
+.footer-inner::after {
+  position: absolute;
+  right: 50%;
+  left: 50%;
+  width: 100vw;
+  height: 9px;
+  content: "";
+  pointer-events: none;
+  transform: translateX(-50%);
+}
+
+.footer-inner::before {
+  top: 0;
+  background:
+    linear-gradient(rgba(0, 0, 0, .08), rgba(0, 0, 0, .08)) top / 100% 1px no-repeat,
+    linear-gradient(rgba(0, 0, 0, .08), rgba(0, 0, 0, .08)) bottom / 100% 1px no-repeat,
+    repeating-linear-gradient(135deg, transparent 0 5px, rgba(0, 0, 0, .12) 5px 6px, transparent 6px 11px) center / 100% 7px no-repeat;
+}
+
+.footer-inner::after {
+  bottom: 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) top / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) bottom / 100% 1px no-repeat;
+}
+
+.footer-main {
+  width: 100%;
+  min-width: 0;
+  padding: 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.footer-brand {
+  height: 52px;
+  padding: 0;
+}
+
+.footer-brand img {
+  width: 220px;
+  height: 52px;
+  object-fit: contain;
+  object-position: left center;
+  filter: none;
+}
+
+.footer .footer-links {
+  padding: 0;
+  flex-direction: row;
+  align-items: center;
+  gap: 32px;
+}
+
+.footer-links a {
+  color: rgba(0, 0, 0, .72) !important;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.footer-divider {
+  width: 100vw;
+  height: 9px;
+  margin-left: 50%;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) top / 100% 1px no-repeat,
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, .08) 0 6px, transparent 6px 12px) bottom / 100% 1px no-repeat;
+  transform: translateX(-50%);
+}
+
+.footer-copyright {
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  color: rgba(0, 0, 0, .58) !important;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+@media (max-width: 767px) {
+  .footer {
+    padding: 32px 20px 0;
+  }
+
+  .footer-inner {
+    grid-template-rows: auto 9px auto;
+  }
+
+  .footer-main {
+    min-height: 0;
+    padding: 24px 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .footer .footer-links {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 12px 24px;
+  }
+}
+
+/* Review refinements: token colors and grid-aligned section details. */
+@media (hover: hover) and (pointer: fine) {
+  #enterprise .enterprise-metric:first-child .enterprise-metric-visual svg:hover .enterprise-dash {
+    stroke: var(--mineral-green-500) !important;
+  }
+
+  #enterprise .enterprise-metric:first-child .enterprise-metric-visual svg:hover .enterprise-signal-node {
+    stroke: var(--coral-signal-500) !important;
+  }
+
+  #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-core-motion,
+  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--top,
+  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--bottom {
+    stroke: var(--mineral-green-500) !important;
+  }
+
+  #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-satellite,
+  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--middle,
+  #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual svg:hover .enterprise-illustration-base > .enterprise-node,
+  #enterprise .enterprise-metric:nth-child(5) .enterprise-metric-visual svg:hover .enterprise-signal-node {
+    stroke: var(--coral-signal-500) !important;
+  }
+
+  #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg:hover .enterprise-commercial-tower-motion {
+    stroke: var(--mineral-green-500) !important;
+  }
+
+  #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg:hover .enterprise-commercial-separators {
+    stroke: var(--coral-signal-500) !important;
+  }
+}
+
+#comparison .scoreboard-mark--yes {
+  color: var(--mineral-green-500);
+}
+
+#comparison .scoreboard-mark--bad,
+#comparison .scoreboard-mark--no {
+  color: var(--coral-signal-500);
+}
+
+@media (min-width: 768px) {
+  #formats .format-orbit-copy,
+  #formats .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy--supported p {
+    text-align: revert;
+  }
+
+  #formats .format-orbit-copy--supported {
+    align-items: flex-end;
+    transform: translate(-2px, 0);
+  }
+
+  #formats .format-orbit-copy--supported p,
+  #formats .format-feature .format-orbit-copy--supported p {
+    text-align: right;
+  }
+
+  #formats .format-orbit-copy--coming {
+    transform: translate(8px, 0);
+  }
+
+  #formats .format-orbit-copy--coming p,
+  #formats .format-feature .format-orbit-copy--coming p {
+    text-align: left;
+  }
+
+  #integration .integration-grid::before,
+  #integration .integration-grid::after {
+    right: 26px;
+    left: 26px;
+  }
+}
+
+@media (min-width: 1200px) {
+  #integration .integration-plinth {
+    width: auto;
+    margin-right: 80px;
+    justify-self: stretch;
+    transform: translateY(16px);
+  }
+}
+
+/* Figma 487:14455 — Hero action links. */
+#top.hero-b-layout .hero-copy .button-row {
+  align-items: center;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+#top.hero-b-layout .hero-copy .button-row .button {
+  min-height: 40px !important;
+  padding: 8px 16px;
+  border: 1px solid #181818;
+  border-radius: 1px !important;
+  background: #181818;
+  color: #fff;
+  font-family: var(--sans) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  line-height: 24px !important;
+}
+
+#top.hero-b-layout .hero-copy .button-row .button:not(.button-secondary) {
+  border-color: #181818;
+  background: #181818;
+  color: #fff;
+}
+
+#top.hero-b-layout .hero-copy .button-row .button:not(.button-secondary):hover {
+  border-color: #595a55;
+  background: #343532;
+  color: #fff;
+}
+
+#top.hero-b-layout .hero-copy .button-row .button-secondary {
+  border-color: #181818;
+  background: transparent;
+  color: rgba(0, 0, 0, .9) !important;
+}
+
+#top.hero-b-layout .hero-copy .button-row .button-secondary:hover {
+  border-color: rgba(24, 24, 24, .8);
+  background: transparent;
+  color: rgba(24, 24, 24, .8) !important;
+}
+
+.heading-primary {
+  color: var(--mineral-green-500);
+}
+
+#playground .section-heading h2,
+#capabilities .section-heading h2,
+#formats .section-heading h2,
+#comparison .section-heading h2,
+#integration .section-heading h2,
+#pricing .pricing-heading h2,
+#faq .section-heading h2,
+#enterprise #enterprise-title {
+  color: var(--mist-white-900) !important;
+}
+
+/* Shared CTA metrics follow the Hero action system; sections keep their color variants. */
+.landing-page .button,
+.landing-page .site-header .nav-actions .button {
+  min-height: 40px !important;
+  padding: 8px 16px !important;
+  border-radius: 1px !important;
+  font-family: var(--sans) !important;
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  line-height: 24px !important;
+}
+
+.landing-page .nav-actions,
+.landing-page .button-row,
+.landing-page #final-cta-actions {
+  gap: 12px;
+}
+
+@media (min-width: 768px) {
+  .landing-page .button {
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-page .button {
+    min-height: 44px !important;
+  }
+}
+
+.landing-page .site-header .nav-actions .button {
+  min-height: 36px !important;
+  height: 36px !important;
+  padding: 6px 12px !important;
+  border-color: var(--mineral-green-500) !important;
+  background: var(--mineral-green-500) !important;
+  color: #fff !important;
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace !important;
+  font-size: 13px !important;
+  line-height: 20px !important;
+}
+
+.landing-page .site-header .nav-actions {
+  gap: 10px;
+}
+
+.landing-page .site-header .nav-actions .button:hover {
+  border-color: var(--mineral-green-600) !important;
+  background: var(--mineral-green-600) !important;
+}
+
+@media (max-width: 767px) {
+  .landing-page .site-header .nav-actions .button {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+}
+
+.landing-page #final-cta-actions .button:not(.button-secondary),
+.landing-page #final-cta-actions .button:not(.button-secondary):hover {
+  border-color: #fff !important;
+  background: #fff !important;
+  color: var(--mist-white-900) !important;
+}
+
+#capabilities .capability-media::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--mist-white-900);
+  content: "placeholder image";
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  letter-spacing: .01em;
+  pointer-events: none;
+}
+
+#enterprise .enterprise-hover-accent,
+#enterprise .enterprise-metric:first-child .enterprise-dash,
+#enterprise .enterprise-metric:nth-child(3) .enterprise-deployment-layer-motion--top,
+#enterprise .enterprise-metric:nth-child(3) .enterprise-deployment-layer-motion--bottom,
+#enterprise .enterprise-metric:nth-child(6) .enterprise-commercial-tower-motion {
+  stroke: var(--mineral-green-500) !important;
+}
+
+#enterprise .enterprise-metric:first-child .enterprise-signal-node,
+#enterprise .enterprise-metric:nth-child(2) .enterprise-priority-satellite,
+#enterprise .enterprise-metric:nth-child(3) .enterprise-deployment-layer-motion--middle,
+#enterprise .enterprise-metric:nth-child(4) .enterprise-illustration-base > .enterprise-node,
+#enterprise .enterprise-metric:nth-child(5) .enterprise-signal-node,
+#enterprise .enterprise-metric:nth-child(6) .enterprise-commercial-separators {
+  stroke: var(--coral-signal-500) !important;
 }

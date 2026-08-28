@@ -15,8 +15,6 @@
     linear-gradient(color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px),
     linear-gradient(90deg, color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px);
   background-size: 24px 24px;
-  -webkit-mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, .72) 36%, transparent 78%);
-  mask-image: radial-gradient(ellipse at center, #000 0%, rgba(0, 0, 0, .72) 36%, transparent 78%);
   content: "";
   pointer-events: none;
 }
@@ -25,7 +23,6 @@
   position: absolute;
   z-index: 2;
   inset: 0;
-  background: linear-gradient(to top, #fff 0, rgba(255, 255, 255, 0) 60px) bottom / 100% 60px no-repeat;
   content: "";
   pointer-events: none;
 }
@@ -41,6 +38,34 @@
 .catenoid-field-workbench {
   position: relative;
   width: 100%;
+}
+
+#integration .catenoid-field-workbench::before {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  content: "";
+  pointer-events: none;
+}
+
+#integration .catenoid-field-workbench::after {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(0, 0, 0, .1);
+  content: "";
+  pointer-events: none;
+}
+
+#integration .catenoid-field-embed::before {
+  content: none;
 }
 
 .integration-code-frame {

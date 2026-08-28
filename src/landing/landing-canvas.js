@@ -39,19 +39,25 @@ function initializeHeroCanvas(root, cleanups) {
       seed: 17
     });
     const currentPrimary = () => getComputedStyle(document.documentElement)
-      .getPropertyValue('--page-primary').trim() || '#6D80B6';
+      .getPropertyValue('--page-primary').trim() || '#19A88B';
     const RED_FLOW_COLOR = '#FF634A';
     let primary500 = currentPrimary();
     const STAGE_COLORS = Array(5).fill(primary500);
     const LAYER_COLORS = STAGE_COLORS.slice(1);
     let heroInkColor = primary500;
     let heroShadowColor = primary500;
+    const currentTextColor = (property, fallback) => getComputedStyle(document.documentElement)
+      .getPropertyValue(property).trim() || fallback;
+    let heroLabelTitleColor = currentTextColor('--mist-white-900', '#2E2E2C');
+    let heroLabelSubtitleColor = currentTextColor('--mist-white-700', '#888A82');
     const syncPrimary = () => {
       primary500 = currentPrimary();
       STAGE_COLORS.fill(primary500);
       LAYER_COLORS.fill(primary500);
       heroInkColor = primary500;
       heroShadowColor = primary500;
+      heroLabelTitleColor = currentTextColor('--mist-white-900', '#2E2E2C');
+      heroLabelSubtitleColor = currentTextColor('--mist-white-700', '#888A82');
     };
     window.addEventListener('main-palette-change', syncPrimary, { signal });
     const vortexControls = {
@@ -85,7 +91,18 @@ function initializeHeroCanvas(root, cleanups) {
       depthDensity: .5,
       depthAlpha: .05,
       overallAlpha: .75,
-      redFlowDuration: 7,
+      redFlowDelay: 0,
+      redFlowDuration: 2.4,
+      redFlowInterval: .45,
+      redFlowLoopPause: 1,
+      redFlowLine1ExtraDelay: 0,
+      redFlowLine2ExtraDelay: 0,
+      redFlowLine3ExtraDelay: 0,
+      redFlowLine4ExtraDelay: 0,
+      redFlowLine5ExtraDelay: 0,
+      redFlowEntrySpread: .12,
+      redFlowStartAngle: 135,
+      redFlowAngleSpread: 22,
       enabled: false,
       count: 33,
       speed: .02,
@@ -101,9 +118,22 @@ function initializeHeroCanvas(root, cleanups) {
       chapterMapY: 106
     };
     window.addEventListener('hero-vortex-controls', event => {
+      const redFlow = event.detail?.redParticleFlow;
+      const timingChanged = redFlow && [
+        'redFlowDelay',
+        'redFlowDuration',
+        'redFlowInterval',
+        'redFlowLoopPause',
+        'redFlowLine1ExtraDelay',
+        'redFlowLine2ExtraDelay',
+        'redFlowLine3ExtraDelay',
+        'redFlowLine4ExtraDelay',
+        'redFlowLine5ExtraDelay'
+      ].some(key => redFlow[key] !== vortexControls[key]);
       Object.values(event.detail || {}).forEach(group => {
         if (group && typeof group === 'object') Object.assign(vortexControls, group);
       });
+      if (timingChanged) redFlowStartedAt = animationTime;
     }, { signal });
     const DATA = [
       { count: 176, width: 1 },
@@ -120,10 +150,40 @@ function initializeHeroCanvas(root, cleanups) {
       { label: 'LIGHTWEIGHT NOTES', detail: 'Topics stay tied to their chapters.' },
       { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
     ];
+    const LABEL_ICON_PATHS = [
+      'M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z',
+      'M2.9918 21C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918ZM20 15V5H4V19L14 9L20 15ZM20 17.8284L14 11.8284L6.82843 19H20V17.8284ZM8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11Z',
+      'M21 15L15 20.996L4.00221 21C3.4487 21 3 20.5551 3 20.0066V3.9934C3 3.44476 3.44495 3 3.9934 3H20.0066C20.5552 3 21 3.45576 21 4.00247V15ZM19 5H5V19H13V14C13 13.4872 13.386 13.0645 13.8834 13.0067L14 13L19 12.999V5ZM18.171 14.999L15 15V18.169L18.171 14.999Z',
+      'M10 2C10.5523 2 11 2.44772 11 3V7C11 7.55228 10.5523 8 10 8H8V10H13V9C13 8.44772 13.4477 8 14 8H20C20.5523 8 21 8.44772 21 9V13C21 13.5523 20.5523 14 20 14H14C13.4477 14 13 13.5523 13 13V12H8V18H13V17C13 16.4477 13.4477 16 14 16H20C20.5523 16 21 16.4477 21 17V21C21 21.5523 20.5523 22 20 22H14C13.4477 22 13 21.5523 13 21V20H7C6.44772 20 6 19.5523 6 19V8H4C3.44772 8 3 7.55228 3 7V3C3 2.44772 3.44772 2 4 2H10ZM19 18H15V20H19V18ZM19 10H15V12H19V10ZM9 4H5V6H9V4Z'
+    ].map(path => new Path2D(path));
+    const FLOATING_FORMATS = [
+      ['.docx', '/assets/file-icons/word.svg'],
+      ['.pdf', '/assets/file-icons/pdf.svg'],
+      ['.jpg', '/assets/file-icons/image.svg'],
+      ['.pptx', '/assets/file-icons/powerpoint.svg'],
+      ['.xlsx', '/assets/file-icons/table.svg'],
+      ['.csv', '/assets/file-icons/table.svg'],
+      ['.png', '/assets/file-icons/image.svg'],
+      ['.md', '/assets/file-icons/markdown.svg'],
+      ['.json', '/assets/file-icons/json.svg'],
+      ['.txt', '/assets/file-icons/document.svg']
+    ].map(([label, source]) => {
+      const image = new Image();
+      image.src = source;
+      return { label, image };
+    });
+    const floatingFormatIconCanvas = document.createElement('canvas');
+    floatingFormatIconCanvas.width = 16;
+    floatingFormatIconCanvas.height = 16;
+    const floatingFormatIconContext = floatingFormatIconCanvas.getContext('2d');
     const LABEL_Y_KEYS = ['originalDocumentY', 'pageImagesY', 'lightweightNotesY', 'chapterMapY'];
-    const HERO_COPY_ACCENTS = [
-      [.08, .14, .16], [.22, .09, .24], [.38, .2, .12], [.54, .12, .3], [.76, .22, .18],
-      [.12, .7, .22], [.3, .82, .14], [.5, .74, .28], [.7, .88, .18], [.9, .68, .24]
+    const HERO_COPY_ACCENTS = [.16, .24, .12, .3, .18, .14, .2, .14, .22, .16, .22, .14, .28, .18, .24];
+    const RED_FLOW_TRAILS = [
+      { delayKey: 'redFlowLine1ExtraDelay', length: .16 },
+      { delayKey: 'redFlowLine2ExtraDelay', length: .24 },
+      { delayKey: 'redFlowLine3ExtraDelay', length: .19 },
+      { delayKey: 'redFlowLine4ExtraDelay', length: .29 },
+      { delayKey: 'redFlowLine5ExtraDelay', length: .22 }
     ];
     const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -228,8 +288,10 @@ function initializeHeroCanvas(root, cleanups) {
       };
     }
 
-    function pointAtStage(layout, trackId, stagePosition) {
-      const clampedStage = Math.max(0, Math.min(DATA.length - 1, stagePosition));
+    function pointAtStage(layout, trackId, stagePosition, rotationPhase = null, phaseOverride = null) {
+      const finalStage = DATA.length - 1;
+      const exitProgress = Math.max(0, stagePosition - finalStage);
+      const clampedStage = Math.max(0, Math.min(finalStage, stagePosition));
       const lowerStage = Math.min(DATA.length - 2, Math.floor(clampedStage));
       const stageMix = clampedStage - lowerStage;
       const eased = stageMix * stageMix * (3 - 2 * stageMix);
@@ -276,9 +338,12 @@ function initializeHeroCanvas(root, cleanups) {
       const localCenter = centerAt(lowerStage) + (centerAt(lowerStage + 1) - centerAt(lowerStage)) * eased;
       const shell = vortexControls.innerShell
         + hash(trackId + 17, 73) * (1 - vortexControls.innerShell);
-      const trackPhase = trackId / Math.max(1, unitCounts[0]) * Math.PI * 2;
+      const trackPhase = phaseOverride
+        ?? trackId / Math.max(1, unitCounts[0]) * Math.PI * 2;
       const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
-      const rotation = reducedMotion ? 0 : animationTime * vortexControls.rotationSpeed;
+      const rotation = reducedMotion
+        ? 0
+        : rotationPhase ?? animationTime * vortexControls.rotationSpeed;
       const middleStart = 1.15;
       const middleEnd = LAYERS.length + .15;
       const middleLinear = Math.max(0, Math.min(1,
@@ -287,6 +352,7 @@ function initializeHeroCanvas(root, cleanups) {
       const middleProgress = middleLinear * middleLinear * (3 - 2 * middleLinear);
       const angle = trackPhase + direction * (
         clampedStage * vortexControls.twistPerStage
+          + exitProgress * .55
           + middleProgress * vortexControls.middleTwist
           + rotation
       );
@@ -300,13 +366,20 @@ function initializeHeroCanvas(root, cleanups) {
       const roll = vortexControls.cameraRoll * Math.PI / 180;
       const rollCosine = Math.cos(roll);
       const rollSine = Math.sin(roll);
+      const baseX = localCenter + radialX * rollCosine - depthY * rollSine;
+      const baseY = layout.topY + layout.stageGap * clampedStage
+        + radialX * rollSine + depthY * rollCosine;
+      const exitDistance = exitProgress * Math.max(width * .6, layout.maxWidth * .68);
+      const exitRadialX = Math.cos(angle) * exitDistance;
+      const exitDepthY = Math.sin(angle) * exitProgress * layout.stageGap * .45;
       return {
-        x: localCenter + radialX * rollCosine - depthY * rollSine,
-        y: layout.topY + layout.stageGap * clampedStage + radialX * rollSine + depthY * rollCosine,
+        x: baseX + exitRadialX * rollCosine - exitDepthY * rollSine,
+        y: baseY + exitRadialX * rollSine + exitDepthY * rollCosine
+          + exitProgress * layout.stageGap * .95,
         depth,
         shell,
         angle,
-        stagePosition: clampedStage
+        stagePosition
       };
     }
 
@@ -562,6 +635,7 @@ function initializeHeroCanvas(root, cleanups) {
         maxY: Math.max(result.maxY, point.y)
       }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity }) : null;
       const flowTime = reducedMotion ? 0 : time;
+      if (bounds) drawShapeAmbientRectangles(bounds, state.to, time, opacity);
       for (let index = 0; index < MORPH_POINT_COUNT; index += 1) {
         const from = fromPoints[index];
         const to = toPoints[index];
@@ -582,6 +656,38 @@ function initializeHeroCanvas(root, cleanups) {
       }
     }
 
+    function drawShapeAmbientRectangles(bounds, layerIndex, time, visibility) {
+      const horizontalPadding = Math.max(34, (bounds.maxX - bounds.minX) * .16);
+      const verticalPadding = Math.max(28, (bounds.maxY - bounds.minY) * .14);
+      ctx.save();
+      ctx.fillStyle = LAYER_COLORS[layerIndex];
+      for (let index = 0; index < 18; index += 1) {
+        const flash = randomGridFlash(time, index, layerIndex * 101 + 1901);
+        if (flash.alpha <= 0) continue;
+        const seed = index + flash.generation * 37;
+        const side = Math.floor(hash(seed + 1913, layerIndex + 1931) * 4);
+        const progress = .06 + hash(seed + 1933, layerIndex + 1949) * .88;
+        const offset = cell * (1 + Math.floor(hash(seed + 1951, layerIndex + 1973) * 5));
+        let x;
+        let y;
+        if (side === 0 || side === 2) {
+          x = bounds.minX + (bounds.maxX - bounds.minX) * progress;
+          y = side === 0 ? bounds.minY - verticalPadding - offset : bounds.maxY + verticalPadding + offset;
+        } else {
+          x = side === 1 ? bounds.maxX + horizontalPadding + offset : bounds.minX - horizontalPadding - offset;
+          y = bounds.minY + (bounds.maxY - bounds.minY) * progress;
+        }
+        ctx.globalAlpha = Math.min(.2, visibility * flash.alpha);
+        fillGridBlock(
+          Math.round(x / cell) * cell,
+          Math.round(y / cell) * cell,
+          1,
+          1
+        );
+      }
+      ctx.restore();
+    }
+
     function drawShapeAnnotation(layout, time) {
       const presentation = shapeCardPresentation(time);
       if (presentation.layerIndex === null || presentation.visibility <= .001) return;
@@ -598,7 +704,7 @@ function initializeHeroCanvas(root, cleanups) {
       }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
       const shapeCenterY = (bounds.minY + bounds.maxY) / 2;
       const visibility = presentation.visibility;
-      const rightInset = width < 768 ? 12 : 18;
+      const rightInset = width < 768 ? 12 : 50;
       const cardWidth = Math.min(273, width - rightInset * 2);
       const cardHeight = 95;
       const rightLimit = width - cardWidth - rightInset;
@@ -634,10 +740,10 @@ function initializeHeroCanvas(root, cleanups) {
       const textX = 16;
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
-      ctx.fillStyle = '#4e5d88';
+      ctx.fillStyle = RED_FLOW_COLOR;
       ctx.font = '500 14px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(displayLabel(layer.label), textX, 16);
-      ctx.fillStyle = '#181818';
+      ctx.fillStyle = RED_FLOW_COLOR;
       ctx.font = '400 13px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(layer.detail, textX, 40);
 
@@ -713,6 +819,101 @@ function initializeHeroCanvas(root, cleanups) {
       );
     }
 
+    function drawLabelIcon(x, y, layerIndex) {
+      const iconSize = 18;
+      ctx.save();
+      ctx.translate(Math.round(x), Math.round(y));
+      ctx.scale(iconSize / 24, iconSize / 24);
+      ctx.fillStyle = RED_FLOW_COLOR;
+      ctx.fill(LABEL_ICON_PATHS[layerIndex]);
+      ctx.restore();
+    }
+
+    function drawFloatingFormatBadge(layout, time) {
+      if (width < 768 || selectedLayer !== null) return;
+      const spawnInterval = 1.8;
+      const lifetime = 2.4;
+      const latestIndex = Math.floor(time / spawnInterval);
+
+      for (let instanceIndex = latestIndex - 1; instanceIndex <= latestIndex; instanceIndex += 1) {
+        if (instanceIndex < 0) continue;
+        const age = time - instanceIndex * spawnInterval;
+        if (age < 0 || age > lifetime) continue;
+        const enterOpacity = easeOutCubic(age / .36);
+        const exitOpacity = 1 - easeOutCubic((age - (lifetime - .6)) / .6);
+        const opacity = enterOpacity * exitOpacity;
+        if (opacity <= .001) continue;
+
+        const format = FLOATING_FORMATS[
+          Math.floor(hash(instanceIndex * 17 + 2203, 2213) * FLOATING_FORMATS.length)
+        ];
+        const side = instanceIndex % 2 === 0 ? -1 : 1;
+        const motionLinear = Math.min(1, age / lifetime);
+        const motionProgress = motionLinear * motionLinear * (3 - 2 * motionLinear);
+        const verticalOffset = reducedMotion ? 0 : -10 + motionProgress * 28;
+        const waistY = layout.topY + layout.stageGap * LAYERS.length;
+        const randomY = (hash(instanceIndex * 23 + 2243, 2251) - .5) * layout.stageGap * .82;
+
+        ctx.save();
+        ctx.globalAlpha = opacity;
+        ctx.font = '500 15px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.textBaseline = 'middle';
+        const textWidth = ctx.measureText(format.label).width;
+        const labelWidth = textWidth + 36;
+        const labelHeight = 24;
+        const waistRadius = layout.maxWidth * vortexControls.waistWidth * .5;
+        const laneDistance = 44 + hash(instanceIndex * 29 + 2267, 2273) * 72;
+        const unclampedX = side < 0
+          ? layout.centerX - waistRadius - laneDistance - labelWidth
+          : layout.centerX + waistRadius + laneDistance;
+        const labelX = Math.max(
+          layout.visualLeft + 12,
+          Math.min(width - labelWidth - 272, unclampedX)
+        );
+        const labelY = waistY + randomY + verticalOffset - labelHeight / 2;
+
+        if (floatingFormatIconContext && format.image.complete && format.image.naturalWidth > 0) {
+          floatingFormatIconContext.clearRect(0, 0, 16, 16);
+          floatingFormatIconContext.globalCompositeOperation = 'source-over';
+          floatingFormatIconContext.drawImage(format.image, 0, 0, 16, 16);
+          floatingFormatIconContext.globalCompositeOperation = 'source-in';
+          floatingFormatIconContext.fillStyle = primary500;
+          floatingFormatIconContext.fillRect(0, 0, 16, 16);
+          floatingFormatIconContext.globalCompositeOperation = 'source-over';
+          ctx.drawImage(floatingFormatIconCanvas, labelX + 4, labelY + 4, 16, 16);
+        }
+        ctx.fillStyle = primary500;
+        ctx.fillText(format.label, labelX + 27, labelY + labelHeight / 2);
+        ctx.restore();
+      }
+    }
+
+    function fillGridBlock(x, y, columns, rows) {
+      ctx.fillRect(
+        x + 1,
+        y + 1,
+        columns * cell - 2,
+        rows * cell - 2
+      );
+    }
+
+    function randomGridFlash(time, index, salt) {
+      if (reducedMotion) return { alpha: .12, generation: 0 };
+      const visibleDuration = .32 + hash(index + salt, 2081) * .34;
+      const hiddenDuration = .72 + hash(index + salt, 2083) * 1.1;
+      const cycleDuration = visibleDuration + hiddenDuration;
+      const shiftedTime = time + hash(index + salt, 2087) * cycleDuration;
+      const generation = Math.floor(shiftedTime / cycleDuration);
+      const cycleTime = shiftedTime - generation * cycleDuration;
+      const progress = cycleTime / visibleDuration;
+      return {
+        alpha: progress >= 0 && progress <= 1
+          ? Math.sin(progress * Math.PI) ** 2 * .2
+          : 0,
+        generation,
+      };
+    }
+
     function easeOutCubic(value) {
       const clamped = Math.max(0, Math.min(1, value));
       return 1 - (1 - clamped) ** 3;
@@ -753,13 +954,19 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.stroke();
     }
 
-    function drawHeroCopyAccents(layout) {
+    function drawHeroCopyAccents(layout, time) {
       ctx.fillStyle = primary500;
-      HERO_COPY_ACCENTS.forEach(([xRatio, yRatio, alpha]) => {
-        const x = Math.round(layout.visualLeft * xRatio / cell) * cell;
-        const y = Math.round((layout.visualTop + layout.visualHeight * yRatio) / cell) * cell;
-        ctx.globalAlpha = alpha;
-        ctx.fillRect(x + 1, y + 1, cell - 3, cell - 3);
+      HERO_COPY_ACCENTS.forEach((strength, index) => {
+        const flash = randomGridFlash(time, index, 1831);
+        if (flash.alpha <= 0) return;
+        const seed = index + flash.generation * 41;
+        const maxX = Math.max(cell, layout.visualLeft - cell * 2);
+        const maxY = Math.max(layout.visualTop, layout.visualTop + layout.visualHeight - cell);
+        const x = Math.round((cell + hash(seed + 1889, 1901) * (maxX - cell)) / cell) * cell;
+        const y = Math.round((layout.visualTop + hash(seed + 1913, 1931)
+          * (maxY - layout.visualTop)) / cell) * cell;
+        ctx.globalAlpha = Math.min(.2, flash.alpha * (.65 + strength));
+        fillGridBlock(x, y, 1, 1);
       });
       ctx.globalAlpha = 1;
     }
@@ -958,19 +1165,94 @@ function initializeHeroCanvas(root, cleanups) {
       });
     }
 
+    function drawRedFlowTrails(layout, time, funnelOpacity) {
+      if (redFlowStartedAt === null) redFlowStartedAt = time;
+      const activeDuration = Math.min(8, Math.max(.6, vortexControls.redFlowDuration));
+      const appearanceDelay = Math.min(10, Math.max(0, vortexControls.redFlowDelay));
+      const trailDelayAt = (trail, index) => index * vortexControls.redFlowInterval
+        + vortexControls[trail.delayKey];
+      const finalDelay = Math.max(...RED_FLOW_TRAILS.map(trailDelayAt));
+      const loopPause = Math.min(5, Math.max(0, vortexControls.redFlowLoopPause));
+      const cycleDuration = appearanceDelay + activeDuration + finalDelay + loopPause;
+      const cycleTime = (time - redFlowStartedAt) % cycleDuration;
+
+      RED_FLOW_TRAILS.forEach((trail, index) => {
+        const centerAngle = vortexControls.redFlowStartAngle
+          + (index - (RED_FLOW_TRAILS.length - 1) / 2) * vortexControls.redFlowAngleSpread;
+        const centerPhase = centerAngle * Math.PI / 180;
+        const trackId = allTracks.reduce((nearest, candidate) => {
+          const candidatePhase = candidate / unitCounts[0] * Math.PI * 2;
+          const candidateDistance = Math.abs(Math.atan2(
+            Math.sin(candidatePhase - centerPhase),
+            Math.cos(candidatePhase - centerPhase)
+          ));
+          return candidateDistance < nearest.distance
+            ? { trackId: candidate, distance: candidateDistance }
+            : nearest;
+        }, { trackId: 0, distance: Infinity }).trackId;
+        const localTime = cycleTime - appearanceDelay - trailDelayAt(trail, index);
+        const travelProgress = Math.max(0, localTime / activeDuration) ** 1.35;
+        const entryProgress = index / (RED_FLOW_TRAILS.length - 1)
+          * vortexControls.redFlowEntrySpread;
+        const head = reducedMotion
+          ? entryProgress + .36 + index * .08
+          : localTime < 0 || localTime > activeDuration
+            ? -1
+            : entryProgress + travelProgress * (1 + trail.length - entryProgress);
+        if (head < 0) return;
+
+        const start = Math.max(entryProgress, head - trail.length);
+        const end = Math.min(1.18, head);
+        const entryStage = entryProgress * (DATA.length - 1);
+        const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
+        const lineStartedAt = time - Math.max(0, localTime);
+        const entryRotation = reducedMotion
+          ? 0
+          : lineStartedAt * vortexControls.rotationSpeed;
+        const entryAngle = Math.PI
+          + (vortexControls.redFlowStartAngle - 135) * Math.PI / 180
+          + (index - (RED_FLOW_TRAILS.length - 1) / 2)
+            * vortexControls.redFlowAngleSpread * Math.PI / 180 * .1;
+        const entryPhase = entryAngle - direction * (
+          entryStage * vortexControls.twistPerStage + entryRotation
+        );
+        const sampleCount = Math.max(5, Math.ceil(
+          (end - start) * layout.stageGap * (DATA.length - 1) / (cell * .55)
+        ));
+        for (let sample = 0; sample <= sampleCount; sample += 1) {
+          const progress = start + (end - start) * sample / sampleCount;
+          const stagePosition = progress * (DATA.length - 1);
+          const point = pointAtStage(layout, trackId, stagePosition, null, entryPhase);
+          const pathSample = Math.round(stagePosition * layout.stageGap / (cell * .55));
+          if (stagePosition - entryStage > .5 && hash(trackId * 97 + pathSample, 293) < .06) continue;
+          const depthVisibility = easeOutCubic((point.depth - .48) / .24);
+          const entryVisibility = 1 - easeOutCubic((stagePosition - entryStage) / .8);
+          const frontVisibility = entryVisibility
+            + (1 - entryVisibility) * depthVisibility;
+          if (frontVisibility <= .001) continue;
+          const spiralRidge = ((Math.sin(
+            point.angle * vortexControls.ridgeFrequency + point.stagePosition * .72
+          ) + 1) * .5) ** 2;
+          const tailFade = easeOutCubic(Math.min(1, sample / Math.max(1, sampleCount * .3)));
+          const exitReveal = easeOutCubic(
+            (point.stagePosition - (DATA.length - 1)) / .18
+          );
+          const verticalVisibility = funnelFadeAt(layout, point.y)
+            + (1 - funnelFadeAt(layout, point.y)) * exitReveal;
+          drawPixel(
+            point.x,
+            point.y,
+            (.56 + point.depth * .3 + spiralRidge * .14)
+              * frontVisibility * tailFade * funnelOpacity
+              * verticalVisibility * vortexControls.overallAlpha,
+            RED_FLOW_COLOR
+          );
+        }
+      });
+    }
+
     function drawDataStream(layout, time, funnelOpacity = 1) {
       const trailAlpha = .48 + (SETTINGS.trailDecay - .75) / .22 * .08;
-      const redFlowLength = .24;
-      const redFlowPause = .22;
-      if (redFlowStartedAt === null) redFlowStartedAt = time;
-      const activeDuration = Math.max(.2, vortexControls.redFlowDuration);
-      const cycleDuration = activeDuration * (1 + redFlowPause);
-      const cycleTime = (time - redFlowStartedAt) % cycleDuration;
-      const redFlowHead = reducedMotion
-        ? .62
-        : cycleTime >= activeDuration
-          ? 1 + redFlowLength
-          : cycleTime / activeDuration * (1 + redFlowLength);
 
       ctx.save();
       ctx.font = '600 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
@@ -979,11 +1261,6 @@ function initializeHeroCanvas(root, cleanups) {
 
       stageTracks[0].forEach(trackId => {
         const totalStages = DATA.length - 1;
-        const trackPhase = trackId / Math.max(1, unitCounts[0]) * Math.PI * 2;
-        const redFlowPhaseDistance = Math.abs(Math.atan2(
-          Math.sin(trackPhase - Math.PI),
-          Math.cos(trackPhase - Math.PI)
-        ));
         const sampleCount = Math.max(24, Math.round(layout.stageGap * totalStages / cell));
         const flowOffset = reducedMotion
           ? 0
@@ -997,20 +1274,6 @@ function initializeHeroCanvas(root, cleanups) {
           const point = pointAtStage(layout, trackId, streamProgress * totalStages);
           const destinationStage = Math.min(DATA.length - 1, Math.floor(point.stagePosition) + 1);
           if (!stageTrackSets[destinationStage].has(trackId)) continue;
-          const redFlowProgress = point.stagePosition / totalStages;
-          const redFlowSegmentProgress = (
-            redFlowProgress - (redFlowHead - redFlowLength)
-          ) / redFlowLength;
-          const isInsideRedFlow = redFlowSegmentProgress >= 0
-            && redFlowSegmentProgress <= 1
-            && redFlowPhaseDistance < .24;
-          const redFlowTail = easeOutCubic(redFlowSegmentProgress / .3);
-          const redFlowHeadFade = 1 - easeOutCubic((redFlowSegmentProgress - .94) / .06);
-          const redFlowEnvelope = isInsideRedFlow ? redFlowTail * redFlowHeadFade : 0;
-          const redFlowFrontVisibility = point.depth <= .52
-            ? 0
-            : easeOutCubic((point.depth - .52) / .16);
-          const isRedFlow = redFlowEnvelope > .001 && redFlowFrontVisibility > .001;
           const spiralRidge = ((Math.sin(
             point.angle * vortexControls.ridgeFrequency + point.stagePosition * .72
           ) + 1) * .5) ** 2;
@@ -1021,27 +1284,24 @@ function initializeHeroCanvas(root, cleanups) {
             + spiralRidge * vortexControls.ridgeStrength + middleRidge
             + (1 - point.shell) * .04)
             * vortexControls.streamDensity;
-          if (!isRedFlow && hash(trackId * 131 + sample, 337) > surfaceDensity) continue;
+          if (hash(trackId * 131 + sample, 337) > surfaceDensity) continue;
           const reveal = entranceAt(layout, point.y, trackId + sample);
           const surfaceAlpha = .48 + point.depth * vortexControls.depthAlpha
             + spiralRidge * .34 + middleRidge * .5;
-          const particleAlpha = isRedFlow
-            ? Math.max(
-              trailAlpha,
-              redFlowEnvelope * redFlowFrontVisibility * .94
-            )
-            : trailAlpha * (.55 + hash(trackId + 211, sample + 419) * .72);
+          const particleAlpha = trailAlpha * (.55 + hash(trackId + 211, sample + 419) * .72);
           drawPixel(
             point.x,
             point.y,
             particleAlpha * surfaceAlpha * reveal * funnelOpacity * funnelFadeAt(layout, point.y)
               * vortexControls.overallAlpha,
-            isRedFlow ? RED_FLOW_COLOR : primary500
+            primary500
           );
         }
       });
 
+      drawRedFlowTrails(layout, time, funnelOpacity);
       drawLayerOutflows(layout, time, funnelOpacity);
+      drawFloatingFormatBadge(layout, time);
 
       if (width >= 768) LAYERS.forEach((layer, layerIndex) => {
         const y = layerLabelY(layout, layerIndex);
@@ -1053,35 +1313,21 @@ function initializeHeroCanvas(root, cleanups) {
         const cardVisibility = layerCardVisibility(layerIndex, time);
         const layerFade = funnelFadeAt(layout, y);
         const labelOffsetX = (1 - cardVisibility) * cell * 1.8;
-        const markerSize = 8;
 
         const markerX = labelX + labelOffsetX;
-        const stagePosition = (y - layout.topY) / layout.stageGap;
-        const vortexRightEdge = stageTracks[layerIndex + 1].reduce((edge, trackId) => (
-          Math.max(edge, pointAtStage(layout, trackId, stagePosition).x)
-        ), layout.centerX);
-        const connectorStartX = Math.min(markerX, vortexRightEdge + cell * 1.5);
-        ctx.fillStyle = LAYER_COLORS[layerIndex];
-        for (let lineX = connectorStartX; lineX < markerX; lineX += cell) {
-          const column = Math.round(lineX / cell);
-          ctx.globalAlpha = (.3 + hash(column, layerIndex + 1709) * .18)
-            * labelReveal * cardVisibility * layerFade;
-          ctx.fillRect(column * cell + 1, Math.round(y / cell) * cell + 1, cell - 3, cell - 3);
-        }
-
         ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility * layerFade;
-        ctx.fillStyle = LAYER_COLORS[layerIndex];
-        ctx.fillRect(markerX, y - markerSize / 2, markerSize, markerSize);
+        drawLabelIcon(markerX - 28, y - 10, layerIndex);
 
-        const titleX = markerX + 19;
+        const titleX = markerX;
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility * layerFade;
-        ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : heroInkColor;
+        ctx.fillStyle = isSelected ? primary500 : heroLabelTitleColor;
         ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
         ctx.fillText(layer.label, titleX, y + 5);
         ctx.globalAlpha = (isActive ? .76 : .68) * labelReveal * cardVisibility * layerFade;
+        ctx.fillStyle = heroLabelSubtitleColor;
         ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-        ctx.fillText(layer.detail, markerX, y + 31);
+        ctx.fillText(layer.detail, markerX - 28, y + 31);
       });
       drawShapeAnnotation(layout, time);
       ctx.restore();
@@ -1101,7 +1347,7 @@ function initializeHeroCanvas(root, cleanups) {
 
       if (reducedMotion && hoveredLayer === null) return false;
       if (!reducedMotion && (age < 0 || age > duration)) return false;
-      ctx.fillStyle = mixHexColor(LAYER_COLORS[layerIndex], heroShadowColor, .2);
+      ctx.fillStyle = primary500;
 
       for (let row = firstRow; row <= lastRow; row += 1) {
         for (let column = 0; column < cols; column += 1) {
@@ -1145,7 +1391,7 @@ function initializeHeroCanvas(root, cleanups) {
       const nextHoveredLayer = layerIndex !== null && visibleLayer ? layerIndex : null;
       if (nextHoveredLayer !== null && nextHoveredLayer !== hoveredLayer) {
         hoverFlowLayer = nextHoveredLayer;
-        hoverFlowStarted = performance.now() / 1000;
+        hoverFlowStarted = animationTime;
       }
       hoveredLayer = nextHoveredLayer;
       hero.classList.toggle('is-data-layer-hovered', hoveredLayer !== null && hoveredLayer !== 0);
@@ -1172,18 +1418,18 @@ function initializeHeroCanvas(root, cleanups) {
       lastFrame = milliseconds;
       intro = Math.min(1, intro + delta / 1.2);
       syncScanReveal();
-      const time = reducedMotion ? 0 : milliseconds / 1000;
-      animationTime = milliseconds / 1000;
+      if (!reducedMotion) animationTime += delta;
+      const time = animationTime;
       const layout = buildLayout();
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = SETTINGS.paperColor;
       ctx.fillRect(0, 0, width, height);
       ctx.save();
       drawGrid();
-      drawHeroCopyAccents(layout);
+      drawHeroCopyAccents(layout, animationTime);
       drawSelectedPointerField(time, delta);
       drawScanTrail();
-      drawHoverGridFlow(layout, milliseconds / 1000);
+      drawHoverGridFlow(layout, time);
       const funnelOpacity = funnelOpacityAt(animationTime);
       drawModeMorph(layout, animationTime);
       drawDataStream(layout, time, funnelOpacity);

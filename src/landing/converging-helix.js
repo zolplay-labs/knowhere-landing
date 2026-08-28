@@ -24,6 +24,7 @@
     rotation: [0, 0.01, 0],
     scale: 1,
     showDataSquares: true,
+    squareAccent: '#fff',
     speed: 1,
     strands: 7,
     turnSpread: 0.42,
@@ -139,7 +140,7 @@
       const squareCount = Math.min(4, this.options.strands);
       context.setLineDash([]);
       context.lineDashOffset = 0;
-      context.fillStyle = this.options.accent;
+      context.fillStyle = this.options.squareAccent;
       for (let index = 0; index < squareCount; index += 1) {
         const progress = this.reducedMotion
           ? (index + 1) / (squareCount + 1)
@@ -213,6 +214,7 @@
       });
       if (typeof options.accent === 'string' && options.accent) this.options.accent = options.accent;
       if (typeof options.background === 'string' && options.background) this.options.background = options.background;
+      if (typeof options.squareAccent === 'string' && options.squareAccent) this.options.squareAccent = options.squareAccent;
       if (typeof options.mirror === 'boolean') this.options.mirror = options.mirror;
       if (typeof options.showDataSquares === 'boolean') this.options.showDataSquares = options.showDataSquares;
       if (Array.isArray(options.rotation) && options.rotation.length === 3 && options.rotation.every(Number.isFinite)) {

@@ -1,6 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { DialRoot, useDialKit } from 'dialkit'
+import '@fontsource/geist-sans/300.css'
+import '@fontsource/geist-sans/400.css'
+import '@fontsource/geist-sans/500.css'
+import '@fontsource/geist-sans/600.css'
 import '@fontsource/poppins/400.css'
 import '@fontsource/poppins/500.css'
 import '@fontsource/poppins/600.css'
@@ -8,40 +12,118 @@ import 'dialkit/styles.css'
 import { colorHex } from './colors'
 
 const STORAGE_KEY = 'knowhere-page-style'
-const PALETTE_VERSION = 5
-const FONT_VERSION = 3
+const HERO_CONTROLS_STORAGE_KEY = 'knowhere-hero-vortex-controls'
+const HERO_LOOP_PAUSE_PATH = 'redParticleFlow.redFlowLoopPause'
+const PALETTE_VERSION = 6
+const FONT_VERSION = 5
 const MAIN_PALETTES = {
-  'main-1': { 50: '#F5F6FA', 100: '#E9EBF3', 200: '#D5D9EA', 300: '#BFC6DF', 400: '#ACB5D6', 500: '#96A2CB', 600: '#6D80B6', 700: '#4E5D88', 800: '#343F5E', 900: '#1B2134', 950: '#101523' },
   'main-3': colorHex['mineral-green'],
 }
 const MAIN_COLOR_VALUES = {
-  'main-1': '#6D80B6',
   'main-3': '#19A88B',
 }
-const MAIN_PALETTE_OPTIONS = [
-  { value: 'main-1', label: 'Blue · Default' },
-  { value: 'main-3', label: 'Green' },
-]
-const DEFAULTS = { font: 'poppins', chineseFont: 'frex-sans-gb', palette: 'main-1' }
+const DEFAULTS = { font: 'geist', chineseFont: 'frex-sans-gb', palette: 'main-3' }
+
+try {
+  const storedHeroControls = JSON.parse(localStorage.getItem(HERO_CONTROLS_STORAGE_KEY) || 'null')
+  if (storedHeroControls?.baseValues?.[HERO_LOOP_PAUSE_PATH] === 5) {
+    storedHeroControls.baseValues[HERO_LOOP_PAUSE_PATH] = 1
+    if (storedHeroControls.values?.[HERO_LOOP_PAUSE_PATH] === 5) {
+      storedHeroControls.values[HERO_LOOP_PAUSE_PATH] = 1
+    }
+    localStorage.setItem(HERO_CONTROLS_STORAGE_KEY, JSON.stringify(storedHeroControls))
+  }
+} catch {
+  // Keep the in-memory defaults when browser storage is unavailable or invalid.
+}
 const FONT_STACKS = {
   poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif',
-  schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", sans-serif',
-  fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial, sans-serif',
   geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
-  helvetica: '"Helvetica Neue", Helvetica, Arial, sans-serif',
-  serif: 'Georgia, "Times New Roman", "Songti SC", serif',
 }
 const ENGLISH_FONT_FACES = {
   poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial',
-  schengen: '"ABC Schengen Greek Variable Trial", "Space Grotesk"',
-  fellix: '"Fellix", "Helvetica Neue", Helvetica, Arial',
   geist: '"Geist Sans", "Helvetica Neue", Arial',
-  helvetica: '"Helvetica Neue", Helvetica, Arial',
-  serif: 'Georgia, "Times New Roman"',
 }
 const CHINESE_FONT_STACKS = {
   'frex-sans-gb': '"Frex Sans GB", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
-  'noto-sans-sc': '"Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+}
+
+const CONTROLLER_TRANSLATIONS = {
+  DialKit: '页面控制器',
+  'Knowhere Landing': 'Knowhere 页面控制',
+  'Hero Vortex': '首屏漩涡',
+  Layout: '布局',
+  'Show Grid': '显示网格',
+  Appearance: '外观',
+  'Font Family': '英文字体',
+  'Chinese Font Family': '中文字体',
+  'Main Color': '主色',
+  Motion: '运动',
+  Direction: '方向',
+  'Flow Speed': '流动速度',
+  'Rotation Speed': '旋转速度',
+  'Mouth Speed': '入口速度',
+  'Twist Per Stage': '每阶段扭转',
+  'Middle Twist': '中段扭转',
+  'Speed Variation': '速度变化',
+  Shape: '形状',
+  'Center Position': '中心位置',
+  'Field Scale': '场景缩放',
+  'Stage Spacing': '阶段间距',
+  'Inner Shell': '内层半径',
+  Perspective: '透视强度',
+  'Orbit Height': '轨道高度',
+  'Camera Yaw': '相机水平偏转',
+  'Camera Lift': '相机抬升',
+  'Camera Roll': '相机旋转',
+  'Waist Width': '收束处宽度',
+  'First Expansion': '第一次扩张',
+  'Final Expansion': '最终扩张',
+  'Fade Distance': '渐隐距离',
+  Particles: '粒子',
+  'Mouth Enabled': '显示入口粒子',
+  'Mouth Count': '入口粒子数量',
+  'Mouth Density': '入口粒子密度',
+  'Stream Density': '流动粒子密度',
+  'Ridge Frequency': '纹理频率',
+  'Ridge Strength': '纹理强度',
+  'Middle Layering': '中段层次',
+  'Depth Density': '深度密度',
+  'Depth Alpha': '深度透明度',
+  'Overall Alpha': '整体透明度',
+  'Red Particle Flow': '红色粒子流',
+  'Red Flow Delay': '整体出现延迟',
+  'Red Flow Duration': '单次持续时间',
+  'Red Flow Interval': '线条出现间隔',
+  'Red Flow Loop Pause': '每轮循环间隔',
+  'Red Flow Line1 Extra Delay': '第 1 条额外延迟',
+  'Red Flow Line2 Extra Delay': '第 2 条额外延迟',
+  'Red Flow Line3 Extra Delay': '第 3 条额外延迟',
+  'Red Flow Line4 Extra Delay': '第 4 条额外延迟',
+  'Red Flow Line5 Extra Delay': '第 5 条额外延迟',
+  'Red Flow Entry Spread': '入口位置偏差',
+  'Red Flow Start Angle': '起始角度',
+  'Red Flow Angle Spread': '轨道角度偏差',
+  Outflow: '输出流',
+  Enabled: '启用',
+  Count: '数量',
+  Speed: '速度',
+  'Base Spread': '初始扩散',
+  'Spread Growth': '扩散增长',
+  Turns: '旋转圈数',
+  Alpha: '透明度',
+  Labels: '标签',
+  'All Labels Y': '全部标签纵向位置',
+  'Hover Height': '悬停区域高度',
+  'Original Document Y': '原始文档纵向位置',
+  'Page Images Y': '页面图像纵向位置',
+  'Lightweight Notes Y': '轻量笔记纵向位置',
+  'Chapter Map Y': '章节地图纵向位置',
+  'Version 1': '版本 1',
+  'Add preset': '添加预设',
+  'Copy parameters': '复制参数',
+  Off: '关闭',
+  On: '开启',
 }
 
 function loadSettings() {
@@ -52,9 +134,7 @@ function loadSettings() {
         ? saved.font
         : DEFAULTS.font,
       chineseFont: CHINESE_FONT_STACKS[saved.chineseFont] ? saved.chineseFont : DEFAULTS.chineseFont,
-      palette: saved.paletteVersion === PALETTE_VERSION && MAIN_PALETTES[saved.palette]
-        ? saved.palette
-        : DEFAULTS.palette,
+      palette: DEFAULTS.palette,
     }
   } catch {
     return { ...DEFAULTS }
@@ -279,6 +359,11 @@ const CONTROLLER_LAYOUT_STYLES = `
   .hero-vortex-copy-slot {
     margin: 0 0 8px;
   }
+  .hero-vortex-action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
   .hero-vortex-copy-button {
     width: 100%;
     min-height: 40px;
@@ -295,7 +380,8 @@ const CONTROLLER_LAYOUT_STYLES = `
     border-color: #898887;
     background: #fff;
   }
-  .hero-vortex-copy-button[data-state="copied"] {
+  .hero-vortex-copy-button[data-state="copied"],
+  .hero-vortex-copy-button[data-state="saved"] {
     border-color: var(--page-primary);
     background: color-mix(in srgb, var(--page-primary) 14%, #fff);
   }
@@ -343,6 +429,7 @@ function applySettings(targetDocument, settings) {
   rootStyle.setProperty('--mineral-green-500', colorHex['mineral-green'][500])
   rootStyle.setProperty('--mineral-green-600', colorHex['mineral-green'][600])
   rootStyle.setProperty('--mineral-green-700', colorHex['mineral-green'][700])
+  rootStyle.setProperty('--mineral-green-800', colorHex['mineral-green'][800])
   rootStyle.setProperty('--mineral-green-900', colorHex['mineral-green'][900])
   rootStyle.setProperty('--coral-signal-500', colorHex['coral-signal'][500])
   rootStyle.setProperty('--deep-teal-500', colorHex['deep-teal'][500])
@@ -358,7 +445,25 @@ export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const [vortexCopyTarget, setVortexCopyTarget] = useState(null)
   const [copyState, setCopyState] = useState('idle')
+  const [saveState, setSaveState] = useState('idle')
   const copyResetTimer = useRef(0)
+  const saveResetTimer = useRef(0)
+  const paramsRef = useRef(null)
+  const vortexParamsRef = useRef(null)
+  const saveControllerSettings = () => {
+    clearTimeout(saveResetTimer.current)
+    try {
+      localStorage.setItem('knowhere-controller-snapshot', JSON.stringify({
+        page: paramsRef.current,
+        heroVortex: vortexParamsRef.current,
+        savedAt: new Date().toISOString(),
+      }))
+      setSaveState('saved')
+    } catch {
+      setSaveState('error')
+    }
+    saveResetTimer.current = window.setTimeout(() => setSaveState('idle'), 2000)
+  }
   const params = useDialKit('Knowhere Landing', {
     layout: {
       showGrid: false,
@@ -367,37 +472,24 @@ export function PageStyleControls() {
       fontFamily: {
         type: 'select',
         options: [
-          { value: 'poppins', label: 'Poppins · Default' },
-          { value: 'schengen', label: 'Schengen' },
-          { value: 'fellix', label: 'Fellix' },
-          { value: 'geist', label: 'Geist Sans' },
-          { value: 'helvetica', label: 'Helvetica Neue' },
-          { value: 'serif', label: 'Georgia Serif' },
+          { value: 'geist', label: 'Geist Sans · 默认' },
+          { value: 'poppins', label: 'Poppins' },
         ],
         default: initialSettings.font,
       },
-      chineseFontFamily: {
-        type: 'select',
-        options: [
-          { value: 'frex-sans-gb', label: 'Frex Sans GB · Default' },
-          { value: 'noto-sans-sc', label: 'Noto Sans SC' },
-        ],
-        default: initialSettings.chineseFont,
-      },
-      mainColor: {
-        type: 'select',
-        options: MAIN_PALETTE_OPTIONS,
-        default: initialSettings.palette,
-      },
     },
+  }, {
+    id: 'knowhere-landing-controls-v2',
+    persist: { key: 'knowhere-landing-controls-v2', storage: 'localStorage', presets: true },
   })
+  paramsRef.current = params
   const vortexParams = useDialKit('Hero Vortex', {
     motion: {
       direction: {
         type: 'select',
         options: [
-          { value: 'clockwise', label: 'Clockwise' },
-          { value: 'counterclockwise', label: 'Counterclockwise' },
+          { value: 'clockwise', label: '顺时针' },
+          { value: 'counterclockwise', label: '逆时针' },
         ],
         default: 'counterclockwise',
       },
@@ -436,7 +528,18 @@ export function PageStyleControls() {
       overallAlpha: [0.75, 0.2, 1.5, 0.05],
     },
     redParticleFlow: {
-      redFlowDuration: [7, 0.8, 20, 0.2],
+      redFlowDelay: [0, 0, 10, 0.1],
+      redFlowDuration: [2.4, 0.6, 8, 0.05],
+      redFlowInterval: [0.45, 0, 2, 0.05],
+      redFlowLoopPause: [1, 0, 5, 0.5],
+      redFlowLine1ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine2ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine3ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine4ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine5ExtraDelay: [0, 0, 5, 0.05],
+      redFlowEntrySpread: [0.12, 0, 0.3, 0.01],
+      redFlowStartAngle: [135, 90, 180, 1],
+      redFlowAngleSpread: [22, 4, 30, 1],
     },
     outflow: {
       enabled: false,
@@ -455,17 +558,17 @@ export function PageStyleControls() {
       lightweightNotesY: [120, -120, 120, 2],
       chapterMapY: [106, -120, 120, 2],
     },
+  }, {
+    id: 'hero-vortex-controls',
+    persist: { key: HERO_CONTROLS_STORAGE_KEY, storage: 'localStorage', presets: true },
   })
+  vortexParamsRef.current = vortexParams
 
   const font = FONT_STACKS[params.appearance.fontFamily]
     ? params.appearance.fontFamily
     : DEFAULTS.font
-  const chineseFont = CHINESE_FONT_STACKS[params.appearance.chineseFontFamily]
-    ? params.appearance.chineseFontFamily
-    : DEFAULTS.chineseFont
-  const palette = MAIN_PALETTES[params.appearance.mainColor]
-    ? params.appearance.mainColor
-    : DEFAULTS.palette
+  const chineseFont = DEFAULTS.chineseFont
+  const palette = DEFAULTS.palette
 
   const copyAllVortexParameters = async () => {
     clearTimeout(copyResetTimer.current)
@@ -482,8 +585,9 @@ export function PageStyleControls() {
     let currentTarget = null
     const syncCopyTarget = () => {
       const vortexFolder = [...document.querySelectorAll('.dialkit-folder')].find(folder => (
-        folder.querySelector(':scope > .dialkit-folder-header .dialkit-folder-title')?.textContent
-          === 'Hero Vortex'
+        ['Hero Vortex', 'Hero 漩涡', '首屏漩涡'].includes(
+          folder.querySelector(':scope > .dialkit-folder-header .dialkit-folder-title')?.textContent
+        )
       ))
       const folderInner = vortexFolder?.querySelector(
         ':scope > .dialkit-folder-content > .dialkit-folder-inner'
@@ -510,7 +614,42 @@ export function PageStyleControls() {
     return () => {
       observer.disconnect()
       clearTimeout(copyResetTimer.current)
+      clearTimeout(saveResetTimer.current)
       currentTarget?.remove()
+    }
+  }, [])
+
+  useEffect(() => {
+    let frame = 0
+    const translateController = () => {
+      frame = 0
+      const root = document.querySelector('.dialkit-root')
+      if (!root) return
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+      let node = walker.nextNode()
+      while (node) {
+        const source = node.nodeValue?.trim()
+        const translation = CONTROLLER_TRANSLATIONS[source]
+        if (translation) node.nodeValue = node.nodeValue.replace(source, translation)
+        node = walker.nextNode()
+      }
+      root.querySelectorAll('[aria-label], [title]').forEach(element => {
+        for (const attribute of ['aria-label', 'title']) {
+          const source = element.getAttribute(attribute)
+          const translation = CONTROLLER_TRANSLATIONS[source]
+          if (translation) element.setAttribute(attribute, translation)
+        }
+      })
+    }
+    const scheduleTranslation = () => {
+      if (!frame) frame = requestAnimationFrame(translateController)
+    }
+    const observer = new MutationObserver(scheduleTranslation)
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true })
+    scheduleTranslation()
+    return () => {
+      observer.disconnect()
+      cancelAnimationFrame(frame)
     }
   }, [])
 
@@ -694,21 +833,35 @@ export function PageStyleControls() {
 
   return (
     <>
-      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-200:${colorHex['mist-white'][200]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mist-white-700:${colorHex['mist-white'][700]};--mist-white-900:${colorHex['mist-white'][900]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
+      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-200:${colorHex['mist-white'][200]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mist-white-700:${colorHex['mist-white'][700]};--mist-white-900:${colorHex['mist-white'][900]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-800:${colorHex['mineral-green'][800]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
       <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" productionEnabled />
       {vortexCopyTarget && createPortal(
-        <button
-          type="button"
-          className="hero-vortex-copy-button"
-          data-state={copyState}
-          onClick={copyAllVortexParameters}
-        >
-          {copyState === 'copied'
-            ? 'Copied all Hero parameters'
-            : copyState === 'error'
-              ? 'Copy failed — try again'
-              : 'Copy all Hero parameters'}
-        </button>,
+        <div className="hero-vortex-action-buttons">
+          <button
+            type="button"
+            className="hero-vortex-copy-button"
+            data-state={saveState}
+            onClick={saveControllerSettings}
+          >
+            {saveState === 'saved'
+              ? '已保存 ✓'
+              : saveState === 'error'
+                ? '保存失败'
+                : '保存当前设置'}
+          </button>
+          <button
+            type="button"
+            className="hero-vortex-copy-button"
+            data-state={copyState}
+            onClick={copyAllVortexParameters}
+          >
+            {copyState === 'copied'
+              ? '已复制参数'
+              : copyState === 'error'
+                ? '复制失败'
+                : '复制全部参数'}
+          </button>
+        </div>,
         vortexCopyTarget,
       )}
     </>

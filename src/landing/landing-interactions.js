@@ -765,7 +765,22 @@ if (!(root instanceof Element)) return () => {};
     headingTypingTimers.delete(heading);
   }
   function replaceHeadingText(heading, text) {
-    heading.replaceChildren(document.createTextNode(text));
+    const emphasis = heading.dataset.headingPrimary
+      ? { phrase: heading.dataset.headingPrimary, className: 'heading-primary' }
+      : null;
+    const phraseIndex = emphasis ? text.indexOf(emphasis.phrase) : -1;
+    if (phraseIndex < 0) {
+      heading.replaceChildren(document.createTextNode(text));
+      return;
+    }
+    const phrase = document.createElement('span');
+    phrase.className = emphasis.className;
+    phrase.textContent = emphasis.phrase;
+    heading.replaceChildren(
+      document.createTextNode(text.slice(0, phraseIndex)),
+      phrase,
+      document.createTextNode(text.slice(phraseIndex + emphasis.phrase.length))
+    );
   }
   function showHeading(heading, text) {
     stopHeadingTyping(heading);
@@ -803,6 +818,7 @@ if (!(root instanceof Element)) return () => {};
       if (renderedCount >= characters.length) {
         cursor.remove();
         reservedText.remove();
+        replaceHeadingText(heading, text);
         heading.classList.remove('is-typing');
         heading.classList.add('is-typed');
         heading.style.minHeight = '';
@@ -827,6 +843,12 @@ if (!(root instanceof Element)) return () => {};
       if (reducedMotion) showHeading(heading, text);
       else heading.classList.add('is-waiting');
     });
+    $$('[data-heading-primary]')
+      .filter(heading => !typedHeadings.includes(heading))
+      .forEach(heading => replaceHeadingText(
+        heading,
+        localizeText(headingSourceText.get(heading) || heading.textContent.trim())
+      ));
     document.documentElement.classList.add('title-type-ready');
     if (reducedMotion || !('IntersectionObserver' in window)) {
       typedHeadings.forEach(heading => showHeading(heading, localizeText(headingSourceText.get(heading))));
