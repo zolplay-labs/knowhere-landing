@@ -708,7 +708,9 @@ function initializeHeroCanvas(root, cleanups) {
       const cardWidth = Math.min(273, width - rightInset * 2);
       const cardHeight = 95;
       const rightLimit = width - cardWidth - rightInset;
-      const targetX = rightLimit;
+      const targetX = width < 768
+        ? rightLimit
+        : Math.min(rightLimit, layout.centerX + layout.maxWidth * .21);
       const targetY = Math.max(layout.topY + cell, shapeCenterY - cardHeight / 2);
       const cardX = targetX + (1 - visibility) * cell * 3.2;
       const cardY = targetY + (1 - visibility) * cell * .8;
@@ -740,10 +742,10 @@ function initializeHeroCanvas(root, cleanups) {
       const textX = 16;
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
-      ctx.fillStyle = RED_FLOW_COLOR;
+      ctx.fillStyle = '#181818';
       ctx.font = '500 14px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(displayLabel(layer.label), textX, 16);
-      ctx.fillStyle = RED_FLOW_COLOR;
+      ctx.fillStyle = '#181818';
       ctx.font = '400 13px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(layer.detail, textX, 40);
 
@@ -1601,10 +1603,11 @@ function initializeFormatGlobe(root, cleanups) {
     let pointerLocalX = 0;
     let pointerLocalY = 0;
     let pointerInside = false;
-    let visible = true;
+    let visible = false;
     let frameId = 0;
-    let startTime = performance.now();
-    let introStartedAt = reducedMotion ? startTime : null;
+    let animationElapsed = 0;
+    let lastFrameTime = null;
+    let introStartedAt = reducedMotion ? 0 : null;
     let introComplete = reducedMotion;
     const controller = new AbortController();
     const { signal } = controller;
@@ -1613,17 +1616,17 @@ function initializeFormatGlobe(root, cleanups) {
     const introRingStagger = 140;
     const autoLabelInterval = 10000;
     const labelFadeDuration = 800;
-    let activeLabelIndex = Math.floor(Math.random() * particles.length);
+    let activeLabelIndex = 0;
     let outgoingLabelIndex = null;
     let labelTransitionStartedAt = 0;
     let previousHoveredParticleIndex = null;
     let autoLabelTimer = 0;
 
-    function nextRandomLabelIndex(currentIndex) {
-      return (currentIndex + 1 + Math.floor(Math.random() * (particles.length - 1))) % particles.length;
+    function nextLabelIndex(currentIndex) {
+      return (currentIndex + 1) % particles.length;
     }
 
-    function activateLabel(nextIndex, now = performance.now()) {
+    function activateLabel(nextIndex, now = animationElapsed) {
       if (nextIndex === activeLabelIndex) return;
       outgoingLabelIndex = reducedMotion ? null : activeLabelIndex;
       activeLabelIndex = nextIndex;
@@ -1634,9 +1637,8 @@ function initializeFormatGlobe(root, cleanups) {
       clearTimeout(autoLabelTimer);
       if (!active || !visible || document.hidden) return;
       autoLabelTimer = window.setTimeout(() => {
-        const now = performance.now();
-        activateLabel(nextRandomLabelIndex(activeLabelIndex), now);
-        draw(reducedMotion ? 0 : now - startTime, now);
+        activateLabel(nextLabelIndex(activeLabelIndex), animationElapsed);
+        draw(reducedMotion ? 0 : animationElapsed, animationElapsed);
         scheduleAutoLabel();
       }, autoLabelInterval);
     }
@@ -1730,7 +1732,7 @@ function initializeFormatGlobe(root, cleanups) {
       context.restore();
     }
 
-    function draw(elapsed, now = performance.now()) {
+    function draw(elapsed, now = animationElapsed) {
       context.clearRect(0, 0, width, height);
       const radius = Math.min(width, height) * 0.42;
       const radiusForRing = ringIndex => ringIndex === 0 ? radius : radius * 1.06;
@@ -1912,14 +1914,19 @@ function initializeFormatGlobe(root, cleanups) {
     function frame(now) {
       frameId = 0;
       if (!active || reducedMotion || !visible || document.hidden) return;
+      if (lastFrameTime !== null) {
+        animationElapsed += Math.min(now - lastFrameTime, 50);
+      }
+      lastFrameTime = now;
       tiltX += (pointerY - tiltX) * 0.055;
       tiltY += (pointerX - tiltY) * 0.055;
-      draw(now - startTime, now);
+      draw(animationElapsed, animationElapsed);
       frameId = requestAnimationFrame(frame);
     }
 
     function startAnimation() {
       if (!active || reducedMotion || !visible || document.hidden || frameId) return;
+      lastFrameTime = null;
       frameId = requestAnimationFrame(frame);
     }
 
@@ -1938,8 +1945,7 @@ function initializeFormatGlobe(root, cleanups) {
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-      const now = performance.now();
-      draw(now - startTime, now);
+      draw(reducedMotion ? 0 : animationElapsed, animationElapsed);
     }
 
     stage.addEventListener('pointermove', event => {
@@ -1952,7 +1958,7 @@ function initializeFormatGlobe(root, cleanups) {
       if (reducedMotion) {
         tiltX = pointerY;
         tiltY = pointerX;
-        draw(0, performance.now());
+        draw(0, 0);
       }
     }, { signal });
 
@@ -1963,17 +1969,18 @@ function initializeFormatGlobe(root, cleanups) {
       stage.style.cursor = 'crosshair';
     }, { signal });
 
-    window.addEventListener('main-palette-change', () => draw(reducedMotion ? 0 : performance.now() - startTime), { signal });
+    window.addEventListener('main-palette-change', () => {
+      draw(reducedMotion ? 0 : animationElapsed, animationElapsed);
+    }, { signal });
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(stage);
     const intersectionObserver = new IntersectionObserver(entries => {
       const nextVisible = entries[0].isIntersecting;
-      if (nextVisible && introStartedAt === null) introStartedAt = performance.now();
+      if (nextVisible && introStartedAt === null) introStartedAt = animationElapsed;
       if (nextVisible && !visible) {
         visible = true;
         scheduleAutoLabel();
-        if (introStartedAt === null) introStartedAt = performance.now();
         startAnimation();
       } else {
         visible = nextVisible;

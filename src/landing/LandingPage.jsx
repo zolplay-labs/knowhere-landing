@@ -125,7 +125,7 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">[ PROCESS ]</p><h2 id="formats-title">Core capabilities.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
+        <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="formats-title">Core capabilities.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
             <div className="format-orbit-layout">
@@ -258,7 +258,7 @@ export function LandingPage() {
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
         <p className="section-no enterprise-label">[ ENTERPRISE ]</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p></div></div>
+        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -267,11 +267,10 @@ export function LandingPage() {
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="sla" /></div><div className="enterprise-metric-copy"><strong>SLA requirements</strong><p>Define your uptime and service-level needs.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="commercial" /></div><div className="enterprise-metric-copy"><strong>Commercial terms</strong><p>Discuss billing and terms for your usage.</p></div></li>
         </ul>
-        <a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a>
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
-        <div className="section-heading"><p className="section-no">&gt;_Faq</p><h2 id="faq-title">Frequently asked questions.</h2></div>
+        <div className="section-heading"><p className="section-no">[ FAQ ]</p><h2 id="faq-title">Frequently asked questions.</h2></div>
         <div className="faq-list">
           <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
@@ -283,7 +282,7 @@ export function LandingPage() {
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
       <ConvergingHelixTuner>
-        <div id="final-cta-copy"><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p></div>
+        <div id="final-cta-copy"><p className="section-no final-cta-label">[ GET STARTED ]</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p></div>
         <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
       </ConvergingHelixTuner>
     </section>

@@ -3707,7 +3707,7 @@
       #formats .formats-secondary-grid .format-feature::before {
         display: block;
         position: absolute;
-        inset: 12px -12px -12px 12px;
+        inset: 6px -6px -6px 6px;
         z-index: 0;
         border: 1px solid #e9ebf3;
         border-radius: 4px;
@@ -3758,7 +3758,7 @@
 
       #formats .formats-secondary-grid .format-feature:hover::after,
       #formats .formats-secondary-grid .format-feature:hover > * {
-        transform: translate(-4px, -4px);
+        transform: translate(-2px, -2px);
       }
 
       #formats .formats-secondary-grid .format-feature:hover .format-feature-icon {
@@ -4047,7 +4047,7 @@
       padding: 6px 10px;
       border: 0;
       border-radius: 2px;
-      background: var(--main-600);
+      background: var(--mineral-green-500);
       color: #fff;
       font-family: var(--figma-display);
       font-size: 15px;
@@ -4057,8 +4057,8 @@
     }
 
     #enterprise .sales-link:hover {
-      border-color: var(--main-700);
-      background: var(--main-700);
+      border-color: var(--mineral-green-600);
+      background: var(--mineral-green-600);
     }
 
     #enterprise .enterprise-metrics {
@@ -4229,6 +4229,11 @@
       75% { transform: translate(1.5px, 1.5px); }
     }
 
+    @keyframes enterprise-motion-loop {
+      0%, 100% { transform: none; }
+      50% { transform: var(--enterprise-loop-transform); }
+    }
+
     #enterprise.is-visible .enterprise-illustration {
       animation: enterprise-illustration-enter 500ms cubic-bezier(.23, 1, .32, 1) var(--enterprise-visual-delay) both;
     }
@@ -4245,54 +4250,52 @@
       animation-delay: calc(var(--enterprise-visual-delay) + 100ms);
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-hover--flow .enterprise-dash {
-        animation-play-state: running;
-      }
+    #enterprise .enterprise-hover--flow .enterprise-dash {
+      animation-play-state: running;
+    }
 
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-hover-accent {
-        stroke: var(--main-600) !important;
-      }
+    #enterprise .enterprise-priority-satellite {
+      animation: enterprise-priority-orbit 2.4s linear infinite;
+    }
 
-      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-core-motion {
-        transform: translateY(-3px);
-      }
+    #enterprise .enterprise-priority-satellite--second {
+      animation-delay: -800ms;
+    }
 
-      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-satellite {
-        animation: enterprise-priority-orbit 2.4s linear infinite;
-      }
+    #enterprise .enterprise-priority-satellite--third {
+      animation-delay: -1600ms;
+    }
 
-      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-satellite--second {
-        animation-delay: -800ms;
-      }
+    #enterprise .enterprise-priority-core-motion,
+    #enterprise .enterprise-deployment-layer-motion,
+    #enterprise .enterprise-support-circle-motion,
+    #enterprise .enterprise-sla-core-motion {
+      animation: enterprise-motion-loop 2.4s ease-in-out infinite;
+    }
 
-      #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-satellite--third {
-        animation-delay: -1600ms;
-      }
+    #enterprise .enterprise-priority-core-motion,
+    #enterprise .enterprise-deployment-layer-motion--top {
+      --enterprise-loop-transform: translateY(-3px);
+    }
 
-      #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--top {
-        transform: translateY(-3px);
-      }
+    #enterprise .enterprise-deployment-layer-motion--middle {
+      --enterprise-loop-transform: none;
+    }
 
-      #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--bottom {
-        transform: translateY(3px);
-      }
+    #enterprise .enterprise-deployment-layer-motion--bottom {
+      --enterprise-loop-transform: translateY(3px);
+    }
 
-      #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual svg:hover .enterprise-support-circle-motion--left {
-        transform: translateX(3px);
-      }
+    #enterprise .enterprise-support-circle-motion--left {
+      --enterprise-loop-transform: translateX(3px);
+    }
 
-      #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual svg:hover .enterprise-support-circle-motion--right {
-        transform: translateX(-3px);
-      }
+    #enterprise .enterprise-support-circle-motion--right {
+      --enterprise-loop-transform: translateX(-3px);
+    }
 
-      #enterprise .enterprise-metric:nth-child(5) .enterprise-metric-visual svg:hover .enterprise-sla-core-motion {
-        transform: scale(1.025);
-      }
-
-      #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg:hover .enterprise-commercial-tower-motion {
-        transform: scaleY(1.035);
-      }
+    #enterprise .enterprise-sla-core-motion {
+      --enterprise-loop-transform: scale(1.025);
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -4315,26 +4318,9 @@
         stroke-dashoffset: 0;
       }
 
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-priority-core-motion,
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-priority-satellite,
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion,
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-support-circle-motion,
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-sla-core-motion,
-      #enterprise .enterprise-metric-visual svg:hover .enterprise-commercial-tower-motion {
-        animation: none !important;
-        transform: none !important;
-      }
-
       #enterprise .enterprise-illustration {
         opacity: 1;
         transition: opacity 120ms ease-out !important;
-      }
-
-      @media (hover: hover) and (pointer: fine) {
-        #enterprise .enterprise-metric-visual svg:hover {
-          opacity: .82;
-        }
-
       }
     }
 
@@ -5256,8 +5242,9 @@
     }
 
     #final-cta .lede {
-      width: 590px;
+      width: 480px;
       max-width: 100%;
+      opacity: .6;
       font-size: 18px;
       line-height: 27px;
     }
@@ -5398,11 +5385,11 @@
       transition: color 180ms ease;
     }
 
-    #integration .steps li:hover {
+    #integration .steps li:first-child:hover {
       border-color: var(--main-600);
     }
 
-    #integration .steps li:hover > span {
+    #integration .steps li:first-child:hover > span {
       background: transparent;
       color: var(--main-600);
     }
@@ -5431,8 +5418,8 @@
       transition: opacity 180ms ease;
     }
 
-    #integration .steps li:hover::after,
-    #integration .steps li:not(:last-child):hover::after {
+    #integration .steps li:first-child:hover::after,
+    #integration .steps li:first-child:not(:last-child):hover::after {
       opacity: 1;
     }
 
@@ -5799,7 +5786,7 @@
       transition: color 180ms ease;
     }
 
-    #integration .steps li:hover .integration-step-number {
+    #integration .steps li:first-child:hover .integration-step-number {
       color: var(--main-600);
     }
 
@@ -6322,7 +6309,7 @@
       display: block;
       position: absolute;
       z-index: 0;
-      inset: 12px -12px -12px 12px;
+      inset: 6px -6px -6px 6px;
       border: 1px solid #e9ebf3;
       border-radius: 4px;
       background-color: #fff;
@@ -6366,7 +6353,7 @@
 
     #formats .formats-secondary-grid .format-feature:hover::after,
     #formats .formats-secondary-grid .format-feature:hover > * {
-      transform: translate(-4px, -4px);
+      transform: translate(-2px, -2px);
     }
 
     #formats .formats-secondary-grid .format-feature:hover .format-feature-icon {
@@ -6403,8 +6390,22 @@
     }
 
     .landing-page #main .section-no {
+      color: var(--mineral-green-500);
       font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace !important;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 24px;
+      letter-spacing: 0;
       text-transform: none;
+    }
+
+    .landing-page #main #final-cta .final-cta-label {
+      width: max-content;
+      padding: 3px 8px;
+      align-self: center;
+      border: 1px solid currentColor;
+      border-radius: 1px;
+      color: var(--coral-signal-500) !important;
     }
 
     #capabilities .capability-copy-title h3 {
@@ -7162,11 +7163,28 @@
   pointer-events: none;
 }
 
-/* Enterprise action belongs beneath the illustration grid. */
-#enterprise .enterprise-content > .sales-link {
-  order: 4;
-  align-self: center;
-  margin-top: 40px;
+/* Keep the Enterprise supporting copy and its action in the right column. */
+@media (min-width: 768px) {
+  #enterprise .enterprise-copy {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    column-gap: var(--layout-grid-gap);
+  }
+}
+
+@media (min-width: 1200px) {
+  #enterprise .enterprise-copy {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+  }
+
+  #enterprise h2 {
+    grid-column: 1 / span 6;
+  }
+
+  #enterprise .enterprise-copy-detail {
+    grid-column: 8 / -1;
+  }
 }
 
 /* Keep the existing Integration cards intact; only style their sequence chips. */
@@ -7691,7 +7709,7 @@
     height: 72px;
     width: calc(100% - 16px);
     margin: 12px 8px;
-    padding: 4px 16px;
+    padding: 8px 16px;
     gap: 0;
     background-color: var(--mineral-green-500, #19A88B);
     background-image: none;
@@ -7856,38 +7874,6 @@
     flex-wrap: wrap;
     flex-direction: row;
     gap: 12px 24px;
-  }
-}
-
-/* Review refinements: token colors and grid-aligned section details. */
-@media (hover: hover) and (pointer: fine) {
-  #enterprise .enterprise-metric:first-child .enterprise-metric-visual svg:hover .enterprise-dash {
-    stroke: var(--mineral-green-500) !important;
-  }
-
-  #enterprise .enterprise-metric:first-child .enterprise-metric-visual svg:hover .enterprise-signal-node {
-    stroke: var(--coral-signal-500) !important;
-  }
-
-  #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-core-motion,
-  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--top,
-  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--bottom {
-    stroke: var(--mineral-green-500) !important;
-  }
-
-  #enterprise .enterprise-metric:nth-child(2) .enterprise-metric-visual svg:hover .enterprise-priority-satellite,
-  #enterprise .enterprise-metric:nth-child(3) .enterprise-metric-visual svg:hover .enterprise-deployment-layer-motion--middle,
-  #enterprise .enterprise-metric:nth-child(4) .enterprise-metric-visual svg:hover .enterprise-illustration-base > .enterprise-node,
-  #enterprise .enterprise-metric:nth-child(5) .enterprise-metric-visual svg:hover .enterprise-signal-node {
-    stroke: var(--coral-signal-500) !important;
-  }
-
-  #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg:hover .enterprise-commercial-tower-motion {
-    stroke: var(--mineral-green-500) !important;
-  }
-
-  #enterprise .enterprise-metric:nth-child(6) .enterprise-metric-visual svg:hover .enterprise-commercial-separators {
-    stroke: var(--coral-signal-500) !important;
   }
 }
 
