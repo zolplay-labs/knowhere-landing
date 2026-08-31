@@ -9,9 +9,9 @@
   const DATA_PULSE_DELAY_MS = 900;
   const POINTER_EASE = 0.055;
   const DEFAULT_COLORS = {
-    accent: '#77e1ca',
-    secondary: '#a98bff',
-    background: '#0f141a'
+    accent: '#19A88B',
+    secondary: '#19A88B',
+    background: '#FFFFFF'
   };
 
   function clamp(value, min = 0, max = 1) {

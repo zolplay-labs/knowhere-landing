@@ -27,6 +27,8 @@ function initializeHeroCanvas(root, cleanups) {
     const controller = new AbortController();
     const { signal } = controller;
     let active = true;
+    const currentColor = (property, fallback) => getComputedStyle(document.documentElement)
+      .getPropertyValue(property).trim() || fallback;
 
     const SETTINGS = Object.freeze({
       cellSize: 6,
@@ -35,29 +37,29 @@ function initializeHeroCanvas(root, cleanups) {
       trailDecay: .925,
       brushRadius: 10,
       interactionStrength: .19,
-      paperColor: '#fff',
       seed: 17
     });
-    const currentPrimary = () => getComputedStyle(document.documentElement)
-      .getPropertyValue('--page-primary').trim() || '#19A88B';
-    const RED_FLOW_COLOR = '#FF634A';
+    const currentPrimary = () => currentColor('--page-primary', '#19A88B');
+    const RED_FLOW_COLOR = currentColor('--coral-signal-500', '#FF634A');
     let primary500 = currentPrimary();
     const STAGE_COLORS = Array(5).fill(primary500);
     const LAYER_COLORS = STAGE_COLORS.slice(1);
     let heroInkColor = primary500;
     let heroShadowColor = primary500;
-    const currentTextColor = (property, fallback) => getComputedStyle(document.documentElement)
-      .getPropertyValue(property).trim() || fallback;
-    let heroLabelTitleColor = currentTextColor('--mist-white-900', '#2E2E2C');
-    let heroLabelSubtitleColor = currentTextColor('--mist-white-700', '#888A82');
+    let heroPaperColor = currentColor('--white-100', '#FFFFFF');
+    let heroLabelTitleColor = currentColor('--mist-white-900', '#2E2E2C');
+    let heroLabelSubtitleColor = currentColor('--mist-white-700', '#888A82');
+    let heroGridColor = currentColor('--black-6', 'rgba(0, 0, 0, 0.06)');
     const syncPrimary = () => {
       primary500 = currentPrimary();
       STAGE_COLORS.fill(primary500);
       LAYER_COLORS.fill(primary500);
       heroInkColor = primary500;
       heroShadowColor = primary500;
-      heroLabelTitleColor = currentTextColor('--mist-white-900', '#2E2E2C');
-      heroLabelSubtitleColor = currentTextColor('--mist-white-700', '#888A82');
+      heroPaperColor = currentColor('--white-100', '#FFFFFF');
+      heroLabelTitleColor = currentColor('--mist-white-900', '#2E2E2C');
+      heroLabelSubtitleColor = currentColor('--mist-white-700', '#888A82');
+      heroGridColor = currentColor('--black-6', 'rgba(0, 0, 0, 0.06)');
     };
     window.addEventListener('main-palette-change', syncPrimary, { signal });
     const vortexControls = {
@@ -733,27 +735,32 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.translate(-cardWidth / 2, -cardHeight / 2);
 
       ctx.globalAlpha = visibility;
-      ctx.fillStyle = '#fff';
+      ctx.fillStyle = currentColor('--white-100', '#FFFFFF');
       ctx.fillRect(0, 0, cardWidth, cardHeight);
-      ctx.strokeStyle = '#cecde0';
+      ctx.strokeStyle = currentColor('--mist-white-600', '#BBBCB3');
       ctx.lineWidth = 1;
       ctx.strokeRect(.5, .5, cardWidth - 1, cardHeight - 1);
 
       const textX = 16;
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
-      ctx.fillStyle = '#181818';
+      ctx.fillStyle = currentColor('--mist-white-950', '#1B1C1A');
       ctx.font = '500 14px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(displayLabel(layer.label), textX, 16);
-      ctx.fillStyle = '#181818';
+      ctx.fillStyle = currentColor('--mist-white-950', '#1B1C1A');
       ctx.font = '400 13px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
       ctx.fillText(layer.detail, textX, 40);
 
       const statusY = 66;
       ctx.globalAlpha = .4 * visibility;
-      ctx.fillStyle = '#000';
+      ctx.fillStyle = currentColor('--black-100', '#000000');
       ctx.fillText('Live data pass', textX, statusY);
-      const statusColors = ['#ced3e7', '#8191c0', '#a1aed1', '#dce0ee', '#dce0ee', '#dce0ee', '#dce0ee'];
+      const statusColors = [
+        currentColor('--mineral-green-100', '#7EFEDD'),
+        currentColor('--mineral-green-300', '#23D6B1'),
+        currentColor('--mineral-green-200', '#27EFC6'),
+        ...Array(4).fill(currentColor('--mineral-green-50', '#CAFFEE'))
+      ];
       const statusStartX = cardWidth - 118;
       statusColors.forEach((statusColor, index) => {
         const phase = ((time * 1.15 - index * .11) % 1 + 1) % 1;
@@ -940,9 +947,10 @@ function initializeHeroCanvas(root, cleanups) {
     function drawGrid() {
       const gridEntrance = reducedMotion ? 1 : .2 + easeOutCubic(intro * 1.65) * .8;
       const gridGradient = ctx.createLinearGradient(0, 0, 0, height);
-      gridGradient.addColorStop(0, `rgba(0, 0, 0, ${.04 * gridEntrance})`);
-      gridGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      gridGradient.addColorStop(0, heroGridColor);
+      gridGradient.addColorStop(1, 'transparent');
       ctx.strokeStyle = gridGradient;
+      ctx.globalAlpha = gridEntrance;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = 0; x <= width; x += cell) {
@@ -954,6 +962,7 @@ function initializeHeroCanvas(root, cleanups) {
         ctx.lineTo(width, y + .5);
       }
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
 
     function drawHeroCopyAccents(layout, time) {
@@ -1435,7 +1444,7 @@ function initializeHeroCanvas(root, cleanups) {
       const time = animationTime;
       const layout = buildLayout();
       ctx.clearRect(0, 0, width, height);
-      ctx.fillStyle = SETTINGS.paperColor;
+      ctx.fillStyle = heroPaperColor;
       ctx.fillRect(0, 0, width, height);
       ctx.save();
       drawGrid();
@@ -1556,6 +1565,8 @@ function initializeFormatGlobe(root, cleanups) {
     canvas.dataset.formatGlobeOwned = 'true';
 
     const context = canvas.getContext('2d');
+    const currentColor = (property, fallback) => getComputedStyle(document.documentElement)
+      .getPropertyValue(property).trim() || fallback;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const ringRotations = [
       [0, 0, 0],
@@ -1665,12 +1676,24 @@ function initializeFormatGlobe(root, cleanups) {
     }
 
     function formatBaseColor() {
-      const color = getComputedStyle(document.documentElement).getPropertyValue('--mineral-green-500').trim();
+      const rootStyle = getComputedStyle(document.documentElement);
+      const property = document.documentElement.dataset.theme === 'dark'
+        ? '--md-sys-color-primary'
+        : '--mineral-green-500';
+      const color = rootStyle.getPropertyValue(property).trim();
       return /^#[0-9a-f]{6}$/i.test(color) ? color : '#19A88B';
     }
 
     function formatBaseColorWithAlpha(alpha) {
       return colorWithAlpha(formatBaseColor(), alpha);
+    }
+
+    function formatNeutralColorWithAlpha(alpha) {
+      const color = getComputedStyle(document.documentElement).getPropertyValue('--black-100').trim();
+      const mappedAlpha = document.documentElement.dataset.theme === 'dark'
+        ? Math.min(1, 0.16 + alpha * 1.4)
+        : alpha;
+      return colorWithAlpha(/^#[0-9a-f]{6}$/i.test(color) ? color : '#000000', mappedAlpha);
     }
 
     function rotate(point, rotation) {
@@ -1787,7 +1810,7 @@ function initializeFormatGlobe(root, cleanups) {
           context.lineWidth = colorStrength > 0 ? 1.25 : 0.75;
           context.strokeStyle = colorStrength > 0
             ? formatBaseColorWithAlpha(0.18 + colorStrength * 0.78)
-            : `rgba(24, 24, 24, ${depthAlpha})`;
+            : formatNeutralColorWithAlpha(depthAlpha);
           context.stroke();
         }
         drawTraceHead(ringIndex, ringRadius, introState.reveal, introState.headOpacity, elapsed, segments);
@@ -1828,7 +1851,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.arc(particle.x, particle.y, isHovered ? 4.8 : particle.radius, 0, Math.PI * 2);
         context.fillStyle = isHovered || isColored
           ? colorWithAlpha(formatBaseColor(), (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
-          : `rgba(24, 24, 24, ${(0.22 + (particle.z + 1) * 0.20) * particle.introAlpha})`;
+          : formatNeutralColorWithAlpha((0.22 + (particle.z + 1) * 0.20) * particle.introAlpha);
         context.fill();
       });
 
@@ -1886,12 +1909,12 @@ function initializeFormatGlobe(root, cleanups) {
           whiteIconContext.globalCompositeOperation = 'source-over';
           whiteIconContext.drawImage(icon, 0, 0, 16, 16);
           whiteIconContext.globalCompositeOperation = 'source-in';
-          whiteIconContext.fillStyle = '#fff';
+          whiteIconContext.fillStyle = currentColor('--white-100', '#FFFFFF');
           whiteIconContext.fillRect(0, 0, 16, 16);
           whiteIconContext.globalCompositeOperation = 'source-over';
           context.drawImage(whiteIconCanvas, labelX + 4, labelY + 4, 16, 16);
         }
-        context.fillStyle = '#fff';
+        context.fillStyle = currentColor('--white-100', '#FFFFFF');
         context.fillText(particle.label, labelX + 27, labelY + 12);
         context.restore();
       }

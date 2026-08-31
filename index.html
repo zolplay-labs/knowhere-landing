@@ -7,6 +7,16 @@
       name="description"
       content="Knowhere turns complex documents into structured, navigable, and source-linked context for agents."
     />
+    <script>
+      (() => {
+        const storedTheme = localStorage.getItem('knowhere-color-theme')
+        const theme = storedTheme === 'light' || storedTheme === 'dark'
+          ? storedTheme
+          : matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        document.documentElement.dataset.theme = theme
+        document.documentElement.style.colorScheme = theme
+      })()
+    </script>
     <title>KNOWHERE — Document context for agents</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

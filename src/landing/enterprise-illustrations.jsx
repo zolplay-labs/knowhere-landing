@@ -8,7 +8,7 @@ const sharedSvgProps = {
 function Illustration({ type, viewBox, children }) {
   return (
     <svg {...sharedSvgProps} className={`enterprise-illustration enterprise-illustration--${type}`} viewBox={viewBox}>
-      <g className="enterprise-illustration-base" stroke="#747985" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+      <g className="enterprise-illustration-base" stroke="var(--mist-white-700)" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
         {children}
       </g>
     </svg>

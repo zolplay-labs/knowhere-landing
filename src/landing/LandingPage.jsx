@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
 import { ConvergingHelixTuner } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
@@ -7,6 +7,7 @@ import { initializeLandingInteractions } from './landing-interactions'
 
 export function LandingPage() {
   const rootRef = useRef(null)
+  const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || 'light')
 
   useEffect(() => {
     const root = rootRef.current
@@ -19,6 +20,37 @@ export function LandingPage() {
       cleanupInteractions()
     }
   }, [])
+
+  useEffect(() => {
+    const root = document.documentElement
+    const scanFrame = rootRef.current?.querySelector('.section-scan-frame iframe')
+    const applyTheme = (targetDocument) => {
+      if (!targetDocument?.documentElement) return
+      targetDocument.documentElement.dataset.theme = theme
+      targetDocument.documentElement.style.colorScheme = theme
+      targetDocument.defaultView?.dispatchEvent(new CustomEvent('main-palette-change'))
+    }
+    const syncTheme = () => {
+      applyTheme(document)
+      try {
+        applyTheme(scanFrame?.contentDocument)
+      } catch {
+        // A future cross-origin preview must not block the main page theme.
+      }
+    }
+
+    syncTheme()
+    scanFrame?.addEventListener('load', syncTheme)
+    return () => scanFrame?.removeEventListener('load', syncTheme)
+  }, [theme])
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => {
+      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark'
+      localStorage.setItem('knowhere-color-theme', nextTheme)
+      return nextTheme
+    })
+  }
 
   return (
 <div className="landing-page" ref={rootRef}>
@@ -33,6 +65,10 @@ export function LandingPage() {
       <div className="nav-actions">
         <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.91-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.72c.85 0 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z" /></svg></a>
         <button className="language-toggle desktop-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><g fill="currentColor"><line x1="2.25" y1="4.25" x2="10.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="6.25" y1="2.25" x2="6.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M4.25,4.25c.091,2.676,1.916,4.981,4.5,5.684" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M8.25,4.25c-.4,5.625-6,6-6,6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><polyline points="9.25 15.75 12.25 7.75 12.75 7.75 15.75 15.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="10.188" y1="13.25" x2="14.813" y2="13.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></g></svg></button>
+        <button className="theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+          <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
+          <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
+        </button>
         <a className="button button-small" href="https://knowhereto.ai/login">Get API Key</a>
         <button className="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><span className="sr-only">Open menu</span><span aria-hidden="true">Menu</span></button>
       </div>

@@ -9,7 +9,7 @@ import '@fontsource/poppins/400.css'
 import '@fontsource/poppins/500.css'
 import '@fontsource/poppins/600.css'
 import 'dialkit/styles.css'
-import { colorHex } from './colors'
+import { colorAlpha, colorHex, materialDark } from './colors'
 
 const STORAGE_KEY = 'knowhere-page-style'
 const HERO_CONTROLS_STORAGE_KEY = 'knowhere-hero-vortex-controls'
@@ -20,7 +20,7 @@ const MAIN_PALETTES = {
   'main-3': colorHex['mineral-green'],
 }
 const MAIN_COLOR_VALUES = {
-  'main-3': '#19A88B',
+  'main-3': colorHex['mineral-green'][500],
 }
 const DEFAULTS = { font: 'geist', chineseFont: 'frex-sans-gb', palette: 'main-3' }
 
@@ -180,11 +180,32 @@ function readableForeground(hex) {
     value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
   ))
   const luminance = 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2]
-  return luminance > 0.179 ? '#181818' : '#FFFFFF'
+  return luminance > 0.179 ? colorHex['mist-white'][950] : colorHex.white
 }
 
 function paletteStyles(palette) {
   return Object.entries(palette).map(([stop, color]) => `--main-${stop}:${color}`).join(';')
+}
+
+function resolveColorToken(token) {
+  if (typeof colorHex[token] === 'string') return colorHex[token]
+  const match = token.match(/^(.*)-(\d+)$/)
+  return match ? colorHex[match[1]]?.[match[2]] : undefined
+}
+
+function colorTokenStyles() {
+  const solidTokens = Object.entries(colorHex).flatMap(([family, value]) => (
+    typeof value === 'string'
+      ? [`--${family}:${value}`]
+      : Object.entries(value).map(([stop, color]) => `--${family}-${stop}:${color}`)
+  ))
+  const alphaTokens = Object.entries(colorAlpha).flatMap(([family, values]) => (
+    Object.entries(values).map(([opacity, color]) => `--${family}-${opacity}:${color}`)
+  ))
+  const materialDarkTokens = Object.entries(materialDark).map(([role, token]) => (
+    `--md-sys-color-${role}:${resolveColorToken(token)}`
+  ))
+  return [...solidTokens, ...alphaTokens, ...materialDarkTokens].join(';')
 }
 
 const CONTROLLER_LAYOUT_STYLES = `
@@ -194,53 +215,72 @@ const CONTROLLER_LAYOUT_STYLES = `
     inset: 0;
     width: 100%;
     height: 0;
-    --dial-surface: #f3f2ee;
-    --dial-surface-hover: #ecebe6;
-    --dial-surface-active: #e5e4de;
-    --dial-surface-subtle: #d8d6d0;
-    --dial-text-root: #181818;
-    --dial-text-section: #5f5e5c;
-    --dial-text-label: #454440;
-    --dial-text-focus: #181818;
-    --dial-text-primary: #181818;
-    --dial-text-secondary: #5f5e5c;
-    --dial-text-tertiary: #898887;
-    --dial-border: #c9c7c0;
-    --dial-border-hover: #898887;
-    --dial-glass-bg: rgba(253, 252, 252, .96);
-    --dial-dropdown-bg: #fdfcfc;
+    --dial-surface: var(--mist-white-400);
+    --dial-surface-hover: var(--mist-white-500);
+    --dial-surface-active: var(--mist-white-600);
+    --dial-surface-subtle: var(--mist-white-600);
+    --dial-text-root: var(--mist-white-950);
+    --dial-text-section: var(--mist-white-800);
+    --dial-text-label: var(--mist-white-900);
+    --dial-text-focus: var(--mist-white-950);
+    --dial-text-primary: var(--mist-white-950);
+    --dial-text-secondary: var(--mist-white-800);
+    --dial-text-tertiary: var(--mist-white-700);
+    --dial-border: var(--mist-white-600);
+    --dial-border-hover: var(--mist-white-700);
+    --dial-glass-bg: var(--white-100);
+    --dial-dropdown-bg: var(--mist-white-100);
     --dial-backdrop-blur: 14px;
     --dial-radius: 4px;
     --dial-row-height: 44px;
-    --dial-shadow: 0 16px 48px rgba(24, 24, 24, .12);
+    --dial-shadow: 0 16px 48px var(--black-10);
     --dial-shadow-collapsed: none;
-    --dial-shadow-dropdown: 0 12px 32px rgba(24, 24, 24, .12);
+    --dial-shadow-dropdown: 0 12px 32px var(--black-10);
     font-family: var(--sans);
+  }
+  html[data-theme="dark"] .dialkit-root {
+    --dial-surface: var(--md-sys-color-surface-container-high);
+    --dial-surface-hover: var(--md-sys-color-surface-container-highest);
+    --dial-surface-active: var(--md-sys-color-primary-container);
+    --dial-surface-subtle: var(--md-sys-color-surface-container);
+    --dial-text-root: var(--md-sys-color-on-surface);
+    --dial-text-section: var(--md-sys-color-on-surface-variant);
+    --dial-text-label: var(--md-sys-color-on-surface);
+    --dial-text-focus: var(--md-sys-color-on-surface);
+    --dial-text-primary: var(--md-sys-color-on-surface);
+    --dial-text-secondary: var(--md-sys-color-on-surface-variant);
+    --dial-text-tertiary: var(--md-sys-color-outline);
+    --dial-border: var(--md-sys-color-outline-variant);
+    --dial-border-hover: var(--md-sys-color-outline);
+    --dial-glass-bg: var(--md-sys-color-surface-container-high);
+    --dial-dropdown-bg: var(--md-sys-color-surface-container);
+    --dial-shadow: 0 16px 48px color-mix(in srgb, var(--md-sys-color-shadow) 40%, transparent);
+    --dial-shadow-dropdown: 0 12px 32px color-mix(in srgb, var(--md-sys-color-shadow) 40%, transparent);
   }
   .dialkit-panel-inner:not([data-collapsed="true"]) {
     width: min(400px, calc(100vw - 32px)) !important;
     padding: 0 14px !important;
-    border-color: #c9c7c0;
+    border-color: var(--mist-white-600);
     border-radius: 6px !important;
-    background: rgba(253, 252, 252, .96);
+    background: var(--white-100);
   }
   .dialkit-panel[data-position="top-right"] {
     top: 80px;
   }
   .dialkit-panel-inner[data-collapsed="true"] {
-    border-color: #181818;
+    border-color: var(--mist-white-950);
     border-radius: 4px !important;
-    background: #181818;
-    color: #fff;
+    background: var(--mist-white-950);
+    color: var(--white-100);
   }
   .dialkit-panel-inner[data-collapsed="true"] .dialkit-panel-icon {
-    color: #fff;
+    color: var(--white-100);
   }
   .dialkit-panel-inner:not([data-collapsed="true"]) .dialkit-panel-header {
     min-height: 54px;
     margin: 0;
     padding: 0;
-    border-bottom-color: #c9c7c0;
+    border-bottom-color: var(--mist-white-600);
     cursor: grab;
     touch-action: none;
     user-select: none;
@@ -265,13 +305,13 @@ const CONTROLLER_LAYOUT_STYLES = `
   }
   .dialkit-folder:not(.dialkit-folder-root) {
     margin: 0;
-    border-color: #d8d6d0;
+    border-color: var(--mist-white-600);
   }
   .dialkit-folder:not(.dialkit-folder-root) > .dialkit-folder-header {
     height: 42px;
   }
   .dialkit-folder:not(.dialkit-folder-root) .dialkit-folder-title {
-    color: #777670;
+    color: var(--mist-white-700);
     font-size: 10px;
     font-weight: 500;
     letter-spacing: .08em;
@@ -290,7 +330,7 @@ const CONTROLLER_LAYOUT_STYLES = `
   .dialkit-select-label {
     min-width: 0;
     flex: 1 1 auto;
-    color: #454440;
+    color: var(--mist-white-900);
     font-size: 12px;
     font-weight: 400;
     text-align: left;
@@ -302,19 +342,19 @@ const CONTROLLER_LAYOUT_STYLES = `
     align-self: stretch;
     padding: 0 12px;
     justify-content: space-between;
-    border: 1px solid #c9c7c0;
+    border: 1px solid var(--mist-white-600);
     border-radius: 4px;
-    background: #f7f6f1;
+    background: var(--mist-white-300);
   }
   .dialkit-select-trigger:hover .dialkit-select-right,
   .dialkit-select-trigger[data-open="true"] .dialkit-select-right {
-    border-color: #898887;
-    background: #fff;
+    border-color: var(--mist-white-700);
+    background: var(--white-100);
   }
   .dialkit-select-value {
     min-width: 0;
     overflow: hidden;
-    color: #181818;
+    color: var(--mist-white-950);
     font-size: 12px;
     font-weight: 400;
     text-overflow: ellipsis;
@@ -327,26 +367,26 @@ const CONTROLLER_LAYOUT_STYLES = `
   }
   .dialkit-select-dropdown {
     padding: 4px;
-    border: 1px solid #c9c7c0;
+    border: 1px solid var(--mist-white-600);
     border-radius: 4px;
-    background: #fdfcfc;
-    box-shadow: 0 12px 32px rgba(24, 24, 24, .12);
+    background: var(--mist-white-100);
+    box-shadow: 0 12px 32px var(--black-10);
     font-family: var(--sans);
   }
   .dialkit-select-option {
     min-height: 36px;
     padding: 8px 10px;
     border-radius: 3px;
-    color: #454440;
+    color: var(--mist-white-900);
     font-size: 12px;
     font-weight: 400;
   }
   .dialkit-select-option:hover {
-    background: #f0efe9;
+    background: var(--mist-white-500);
   }
   .dialkit-select-option[data-selected="true"] {
-    background: color-mix(in srgb, var(--page-primary) 16%, #fdfcfc);
-    color: #181818;
+    background: color-mix(in srgb, var(--page-primary) 16%, var(--mist-white-100));
+    color: var(--mist-white-950);
   }
   .dialkit-panel button:focus-visible {
     outline: 2px solid var(--page-primary);
@@ -368,26 +408,26 @@ const CONTROLLER_LAYOUT_STYLES = `
     width: 100%;
     min-height: 40px;
     padding: 8px 12px;
-    border: 1px solid #c9c7c0;
+    border: 1px solid var(--mist-white-600);
     border-radius: 4px;
-    background: #f7f6f1;
-    color: #181818;
+    background: var(--mist-white-300);
+    color: var(--mist-white-950);
     font-size: 12px;
     font-weight: 500;
     cursor: pointer;
   }
   .hero-vortex-copy-button:hover {
-    border-color: #898887;
-    background: #fff;
+    border-color: var(--mist-white-700);
+    background: var(--white-100);
   }
   .hero-vortex-copy-button[data-state="copied"],
   .hero-vortex-copy-button[data-state="saved"] {
     border-color: var(--page-primary);
-    background: color-mix(in srgb, var(--page-primary) 14%, #fff);
+    background: color-mix(in srgb, var(--page-primary) 14%, var(--white-100));
   }
   .hero-vortex-copy-button[data-state="error"] {
-    border-color: #b42318;
-    color: #b42318;
+    border-color: var(--coral-signal-700);
+    color: var(--coral-signal-700);
   }
   .dialkit-select-option:focus-visible {
     outline: 2px solid var(--page-primary);
@@ -417,22 +457,23 @@ function applySettings(targetDocument, settings) {
   for (const [stop, color] of Object.entries(palette)) {
     rootStyle.setProperty(`--main-${stop}`, color)
   }
-  rootStyle.setProperty('--mist-white-50', colorHex['mist-white'][50])
-  rootStyle.setProperty('--mist-white-100', colorHex['mist-white'][100])
-  rootStyle.setProperty('--mist-white-200', colorHex['mist-white'][200])
-  rootStyle.setProperty('--mist-white-300', colorHex['mist-white'][300])
-  rootStyle.setProperty('--mist-white-400', colorHex['mist-white'][400])
-  rootStyle.setProperty('--mist-white-500', colorHex['mist-white'][500])
-  rootStyle.setProperty('--mist-white-700', colorHex['mist-white'][700])
-  rootStyle.setProperty('--mist-white-900', colorHex['mist-white'][900])
-  rootStyle.setProperty('--mineral-green-400', colorHex['mineral-green'][400])
-  rootStyle.setProperty('--mineral-green-500', colorHex['mineral-green'][500])
-  rootStyle.setProperty('--mineral-green-600', colorHex['mineral-green'][600])
-  rootStyle.setProperty('--mineral-green-700', colorHex['mineral-green'][700])
-  rootStyle.setProperty('--mineral-green-800', colorHex['mineral-green'][800])
-  rootStyle.setProperty('--mineral-green-900', colorHex['mineral-green'][900])
-  rootStyle.setProperty('--coral-signal-500', colorHex['coral-signal'][500])
-  rootStyle.setProperty('--deep-teal-500', colorHex['deep-teal'][500])
+  for (const [family, value] of Object.entries(colorHex)) {
+    if (typeof value === 'string') {
+      rootStyle.setProperty(`--${family}`, value)
+      continue
+    }
+    for (const [stop, color] of Object.entries(value)) {
+      rootStyle.setProperty(`--${family}-${stop}`, color)
+    }
+  }
+  for (const [family, values] of Object.entries(colorAlpha)) {
+    for (const [opacity, color] of Object.entries(values)) {
+      rootStyle.setProperty(`--${family}-${opacity}`, color)
+    }
+  }
+  for (const [role, token] of Object.entries(materialDark)) {
+    rootStyle.setProperty(`--md-sys-color-${role}`, resolveColorToken(token))
+  }
   rootStyle.setProperty('--accent', mainColor)
   rootStyle.setProperty('--page-primary', mainColor)
   rootStyle.setProperty('--page-primary-foreground', readableForeground(mainColor))
@@ -443,6 +484,7 @@ function applySettings(targetDocument, settings) {
 
 export function PageStyleControls() {
   const defaultOpen = !matchMedia('(max-width: 767px)').matches
+  const [colorTheme, setColorTheme] = useState(() => document.documentElement.dataset.theme || 'light')
   const [vortexCopyTarget, setVortexCopyTarget] = useState(null)
   const [copyState, setCopyState] = useState('idle')
   const [saveState, setSaveState] = useState('idle')
@@ -450,6 +492,16 @@ export function PageStyleControls() {
   const saveResetTimer = useRef(0)
   const paramsRef = useRef(null)
   const vortexParamsRef = useRef(null)
+
+  useEffect(() => {
+    const root = document.documentElement
+    const syncColorTheme = () => setColorTheme(root.dataset.theme || 'light')
+    const observer = new MutationObserver(syncColorTheme)
+    observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+    syncColorTheme()
+    return () => observer.disconnect()
+  }, [])
+
   const saveControllerSettings = () => {
     clearTimeout(saveResetTimer.current)
     try {
@@ -833,8 +885,8 @@ export function PageStyleControls() {
 
   return (
     <>
-      <style>{`:root{${paletteStyles(initialPalette)};--mist-white-50:${colorHex['mist-white'][50]};--mist-white-100:${colorHex['mist-white'][100]};--mist-white-200:${colorHex['mist-white'][200]};--mist-white-300:${colorHex['mist-white'][300]};--mist-white-400:${colorHex['mist-white'][400]};--mist-white-500:${colorHex['mist-white'][500]};--mist-white-700:${colorHex['mist-white'][700]};--mist-white-900:${colorHex['mist-white'][900]};--mineral-green-400:${colorHex['mineral-green'][400]};--mineral-green-500:${colorHex['mineral-green'][500]};--mineral-green-600:${colorHex['mineral-green'][600]};--mineral-green-700:${colorHex['mineral-green'][700]};--mineral-green-800:${colorHex['mineral-green'][800]};--mineral-green-900:${colorHex['mineral-green'][900]};--coral-signal-500:${colorHex['coral-signal'][500]};--deep-teal-500:${colorHex['deep-teal'][500]};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
-      <DialRoot position="top-right" defaultOpen={defaultOpen} theme="light" />
+      <style>{`:root{${paletteStyles(initialPalette)};${colorTokenStyles()};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
+      <DialRoot position="top-right" defaultOpen={defaultOpen} theme={colorTheme} />
       {vortexCopyTarget && createPortal(
         <div className="hero-vortex-action-buttons">
           <button

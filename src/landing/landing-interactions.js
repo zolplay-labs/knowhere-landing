@@ -1113,11 +1113,11 @@ syncPricingCalculator();
         const baseSize = 0.28 + breathing * 0.08;
         const size = tileCell * (baseSize + (0.9 - baseSize) * brightness);
         const half = size / 2;
-        tileContext.fillStyle = `rgba(245,245,241,${(0.08 + brightness * 0.44).toFixed(3)})`;
+        tileContext.fillStyle = `rgba(255,255,255,${(0.08 + brightness * 0.44).toFixed(3)})`;
         tileContext.fillRect(tile.x - half, tile.y - half, size, size);
         if (tile.spark && tile.lit > 0.5 && Math.sin(now * 0.018 + tile.seed * 30) > 0.82) {
           const sparkSize = size * 1.45;
-          tileContext.fillStyle = `rgba(245,245,241,${(tile.lit * 0.5).toFixed(3)})`;
+          tileContext.fillStyle = `rgba(255,255,255,${(tile.lit * 0.5).toFixed(3)})`;
           tileContext.fillRect(tile.x - sparkSize / 2, tile.y - sparkSize / 2, sparkSize, sparkSize);
         }
       });
@@ -1207,8 +1207,14 @@ syncPricingCalculator();
       { label: 'PAYING', value: 310 }
     ];
     const WIRE = {
-      FAINTDATA: '#C0BFB7',
-      RAMP: ['#DBDAD3', '#C0BFB7', '#8F8E86', '#22211F', '#F5572F']
+      FAINTDATA: 'var(--mist-white-600)',
+      RAMP: [
+        'var(--mist-white-500)',
+        'var(--mist-white-600)',
+        'var(--mist-white-700)',
+        'var(--mist-white-950)',
+        'var(--coral-signal-500)'
+      ]
     };
     const NS = 'http://www.w3.org/2000/svg';
     const el = (parent, tag, attrs) => {
@@ -1307,7 +1313,7 @@ syncPricingCalculator();
           d += ` C${x0} ${midY} ${x1} ${midY} ${x1} ${y1}`;
         }
         el(svg, 'path', {
-          d, stroke: '#8F8E86', pathLength: 1, class: 'hero-b-flow-motion',
+          d, stroke: 'var(--mist-white-700)', pathLength: 1, class: 'hero-b-flow-motion',
           style: `--flow-duration:${6.4 + rnd(trackId + 1, 41) * 2.8}s;--flow-delay:${.65 + trackId * .095}s`
         });
         el(svg, 'path', {
@@ -1387,6 +1393,8 @@ syncPricingCalculator();
     const header = document.querySelector('.site-header');
     const ctx = canvas?.getContext('2d');
     if (!hero || !canvas || !copy || !visual || !tooltip || !ctx) return;
+    const colorToken = (property, fallback) => getComputedStyle(document.documentElement)
+      .getPropertyValue(property).trim() || fallback;
 
     const SETTINGS = Object.freeze({
       cellSize: 6,
@@ -1401,9 +1409,9 @@ syncPricingCalculator();
       fadeStart: .58,
       fadeSoftness: .28,
       gridOpacity: .022,
-      inkColor: '#1c1c1a',
-      accentColor: '#ef613d',
-      paperColor: '#fff',
+      inkColor: colorToken('--mist-white-950', '#1B1C1A'),
+      accentColor: colorToken('--coral-signal-500', '#FF634A'),
+      paperColor: colorToken('--white-100', '#FFFFFF'),
       seed: 17
     });
     const mainColor = stop => getComputedStyle(document.documentElement)
@@ -1411,9 +1419,9 @@ syncPricingCalculator();
     const STAGE_COLORS = [
       mainColor(800),
       mainColor(600),
-      '#b39a58',
-      '#b87560',
-      '#8c9970'
+      colorToken('--coral-signal-400', '#FF897D'),
+      colorToken('--coral-signal-500', '#FF634A'),
+      colorToken('--mineral-green-300', '#23D6B1')
     ];
     const LAYER_COLORS = STAGE_COLORS.slice(1);
     let mainTextureColor = mainColor(400);
@@ -1787,7 +1795,7 @@ syncPricingCalculator();
           from.x + (to.x - from.x) * state.progress,
           from.y + (to.y - from.y) * state.progress,
           (from.alpha + (to.alpha - from.alpha) * state.progress) * opacity * (.72 + flow * .46),
-          flow > 0 ? mixHexColor(color, '#26272a', flow * .11) : color
+          flow > 0 ? mixHexColor(color, colorToken('--mist-white-900', '#2E2E2C'), flow * .11) : color
         );
       }
     }
@@ -1947,7 +1955,7 @@ syncPricingCalculator();
 
     function drawGrid(time) {
       const gridEntrance = reducedMotion ? 1 : .2 + easeOutCubic(intro * 1.65) * .8;
-      ctx.strokeStyle = `rgba(28,28,26,${SETTINGS.gridOpacity * gridEntrance})`;
+      ctx.strokeStyle = `rgba(0,0,0,${SETTINGS.gridOpacity * gridEntrance})`;
       ctx.lineWidth = 1;
       ctx.beginPath();
       for (let x = 0; x <= width; x += cell) {
@@ -2487,7 +2495,17 @@ syncPricingCalculator();
     ];
     const movingDashRingIndex = 2;
     const formatLabels = ['.docx', '.pdf', '.jpg', '.pptx', '.xlsx', '.csv', '.png', '.md', '.json', '.txt'];
-    const formatLabelColors = ['#6D80B6', '#9E9773', '#939D81', '#7C85A8', '#7C9BEE', '#9CB2AF', '#96B0CB'];
+    const colorToken = (property, fallback) => getComputedStyle(document.documentElement)
+      .getPropertyValue(property).trim() || fallback;
+    const formatLabelColors = [
+      colorToken('--mineral-green-500', '#19A88B'),
+      colorToken('--mineral-green-600', '#12846C'),
+      colorToken('--mineral-green-400', '#1DBE9D'),
+      colorToken('--deep-teal-300', '#208C8A'),
+      colorToken('--mineral-green-300', '#23D6B1'),
+      colorToken('--deep-teal-200', '#2FBAB8'),
+      colorToken('--mineral-green-200', '#27EFC6')
+    ];
     const particles = Array.from({ length: 10 }, (_, index) => ({
       ring: index % ringRotations.length,
       phase: (index * 0.61803398875) % 1,
@@ -2654,7 +2672,7 @@ syncPricingCalculator();
           context.lineWidth = colorStrength > 0 ? 1.25 : 0.75;
           context.strokeStyle = colorStrength > 0
             ? activeLabelColorWithAlpha(0.18 + colorStrength * 0.78)
-            : `rgba(24, 24, 24, ${depthAlpha})`;
+            : `rgba(0, 0, 0, ${depthAlpha})`;
           context.stroke();
         }
         drawTraceHead(ringIndex, ringRadius, introState.reveal, introState.headOpacity, elapsed, segments);
@@ -2688,7 +2706,7 @@ syncPricingCalculator();
         context.arc(particle.x, particle.y, isHovered ? 4.8 : particle.radius, 0, Math.PI * 2);
         context.fillStyle = isColored
           ? colorWithAlpha(particle.color, (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
-          : `rgba(24, 24, 24, ${(0.22 + (particle.z + 1) * 0.20) * particle.introAlpha})`;
+          : `rgba(0, 0, 0, ${(0.22 + (particle.z + 1) * 0.20) * particle.introAlpha})`;
         context.fill();
       });
 
@@ -2726,7 +2744,7 @@ syncPricingCalculator();
         context.strokeStyle = hoveredParticle.color;
         context.lineWidth = 1;
         context.stroke();
-        context.fillStyle = '#fff';
+        context.fillStyle = colorToken('--white-100', '#FFFFFF');
         context.fillText(hoveredParticle.label, labelX + 6, labelY + 12);
         context.restore();
       }

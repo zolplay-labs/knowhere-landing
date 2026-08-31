@@ -1,7 +1,7 @@
 # KNOWHERE Landing Page Design System Backup
 
 Snapshot date: 2026-08-19 (Asia/Shanghai)
-Current color-system update: 2026-08-27 (Asia/Shanghai)
+Current color-system update: 2026-08-31 (Asia/Shanghai)
 
 ## Current approved color system
 
@@ -26,6 +26,39 @@ Color ramps (`50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950`), light to d
 | `deep-teal` | `#6DFDFA`, `#3BE8E4`, `#2FBAB8`, `#208C8A`, `#156462`, `#083B3A`, `#073231`, `#042626`, `#021D1D`, `#011110`, `#010909` |
 
 `mist-white/50` is explicitly normalized to `oklch(1 0 0)` / `#FFFFFF`. Generated OKLCH values may round back to a Hex value that differs by one channel step; the approved Hex value always wins at `500`.
+
+Black and white opacity tokens are available as `black/{opacity}` and `white/{opacity}`. Supported opacity stops are `3, 6, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100`; their CSS variables are `--black-{opacity}` and `--white-{opacity}`. These tokens are reserved for overlays, dividers, borders, shadows, and content on solid dark or light surfaces.
+
+### Material 3 dark semantic scheme
+
+The Material 3 dark scheme uses Material role names while preserving the four approved Knowhere ramps. It introduces no independent color values. Machine-readable mappings live in `materialDark` in `src/colors.js` and are available at runtime as `--md-sys-color-{role}` CSS variables.
+
+| Material role | Knowhere token | Hex |
+| --- | --- | --- |
+| `primary` / `on-primary` | `mineral-green-300` / `mineral-green-950` | `#23D6B1` / `#011711` |
+| `primary-container` / `on-primary-container` | `mineral-green-800` / `mineral-green-100` | `#054437` / `#7EFEDD` |
+| `secondary` / `on-secondary` | `deep-teal-200` / `deep-teal-950` | `#2FBAB8` / `#010909` |
+| `secondary-container` / `on-secondary-container` | `deep-teal-700` / `deep-teal-50` | `#042626` / `#6DFDFA` |
+| `tertiary` / `on-tertiary` | `deep-teal-100` / `deep-teal-950` | `#3BE8E4` / `#010909` |
+| `tertiary-container` / `on-tertiary-container` | `deep-teal-600` / `deep-teal-50` | `#073231` / `#6DFDFA` |
+| `error` / `on-error` | `coral-signal-300` / `coral-signal-950` | `#FFA79F` / `#2D0500` |
+| `error-container` / `on-error-container` | `coral-signal-800` / `coral-signal-100` | `#731A00` / `#FFE1DF` |
+| `background` / `on-background` | `deep-teal-950` / `mist-white-200` | `#010909` / `#F9FAF5` |
+| `surface` / `on-surface` | `deep-teal-950` / `mist-white-200` | `#010909` / `#F9FAF5` |
+| `surface-variant` / `on-surface-variant` | `deep-teal-700` / `mist-white-600` | `#042626` / `#BBBCB3` |
+| `outline` / `outline-variant` | `mist-white-700` / `deep-teal-500` | `#888A82` / `#083B3A` |
+| `inverse-surface` / `inverse-on-surface` | `mist-white-200` / `deep-teal-900` | `#F9FAF5` / `#011110` |
+| `surface-dim` / `surface-bright` | `deep-teal-950` / `deep-teal-700` | `#010909` / `#042626` |
+| `surface-container-lowest` | `black` | `#000000` |
+| `surface-container-low` | `deep-teal-900` | `#011110` |
+| `surface-container` | `deep-teal-800` | `#021D1D` |
+| `surface-container-high` | `deep-teal-700` | `#042626` |
+| `surface-container-highest` | `deep-teal-600` | `#073231` |
+| `shadow` / `scrim` | `black` / `black` | `#000000` / `#000000` |
+
+Fixed and inverse Material roles are also mapped in `materialDark`. Tertiary intentionally reuses a distinct Deep Teal level because Coral Signal remains reserved for warning and error semantics.
+
+The landing page activates these mappings with `data-theme="dark"` on the root element. Legacy visual aliases are rebound to Material roles (for example, `paper → background`, `ink → on-background`, `muted → on-surface-variant`, and primary actions → `primary / on-primary`). The navigation toggle persists the explicit choice in `knowhere-color-theme`; without an explicit choice, the initial mode follows `prefers-color-scheme`. The same theme attribute and semantic role variables are synchronized to the embedded document demo.
 
 ### Role constraints
 

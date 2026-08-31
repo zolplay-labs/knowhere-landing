@@ -3,7 +3,7 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  background: #101523;
+  background: var(--deep-teal-900);
   isolation: isolate;
 }
 
@@ -59,7 +59,7 @@
   right: 0;
   bottom: 0;
   width: 1px;
-  background: rgba(0, 0, 0, .1);
+  background: var(--black-10);
   content: "";
   pointer-events: none;
 }
@@ -91,7 +91,7 @@
   flex-direction: column;
   gap: 12px;
   border: 1px solid color-mix(in srgb, var(--mineral-green-500) 56%, transparent);
-  background: #fff;
+  background: var(--white-100);
   opacity: 0;
   clip-path: inset(50%);
 }
@@ -129,7 +129,7 @@
 .integration-code-frame__tabs button.is-active {
   border-color: var(--mineral-green-500);
   background: var(--mineral-green-500);
-  color: #fff;
+  color: var(--white-100);
 }
 
 #integration .integration-code-frame__copy {
@@ -250,11 +250,11 @@
   width: min(420px, calc(100% - 24px));
   max-height: none;
   margin: 0;
-  border: 1px solid rgba(0, 0, 0, .1);
+  border: 1px solid var(--black-10);
   border-radius: 4px;
   overflow: visible;
-  background: rgba(255, 255, 255, .96);
-  box-shadow: 0 10px 30px rgba(16, 21, 35, .12);
+  background: var(--white-100);
+  box-shadow: 0 10px 30px var(--black-10);
   backdrop-filter: blur(8px);
   color: var(--ink);
 }
@@ -288,7 +288,7 @@
   min-height: 48px;
   padding: 10px 14px;
   gap: 12px;
-  background: rgba(255, 255, 255, .98);
+  background: var(--white-100);
   font: 500 13px/20px var(--sans);
 }
 
@@ -341,7 +341,7 @@
 
 .catenoid-field-controls__body {
   padding: 16px;
-  border-top: 1px solid rgba(0, 0, 0, .1);
+  border-top: 1px solid var(--black-10);
 }
 
 #integration .catenoid-field-mode {
@@ -360,7 +360,7 @@
 #integration .catenoid-field-control-heading {
   margin: 18px 0 12px;
   padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, .1);
+  border-top: 1px solid var(--black-10);
   color: var(--ink);
   font: 500 12px/16px var(--mono);
   letter-spacing: .04em;
@@ -399,7 +399,7 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  border-top: 1px solid rgba(0, 0, 0, .1);
+  border-top: 1px solid var(--black-10);
 }
 
 .catenoid-field-color-control {
@@ -422,9 +422,9 @@
   height: 28px;
   flex: 0 0 auto;
   padding: 2px;
-  border: 1px solid rgba(0, 0, 0, .16);
+  border: 1px solid var(--black-20);
   border-radius: 3px;
-  background: #fff;
+  background: var(--white-100);
 }
 
 .catenoid-field-color-value output {
@@ -444,9 +444,9 @@
 #integration .catenoid-field-actions button {
   min-height: 34px;
   padding: 6px 10px;
-  border: 1px solid rgba(0, 0, 0, .16);
+  border: 1px solid var(--black-20);
   border-radius: 3px;
-  background: #fff;
+  background: var(--white-100);
   color: var(--ink);
   font: 500 12px/20px var(--sans);
   cursor: pointer;

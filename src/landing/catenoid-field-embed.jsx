@@ -449,7 +449,7 @@ export function CatenoidFieldTuner() {
         viewRotation={viewRotation}
         accentColor="var(--mineral-green-500)"
         secondaryColor="var(--mineral-green-500)"
-        backgroundColor={colors.backgroundColor}
+        backgroundColor={colors.backgroundColor === DEFAULT_COLORS.backgroundColor ? 'var(--white-100)' : colors.backgroundColor}
         cycleSpeed={cycleSpeed}
         fieldOffsetX={fieldLayout.x}
         fieldOffsetY={fieldLayout.y}
