@@ -4,6 +4,7 @@ import { ConvergingHelixTuner } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
+import { DocumentMap } from './document-map'
 
 export function LandingPage() {
   const rootRef = useRef(null)
@@ -98,6 +99,7 @@ export function LandingPage() {
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
+      <DocumentMap />
       <div className="section-scan-frame">
         <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
       </div>
