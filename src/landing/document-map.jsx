@@ -120,6 +120,150 @@ const performanceCopy = [
   'Operating income grew 21.7% year over year to $1.1B, resulting in an operating margin of 22.9%, compared with 21.3% in the prior year. Margin expansion was supported by disciplined cost management and improved efficiency in sales and customer success operations.',
 ]
 
+const themeSourcesMap = {
+  growth: [
+    {
+      id: 'src-growth-1',
+      format: 'PDF',
+      page: 'PAGE 06 & 08',
+      type: 'table',
+      title: 'FY2026 commercial schedule',
+      widths: [34, 22, 22, 22],
+      columns: ['Item', 'Qty', 'FY25', 'FY26'],
+      rows: [
+        ['Platform seats', '1,200', '$402k', '$420k'],
+        ['24×7 support', '1', '$48k', '$50k'],
+        ['Total annual fee', '—', '$450k', '$470k'],
+      ],
+      image: revenueTable,
+      alt: 'Original master service agreement excerpt',
+    },
+    {
+      id: 'src-growth-2',
+      format: 'XLSX',
+      page: 'PAGE 09 & 10',
+      type: 'document',
+      kicker: 'Service schedule · §11.4',
+      title: 'Availability credits & margin',
+      copy: 'Monthly availability below 99.9% earns a 5% service credit; below 99.5% earns 10%.',
+      note: 'Claims must be submitted within 30 days of the affected month.',
+      image: marginAnalysis,
+      alt: 'Operating margin review',
+    },
+    {
+      id: 'src-growth-3',
+      format: 'PDF',
+      page: 'PAGE 12 & 14',
+      type: 'line',
+      title: 'Active-seat utilization (%)',
+      chart: 'usage',
+      image: revenueChart,
+      alt: 'Financial summary source chart excerpt',
+    },
+  ],
+  regional: [
+    {
+      id: 'src-reg-1',
+      format: 'PDF',
+      page: 'PAGE 04, 05, 07',
+      type: 'table',
+      title: 'Rollout tracker · 14 / 17 on plan',
+      widths: [30, 24, 24, 22],
+      columns: ['Workstream', 'Owner', 'Status', 'Due'],
+      rows: [
+        ['Identity map', 'Eng', 'At risk', '25 Jul'],
+        ['Legal review', 'Legal', 'Blocked', '31 Jul'],
+        ['User testing', 'Ops', 'On plan', '08 Aug'],
+      ],
+      image: revenueTable,
+      alt: 'Regional review source table',
+    },
+    {
+      id: 'src-reg-2',
+      format: 'XLSX',
+      page: 'PAGE 02 & 03',
+      type: 'document',
+      kicker: 'Implementation SOW · §4.1',
+      title: 'Delivery milestones',
+      copy: 'Production launch is scheduled for 18 August after configuration review and migration validation.',
+      note: 'Both acceptance gates require written customer approval.',
+      image: marginAnalysis,
+      alt: 'EMEA forecast sheet',
+    },
+    {
+      id: 'src-reg-3',
+      format: 'PPTX',
+      page: 'PAGE 11 & 13',
+      type: 'line',
+      title: 'Forecast migration volume',
+      chart: 'migration',
+      image: revenueChart,
+      alt: 'APAC briefing slide',
+    },
+  ],
+  efficiency: [
+    {
+      id: 'src-eff-1',
+      format: 'PDF',
+      page: 'PAGE 08, 09, 12',
+      type: 'document',
+      kicker: 'Security architecture standard · §3',
+      title: 'Encryption baseline',
+      copy: 'Production data is encrypted with AES-256 at rest and TLS 1.3 for service-to-service traffic.',
+      note: 'Keys are isolated by environment and rotated every 90 days.',
+      image: marginAnalysis,
+      alt: 'Operating model breakdown',
+    },
+    {
+      id: 'src-eff-2',
+      format: 'PDF',
+      page: 'PAGE 15 & 16',
+      type: 'table',
+      title: 'Data residency control matrix',
+      widths: [34, 33, 33],
+      columns: ['Data class', 'Primary', 'Backup'],
+      rows: [
+        ['EU customer', 'Frankfurt', 'Dublin'],
+        ['US customer', 'Virginia', 'Oregon'],
+        ['EU audit logs', 'Frankfurt', 'Dublin'],
+      ],
+      image: revenueTable,
+      alt: 'Regional contribution table',
+    },
+  ],
+}
+
+const themeSummaries = {
+  growth: {
+    topic: 'Renewal decision brief',
+    hierarchy: [
+      { source: 'Master service agreement.pdf', location: '8.2 and 11.4', type: 'doc', isActive: true },
+      { source: 'Pricing schedule.xlsx', location: 'FY26 rates', type: 'table', isActive: false },
+      { source: 'Seat utilization.csv', location: '6-month trend', type: 'chart', isActive: false },
+    ],
+  },
+  regional: {
+    topic: 'Implementation readiness',
+    hierarchy: [
+      { source: 'Implementation SOW.docx', location: '4.1 and 7', type: 'doc', isActive: true },
+      { source: 'Rollout tracker.xlsx', location: 'Readiness', type: 'table', isActive: false },
+      { source: 'Migration forecast.csv', location: 'Daily volume', type: 'chart', isActive: false },
+    ],
+  },
+  efficiency: {
+    topic: 'Evidence and open controls',
+    hierarchy: [
+      { source: 'Security architecture.pdf', location: 'Chapter 3', type: 'doc', isActive: true },
+      { source: 'Residency matrix.xlsx', location: 'Regions', type: 'table', isActive: false },
+      { source: 'SOC 2 Type II.pdf', location: 'Findings', type: 'chart', isActive: false },
+    ],
+  },
+}
+
+function clamp(val, min = 0, max = 1) {
+  return Math.max(min, Math.min(max, val))
+}
+
 function getPageMedia(page) {
   if (page.image === revenueTable) {
     return {
@@ -169,14 +313,343 @@ function useMobileProductLayout() {
   return isMobile
 }
 
-function DocumentMap({ activeThemeId, onOpenTrace, inactive = false }) {
+function MapFlowSvg({ className, viewBox, path, dots = [], clipProgress = 1, direction = 'vertical' }) {
+  const clipStyle = clipProgress < 1
+    ? (direction === 'horizontal'
+      ? { clipPath: `inset(0 ${(1 - clipProgress) * 100}% 0 0)` }
+      : { clipPath: `inset(0 0 ${(1 - clipProgress) * 100}% 0)` })
+    : undefined
+
+  return (
+    <svg className={className} viewBox={viewBox} preserveAspectRatio="none" aria-hidden="true" style={clipStyle}>
+      <path className="map-flow-stroke" d={path} />
+      {dots.map(([x, y]) => (
+        <circle
+          className="map-flow-dot"
+          cx={x}
+          cy={y}
+          r="2"
+          key={`${x}-${y}`}
+          style={{ opacity: clipProgress >= 0.85 ? 1 : 0 }}
+        />
+      ))}
+    </svg>
+  )
+}
+
+function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
+  const forked = sectionCount >= 2
+  const height = 37
+  const stem = (
+    <MapFlowSvg
+      className="document-branch-line-svg is-stem"
+      viewBox={`0 0 10 ${height}`}
+      path="M5 0 V37"
+      dots={[[5, height]]}
+      clipProgress={clipProgress}
+    />
+  )
+
+  if (!forked) {
+    return <div className="document-branch-line" aria-hidden="true">{stem}</div>
+  }
+
+  const card = 381
+  const gap = 33
+  const width = card * 2 + gap
+  const left = card / 2
+  const right = card + gap + card / 2
+  const mid = width / 2
+  const forkY = 16
+
+  return (
+    <div className="document-branch-line is-fork" aria-hidden="true">
+      <MapFlowSvg
+        className="document-branch-line-svg is-fork-path"
+        viewBox={`0 0 ${width} ${height}`}
+        path={`M${mid} 0 V${forkY} M${left} ${forkY} H${right} M${left} ${forkY} V${height} M${right} ${forkY} V${height}`}
+        dots={[[left, height], [right, height]]}
+        clipProgress={clipProgress}
+      />
+      {stem}
+    </div>
+  )
+}
+
+function SectionToSourceLines({ clipProgress = 1, sourceCount = 3, documentCount = 2 }) {
+  const height = 32
+  if (sourceCount === 2) {
+    return (
+      <div className="stage-flow-row is-section-to-source" aria-hidden="true">
+        <div className="flow-line-slot" style={{ width: 381 }}>
+          <MapFlowSvg
+            className="stage-flow-line-svg"
+            viewBox={`0 0 10 ${height}`}
+            path="M5 0 V32"
+            dots={[[5, 0], [5, height]]}
+            clipProgress={clipProgress}
+          />
+        </div>
+        <div className="flow-line-gap" style={{ width: 33 }} />
+        <div className="flow-line-slot" style={{ width: 381 }}>
+          <MapFlowSvg
+            className="stage-flow-line-svg"
+            viewBox={`0 0 10 ${height}`}
+            path="M5 0 V32"
+            dots={[[5, 0], [5, height]]}
+            clipProgress={clipProgress}
+          />
+        </div>
+      </div>
+    )
+  }
+
+  const gapBetweenDocs = documentCount === 3 ? 33 : 101
+
+  return (
+    <div className="stage-flow-row is-section-to-source" aria-hidden="true">
+      <div className="flow-line-slot" style={{ width: 381 }}>
+        <MapFlowSvg
+          className="stage-flow-line-svg"
+          viewBox={`0 0 10 ${height}`}
+          path="M5 0 V32"
+          dots={[[5, 0], [5, height]]}
+          clipProgress={clipProgress}
+        />
+      </div>
+      <div className="flow-line-gap" style={{ width: 33 }} />
+      <div className="flow-line-slot" style={{ width: 381 }}>
+        <MapFlowSvg
+          className="stage-flow-line-svg"
+          viewBox={`0 0 10 ${height}`}
+          path="M5 0 V32"
+          dots={[[5, 0], [5, height]]}
+          clipProgress={clipProgress}
+        />
+      </div>
+      <div className="flow-line-gap" style={{ width: gapBetweenDocs }} />
+      <div className="flow-line-slot" style={{ width: 381 }}>
+        <MapFlowSvg
+          className="stage-flow-line-svg"
+          viewBox={`0 0 10 ${height}`}
+          path="M5 0 V32"
+          dots={[[5, 0], [5, height]]}
+          clipProgress={clipProgress}
+        />
+      </div>
+    </div>
+  )
+}
+
+function ConvergenceLine({ clipProgress = 1, sourceCount = 3, documentCount = 2 }) {
+  const height = 40
+  const width = sourceCount === 2 ? 795 : (documentCount === 3 ? 1209 : 1277)
+  const midY = 18
+  const cx1 = 190.5
+  const cx2 = 604.5
+  const cx3 = documentCount === 3 ? 1018.5 : 1086.5
+  const centerTarget = width / 2
+
+  const path = sourceCount === 2
+    ? `M${cx1} 0 V${midY} H${cx2} M${cx2} 0 V${midY} M${(cx1 + cx2) / 2} ${midY} V${height}`
+    : `M${cx1} 0 V${midY} H${cx3} M${cx2} 0 V${midY} M${cx3} 0 V${midY} M${centerTarget} ${midY} V${height}`
+
+  const dots = sourceCount === 2
+    ? [[cx1, 0], [cx2, 0], [(cx1 + cx2) / 2, height]]
+    : [[cx1, 0], [cx2, 0], [cx3, 0], [centerTarget, height]]
+
+  return (
+    <div className="stage-convergence-row" aria-hidden="true">
+      <MapFlowSvg
+        className="stage-convergence-line-svg"
+        viewBox={`0 0 ${width} ${height}`}
+        path={path}
+        dots={dots}
+        clipProgress={clipProgress}
+      />
+    </div>
+  )
+}
+
+function SourcePreviewContent({ source }) {
+  if (source.type === 'table') {
+    return (
+      <>
+        <p className="trace-source-table-title">{source.title}</p>
+        <table className="trace-source-mini-table">
+          <colgroup>
+            {source.widths.map((w, idx) => (
+              <col key={idx} style={{ width: `${w}%` }} />
+            ))}
+          </colgroup>
+          <thead>
+            <tr>
+              {source.columns.map((col, idx) => (
+                <th key={idx}>{col}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {source.rows.map((row, rIdx) => (
+              <tr key={rIdx}>
+                {row.map((val, cIdx) => (
+                  <td key={cIdx}>{val}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </>
+    )
+  }
+
+  if (source.type === 'line') {
+    if (source.chart === 'migration') {
+      return (
+        <>
+          <p className="trace-source-chart-title">{source.title}</p>
+          <div className="trace-source-chart">
+            <svg viewBox="0 0 300 105" role="img" aria-label="Migration volume peaks at 310 thousand records per day">
+              <g className="trace-source-chart-grid">
+                <line x1="36" y1="14" x2="294" y2="14" />
+                <line x1="36" y1="50" x2="294" y2="50" />
+                <line x1="36" y1="86" x2="294" y2="86" />
+              </g>
+              <g className="trace-source-chart-axis">
+                <text x="0" y="18">300k</text>
+                <text x="0" y="54">200k</text>
+                <text x="0" y="90">100k</text>
+                <text x="36" y="103">11 Aug</text>
+                <text x="164" y="103" textAnchor="middle">14 Aug</text>
+                <text x="294" y="103" textAnchor="end">16 Aug</text>
+              </g>
+              <path className="trace-source-chart-area" d="M40 90 L90 72 L140 44 L190 14 L240 22 L290 58 L290 90 L40 90 Z" />
+              <polyline className="trace-source-chart-line" points="40,90 90,72 140,44 190,14 240,22 290,58" />
+              <g>
+                <circle className="trace-source-chart-point" cx="40" cy="90" r="3" />
+                <circle className="trace-source-chart-point" cx="90" cy="72" r="3" />
+                <circle className="trace-source-chart-point" cx="140" cy="44" r="3" />
+                <circle className="trace-source-chart-point" cx="190" cy="14" r="3" />
+                <circle className="trace-source-chart-point" cx="240" cy="22" r="3" />
+                <circle className="trace-source-chart-point" cx="290" cy="58" r="3" />
+              </g>
+              <text className="trace-source-chart-end" x="198" y="13">310k</text>
+            </svg>
+          </div>
+        </>
+      )
+    }
+
+    return (
+      <>
+        <p className="trace-source-chart-title">{source.title}</p>
+        <div className="trace-source-chart">
+          <svg viewBox="0 0 300 105" role="img" aria-label="Active-seat utilization averages 78 percent over six months">
+            <g className="trace-source-chart-grid">
+              <line x1="32" y1="14" x2="294" y2="14" />
+              <line x1="32" y1="50" x2="294" y2="50" />
+              <line x1="32" y1="86" x2="294" y2="86" />
+            </g>
+            <g className="trace-source-chart-axis">
+              <text x="0" y="18">80%</text>
+              <text x="0" y="54">75%</text>
+              <text x="0" y="90">70%</text>
+              <text x="32" y="103">Jan</text>
+              <text x="163" y="103" textAnchor="middle">Apr</text>
+              <text x="294" y="103" textAnchor="end">Jun</text>
+            </g>
+            <path className="trace-source-chart-area" d="M36 72 L87 61 L138 50 L189 43 L240 29 L290 36 L290 86 L36 86 Z" />
+            <polyline className="trace-source-chart-line" points="36,72 87,61 138,50 189,43 240,29 290,36" />
+            <g>
+              <circle className="trace-source-chart-point" cx="36" cy="72" r="3" />
+              <circle className="trace-source-chart-point" cx="87" cy="61" r="3" />
+              <circle className="trace-source-chart-point" cx="138" cy="50" r="3" />
+              <circle className="trace-source-chart-point" cx="189" cy="43" r="3" />
+              <circle className="trace-source-chart-point" cx="240" cy="29" r="3" />
+              <circle className="trace-source-chart-point" cx="290" cy="36" r="3" />
+            </g>
+            <text className="trace-source-chart-end" x="256" y="29">78%</text>
+          </svg>
+        </div>
+      </>
+    )
+  }
+
+  return (
+    <article className="trace-source-document">
+      <p className="trace-source-document-kicker">{source.kicker}</p>
+      <strong className="trace-source-document-title">{source.title}</strong>
+      <p className="trace-source-passage">{source.copy}</p>
+      <p className="trace-source-document-note">{source.note}</p>
+    </article>
+  )
+}
+
+function AISummaryCard({ activeThemeId, opacity = 1, translateY = 0, onOpenTrace }) {
+  const summary = themeSummaries[activeThemeId] ?? themeSummaries.growth
+  const reducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  return (
+    <aside
+      className="trace-summary-card"
+      data-trace-summary-card
+      aria-label="Cross-document hierarchy for the selected source"
+      style={{
+        opacity,
+        transform: `translateY(${translateY}px)`,
+        transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+        pointerEvents: opacity > 0.5 ? 'auto' : 'none',
+      }}
+    >
+      <div className="trace-card-content">
+        <span className="trace-summary-label">Cross-document hierarchy</span>
+        <div className="trace-hierarchy" data-trace-summary>
+          <div className="trace-hierarchy-topic" data-trace-hierarchy-topic>{summary.topic}</div>
+          <ul className="trace-hierarchy-list">
+            {summary.hierarchy.map((item, index) => (
+              <li
+                className={`trace-hierarchy-node${item.isActive ? ' is-active' : ''}`}
+                data-trace-hierarchy-index={index}
+                key={index}
+              >
+                {item.type === 'table' ? (
+                  <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M2.85858 2.87732L15.4293 1.0815C15.7027 1.04245 15.9559 1.2324 15.995 1.50577C15.9983 1.52919 16 1.55282 16 1.57648V22.4235C16 22.6996 15.7761 22.9235 15.5 22.9235C15.4763 22.9235 15.4527 22.9218 15.4293 22.9184L2.85858 21.1226C2.36593 21.0522 2 20.6303 2 20.1327V3.86727C2 3.36962 2.36593 2.9477 2.85858 2.87732ZM4 4.73457V19.2654L14 20.694V3.30599L4 4.73457ZM17 19H20V4.99997H17V2.99997H21C21.5523 2.99997 22 3.44769 22 3.99997V20C22 20.5523 21.5523 21 21 21H17V19ZM10.2 12L13 16H10.6L9 13.7143L7.39999 16H5L7.8 12L5 7.99997H7.39999L9 10.2857L10.6 7.99997H13L10.2 12Z" />
+                  </svg>
+                ) : item.type === 'chart' ? (
+                  <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M13 21V23H11V21H3C2.44772 21 2 20.5523 2 20V6H22V20C22 20.5523 21.5523 21 21 21H13ZM4 19H20V8H4V19ZM13 10H18V12H13V10ZM13 14H18V16H13V14ZM9 10V13H12C12 14.6569 10.6569 16 9 16C7.34315 16 6 14.6569 6 13C6 11.3431 7.34315 10 9 10ZM2 3H22V5H2V3Z" />
+                  </svg>
+                ) : (
+                  <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z" />
+                  </svg>
+                )}
+                <span className="trace-hierarchy-content">
+                  <span data-trace-hierarchy-label>{item.source}</span>
+                  <span className="trace-hierarchy-detail" data-trace-hierarchy-detail>{item.location}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </aside>
+  )
+}
+
+function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgress = 1 }) {
+  const isMobile = useMobileProductLayout()
   const interactive = typeof onOpenTrace === 'function'
   const [selectedName, setSelectedName] = useState(null)
   const openTimer = useRef(0)
   const activeTheme = themes.find(theme => theme.id === activeThemeId) ?? themes[0]
-  const NodeTag = interactive ? 'button' : 'header'
+  const currentSources = themeSourcesMap[activeTheme.id] ?? themeSourcesMap.growth
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const showCrossDocumentLink = activeTheme.documents.length === 2
+    && activeTheme.documents[0].sections.length >= 2
 
   useEffect(() => () => window.clearTimeout(openTimer.current), [])
 
@@ -193,47 +666,109 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false }) {
     openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
   }
 
+  // Animation Stage metrics calculated from scrollProgress (0 to 1)
+  const p = reducedMotion ? 1 : scrollProgress
+
+  // Stage 1: Initial & Zoom (0.00 -> 0.16)
+  const pStage1 = clamp(p / 0.16)
+  const docScale = 1.15 - 0.15 * pStage1
+
+  // Stage 2: Branch lines & Section document entrance (0.14 -> 0.36)
+  const pBranchLine = clamp((p - 0.14) / 0.14)
+  const pSectionCards = clamp((p - 0.22) / 0.14)
+
+  // Stage 3: Cross-document relationship (0.34 -> 0.50)
+  const pCrossLine = clamp((p - 0.34) / 0.12)
+  const pCrossBadge = clamp((p - 0.40) / 0.10)
+
+  // Stage 4: Flow to Source Documents (0.48 -> 0.70)
+  const pSecToSourceLine = clamp((p - 0.48) / 0.12)
+  const pSourceCards = clamp((p - 0.56) / 0.14)
+
+  // Camera shift Y (pan viewport upward to bring Stages 4 and 5 into view) (0.50 -> 0.86)
+  const pCamera = clamp((p - 0.50) / 0.36)
+  const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
+  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 350
+
+  // Stage 5: Convergence & AI Summary (0.68 -> 0.88)
+  const pConvergenceLine = clamp((p - 0.68) / 0.12)
+  const pSummaryCard = clamp((p - 0.76) / 0.12)
+
   return (
     <section className="document-map reveal" aria-labelledby="document-map-title" inert={inactive ? '' : undefined}>
       <span className="sr-only" id="document-map-title">Document map</span>
       <div className="document-map-hierarchy">
         <div className="document-map-hierarchy-canvas" data-document-count={activeTheme.documents.length} style={{ '--document-count': activeTheme.documents.length }}>
-          <div className="document-map-content" key={activeTheme.id} aria-live="polite">
-            <div className="document-map-documents" data-document-count={activeTheme.documents.length}>
+          <div
+            className="document-map-content"
+            key={activeTheme.id}
+            aria-live="polite"
+            style={{
+              transform: `translateY(-${cameraShiftY}px)`,
+              transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
+            }}
+          >
+            
+            {/* STAGES 1, 2, 3: Documents, Branch Lines, Section Cards, Cross Link */}
+            <div
+              className="document-map-documents"
+              data-document-count={activeTheme.documents.length}
+              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
+            >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
                   className={`document-branch${selectedName === document.name ? ' is-selected' : ''}`}
                   key={document.name}
                 >
-                  <NodeTag
+                  <header
                     className="document-node"
-                    {...(interactive
-                      ? {
-                          type: 'button',
-                          onClick: () => openTrace(document),
-                          'aria-label': `Open ${document.name}`,
-                        }
-                      : {})}
+                    style={{
+                      transform: `scale(${docScale})`,
+                      transformOrigin: 'bottom center',
+                      transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
+                    }}
                   >
                     <span>DOCUMENT {documentIndex + 1}</span>
                     <strong>{document.name}</strong>
-                  </NodeTag>
-                  <div className="document-branch-line" aria-hidden="true" />
+                  </header>
+                  <DocumentBranchLine
+                    sectionCount={document.sections.length}
+                    clipProgress={pBranchLine}
+                  />
                   <div
                     className="document-sections"
                     data-section-count={document.sections.length}
-                    style={{ '--section-count': document.sections.length }}
+                    style={{
+                      '--section-count': document.sections.length,
+                      opacity: pSectionCards,
+                      transform: `translateY(${(1 - pSectionCards) * 14}px)`,
+                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                      pointerEvents: pSectionCards > 0.5 ? 'auto' : 'none',
+                    }}
                   >
                     {document.sections.map((section, sectionIndex) => {
                       const [firstPage, ...remainingPages] = section.pages
                       const firstPageMedia = getPageMedia(firstPage)
+                      const isCrossSource = showCrossDocumentLink && documentIndex === 0 && sectionIndex === 1
+                      const isCrossTarget = showCrossDocumentLink && documentIndex === 1 && sectionIndex === 0
+                      const SectionTag = interactive ? 'button' : 'section'
 
                       return (
-                        <section className="section-node" key={section.name}>
-                          <header>
+                        <SectionTag
+                          className={`section-node${isCrossSource ? ' is-cross-source' : ''}${isCrossTarget ? ' is-cross-target' : ''}`}
+                          key={section.name}
+                          {...(interactive
+                            ? {
+                                type: 'button',
+                                onClick: () => openTrace(document),
+                                'aria-label': `Open ${document.name}`,
+                              }
+                            : {})}
+                        >
+                          <div className="section-node-head">
                             <span>SECTION {sectionIndex + 1}</span>
                             <strong>{section.name}</strong>
-                          </header>
+                          </div>
                           <div className="section-body">
                             <p>
                               {performanceCopy[0]}
@@ -243,16 +778,106 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false }) {
                             <p>{performanceCopy[1]}</p>
                             {remainingPages.map(page => <SectionPageContent page={page} key={page.number} />)}
                           </div>
-                        </section>
+                        </SectionTag>
                       )
                     })}
                   </div>
                 </article>
               ))}
+              {showCrossDocumentLink && (
+                <div
+                  className="cross-document-link"
+                  aria-label="Cross-document relationship"
+                  style={{
+                    opacity: pCrossLine > 0.05 ? 1 : 0,
+                  }}
+                >
+                  <MapFlowSvg
+                    className="cross-document-link-rail"
+                    viewBox="0 0 101 20"
+                    path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
+                    clipProgress={pCrossLine}
+                    direction="horizontal"
+                  />
+                  <span
+                    style={{
+                      opacity: pCrossBadge,
+                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
+                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                    }}
+                  >
+                    Cross-document relationship
+                  </span>
+                </div>
+              )}
             </div>
-            {activeTheme.documents.length > 1 && (
-              <div className="cross-document-link" aria-label="Sections connected across documents"><span>Cross-document relationship</span></div>
-            )}
+
+            {/* STAGE 4: Flow lines from Sections to Source Documents */}
+            <SectionToSourceLines
+              clipProgress={pSecToSourceLine}
+              sourceCount={currentSources.length}
+              documentCount={activeTheme.documents.length}
+            />
+
+            {/* STAGE 4: Source Document cards */}
+            <div
+              className="source-sections"
+              data-source-count={currentSources.length}
+              data-document-count={activeTheme.documents.length}
+              style={{
+                opacity: pSourceCards,
+                transform: `translateY(${(1 - pSourceCards) * 14}px)`,
+                transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                pointerEvents: pSourceCards > 0.5 ? 'auto' : 'none',
+              }}
+            >
+              {currentSources.map((source, index) => {
+                const isPrimary = index === 0
+                const slot = isPrimary ? 'primary' : index === 1 ? 'secondary-one' : 'secondary-two'
+                return (
+                  <figure
+                    className="trace-source-card"
+                    key={source.id}
+                    data-source-slot={slot}
+                    data-region={source.type}
+                  >
+                    <div className="trace-card-content">
+                      <figcaption>
+                        <span className="trace-folder-tab">Original file</span>
+                        <span data-trace-coordinate>{source.format} · {source.page}</span>
+                      </figcaption>
+                      <div className="trace-source-thumb">
+                        <div className="trace-source-frame">
+                          <div className="trace-source-media">
+                            <img className="trace-source-image" src={source.image} alt={source.alt} />
+                            <div className="trace-source-preview" aria-hidden="true">
+                              <SourcePreviewContent source={source} />
+                            </div>
+                            <span className="trace-document-scanner" aria-hidden="true" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </figure>
+                )
+              })}
+            </div>
+
+            {/* STAGE 5: 3-to-1 Convergence line */}
+            <ConvergenceLine
+              clipProgress={pConvergenceLine}
+              sourceCount={currentSources.length}
+              documentCount={activeTheme.documents.length}
+            />
+
+            {/* STAGE 5: AI Summary Result Card */}
+            <AISummaryCard
+              activeThemeId={activeTheme.id}
+              opacity={pSummaryCard}
+              translateY={(1 - pSummaryCard) * 14}
+              onOpenTrace={onOpenTrace}
+            />
+
           </div>
         </div>
       </div>
@@ -277,13 +902,159 @@ function DocumentMapSwitcher({ activeThemeId, onChange }) {
   )
 }
 
+const SCAN_DEMO_CROP_CSS = `
+html, body {
+  margin: 0 !important;
+  height: auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: #fff !important;
+}
+.skip-link,
+.site-header,
+.mobile-menu,
+footer,
+.toast,
+.layout-grid-overlay,
+.trace-debug,
+.trace-debug-panel,
+.trace-debug-toggle {
+  display: none !important;
+}
+#main {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+#main > *:not(#top) {
+  display: none !important;
+}
+#top.hero,
+.hero {
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  gap: 0 !important;
+  grid-template: none !important;
+}
+.hero-copy,
+.hero-support,
+.hero-center-divider,
+.hero-primary {
+  display: none !important;
+}
+.hero-visual {
+  display: block !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: var(--trace-stage-height, 600px) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+[data-trace-demo] {
+  width: 100% !important;
+  height: var(--trace-stage-height, 600px) !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+`
+
+function syncScanFrameHeight(frame) {
+  const demo = frame?.contentDocument?.querySelector('[data-trace-demo]')
+  if (!demo) return
+  const height = Math.ceil(demo.getBoundingClientRect().height)
+  if (height < 1) return
+  frame.style.height = `${height}px`
+  frame.parentElement?.style.setProperty('--scan-demo-height', `${height}px`)
+}
+
+function cropScanDemo(frame) {
+  const doc = frame?.contentDocument
+  if (!doc?.head) return
+  if (!doc.getElementById('knowhere-scan-crop')) {
+    const style = doc.createElement('style')
+    style.id = 'knowhere-scan-crop'
+    style.textContent = SCAN_DEMO_CROP_CSS
+    doc.head.appendChild(style)
+  }
+  syncScanFrameHeight(frame)
+}
+
 export function ProductStage() {
   const isMobile = useMobileProductLayout()
-  const [stage, setStage] = useState('map')
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
+  const trackRef = useRef(null)
   const iframeRef = useRef(null)
+  const scanFrameRef = useRef(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    if (reducedMotion || isMobile) {
+      setScrollProgress(1)
+      return undefined
+    }
+
+    let rafId
+    const updateProgress = () => {
+      const track = trackRef.current
+      if (!track) return
+
+      const rect = track.getBoundingClientRect()
+      const totalScroll = track.offsetHeight - window.innerHeight
+      if (totalScroll <= 0) {
+        setScrollProgress(1)
+        return
+      }
+
+      // Progress goes 0 -> 1 as user scrolls through the track
+      const currentScroll = -rect.top
+      const p = Math.max(0, Math.min(1, currentScroll / totalScroll))
+      setScrollProgress(p)
+    }
+
+    const onScroll = () => {
+      cancelAnimationFrame(rafId)
+      rafId = requestAnimationFrame(updateProgress)
+    }
+
+    updateProgress()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
+
+    return () => {
+      cancelAnimationFrame(rafId)
+      window.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
+    }
+  }, [reducedMotion, isMobile])
+
+  useEffect(() => {
+    const frame = iframeRef.current
+    if (!frame) return undefined
+    let resizeObserver
+    const crop = () => {
+      cropScanDemo(frame)
+      const demo = frame.contentDocument?.querySelector('[data-trace-demo]')
+      if (demo && typeof ResizeObserver !== 'undefined') {
+        resizeObserver?.disconnect()
+        resizeObserver = new ResizeObserver(() => syncScanFrameHeight(frame))
+        resizeObserver.observe(demo)
+      }
+    }
+    crop()
+    frame.addEventListener('load', crop)
+    return () => {
+      frame.removeEventListener('load', crop)
+      resizeObserver?.disconnect()
+    }
+  }, [])
 
   const revealTrace = () => {
     const frame = iframeRef.current
@@ -292,45 +1063,36 @@ export function ProductStage() {
     } catch {
       // Same-origin preview only; a missing iframe must not block the stage change.
     }
-    setStage('trace')
+    scanFrameRef.current?.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    })
   }
 
   return (
-    <>
-      <div className="product-stage-switcher-row">
-        <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={setActiveThemeId} />
-      </div>
-      <div className={`product-stage${stage === 'trace' ? ' is-trace' : ''}${isMobile ? ' is-stacked' : ''}`}>
-        <div
-          className="product-stage-track"
-          style={reducedMotion && stage === 'trace' ? { transition: 'none' } : undefined}
-        >
-          <DocumentMap
-            activeThemeId={activeThemeId}
-            inactive={!isMobile && stage === 'trace'}
-            onOpenTrace={isMobile ? undefined : revealTrace}
-          />
-          <div className="section-scan-frame" inert={!isMobile && stage === 'map' ? '' : undefined}>
-            <iframe
-              ref={iframeRef}
-              src="document-scan-section.html"
-              title="Document scan and source traceability demonstration"
-              loading="eager"
-              tabIndex={-1}
-              aria-hidden="true"
+    <div className="playground-scroll-track" ref={trackRef}>
+      <div className="playground-sticky">
+        <div className="product-stage-switcher-row">
+          <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={setActiveThemeId} />
+        </div>
+        <div className={`product-stage${isMobile ? ' is-stacked' : ''}`}>
+          <div className="product-stage-track">
+            <DocumentMap
+              activeThemeId={activeThemeId}
+              onOpenTrace={revealTrace}
+              scrollProgress={scrollProgress}
             />
+            <div className="section-scan-frame" ref={scanFrameRef} hidden>
+              <iframe
+                ref={iframeRef}
+                src="document-scan-section.html"
+                title="Document scan and source traceability demonstration"
+                loading="eager"
+              />
+            </div>
           </div>
         </div>
-        {!isMobile && stage === 'trace' && (
-          <button
-            type="button"
-            className="product-stage-back"
-            onClick={() => setStage('map')}
-          >
-            Back to document map
-          </button>
-        )}
       </div>
-    </>
+    </div>
   )
 }
