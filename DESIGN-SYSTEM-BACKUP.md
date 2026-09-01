@@ -2,6 +2,76 @@
 
 Snapshot date: 2026-08-19 (Asia/Shanghai)
 Current color-system update: 2026-08-31 (Asia/Shanghai)
+Current responsive-spacing update: 2026-09-01 (Asia/Shanghai)
+
+## Current responsive spacing and grid system
+
+This section is the current source of truth for mapping Web spacing and grids to Tablet and Mobile. It changes responsive geometry only: typography, color, component structure, effects, and motion do not change as part of this mapping.
+
+### Web → Mobile vertical spacing map
+
+Use the computed Web value as the source. Apply the mapping only to vertical rhythm (`margin-block`, `padding-block`, and `row-gap`). Values between listed source steps resolve to the nearest compact step; never produce a Mobile value below `8px`.
+
+| Computed Web value | Mobile value |
+| ---: | ---: |
+| `8px` | `8px` |
+| `12px` | `8px` |
+| `16px` | `12px` |
+| `24px` | `16px` |
+| `32px` | `20px` |
+| `40px` | `24px` |
+| `48px` | `24px` |
+| `64px` | `32px` |
+| `80px` | `40px` |
+| `96px` | `48px` |
+| `120px` | `56px` |
+| `160px` and above | `64px` |
+
+Apply the larger steps first:
+
+- Section-to-section rhythm uses the `80px`, `96px`, `120px`, and `160px+` source bands whenever those are the computed Web values.
+- A section heading to its following content uses the `24px`, `32px`, `40px`, or `48px` source band.
+- Micro-spacing below `16px` stays unchanged or follows the table. Never increase it during responsive adaptation.
+- When the current Web implementation computes an intermediate value, resolve it to the nearest listed source band. For example, `60px` follows the `64px → 32px` band, and `100px` follows the `96px → 48px` band.
+
+Recommended semantic aliases for this landing page:
+
+```css
+@media (max-width: 767px) {
+  :root {
+    --space-section-mobile: 32px;
+    --space-section-compact-mobile: 16px;
+    --space-heading-content-mobile: 32px;
+    --space-heading-row-mobile: 8px;
+  }
+}
+```
+
+These aliases are Mobile-only. Do not change a Web spacing token to make Mobile smaller.
+
+### Responsive grid map
+
+| Tier | Columns | Gutter | Page edge |
+| --- | ---: | ---: | ---: |
+| Web (`≥1200px`) | Keep the existing Web grid (`12` on this landing page) | Keep the existing Web gutter (`20px` here) | Keep the existing Web edge (`80px` here) |
+| Tablet (`768–1199px`) | `8` | `16px` | `24px` |
+| Mobile (`≤767px`) | `4` | `16px` | `16px` |
+
+Grid behavior:
+
+- Mobile cards and image/text blocks span all four columns by default and stack in one column.
+- Mobile content starts at the `16px` page edge. Do not add another wrapper padding merely to make the composition feel looser.
+- Tablet uses its own eight-column grid; it must not stretch the four-column Mobile layout.
+- Tablet retains Web vertical spacing unless a Tablet-specific vertical mapping is approved separately.
+- Full-bleed sections may keep a full-width outer surface, but their headings and content columns still align to the tier's page edge.
+
+### Responsive constraints and acceptance
+
+- Implement responsive spacing and grid changes inside the relevant media query. Do not alter base or Web declarations to accommodate Mobile.
+- Preserve all Web typography, color, weight, radius, shadow, component structure, content, and motion parameters.
+- Do not enlarge any Web value in the name of responsive balance.
+- At Web width, computed section spacing, heading spacing, columns, gutters, and page edges must remain unchanged.
+- At Mobile width, section and heading spacing must resolve to values in the table, content must fit the four-column grid, and the first-party page must not overflow horizontally.
 
 ## Current approved color system
 
