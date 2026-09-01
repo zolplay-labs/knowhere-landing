@@ -1,8 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import revenueChart from '../../assets/source-chart.png'
 import marginAnalysis from '../../assets/source-margin.png'
 import revenueAnalysis from '../../assets/source-revenue.png'
 import revenueTable from '../../assets/source-table.png'
+
+const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
 
 const themes = [
   {
@@ -113,12 +115,44 @@ const themes = [
   },
 ]
 
-export function DocumentMap() {
+function useMobileProductLayout() {
+  const [isMobile, setIsMobile] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia(MOBILE_PRODUCT_QUERY).matches
+  ))
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_PRODUCT_QUERY)
+    const sync = () => setIsMobile(media.matches)
+    sync()
+    media.addEventListener('change', sync)
+    return () => media.removeEventListener('change', sync)
+  }, [])
+
+  return isMobile
+}
+
+function DocumentMap({ onOpenTrace, inactive = false }) {
+  const interactive = typeof onOpenTrace === 'function'
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
+  const [selectedName, setSelectedName] = useState(null)
+  const openTimer = useRef(0)
   const activeTheme = themes.find(theme => theme.id === activeThemeId) ?? themes[0]
+  const reducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const NodeTag = interactive ? 'button' : 'header'
+
+  useEffect(() => () => window.clearTimeout(openTimer.current), [])
+
+  const openTrace = document => {
+    if (!interactive) return
+    const delay = reducedMotion ? 0 : 280
+    setSelectedName(document.name)
+    window.clearTimeout(openTimer.current)
+    openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
+  }
 
   return (
-    <section className="document-map reveal" aria-labelledby="document-map-title">
+    <section className="document-map reveal" aria-labelledby="document-map-title" inert={inactive ? '' : undefined}>
       <div className="document-map-label"><span id="document-map-title">Document map</span><span>Theme → file → section → pages</span></div>
       <div className="document-map-switcher" aria-label="Choose a document theme">
         {themes.map((theme, index) => (
@@ -126,7 +160,11 @@ export function DocumentMap() {
             type="button"
             key={theme.id}
             aria-pressed={theme.id === activeThemeId}
-            onClick={() => setActiveThemeId(theme.id)}
+            onClick={() => {
+              window.clearTimeout(openTimer.current)
+              setSelectedName(null)
+              setActiveThemeId(theme.id)
+            }}
           >
             <span>{String(index + 1).padStart(2, '0')}</span>{theme.label}
           </button>
@@ -139,11 +177,23 @@ export function DocumentMap() {
           <div className="document-map-content" key={activeTheme.id} aria-live="polite">
             <div className="document-map-documents" data-document-count={activeTheme.documents.length}>
               {activeTheme.documents.map((document, documentIndex) => (
-                <article className="document-branch" key={document.name}>
-                  <header className="document-node">
+                <article
+                  className={`document-branch${selectedName === document.name ? ' is-selected' : ''}`}
+                  key={document.name}
+                >
+                  <NodeTag
+                    className="document-node"
+                    {...(interactive
+                      ? {
+                          type: 'button',
+                          onClick: () => openTrace(document),
+                          'aria-label': `Open ${document.name}`,
+                        }
+                      : {})}
+                  >
                     <span>DOCUMENT {documentIndex + 1}</span>
                     <strong>{document.name}</strong>
-                  </header>
+                  </NodeTag>
                   <div className="document-branch-line" aria-hidden="true" />
                   <div
                     className="document-sections"
@@ -177,5 +227,56 @@ export function DocumentMap() {
         </div>
       </div>
     </section>
+  )
+}
+
+export function ProductStage() {
+  const isMobile = useMobileProductLayout()
+  const [stage, setStage] = useState('map')
+  const iframeRef = useRef(null)
+  const reducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  const revealTrace = () => {
+    const frame = iframeRef.current
+    try {
+      frame?.contentWindow?.postMessage({ type: 'knowhere-play-trace' }, window.location.origin)
+    } catch {
+      // Same-origin preview only; a missing iframe must not block the stage change.
+    }
+    setStage('trace')
+  }
+
+  return (
+    <div className={`product-stage${stage === 'trace' ? ' is-trace' : ''}${isMobile ? ' is-stacked' : ''}`}>
+      <div
+        className="product-stage-track"
+        style={reducedMotion && stage === 'trace' ? { transition: 'none' } : undefined}
+      >
+        <DocumentMap
+          inactive={!isMobile && stage === 'trace'}
+          onOpenTrace={isMobile ? undefined : revealTrace}
+        />
+        <div className="section-scan-frame" inert={!isMobile && stage === 'map' ? '' : undefined}>
+          <iframe
+            ref={iframeRef}
+            src="document-scan-section.html"
+            title="Document scan and source traceability demonstration"
+            loading="eager"
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+        </div>
+      </div>
+      {!isMobile && stage === 'trace' && (
+        <button
+          type="button"
+          className="product-stage-back"
+          onClick={() => setStage('map')}
+        >
+          Back to document map
+        </button>
+      )}
+    </div>
   )
 }

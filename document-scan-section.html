@@ -4106,11 +4106,21 @@ curl -X POST "[endpoint-to-be-confirmed]" \
       if (traceAutoCycleVisible) playTraceStageEntrance();
       syncTraceAutoCycle();
     }, { threshold: .18 });
-    traceEntranceObserver.observe(traceDemo);
+    if (traceDemo) traceEntranceObserver.observe(traceDemo);
   } else {
     traceAutoCycleVisible = true;
     playTraceStageEntrance();
     syncTraceAutoCycle();
+  }
+  addEventListener('message', event => {
+    if (event.origin !== location.origin) return;
+    if (event.data?.type !== 'knowhere-play-trace') return;
+    playTraceStageEntrance();
+  });
+  if (window.parent !== window && traceDemo) {
+    traceStageEntered = true;
+    traceDemo.classList.add('is-stage-entered');
+    syncTracePreview(false);
   }
   document.addEventListener('visibilitychange', syncTraceAutoCycle);
   languageToggles.forEach(button => button.addEventListener('click', () => {

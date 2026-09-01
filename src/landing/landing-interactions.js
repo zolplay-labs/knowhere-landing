@@ -58,6 +58,16 @@ if (!(root instanceof Element)) return () => {};
     'Image placeholder': '图片占位', 'Brain powered by KNOWHERE.': '由 KNOWHERE 驱动的 Brain',
     'Process document context once, then make it available to each agent that needs it.': '文档上下文处理一次，即可供每个需要它的智能体使用。', 'Shared retrieval': '共享检索', 'Give different agents the right document context for the task at hand.': '为不同智能体提供与当前任务匹配的文档上下文。', 'Keep every retrieved result connected to the original document source.': '让每个检索结果持续关联原始文档来源。'
 ,
+    'Original file': '原始文件',
+    'Document map': '文档地图',
+    'Theme → file → section → pages': '主题 → 文件 → 章节 → 页面',
+    'Choose a document theme': '选择文档主题',
+    'Q4 growth & outlook': '第四季度增长与展望',
+    'Regional performance': '区域表现',
+    'Operating efficiency': '运营效率',
+    'Cross-document relationship': '跨文档关系',
+    'Back to document map': '返回文档地图',
+    'Interactive document scan and source traceability demonstration': '交互式文档扫描与来源追溯演示',
     'Try a sample document': '体验示例文档',
     'See what Knowhere returns to your agents.': '查看 Knowhere 向智能体返回什么。',
     'Choose a prepared example to inspect the illustrative structured context shown to agents.': '选择预置示例，查看向智能体展示的示意性结构化上下文。',
@@ -1393,6 +1403,7 @@ syncPricingCalculator();
     const header = document.querySelector('.site-header');
     const ctx = canvas?.getContext('2d');
     if (!hero || !canvas || !copy || !visual || !tooltip || !ctx) return;
+    if (canvas.dataset.heroCanvasOwned === 'true') return;
     const colorToken = (property, fallback) => getComputedStyle(document.documentElement)
       .getPropertyValue(property).trim() || fallback;
 

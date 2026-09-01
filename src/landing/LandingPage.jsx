@@ -4,7 +4,7 @@ import { ConvergingHelixTuner } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
-import { DocumentMap } from './document-map'
+import { ProductStage } from './document-map'
 
 export function LandingPage() {
   const rootRef = useRef(null)
@@ -99,10 +99,7 @@ export function LandingPage() {
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
-      <DocumentMap />
-      <div className="section-scan-frame">
-        <iframe src="document-scan-section.html" title="Interactive document scan and source traceability demonstration" loading="eager" tabIndex={-1} aria-hidden="true" />
-      </div>
+      <ProductStage />
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">
           <li role="presentation"><button role="option" aria-selected="true" draggable="true" data-sample="research"><span className="sample-spine-num">01</span><span className="sample-file-name">Tesla Q4 2025 Update.pdf</span><span className="sample-file-type">PDF</span><span className="sample-spine-dot" aria-hidden="true" /><span className="sample-spine-progress" aria-hidden="true"><span /></span><span className="sample-drag">Drag ↗</span></button></li>
