@@ -8287,10 +8287,19 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
   }
 }
 
-    /* PRODUCT 1: two illustrations share one frame; the map keeps Theme → Document → Section → Pages. */
+    /* PRODUCT 1: two illustrations share one frame; the map keeps Document → Section → Pages. */
+    #playground .product-stage-switcher-row {
+      display: flex;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
     #playground .product-stage {
-      --product-stage-height: clamp(670px, calc(37.15vw + 80px), 680px);
-      --map-line: var(--mineral-green-500, var(--main-500, #19A88B));
+      --product-stage-height: clamp(590px, calc(6.25vw + 490px), 610px);
+      --map-line: color-mix(in srgb, var(--mineral-green-700, #0E6B5C) 58%, transparent);
+      --map-line-vertical: repeating-linear-gradient(to bottom, var(--map-line) 0 4px, transparent 4px 7px);
+      --map-line-horizontal: repeating-linear-gradient(to right, var(--map-line) 0 4px, transparent 4px 7px);
       position: relative;
       width: 100%;
       height: var(--product-stage-height);
@@ -8327,10 +8336,13 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       height: 50%;
       flex: none;
       margin: 0;
-      overflow: hidden;
       border: 0;
       background: transparent;
       transform: none;
+    }
+
+    #playground .product-stage-track > .section-scan-frame {
+      overflow: hidden;
     }
 
     #playground .product-stage .section-scan-frame::before,
@@ -8368,76 +8380,83 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       transform: translateY(-50%);
     }
 
-    /* Interactive hierarchy: theme → files → sections → page groups. */
+    /* Interactive hierarchy: files → sections → page groups. */
     #playground .document-map {
-      --map-line: var(--mineral-green-500, var(--main-500, #19A88B));
+      --map-line: color-mix(in srgb, var(--mineral-green-700, #0E6B5C) 58%, transparent);
+      --map-line-vertical: repeating-linear-gradient(to bottom, var(--map-line) 0 4px, transparent 4px 7px);
+      --map-line-horizontal: repeating-linear-gradient(to right, var(--map-line) 0 4px, transparent 4px 7px);
       position: relative;
       display: flex;
       flex-direction: column;
       min-height: 0;
-      padding: 18px clamp(20px, 3vw, 40px) 20px;
-      overflow: hidden;
+      padding: 10px clamp(20px, 3vw, 40px) 14px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior-y: contain;
+      scrollbar-color: color-mix(in srgb, var(--mineral-green-700, #0E6B5C) 34%, transparent) transparent;
+      scrollbar-gutter: stable;
+      scrollbar-width: thin;
       isolation: isolate;
     }
 
-    #playground .document-map-label {
-      display: flex;
-      justify-content: space-between;
-      color: var(--mist-white-700, #888A82);
-      font: 500 13px/24px var(--sans);
-    }
-
-    #playground .document-map-label span:first-child {
-      padding-left: 17px;
-      background: linear-gradient(var(--mineral-green-700), var(--mineral-green-700)) left center / 7px 7px no-repeat;
-      color: var(--mist-white-950, #1B1C1A);
-      font-weight: 500;
+    #playground .document-map::-webkit-scrollbar { width: 7px; }
+    #playground .document-map::-webkit-scrollbar-track { background: transparent; }
+    #playground .document-map::-webkit-scrollbar-thumb {
+      border: 2px solid transparent;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--mineral-green-700, #0E6B5C) 34%, transparent);
+      background-clip: padding-box;
     }
 
     #playground .document-map-switcher {
-      width: min(760px, 100%);
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      margin: 16px auto 0;
-      border: 1px solid #cecde0;
-      background: var(--white, #fff);
+      display: inline-flex;
+      align-items: center;
+      width: max-content;
+      max-width: 100%;
+      margin: 0;
+      padding: 6px;
+      gap: 6px;
+      border: 1px solid rgba(0, 0, 0, .03);
+      border-radius: 16px;
+      background: rgba(242, 242, 244, .8);
     }
 
     #playground .document-map-switcher button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       min-width: 0;
-      min-height: 40px;
-      padding: 8px 14px;
-      border: 0;
-      border-right: 1px solid #cecde0;
+      height: 36px;
+      min-height: 36px;
+      padding: 4px 10px;
+      gap: 2px;
+      border: 1px solid transparent;
+      border-radius: 10px !important;
       background: transparent;
-      color: var(--mist-white-700, #888A82);
-      font-size: 13px;
-      line-height: 18px;
+      color: rgba(0, 0, 0, .4);
+      font: 500 13px/20px "Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-family: "Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+      white-space: nowrap;
       cursor: pointer;
-      transition: background-color 180ms ease, color 180ms ease;
     }
 
-    #playground .document-map-switcher button:last-child { border-right: 0; }
     #playground .document-map-switcher button > span {
-      margin-right: 8px;
+      margin: 0;
+      padding-inline: 4px;
       color: currentColor;
-      font: 500 11px/1 "Geist Mono", ui-monospace, monospace !important;
+      font: inherit;
+      font-family: inherit !important;
     }
 
     #playground .document-map-switcher button[aria-pressed="true"] {
-      background: color-mix(in srgb, var(--mineral-green-500, #19A88B) 8%, #fff);
-      color: var(--mineral-green-700, #0E6B5C);
-    }
-
-    #playground .document-map-theme {
-      position: relative;
-      z-index: 3;
-      width: min(360px, 76%);
-      margin: 28px auto 0;
-      padding: 17px 22px 18px;
-      border: 1px solid #cecde0;
-      background: #fff;
-      text-align: center;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(180deg, rgba(0, 0, 0, .06) 48%, rgba(0, 0, 0, .12) 100%) border-box;
+      color: #19A88B;
+      box-shadow:
+        0 20px 20px -12px rgba(0, 0, 0, .03),
+        0 3px 3px -1.5px rgba(0, 0, 0, .03),
+        0 1px 1px -.5px rgba(0, 0, 0, .03);
     }
 
     #playground .document-map-hierarchy,
@@ -8450,7 +8469,6 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       flex: 1;
     }
 
-    #playground .document-map-theme span,
     #playground .document-node > span,
     #playground .section-node header > span,
     #playground .section-page figcaption > span {
@@ -8460,27 +8478,25 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       letter-spacing: .08em;
     }
 
-    #playground .document-map-theme span,
     #playground .document-node > span,
     #playground .section-node header > span {
+      width: max-content;
+      margin-inline: auto;
       padding-left: 17px;
       background: linear-gradient(var(--mineral-green-700), var(--mineral-green-700)) left center / 7px 7px no-repeat;
+      text-align: left;
     }
 
-    #playground .document-map-theme strong {
-      display: block;
-      margin-top: 3px;
-      font-size: 23px;
-      font-weight: 400;
-      line-height: 30px;
-    }
-
-    #playground .document-map-trunk {
-      width: 1px;
-      height: 58px;
-      margin: 0 auto;
+    #playground .document-branch-line::after {
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
       background: var(--map-line);
-      transform-origin: top;
+      content: "";
+      transform: translateX(-50%);
     }
 
     #playground .document-map-content {
@@ -8494,7 +8510,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       right: calc(50% / var(--document-count));
       left: calc(50% / var(--document-count));
       height: 1px;
-      background: var(--map-line);
+      background: var(--map-line-horizontal);
       content: "";
       transform-origin: left;
     }
@@ -8522,7 +8538,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       left: 50%;
       width: 1px;
       height: 28px;
-      background: var(--map-line);
+      background: var(--map-line-vertical);
       content: "";
     }
 
@@ -8532,19 +8548,24 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       left: 50%;
       width: 1px;
       height: 42px;
-      background: var(--map-line);
+      background: var(--map-line-vertical);
       content: "";
     }
 
     #playground .document-node {
-      width: min(300px, 94%);
+      display: block;
+      width: min(560px, 100%);
       margin: 0 auto;
       padding: 0;
       border: 0;
       background: transparent;
       color: inherit;
-      text-align: center;
+      text-align: left;
       cursor: pointer;
+    }
+
+    #playground .document-node > span {
+      margin-inline: 0;
     }
 
     #playground .document-node strong {
@@ -8563,101 +8584,120 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     }
 
     #playground .document-branch-line {
+      position: relative;
       width: 1px;
       height: 28px;
       margin: 9px auto 0;
-      background: var(--map-line);
+      background: var(--map-line-vertical);
     }
 
     #playground .document-sections {
       position: relative;
-      display: grid;
-      grid-template-columns: repeat(var(--section-count), minmax(0, 1fr));
-      gap: 14px;
-      padding-top: 20px;
+      display: block;
+      width: min(560px, 100%);
+      margin-inline: auto;
+      padding: 0 0 24px;
+      background: #fff;
     }
 
     #playground .document-sections::before {
-      position: absolute;
-      top: 0;
-      right: calc(50% / var(--section-count));
-      left: calc(50% / var(--section-count));
-      height: 1px;
-      background: var(--map-line);
-      content: "";
+      content: none;
     }
 
     #playground .section-node {
       position: relative;
       min-width: 0;
-      border: 1px solid #cecde0;
-      background: #fff;
+      border: 0;
+      background: transparent;
     }
 
     #playground .section-node::before {
-      position: absolute;
-      top: -20px;
-      left: 50%;
-      width: 1px;
-      height: 20px;
-      background: var(--map-line);
-      content: "";
+      content: none;
+    }
+
+    #playground .section-node + .section-node {
+      margin-top: 18px;
+      padding-top: 18px;
+      border-top: 1px solid #cecde0;
     }
 
     #playground .section-node > header {
-      min-height: 72px;
-      padding: 13px 16px 12px 20px;
-      background: #fff;
-      text-align: center;
+      min-height: 0;
+      padding: 14px 0 10px;
+      background: transparent;
+      text-align: left;
+    }
+
+    #playground .section-node header > span {
+      margin-inline: 0;
     }
 
     #playground .section-node header strong {
       display: block;
-      margin-top: 2px;
-      font-size: clamp(15px, 1.35vw, 19px);
-      font-weight: 500;
-      line-height: 24px;
+      max-width: 28ch;
+      margin-top: 4px;
+      font-size: clamp(15px, 1.25vw, 18px);
+      font-weight: 400;
+      line-height: 25px;
     }
 
-    #playground .section-pages {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
-      gap: 10px;
-      padding: 12px;
-      border-top: 1px solid #cecde0;
+    #playground .section-body p {
+      margin: 0 0 14px;
+      color: var(--mist-white-800, #5F615B);
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.7;
     }
 
     #playground .section-page {
       position: relative;
       min-width: 0;
-      height: 166px;
-      margin: 0;
+      margin: 16px 0 18px;
       overflow: hidden;
-      border: 1px solid #cecde0;
-      background: #fff;
+      border: 0;
+      background: transparent;
     }
 
     #playground .section-page img {
       width: 100%;
-      height: 100%;
+      height: auto;
+      aspect-ratio: 900 / 420;
       display: block;
       object-fit: cover;
-      object-position: center;
+      object-position: top center;
+      outline: 1px solid #cecde0;
+      outline-offset: -1px;
       transition: transform 500ms cubic-bezier(.23, 1, .32, 1);
     }
 
     #playground .section-page figcaption {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      left: 0;
       display: flex;
+      gap: 10px;
       align-items: center;
       justify-content: flex-start;
-      padding: 7px 8px;
-      border-top: 1px solid #cecde0;
-      background: rgba(255, 255, 255, .94);
-      backdrop-filter: blur(8px);
+      padding: 7px 0 2px;
+      border-top: 0;
+      background: transparent;
+      color: var(--mist-white-700, #888A82);
+      font-size: 11px;
+      line-height: 16px;
+    }
+
+    #playground .section-page-reference {
+      display: inline-block;
+      margin-left: 8px;
+      color: var(--mineral-green-700, #0E6B5C);
+      font: 500 10px/16px "Geist Mono", ui-monospace, monospace !important;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+
+    #playground .section-body p.section-source-line {
+      margin: -4px 0 12px;
+    }
+
+    #playground .section-source-line .section-page-reference {
+      margin-left: 0;
     }
 
     #playground .cross-document-link {
@@ -8665,7 +8705,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       width: calc(100% - (100% / var(--document-count)));
       min-height: 44px;
       margin: 42px auto 0;
-      border-top: 1px solid var(--map-line);
+      border-top: 0;
+      background: var(--map-line-horizontal) top left / 100% 1px no-repeat;
       text-align: center;
     }
 
@@ -8682,9 +8723,6 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     }
 
     @media (hover: hover) and (pointer: fine) {
-      #playground .document-map-switcher button:not([aria-pressed="true"]):hover {
-        color: var(--mist-white-950, #1B1C1A);
-      }
       #playground .section-page:hover img { transform: scale(1.025); }
     }
 
@@ -8693,7 +8731,10 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       to { opacity: 1; transform: none; }
     }
 
-    #playground .document-map.reveal { opacity: 0; transform: translateY(16px); }
+    #playground .document-map.reveal {
+      opacity: 0;
+      transform: translateY(16px);
+    }
     #playground .document-map.reveal.is-visible {
       opacity: 1;
       transform: none;
@@ -8759,12 +8800,11 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         width: 100%;
         min-height: 0;
         margin-bottom: 0;
-        padding: 16px 16px 24px;
+        padding: 10px 16px 24px;
         overflow: visible;
       }
 
-      #playground .document-map-label span:last-child { display: none; }
-      #playground .document-map-switcher { grid-template-columns: 1fr; }
+      #playground .document-map-switcher { display: grid; width: 100%; grid-template-columns: 1fr; }
       #playground .document-map-switcher button { border-right: 0; border-bottom: 1px solid #cecde0; }
       #playground .document-map-switcher button:last-child { border-bottom: 0; }
       #playground .document-map-hierarchy { width: calc(100% + 32px); margin-inline: -16px; overflow-x: auto; overscroll-behavior-inline: contain; scrollbar-width: none; }
@@ -8772,13 +8812,9 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       #playground .document-map-hierarchy-canvas { width: 100%; padding-inline: 16px; }
       #playground .document-map-hierarchy-canvas[data-document-count="2"] { width: 648px; }
       #playground .document-map-hierarchy-canvas[data-document-count="3"] { width: 972px; }
-      #playground .document-map-theme { margin-top: 28px; }
-      #playground .document-map-trunk { height: 38px; }
       #playground .document-map-documents { gap: 24px; }
       #playground .document-node { cursor: default; }
-      #playground .document-sections { gap: 12px; }
-      #playground .section-pages { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      #playground .section-page { height: 178px; }
+      #playground .section-page { height: auto; }
     }
 
     html[data-theme="dark"] #playground .product-stage,
@@ -8791,14 +8827,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         linear-gradient(90deg, var(--md-sys-color-outline-variant) 1px, transparent 1px);
     }
 
-    html[data-theme="dark"] #playground .document-map-label,
-    html[data-theme="dark"] #playground .document-map-switcher button {
-      color: var(--md-sys-color-on-surface-variant);
-    }
-
     html[data-theme="dark"] #playground .document-map-switcher,
-    html[data-theme="dark"] #playground .document-map-switcher button,
-    html[data-theme="dark"] #playground .document-map-theme,
+    html[data-theme="dark"] #playground .document-sections,
     html[data-theme="dark"] #playground .section-node,
     html[data-theme="dark"] #playground .section-page,
     html[data-theme="dark"] #playground .section-page figcaption,
@@ -8807,13 +8837,18 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       background: var(--md-sys-color-surface-container-low);
     }
 
+    html[data-theme="dark"] #playground .document-map-switcher button {
+      background: transparent;
+      color: var(--md-sys-color-on-surface-variant);
+    }
+
     html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="true"] {
       background: color-mix(in srgb, var(--md-sys-color-primary) 16%, var(--md-sys-color-surface));
       color: var(--md-sys-color-primary);
     }
 
     html[data-theme="dark"] #playground .section-node > header {
-      background: var(--md-sys-color-surface-container-high);
+      background: transparent;
     }
 
     html[data-theme="dark"] #playground .cross-document-link span,

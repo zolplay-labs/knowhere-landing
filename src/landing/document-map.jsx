@@ -115,6 +115,44 @@ const themes = [
   },
 ]
 
+const performanceCopy = [
+  'Global enterprise software revenue increased 18.4% year over year in Q4 2025 to $4.8B, driven by continued demand for cloud, security, and data platforms. Subscription and support revenue represented 77% of total revenue, up from 74% in Q4 2024, reflecting the ongoing shift to recurring, high-margin business models.',
+  'Operating income grew 21.7% year over year to $1.1B, resulting in an operating margin of 22.9%, compared with 21.3% in the prior year. Margin expansion was supported by disciplined cost management and improved efficiency in sales and customer success operations.',
+]
+
+function getPageMedia(page) {
+  if (page.image === revenueTable) {
+    return {
+      alt: 'Regional revenue table',
+      caption: 'Q4 2025 revenue increases across all regions, led by APAC (+21.6%) and Europe (+19.4%).',
+    }
+  }
+
+  if (page.image === revenueChart) {
+    return {
+      alt: 'Revenue trend and operating income charts',
+      caption: 'Revenue trend shows consistent quarter-over-quarter growth.',
+    }
+  }
+
+  return null
+}
+
+function SectionPageContent({ page }) {
+  const media = getPageMedia(page)
+
+  if (!media) {
+    return <p className="section-source-line"><span className="section-page-reference">PAGE {page.number}</span></p>
+  }
+
+  return (
+    <figure className="section-page">
+      <img src={page.image} alt={media.alt} />
+      <figcaption><span>PAGE {page.number}</span>{media.caption}</figcaption>
+    </figure>
+  )
+}
+
 function useMobileProductLayout() {
   const [isMobile, setIsMobile] = useState(() => (
     typeof window !== 'undefined' && window.matchMedia(MOBILE_PRODUCT_QUERY).matches
@@ -131,17 +169,21 @@ function useMobileProductLayout() {
   return isMobile
 }
 
-function DocumentMap({ onOpenTrace, inactive = false }) {
+function DocumentMap({ activeThemeId, onOpenTrace, inactive = false }) {
   const interactive = typeof onOpenTrace === 'function'
-  const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
   const [selectedName, setSelectedName] = useState(null)
   const openTimer = useRef(0)
   const activeTheme = themes.find(theme => theme.id === activeThemeId) ?? themes[0]
+  const NodeTag = interactive ? 'button' : 'header'
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const NodeTag = interactive ? 'button' : 'header'
 
   useEffect(() => () => window.clearTimeout(openTimer.current), [])
+
+  useEffect(() => {
+    window.clearTimeout(openTimer.current)
+    setSelectedName(null)
+  }, [activeThemeId])
 
   const openTrace = document => {
     if (!interactive) return
@@ -153,27 +195,9 @@ function DocumentMap({ onOpenTrace, inactive = false }) {
 
   return (
     <section className="document-map reveal" aria-labelledby="document-map-title" inert={inactive ? '' : undefined}>
-      <div className="document-map-label"><span id="document-map-title">Document map</span><span>Theme → file → section → pages</span></div>
-      <div className="document-map-switcher" aria-label="Choose a document theme">
-        {themes.map((theme, index) => (
-          <button
-            type="button"
-            key={theme.id}
-            aria-pressed={theme.id === activeThemeId}
-            onClick={() => {
-              window.clearTimeout(openTimer.current)
-              setSelectedName(null)
-              setActiveThemeId(theme.id)
-            }}
-          >
-            <span>{String(index + 1).padStart(2, '0')}</span>{theme.label}
-          </button>
-        ))}
-      </div>
+      <span className="sr-only" id="document-map-title">Document map</span>
       <div className="document-map-hierarchy">
         <div className="document-map-hierarchy-canvas" data-document-count={activeTheme.documents.length} style={{ '--document-count': activeTheme.documents.length }}>
-          <div className="document-map-theme"><span>THEME</span><strong>{activeTheme.label}</strong></div>
-          <div className="document-map-trunk" aria-hidden="true" />
           <div className="document-map-content" key={activeTheme.id} aria-live="polite">
             <div className="document-map-documents" data-document-count={activeTheme.documents.length}>
               {activeTheme.documents.map((document, documentIndex) => (
@@ -200,22 +224,28 @@ function DocumentMap({ onOpenTrace, inactive = false }) {
                     data-section-count={document.sections.length}
                     style={{ '--section-count': document.sections.length }}
                   >
-                    {document.sections.map((section, sectionIndex) => (
-                      <section className="section-node" key={section.name}>
-                        <header>
-                          <span>SECTION {sectionIndex + 1}</span>
-                          <strong>{section.name}</strong>
-                        </header>
-                        <div className="section-pages">
-                          {section.pages.map(page => (
-                            <figure className="section-page" key={page.number}>
-                              <img src={page.image} alt="" />
-                              <figcaption><span>PAGE {page.number}</span></figcaption>
-                            </figure>
-                          ))}
-                        </div>
-                      </section>
-                    ))}
+                    {document.sections.map((section, sectionIndex) => {
+                      const [firstPage, ...remainingPages] = section.pages
+                      const firstPageMedia = getPageMedia(firstPage)
+
+                      return (
+                        <section className="section-node" key={section.name}>
+                          <header>
+                            <span>SECTION {sectionIndex + 1}</span>
+                            <strong>{section.name}</strong>
+                          </header>
+                          <div className="section-body">
+                            <p>
+                              {performanceCopy[0]}
+                              {!firstPageMedia && <span className="section-page-reference">PAGE {firstPage.number}</span>}
+                            </p>
+                            {firstPageMedia && <SectionPageContent page={firstPage} />}
+                            <p>{performanceCopy[1]}</p>
+                            {remainingPages.map(page => <SectionPageContent page={page} key={page.number} />)}
+                          </div>
+                        </section>
+                      )
+                    })}
                   </div>
                 </article>
               ))}
@@ -230,9 +260,27 @@ function DocumentMap({ onOpenTrace, inactive = false }) {
   )
 }
 
+function DocumentMapSwitcher({ activeThemeId, onChange }) {
+  return (
+    <div className="document-map-switcher" aria-label="Choose a document theme">
+      {themes.map((theme, index) => (
+        <button
+          type="button"
+          key={theme.id}
+          aria-pressed={theme.id === activeThemeId}
+          onClick={() => onChange(theme.id)}
+        >
+          <span>{String(index + 1).padStart(2, '0')} {theme.label}</span>
+        </button>
+      ))}
+    </div>
+  )
+}
+
 export function ProductStage() {
   const isMobile = useMobileProductLayout()
   const [stage, setStage] = useState('map')
+  const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
   const iframeRef = useRef(null)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -248,35 +296,41 @@ export function ProductStage() {
   }
 
   return (
-    <div className={`product-stage${stage === 'trace' ? ' is-trace' : ''}${isMobile ? ' is-stacked' : ''}`}>
-      <div
-        className="product-stage-track"
-        style={reducedMotion && stage === 'trace' ? { transition: 'none' } : undefined}
-      >
-        <DocumentMap
-          inactive={!isMobile && stage === 'trace'}
-          onOpenTrace={isMobile ? undefined : revealTrace}
-        />
-        <div className="section-scan-frame" inert={!isMobile && stage === 'map' ? '' : undefined}>
-          <iframe
-            ref={iframeRef}
-            src="document-scan-section.html"
-            title="Document scan and source traceability demonstration"
-            loading="eager"
-            tabIndex={-1}
-            aria-hidden="true"
-          />
-        </div>
+    <>
+      <div className="product-stage-switcher-row">
+        <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={setActiveThemeId} />
       </div>
-      {!isMobile && stage === 'trace' && (
-        <button
-          type="button"
-          className="product-stage-back"
-          onClick={() => setStage('map')}
+      <div className={`product-stage${stage === 'trace' ? ' is-trace' : ''}${isMobile ? ' is-stacked' : ''}`}>
+        <div
+          className="product-stage-track"
+          style={reducedMotion && stage === 'trace' ? { transition: 'none' } : undefined}
         >
-          Back to document map
-        </button>
-      )}
-    </div>
+          <DocumentMap
+            activeThemeId={activeThemeId}
+            inactive={!isMobile && stage === 'trace'}
+            onOpenTrace={isMobile ? undefined : revealTrace}
+          />
+          <div className="section-scan-frame" inert={!isMobile && stage === 'map' ? '' : undefined}>
+            <iframe
+              ref={iframeRef}
+              src="document-scan-section.html"
+              title="Document scan and source traceability demonstration"
+              loading="eager"
+              tabIndex={-1}
+              aria-hidden="true"
+            />
+          </div>
+        </div>
+        {!isMobile && stage === 'trace' && (
+          <button
+            type="button"
+            className="product-stage-back"
+            onClick={() => setStage('map')}
+          >
+            Back to document map
+          </button>
+        )}
+      </div>
+    </>
   )
 }
