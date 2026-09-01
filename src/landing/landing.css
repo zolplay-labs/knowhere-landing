@@ -6155,15 +6155,15 @@
       :root {
         --layout-grid-columns: 8;
         --layout-grid-gap: 16px;
-        --layout-grid-edge: 40px;
+        --layout-grid-edge: 24px;
       }
     }
 
     @media (max-width: 767px) {
       :root {
         --layout-grid-columns: 4;
-        --layout-grid-gap: 12px;
-        --layout-grid-edge: 20px;
+        --layout-grid-gap: 16px;
+        --layout-grid-edge: 16px;
       }
     }
 
@@ -8828,3 +8828,823 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       #playground .document-map-content { animation: none; }
       #playground .section-page img { transition: none; }
     }
+
+/* Mobile review refinements. */
+@media (max-width: 767px) {
+  /* The process cards are the mobile navigation; the desktop tab rail is redundant. */
+  #capabilities .story-steps {
+    display: none;
+  }
+
+  #capabilities .story-card-stack {
+    margin-top: 0;
+  }
+
+  /* Keep the formats globe centered without the desktop side halos. */
+  #formats .format-orbit-halo {
+    display: none;
+  }
+
+  #formats .format-orbit-copy,
+  #formats .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy--supported p {
+    text-align: center;
+  }
+
+  #formats .format-orbit-copy--supported,
+  #formats .format-orbit-copy--coming {
+    max-width: 440px;
+    justify-self: center;
+    align-items: center;
+  }
+
+  #formats .formats-secondary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 1fr;
+    gap: 12px;
+  }
+
+  #formats .formats-secondary-grid .format-feature {
+    width: auto;
+    min-height: 0;
+    height: 100%;
+    padding: 20px;
+  }
+
+  /* A shorter plot is easier to scan on a phone; its highlighted value is always visible. */
+  #comparison .comparison-chart {
+    min-height: 360px;
+    height: 360px;
+  }
+
+  #comparison .comparison-metrics,
+  #comparison .comparison-axis-y {
+    height: 188px;
+  }
+
+  #comparison .comparison-metric > i::after {
+    opacity: 0;
+    transition: none;
+  }
+
+  #comparison .comparison-metric > i:nth-child(3)::after,
+  #comparison .comparison-metric:hover > i:nth-child(3)::after {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 8px)) rotate(-45deg);
+  }
+
+  #comparison .comparison-metric:hover > i:nth-child(3)::before {
+    animation: none;
+  }
+
+  #comparison .comparison-scoreboard {
+    overflow-x: hidden;
+  }
+
+  #comparison .comparison-scoreboard-grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1.45fr) repeat(2, minmax(0, .85fr));
+  }
+
+  #comparison .scoreboard-cell {
+    min-width: 0;
+    padding: 12px 10px;
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  #comparison .scoreboard-mark {
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  #integration .mcp {
+    padding: 18px 20px;
+    background: var(--black-3);
+  }
+
+  #integration .mcp .text-link {
+    justify-self: start;
+  }
+
+  #pricing .pricing-file-limits {
+    display: block;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  #pricing .pricing-file-limits-head {
+    padding: 20px;
+    gap: 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--black-10);
+  }
+
+  #pricing .pricing-file-limits-head p {
+    max-width: none;
+  }
+
+  #pricing .pricing-file-limits dl {
+    gap: 0;
+  }
+
+  #pricing .pricing-file-limits dl > div {
+    min-height: 84px;
+    padding: 16px 20px;
+  }
+
+  #final-cta .converging-helix-stage {
+    min-height: 380px;
+    gap: 8px;
+  }
+
+  #final-cta .converging-helix-stage > #final-cta-copy {
+    width: calc(100% - 32px);
+  }
+
+  #final-cta-actions {
+    width: calc(100% - 32px);
+    margin-top: 6px;
+    flex-direction: row;
+  }
+
+  #final-cta-actions .button {
+    width: auto;
+    min-width: 0;
+    flex: 1 1 0;
+  }
+
+  .converging-helix-benefits {
+    bottom: 16px;
+    width: calc(100% - 24px);
+    padding-inline: 0;
+    font-size: clamp(10px, 2vw, 12px);
+    line-height: 16px;
+  }
+}
+
+@media (max-width: 479px) {
+  #formats .formats-secondary-grid .format-feature {
+    padding: 16px;
+    overflow: hidden;
+  }
+
+  #formats .formats-secondary-grid .format-feature h3 {
+    overflow-wrap: anywhere;
+    font-size: 18px;
+    line-height: 24px;
+  }
+
+  #formats .formats-secondary-grid .format-feature p {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  #comparison .scoreboard-cell,
+  #comparison .scoreboard-cell.scoreboard-head-cell {
+    padding-inline: 5px;
+    font-size: 13px;
+  }
+}
+
+/* Tablet is a distinct layout tier: desktop content density, without fixed desktop geometry. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  #formats .format-feature--formats,
+  #formats .format-orbit-layout {
+    height: auto;
+    min-height: 0;
+  }
+
+  #formats .format-orbit-layout {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 380px auto;
+    gap: 24px;
+  }
+
+  #formats .format-orbit-layout .format-orbit-stage {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    width: 380px;
+    height: 380px;
+    min-height: 0;
+    justify-self: center;
+  }
+
+  #formats .format-orbit-halo {
+    display: none;
+  }
+
+  #formats .format-orbit-copy,
+  #formats .format-orbit-copy--supported,
+  #formats .format-orbit-copy--coming {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    transform: none;
+    white-space: normal;
+  }
+
+  #formats .format-orbit-copy--supported {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+    align-items: flex-end;
+  }
+
+  #formats .format-orbit-copy--coming {
+    grid-column: 2;
+    grid-row: 2;
+    align-self: start;
+  }
+
+  #formats .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy p {
+    white-space: normal;
+  }
+
+  #integration .integration-grid {
+    min-height: 0;
+    padding: 28px;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    gap: 24px;
+    background-image: none;
+  }
+
+  #integration .steps {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: 1fr;
+    gap: 12px;
+    border: 0;
+    background: transparent;
+  }
+
+  #integration .steps li {
+    min-width: 0;
+    min-height: 148px;
+    padding: 18px;
+    border: 1px solid var(--black-10);
+  }
+
+  #integration .steps li::before,
+  #integration .steps li::after,
+  #integration .steps .integration-step-number::after {
+    content: none;
+  }
+
+  #integration .steps h3 {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  #integration .steps p {
+    padding-left: 0;
+  }
+
+  #integration .integration-plinth {
+    grid-column: 1;
+    grid-row: 2;
+    width: min(720px, 100%);
+    height: auto;
+    margin: 0 auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  #integration .mcp {
+    grid-column: 1;
+    grid-row: 3;
+    width: 100%;
+    min-height: 64px;
+    margin: 0;
+    padding: 16px 20px;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 20px;
+    background: var(--black-3);
+  }
+
+  #integration .mcp .text-link {
+    grid-column: 2;
+    justify-self: end;
+  }
+
+  #integration .mcp::after {
+    content: none;
+  }
+
+  #pricing .pricing-file-limits {
+    grid-template-columns: minmax(260px, .9fr) minmax(0, 1.1fr);
+    gap: 0;
+  }
+
+  #pricing .pricing-file-limits-head,
+  #pricing .pricing-file-limits dl {
+    width: auto;
+  }
+
+  #pricing .pricing-file-limits dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #pricing .pricing-file-limits dl > div {
+    padding-inline: 12px;
+  }
+
+  #comparison .comparison-scoreboard {
+    overflow-x: hidden;
+  }
+
+  #comparison .comparison-scoreboard-grid {
+    min-width: 0;
+    grid-template-columns: minmax(0, 1.45fr) repeat(2, minmax(0, .85fr));
+  }
+
+  #enterprise .enterprise-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #faq {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  #faq .section-heading,
+  #faq .faq-list {
+    width: 100%;
+    max-width: none;
+  }
+
+  #faq .faq-list {
+    padding-top: 0;
+  }
+}
+
+/* Phone: preserve all content, simplify interaction, and remove horizontal scrolling. */
+@media (max-width: 767px) {
+  #top.hero-b-layout .hero-copy .button-row,
+  #final-cta-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #top.hero-b-layout .hero-copy .button-row .button,
+  #final-cta-actions .button,
+  #enterprise .sales-link {
+    width: 100%;
+  }
+
+  #comparison .comparison-chart {
+    overflow-x: hidden;
+  }
+
+  #comparison .comparison-chart-header,
+  #comparison .comparison-plot {
+    width: 100%;
+    min-width: 0;
+  }
+
+  #comparison .comparison-chart-header {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  #comparison .comparison-legend {
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    overflow: visible;
+  }
+
+  #comparison .comparison-plot {
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 4px;
+  }
+
+  #comparison .comparison-axis-y--right {
+    display: none;
+  }
+
+  #comparison .comparison-axis-y--left {
+    grid-template-columns: 12px minmax(0, 1fr);
+    font-size: 9px;
+  }
+
+  #comparison .comparison-metrics {
+    gap: 6px;
+  }
+
+  #comparison .comparison-metric {
+    gap: 2px;
+  }
+
+  #playground .document-map-hierarchy {
+    width: 100%;
+    margin-inline: 0;
+    overflow: visible;
+  }
+
+  #playground .document-map-switcher button {
+    min-height: 44px;
+  }
+
+  #playground .document-map-hierarchy-canvas,
+  #playground .document-map-hierarchy-canvas[data-document-count="2"],
+  #playground .document-map-hierarchy-canvas[data-document-count="3"] {
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  #playground .document-map-theme {
+    width: 100%;
+  }
+
+  #playground .document-map-content::before,
+  #playground .document-map-documents:not([data-document-count="1"]) .document-branch::after,
+  #playground .cross-document-link {
+    display: none;
+  }
+
+  #playground .document-map-documents,
+  #playground .document-map-documents[data-document-count="1"] {
+    width: 100%;
+    margin-inline: 0;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+
+  #playground .document-branch {
+    padding-top: 20px;
+  }
+
+  #playground .document-branch::before {
+    height: 20px;
+  }
+
+  #playground .document-sections {
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  #playground .section-pages {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #playground .section-page {
+    height: 140px;
+  }
+
+  #final-cta .converging-helix-stage {
+    min-height: 460px;
+  }
+
+  #final-cta-actions {
+    width: calc(100% - 32px);
+  }
+}
+
+@media (max-width: 479px) {
+  #playground .document-sections {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #playground .section-pages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1199px) {
+  /* The page-style workbench is a desktop-only authoring tool. */
+  .dialkit-root {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-page #final-cta-actions .button {
+    min-height: 44px !important;
+    height: 44px !important;
+  }
+
+  /* Match the desktop process-card reading rhythm without changing card content. */
+  #capabilities .story-card-stack {
+    gap: 20px;
+  }
+
+  #capabilities .capability-copy {
+    padding: 24px 24px 20px;
+  }
+
+  #capabilities .capability-copy-main {
+    gap: 12px;
+  }
+
+  /* Keep the chart readable at its natural density and scroll only this region. */
+  #comparison .comparison-chart {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+  }
+
+  #comparison .comparison-chart-header,
+  #comparison .comparison-plot {
+    width: 840px;
+    min-width: 840px;
+  }
+
+  #comparison .comparison-chart-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  #comparison .comparison-legend {
+    width: auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+
+  #comparison .comparison-plot {
+    grid-template-columns: 64px minmax(0, 1fr) 62px 62px;
+    column-gap: 3px;
+  }
+
+  #comparison .comparison-axis-y--left,
+  #comparison .comparison-axis-y--right {
+    display: grid;
+  }
+
+  #comparison .comparison-axis-y--left {
+    grid-template-columns: 16px minmax(0, 1fr);
+  }
+
+  #comparison .comparison-axis-y--left strong {
+    display: block;
+  }
+
+  #comparison .comparison-metrics {
+    gap: 24px;
+  }
+
+  #comparison .comparison-metric {
+    gap: 3px;
+  }
+
+  #comparison .comparison-metric-labels span {
+    padding-inline: 0;
+    white-space: nowrap;
+  }
+
+  #comparison .comparison-legend span:nth-child(3),
+  #comparison .comparison-metric > i:nth-child(3) {
+    display: none;
+  }
+
+  /* Preserve the desktop Integration panel structure in a single mobile column. */
+  #integration .steps {
+    width: 100%;
+    margin-inline: 0;
+    gap: 0;
+    border-right: 1px solid var(--black-10);
+    border-left: 1px solid var(--black-10);
+    background: var(--white);
+  }
+
+  #integration .steps li {
+    position: relative;
+    min-height: 124px;
+    padding: 20px;
+    border: 0;
+  }
+
+  #integration .steps li:not(:last-child)::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 60px;
+    height: 1px;
+    display: block;
+    background: repeating-linear-gradient(to right, var(--black-10) 0 6px, transparent 6px 12px);
+    content: "";
+  }
+
+  #integration .steps h3 {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    column-gap: 16px;
+  }
+
+  #integration .steps .integration-step-number {
+    width: 26px;
+    justify-self: center;
+  }
+
+  #integration .steps p {
+    padding-left: 52px;
+  }
+
+  #integration .steps li:not(:last-child) .integration-step-number::after {
+    width: 1px;
+    height: 96px;
+    display: block;
+    background: repeating-linear-gradient(to bottom, var(--mineral-green-500) 0 7px, transparent 7px 14px);
+    content: "";
+  }
+
+  #integration .mcp {
+    width: 100%;
+    margin-inline: 0;
+    padding: 16px 20px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    align-items: start;
+  }
+
+  #integration .mcp-copy,
+  #integration .mcp-copy h3,
+  #integration .mcp-copy p {
+    width: 100%;
+    text-align: left;
+  }
+
+  #integration .mcp .text-link {
+    grid-column: 1;
+    justify-self: start;
+    padding: 6px 0;
+    text-align: left;
+  }
+
+  /* Keep the mobile pricing result visually consistent with its desktop card. */
+  #pricing .pricing-result-value {
+    position: relative;
+    width: calc(100% - 16px);
+    height: 72px;
+    margin: 12px 8px;
+    padding: 8px 16px;
+    gap: 0;
+  }
+
+  #pricing .pricing-result-value::before {
+    position: absolute;
+    inset: -8px;
+    background-image:
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500)),
+      linear-gradient(var(--coral-signal-500), var(--coral-signal-500));
+    background-position:
+      left top, left top,
+      right top, right top,
+      right bottom, right bottom,
+      left bottom, left bottom;
+    background-size:
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px,
+      12px 2px, 2px 12px;
+    background-repeat: no-repeat;
+    content: "";
+    pointer-events: none;
+  }
+
+  #pricing .pricing-file-limits {
+    margin-top: 40px;
+  }
+
+  #pricing .pricing-file-limits dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  #pricing .pricing-file-limits dl > div {
+    min-height: 72px;
+    padding: 12px 8px;
+    gap: 4px;
+    border-right: 1px solid var(--black-10);
+  }
+
+  #pricing .pricing-file-limits dl > div:last-child {
+    border-right: 0;
+  }
+}
+
+/*
+ * Responsive spacing map (Web → Mobile):
+ * 8→8, 12→8, 16→12, 24→16, 32→20, 40/48→24,
+ * 64→32, 80→40, 96→48, 120→56, 160+→64.
+ */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .landing-page #main > #top,
+  .landing-page #main > .capabilities-scroll-track > #capabilities,
+  .landing-page #main > .formats-scroll-track > #formats,
+  .landing-page #main > #comparison,
+  .landing-page #main > #pricing,
+  .landing-page #main > #enterprise.section.shell,
+  .landing-page #main > #faq,
+  .landing-page #main > #final-cta {
+    padding-inline: var(--layout-grid-edge);
+  }
+
+  #integration .integration-grid {
+    padding-inline: var(--layout-grid-edge);
+  }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --gutter: 16px;
+    --space-section-mobile: 32px;
+    --space-section-compact-mobile: 16px;
+    --space-heading-content-mobile: 32px;
+    --space-heading-row-mobile: 8px;
+  }
+
+  .landing-page #main > #top,
+  .landing-page #main > #playground.section.shell,
+  .landing-page #main > .capabilities-scroll-track > #capabilities,
+  .landing-page #main > .formats-scroll-track > #formats,
+  .landing-page #main > #comparison,
+  .landing-page #main > #pricing,
+  .landing-page #main > #enterprise.section.shell,
+  .landing-page #main > #faq,
+  .landing-page #main > #final-cta {
+    padding-inline: var(--layout-grid-edge);
+  }
+
+  .landing-page #main > #top {
+    padding-bottom: 56px;
+  }
+
+  .landing-page #main > #playground.section.shell {
+    padding-block: var(--space-section-compact-mobile);
+  }
+
+  .landing-page #main > .capabilities-scroll-track > #capabilities,
+  .landing-page #main > .formats-scroll-track > #formats,
+  .landing-page #main > #comparison,
+  .landing-page #main > #integration,
+  .landing-page #main > #pricing,
+  .landing-page #main > #enterprise.section.shell,
+  .landing-page #main > #faq,
+  .landing-page #main > #final-cta {
+    padding-top: var(--space-section-mobile);
+    padding-bottom: var(--space-section-mobile);
+  }
+
+  .landing-page #main > #playground,
+  .landing-page #main > .capabilities-scroll-track,
+  .landing-page #main > .formats-scroll-track,
+  .landing-page #main > #comparison,
+  .landing-page #main > #integration,
+  .landing-page #main > #pricing,
+  .landing-page #main > #faq,
+  .landing-page #main > #final-cta {
+    margin-top: var(--space-section-mobile);
+  }
+
+  .landing-page #main > #enterprise {
+    margin-top: 48px;
+  }
+
+  #playground .section-heading,
+  #capabilities .section-heading,
+  #formats .section-heading,
+  #comparison .section-heading,
+  #integration .section-heading,
+  #pricing .pricing-heading {
+    margin-bottom: var(--space-heading-content-mobile);
+    row-gap: var(--space-heading-row-mobile);
+  }
+
+  #integration .integration-grid {
+    padding-right: var(--layout-grid-edge);
+    padding-left: var(--layout-grid-edge);
+  }
+
+  #enterprise .enterprise-content,
+  #enterprise .enterprise-copy,
+  #final-cta-copy {
+    row-gap: var(--space-heading-row-mobile);
+  }
+
+  #enterprise .enterprise-metrics {
+    margin-top: 24px;
+  }
+
+  #faq {
+    row-gap: var(--space-heading-content-mobile);
+  }
+}
