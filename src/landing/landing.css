@@ -8422,6 +8422,17 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       isolation: isolate;
     }
 
+    @media (min-width: 1200px) {
+      #playground .playground-scroll-track {
+        height: 440svh;
+      }
+
+      #playground .product-stage {
+        --product-stage-height: calc(100svh - 130px);
+        border-block: 0;
+      }
+    }
+
     #playground .product-stage-track {
       display: flex;
       flex-direction: column;

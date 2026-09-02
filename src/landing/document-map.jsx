@@ -1079,8 +1079,11 @@ export function ProductStage() {
 
       // Keep the document branches visible on entry, then reveal the deeper source layers on scroll.
       const currentScroll = -rect.top
-      const trackProgress = Math.max(0, Math.min(1, currentScroll / totalScroll))
-      const p = 0.36 + trackProgress * 0.64
+      // Desktop keeps the completed AI output on screen before sticky release.
+      const progressScroll = window.matchMedia('(min-width: 1200px)').matches
+        ? totalScroll * 0.86
+        : totalScroll
+      const p = Math.max(0, Math.min(1, currentScroll / progressScroll))
       setScrollProgress(p)
     }
 
