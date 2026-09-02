@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import revenueChart from '../../assets/source-chart.png'
 import marginAnalysis from '../../assets/source-margin.png'
 import revenueAnalysis from '../../assets/source-revenue.png'
@@ -269,7 +269,7 @@ function clamp(val, min = 0, max = 1) {
 function TracePixelReveal({ active, delay = 0, duration = 800 }) {
   const canvasRef = useRef(null)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const canvas = canvasRef.current
     const host = canvas?.parentElement
     if (!canvas || !host) return undefined
