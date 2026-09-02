@@ -398,7 +398,6 @@ if (!(root instanceof Element)) return () => {};
   const headingSourceText = new WeakMap();
   $$('#main h1, #main h2').forEach(heading => headingSourceText.set(heading, heading.textContent.trim()));
   let activeLanguage = 'en';
-  let activeStoryKey = 'structure';
   let storyReady = false;
   let titleTypeReady = false;
   let pricingReady = false;
@@ -715,84 +714,9 @@ if (!(root instanceof Element)) return () => {};
       $('[data-story-summary]', card).textContent = localizeText(content.summary);
     });
   }
-  const capabilitiesTrack = $('.capabilities-scroll-track');
-  const storyStepList = $('.story-steps');
-  const storyCardStack = $('.story-card-stack');
   const storyCards = $$('.story-card');
-  const storySteps = $$('.story-step');
-  function activateStory(index, focus = false) {
-    const step = storySteps[index];
-    if (!step) return;
-    activeStoryKey = step.dataset.story;
-    storySteps.forEach((item, itemIndex) => {
-      const active = itemIndex === index;
-      item.classList.toggle('is-active', active);
-      item.setAttribute('aria-selected', String(active));
-      item.tabIndex = active ? 0 : -1;
-    });
-    if (focus) step.focus();
-  }
-  function storyMarker(index) {
-    if (matchMedia('(max-width: 767px)').matches || !storyStepList) return 40;
-    const stickyTop = parseFloat(getComputedStyle(storyStepList).top) || 80;
-    const card = storyCards[index];
-    if (index === storyCards.length - 1 && card) {
-      return stickyTop + storyStepList.offsetHeight - card.offsetHeight;
-    }
-    return stickyTop + (storySteps[index]?.offsetTop || 0);
-  }
-  function storyScrollTarget(index) {
-    const card = storyCards[index];
-    return card ? scrollY + card.getBoundingClientRect().top - storyMarker(index) : scrollY;
-  }
-  function scrollToStory(index) {
-    activateStory(index, true);
-    if (!storyCards[index]) return;
-    scrollTo({ top: storyScrollTarget(index), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-  }
-  storySteps.forEach((step, index) => {
-    step.addEventListener('click', () => scrollToStory(index));
-    step.addEventListener('keydown', event => {
-      let next;
-      if (event.key === 'ArrowRight' || event.key === 'ArrowDown') next = (index + 1) % storySteps.length;
-      if (event.key === 'ArrowLeft' || event.key === 'ArrowUp') next = (index - 1 + storySteps.length) % storySteps.length;
-      if (event.key === 'Home') next = 0;
-      if (event.key === 'End') next = storySteps.length - 1;
-      if (next !== undefined) { event.preventDefault(); scrollToStory(next); }
-    });
-  });
-  function syncStoryToScroll() {
-    capabilitiesTrack?.style.removeProperty('height');
-    storyCardStack?.style.removeProperty('height');
-    storyCardStack?.style.removeProperty('transform');
-    storyCards.forEach(card => card.style.removeProperty('transform'));
-    const targets = storyCards.map((card, index) => scrollY + card.getBoundingClientRect().top - storyMarker(index));
-    let activeIndex = 0;
-    storyCards.forEach((card, index) => {
-      if (scrollY >= targets[index] - 0.5) activeIndex = index;
-    });
-    syncHeaderState();
-    activateStory(activeIndex);
-    const activeTarget = targets[activeIndex] ?? scrollY;
-    const nextTarget = targets[activeIndex + 1];
-    const progress = nextTarget === undefined
-      ? 100
-      : Math.max(0, Math.min(100, ((scrollY - activeTarget) / Math.max(1, nextTarget - activeTarget)) * 100));
-    storySteps.forEach((step, index) => step.style.setProperty('--story-progress', index === activeIndex ? `${progress}%` : '0%'));
-    if (activeIndex === storyCards.length - 1 && !matchMedia('(max-width: 767px)').matches) {
-      const holdDistance = Math.min(
-        parseFloat(getComputedStyle(storyCardStack).paddingBottom) || 0,
-        Math.max(0, scrollY - activeTarget),
-      );
-      storyCardStack.style.transform = `translate3d(0, ${holdDistance}px, 0)`;
-    }
-  }
-  addEventListener('scroll', syncStoryToScroll, { passive: true });
-  addEventListener('resize', syncStoryToScroll);
   storyReady = true;
   renderStoryCanvas();
-  activateStory(0);
-  syncStoryToScroll();
 
   const typedHeadings = $$('#main h1, #main h2').filter(heading => !heading.closest('#playground'));
   const headingTypingTimers = new WeakMap();

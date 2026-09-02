@@ -6,18 +6,92 @@ import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 import { ProductStage } from './document-map'
 
+const structureTreeRows = [
+  { label: 'Document map', level: 0, open: false },
+  { label: 'Headings', level: 0, open: false },
+  { label: 'Structure map', level: 0, open: true },
+  { label: 'Annual report', level: 1, open: true },
+  { label: 'Executive summary', level: 2, open: true },
+  { label: 'Market findings', level: 3, leaf: true },
+  { label: 'Revenue by region', level: 3, leaf: true },
+  { label: 'Forecast formulas', level: 2, open: false },
+  { label: 'Page relationships', level: 1, open: false },
+  { label: 'Tables', level: 0, open: false },
+  { label: 'Visual regions', level: 0, open: false },
+]
+
+function CapabilityTree({ className = '', rows }) {
+  return (
+    <div className={`capability-figma-tree ${className}`.trim()}>
+      {rows.map((row) => (
+        <div className="capability-tree-row" data-level={row.level} key={row.label}>
+          <span className="capability-tree-trail" />
+          <span className="capability-tree-leading"><img src={row.leaf ? '/assets/process-checkbox.svg' : row.open ? '/assets/process-arrow-down.svg' : '/assets/process-arrow-right.svg'} alt="" /></span>
+          <span className="capability-tree-label">{row.label}</span>
+          <span className="capability-tree-actions"><img src="/assets/process-check.svg" alt="" /><img src="/assets/process-more.svg" alt="" /><img src="/assets/process-action-arrow.svg" alt="" /></span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function CapabilityCodeCard({ variant }) {
+  const snippets = {
+    left: [
+      '// preserve page provenance',
+      'const page = document.pages[12]',
+      'const region = page.regions.revenue',
+      'const source = region.source',
+      'const bounds = region.boundingBox',
+      'const content = region.content',
+      'return { source, bounds, content }',
+    ],
+    center: [
+      '// traceable document context',
+      'const context = {',
+      "  type: 'structured',",
+      '  page: 12,',
+      "  region: 'revenue',",
+      "  source: 'annual-report.pdf',",
+      "  path: 'tables/revenue-by-region'",
+      '}',
+      'return context.source',
+    ],
+    right: [
+      '// return agent-ready context',
+      'export function getContext(result) {',
+      '  return {',
+      '    content: result.content,',
+      '    citations: result.sources,',
+      '    documentMap: result.map',
+      '  }',
+      '}',
+    ],
+  }
+
+  return (
+    <div className={`capability-code-card capability-code-card--${variant}`}>
+      <span className="capability-code-corner capability-code-corner--tl" />
+      <span className="capability-code-corner capability-code-corner--tr" />
+      <span className="capability-code-corner capability-code-corner--bl" />
+      <span className="capability-code-corner capability-code-corner--br" />
+      <code>
+        {snippets[variant].map((line, index) => <span key={`${variant}-${index}`}>{line}</span>)}
+      </code>
+    </div>
+  )
+}
+
 function CapabilityProductPreview({ story }) {
   if (story === 'structure') {
     return (
       <div className="capability-product-preview capability-product-preview--ingest" aria-hidden="true">
-        <div className="capability-product-bar"><span>Document intake</span><span className="capability-product-status">3 ready</span></div>
-        <div className="capability-product-body">
-          <div className="capability-upload-summary"><span>Upload queue</span><strong>3 sources</strong></div>
-          <div className="capability-file-list">
-            <div><i>PDF</i><span><strong>Annual report.pdf</strong><small>48 pages · Ready</small></span><b>100%</b></div>
-            <div><i>XLS</i><span><strong>Forecast.xlsx</strong><small>6 sheets · Ready</small></span><b>100%</b></div>
-            <div><i>PPT</i><span><strong>Research deck.pptx</strong><small>24 slides · Ready</small></span><b>100%</b></div>
-          </div>
+        <div className="capability-figma-upload">
+          <span className="capability-corner capability-corner--top" />
+          <div className="capability-upload-header"><div><strong>Ingest documents</strong><small>Add supported formats securely.</small></div><img src="/assets/process-close.svg" alt="" /></div>
+          <div className="capability-upload-drop"><img className="capability-upload-icon" src="/assets/process-upload-file.svg" alt="" /><div className="capability-upload-drop-copy"><strong>Drag and drop documents</strong><small>PDF, XLSX, PPTX, scans, and more</small></div><button type="button" tabIndex={-1}>Select file</button></div>
+          <div className="capability-upload-files"><strong>Ingested files</strong><div><img className="capability-file-icon" src="/assets/process-upload-file.svg" alt="" /><span><b>Annual report.pdf</b><small>48 pages · Processing</small></span><button type="button" tabIndex={-1}>×</button></div><div><img className="capability-file-icon" src="/assets/process-upload-file.svg" alt="" /><span><b>Forecast.xlsx</b><small>6 sheets · Ready</small></span><button type="button" tabIndex={-1}>×</button></div></div>
+          <div className="capability-upload-actions"><button type="button" tabIndex={-1}>Cancel</button><button type="button" tabIndex={-1}>Attach file</button></div>
         </div>
       </div>
     )
@@ -26,15 +100,44 @@ function CapabilityProductPreview({ story }) {
   if (story === 'visual') {
     return (
       <div className="capability-product-preview capability-product-preview--capture" aria-hidden="true">
-        <div className="capability-product-bar"><span>Page capture</span><span className="capability-product-status">Page 12 / 48</span></div>
-        <div className="capability-capture-layout">
-          <div className="capability-page-thumbnail"><span /><span /><mark>Table region</mark><span /></div>
-          <div className="capability-region-list">
-            <div><span>Text blocks</span><strong>18</strong></div>
-            <div><span>Visual regions</span><strong>4</strong></div>
-            <div><span>Tables</span><strong>2</strong></div>
-            <small>Original layout preserved</small>
-          </div>
+        <div className="capability-capture-stack">
+          <article className="capability-capture-card capability-capture-card--table">
+            <span className="capability-capture-corner capability-capture-corner--tl" /><span className="capability-capture-corner capability-capture-corner--tr" /><span className="capability-capture-corner capability-capture-corner--bl" /><span className="capability-capture-corner capability-capture-corner--br" />
+            <header className="capability-capture-card-header"><strong>Tables</strong><p>Rows, columns, and headers stay connected to the page.</p></header>
+            <div className="capability-capture-table">
+              <div className="capability-capture-table-row capability-capture-table-row--head"><span>Region</span><span>Captured</span></div>
+              <div className="capability-capture-table-row"><span>NA</span><span>48%</span></div>
+              <div className="capability-capture-table-row"><span>EU</span><span>34%</span></div>
+              <div className="capability-capture-table-row"><span>APAC</span><span>29%</span></div>
+            </div>
+          </article>
+
+          <article className="capability-capture-card capability-capture-card--chart">
+            <span className="capability-capture-corner capability-capture-corner--tl" /><span className="capability-capture-corner capability-capture-corner--tr" /><span className="capability-capture-corner capability-capture-corner--bl" /><span className="capability-capture-corner capability-capture-corner--br" />
+            <header className="capability-capture-card-header"><strong>Charts</strong><p>Labels, legends, and visual relationships are preserved.</p></header>
+            <div className="capability-capture-chart-title"><strong>Revenue by region</strong><span><i /> 2025</span></div>
+            <div className="capability-capture-chart">
+              <span style={{ '--bar-height': '44%' }} /><span style={{ '--bar-height': '62%' }} />
+              <span style={{ '--bar-height': '53%' }} /><span style={{ '--bar-height': '76%' }} />
+              <span style={{ '--bar-height': '68%' }} /><span style={{ '--bar-height': '84%' }} />
+              <span style={{ '--bar-height': '71%' }} /><span style={{ '--bar-height': '92%' }} />
+              <span style={{ '--bar-height': '79%' }} /><span style={{ '--bar-height': '88%' }} />
+              <span style={{ '--bar-height': '73%' }} /><span style={{ '--bar-height': '96%' }} />
+            </div>
+          </article>
+
+          <article className="capability-capture-card capability-capture-card--layout">
+            <span className="capability-capture-corner capability-capture-corner--tl" /><span className="capability-capture-corner capability-capture-corner--tr" /><span className="capability-capture-corner capability-capture-corner--bl" /><span className="capability-capture-corner capability-capture-corner--br" />
+            <header className="capability-capture-card-header"><strong>Layouts</strong><p>Text and visual regions retain their original positions.</p></header>
+            <div className="capability-capture-layout-page">
+              <span className="capability-capture-layout-heading" />
+              <span className="capability-capture-layout-line capability-capture-layout-line--long" />
+              <span className="capability-capture-layout-line" />
+              <div className="capability-capture-layout-columns"><span /><span><i /><i /><i /></span></div>
+              <span className="capability-capture-layout-line capability-capture-layout-line--long" />
+              <span className="capability-capture-layout-line" />
+            </div>
+          </article>
         </div>
       </div>
     )
@@ -43,23 +146,19 @@ function CapabilityProductPreview({ story }) {
   if (story === 'source') {
     return (
       <div className="capability-product-preview capability-product-preview--outline" aria-hidden="true">
-        <div className="capability-product-bar"><span>Document map</span><span className="capability-product-status">84 nodes</span></div>
-        <div className="capability-outline-tree">
-          <div className="is-root"><i>01</i><span><strong>Executive summary</strong><small>Heading · Page 2</small></span></div>
-          <div className="is-child"><i>02</i><span><strong>Market findings</strong><small>Section · Pages 8–16</small></span></div>
-          <div className="is-grandchild"><i>03</i><span><strong>Revenue by region</strong><small>Table · Page 12</small></span></div>
-          <div className="is-child"><i>04</i><span><strong>Forecast model</strong><small>Formula · Page 19</small></span></div>
-        </div>
+        <CapabilityTree className="capability-figma-tree--focus" rows={structureTreeRows} />
       </div>
     )
   }
 
   return (
     <div className="capability-product-preview capability-product-preview--trace" aria-hidden="true">
-      <div className="capability-product-bar"><span>Structured result</span><span className="capability-product-status">Traceable</span></div>
-      <div className="capability-trace-layout">
-        <div className="capability-json-preview"><span>{'{'}</span><span>&nbsp;&nbsp;&quot;type&quot;: &quot;table&quot;,</span><span>&nbsp;&nbsp;&quot;page&quot;: 12,</span><span>&nbsp;&nbsp;&quot;region&quot;: &quot;03&quot;</span><span>{'}'}</span></div>
-        <div className="capability-source-path"><small>Source path</small><strong>Report.pdf</strong><span>Page 12 <i>→</i> Region 03</span></div>
+      <div className="capability-code-cascade">
+        <CapabilityCodeCard variant="left" />
+        <span className="capability-code-connector capability-code-connector--left" />
+        <CapabilityCodeCard variant="center" />
+        <span className="capability-code-connector capability-code-connector--right" />
+        <CapabilityCodeCard variant="right" />
       </div>
     </div>
   )
@@ -189,29 +288,23 @@ export function LandingPage() {
         <div className="capabilities-sticky">
           <div className="section-heading"><p className="section-no">[ PROCESS ]</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
           <div className="narrative-grid">
-            <div className="story-steps" role="tablist" aria-label="Data transformation stages">
-              <div id="story-tab-structure" className="story-step is-active" data-story="structure" role="tab" aria-selected="true" aria-controls="story-panel-structure" tabIndex={0}><span>01</span><h3>Ingest documents</h3><p>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-visual" className="story-step" data-story="visual" role="tab" aria-selected="false" aria-controls="story-panel-visual" tabIndex={-1}><span>02</span><h3>Capture every page</h3><p>Extract text and visual regions while preserving the original page layout.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-source" className="story-step" data-story="source" role="tab" aria-selected="false" aria-controls="story-panel-source" tabIndex={-1}><span>03</span><h3>Map document structure</h3><p>Identify headings, tables, formulas, layouts, and relationships across the document.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-              <div id="story-tab-relations" className="story-step" data-story="relations" role="tab" aria-selected="false" aria-controls="story-panel-relations" tabIndex={-1}><span>04</span><h3>Return traceable context</h3><p>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p><div className="mobile-story-visual" aria-hidden="true" /></div>
-            </div>
             <div className="story-card-stack">
-              <div className="story-canvas story-card" id="story-panel-structure" data-story="structure" role="tabpanel" aria-labelledby="story-tab-structure">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Ingest documents</h3></div><p data-story-summary>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Converging document streams with a document upload queue"><CapabilityProductPreview story="structure" /></div>
-              </div>
-              <div className="story-canvas story-card" id="story-panel-visual" data-story="visual" role="tabpanel" aria-labelledby="story-tab-visual">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Capture every page</h3></div><p data-story-summary>Extract text and visual regions while preserving the original page layout.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Projected page capture field with detected page regions"><CapabilityProductPreview story="visual" /></div>
-              </div>
-              <div className="story-canvas story-card" id="story-panel-source" data-story="source" role="tabpanel" aria-labelledby="story-tab-source">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Map document structure</h3></div><p data-story-summary>Identify headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Layered document structure grid with a document outline"><CapabilityProductPreview story="source" /></div>
-              </div>
-              <div className="story-canvas story-card" id="story-panel-relations" data-story="relations" role="tabpanel" aria-labelledby="story-tab-relations">
-                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p></div></div>
-                <div className="capability-media" role="img" aria-label="Traceable source relationship field with structured JSON and a source path"><CapabilityProductPreview story="relations" /></div>
-              </div>
+              <article className="story-canvas story-card" id="story-panel-structure" data-story="structure">
+                <div className="capability-frame"><div className="capability-media" role="img" aria-label="Converging document streams with a document upload queue"><CapabilityProductPreview story="structure" /></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><span className="capability-copy-index">01</span><h3 data-story-heading>Ingest documents</h3></div><p data-story-summary>Upload PDFs, spreadsheets, presentations, scans, and other supported formats.</p></div></div>
+              </article>
+              <article className="story-canvas story-card" id="story-panel-visual" data-story="visual">
+                <div className="capability-frame"><div className="capability-media" role="img" aria-label="Projected page capture field with detected page regions"><CapabilityProductPreview story="visual" /></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><span className="capability-copy-index">02</span><h3 data-story-heading>Capture every page</h3></div><p data-story-summary>Extract text and visual regions while preserving the original page layout.</p></div></div>
+              </article>
+              <article className="story-canvas story-card" id="story-panel-source" data-story="source">
+                <div className="capability-frame"><div className="capability-media" role="img" aria-label="Layered document structure grid with a document outline"><CapabilityProductPreview story="source" /></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><span className="capability-copy-index">03</span><h3 data-story-heading>Map document structure</h3></div><p data-story-summary>Identify headings, tables, formulas, layouts, and relationships across the document.</p></div></div>
+              </article>
+              <article className="story-canvas story-card" id="story-panel-relations" data-story="relations">
+                <div className="capability-frame"><div className="capability-media" role="img" aria-label="Traceable source relationship field with structured JSON and a source path"><CapabilityProductPreview story="relations" /></div></div>
+                <div className="capability-copy"><div className="capability-copy-main"><div className="capability-copy-title"><span className="capability-copy-index">04</span><h3 data-story-heading>Return traceable context</h3></div><p data-story-summary>Receive structured JSON, navigable document maps, and source-linked pages for agents.</p></div></div>
+              </article>
             </div>
           </div>
         </div>
