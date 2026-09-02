@@ -266,6 +266,136 @@ function clamp(val, min = 0, max = 1) {
   return Math.max(min, Math.min(max, val))
 }
 
+function TracePixelReveal({ active, delay = 0, duration = 800 }) {
+  const canvasRef = useRef(null)
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const host = canvas?.parentElement
+    if (!canvas || !host) return undefined
+
+    const context = canvas.getContext('2d')
+    if (!context) return undefined
+
+    let animationFrame = 0
+    const clear = () => {
+      window.cancelAnimationFrame(animationFrame)
+      context.clearRect(0, 0, canvas.width, canvas.height)
+    }
+
+    if (!active || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      host.style.removeProperty('--trace-particle-mask')
+      canvas.dataset.pixelState = 'idle'
+      clear()
+      return clear
+    }
+
+    const rect = canvas.getBoundingClientRect()
+    const width = Math.max(1, Math.round(rect.width))
+    const height = Math.max(1, Math.round(rect.height))
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    canvas.width = Math.round(width * dpr)
+    canvas.height = Math.round(height * dpr)
+    context.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    const maskCanvas = document.createElement('canvas')
+    maskCanvas.width = canvas.width
+    maskCanvas.height = canvas.height
+    const maskContext = maskCanvas.getContext('2d')
+    if (!maskContext) return clear
+    maskContext.setTransform(dpr, 0, 0, dpr, 0, 0)
+
+    const colors = ['#E1F4EF', '#19A88B', '#0A6351']
+    const gap = 6
+    const pixels = []
+    let colorIndex = 0
+    for (let x = gap / 2; x < width; x += gap) {
+      for (let y = gap / 2; y < height; y += gap) {
+        pixels.push({
+          x,
+          y,
+          color: colors[colorIndex++ % colors.length],
+          maxSize: .65 + Math.random() * 2.05,
+          phase: Math.random() * Math.PI * 2,
+          noise: Math.random(),
+          settleDelay: (Math.random() - .35) * 50,
+        })
+      }
+    }
+
+    host.style.setProperty('--trace-particle-mask', 'linear-gradient(transparent, transparent)')
+    canvas.dataset.pixelState = 'running'
+    const startedAt = performance.now() + delay
+    let lastMaskUpdate = -Infinity
+
+    const renderPixels = now => {
+      const elapsed = now - startedAt
+      context.clearRect(0, 0, width, height)
+      if (elapsed < 0) {
+        animationFrame = window.requestAnimationFrame(renderPixels)
+        return
+      }
+
+      const travel = Math.min(1, elapsed / duration)
+      const eased = travel < .5
+        ? 2 * travel * travel
+        : 1 - Math.pow(-2 * travel + 2, 2) / 2
+      const headY = -18 + eased * (height + 50)
+      const trailWidth = Math.min(118, height * .55)
+
+      if (elapsed - lastMaskUpdate >= 30 || travel === 1) {
+        maskContext.clearRect(0, 0, width, height)
+        maskContext.fillStyle = '#000'
+        pixels.forEach(pixel => {
+          const crossing = ((pixel.y + 18) / (height + 50)) * duration + pixel.settleDelay
+          const age = elapsed - crossing
+          if (age <= 0) return
+          const formation = Math.min(1, age / 68)
+          const grown = formation * formation * (3 - 2 * formation)
+          const cellSize = Math.min(gap + .8, .5 + grown * (gap + .3))
+          maskContext.globalAlpha = Math.min(1, .28 + grown * .72)
+          maskContext.fillRect(pixel.x - cellSize / 2, pixel.y - cellSize / 2, cellSize, cellSize)
+        })
+        maskContext.globalAlpha = 1
+        host.style.setProperty('--trace-particle-mask', `url(${maskCanvas.toDataURL('image/png')})`)
+        lastMaskUpdate = elapsed
+      }
+
+      const fade = elapsed < duration ? 1 : Math.max(0, 1 - (elapsed - duration) / 78)
+      pixels.forEach(pixel => {
+        const distance = headY - pixel.y
+        if (distance < -24 || distance > trailWidth) return
+        const leading = distance < 0 ? (distance + 24) / 24 : 1
+        const trailing = distance <= 0 ? 1 : 1 - distance / trailWidth
+        const envelope = Math.max(0, leading * Math.pow(trailing, .72))
+        if (pixel.noise > Math.min(1, envelope * 1.42)) return
+        const shimmer = .72 + Math.sin(elapsed * .036 + pixel.phase) * .28
+        const size = pixel.maxSize * (.65 + envelope * .7) * shimmer
+        context.globalAlpha = fade * (.4 + envelope * .6)
+        context.fillStyle = pixel.color
+        context.fillRect(pixel.x - size / 2, pixel.y - size / 2, size, size)
+      })
+      context.globalAlpha = 1
+
+      if (elapsed < duration + 78) {
+        animationFrame = window.requestAnimationFrame(renderPixels)
+      } else {
+        host.style.setProperty('--trace-particle-mask', 'linear-gradient(#000, #000)')
+        context.clearRect(0, 0, width, height)
+        canvas.dataset.pixelState = 'complete'
+      }
+    }
+
+    animationFrame = window.requestAnimationFrame(renderPixels)
+    return () => {
+      clear()
+      host.style.removeProperty('--trace-particle-mask')
+    }
+  }, [active, delay, duration])
+
+  return <canvas className="trace-pixel-reveal" data-pixel-state="idle" ref={canvasRef} aria-hidden="true" />
+}
+
 function getPageMedia(page) {
   if (page.image === revenueTable) {
     return {
@@ -642,7 +772,7 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
           </ul>
         </div>
       </div>
-      <span className="trace-pixel-reveal" aria-hidden="true" />
+      <TracePixelReveal active={motionActive} delay={400} />
     </aside>
   )
 }
@@ -682,7 +812,7 @@ function AIOutputReport({ opacity = 1, translateY = 0, motionActive = false }) {
           <span className="ai-output-anchor" aria-hidden="true" />
         </article>
       </div>
-      <span className="trace-pixel-reveal" aria-hidden="true" />
+      <TracePixelReveal active={motionActive} />
     </section>
   )
 }
@@ -898,7 +1028,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     key={source.id}
                     data-source-slot={slot}
                     data-region={source.type}
-                    data-motion-active={pSourceCards > 0 ? 'true' : undefined}
+                    data-motion-active={isDesktop && pSourceCards > 0 ? 'true' : undefined}
                     style={{ '--trace-motion-delay': `${index * 70}ms` }}
                   >
                     <div className="trace-card-content">
@@ -918,7 +1048,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         </div>
                       </div>
                     </div>
-                    <span className="trace-pixel-reveal" aria-hidden="true" />
+                    <TracePixelReveal active={isDesktop && pSourceCards > 0 && isPrimary} />
                   </figure>
                 )
               })}
@@ -936,7 +1066,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               activeThemeId={activeTheme.id}
               opacity={pHierarchyCard}
               translateY={(1 - pHierarchyCard) * 14}
-              motionActive={pHierarchyCard > 0}
+              motionActive={isDesktop && pHierarchyCard > 0}
             />
 
             <MapFlowSvg
@@ -950,7 +1080,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             <AIOutputReport
               opacity={pSummaryDocument}
               translateY={(1 - pSummaryDocument) * 14}
-              motionActive={pSummaryDocument > 0}
+              motionActive={isDesktop && pSummaryDocument > 0}
             />
 
           </div>
