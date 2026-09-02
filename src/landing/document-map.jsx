@@ -360,7 +360,7 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
     return <div className="document-branch-line" aria-hidden="true">{stem}</div>
   }
 
-  const card = 381
+  const card = 380.62
   const gap = 33
   const width = card * 2 + gap
   const left = card / 2

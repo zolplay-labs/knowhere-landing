@@ -8806,16 +8806,19 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       flex: none;
       flex-direction: column;
       box-sizing: border-box;
-      width: 381px;
-      height: 333px;
-      max-height: 333px;
+      width: 380.62px;
+      height: 332.63px;
+      max-height: 332.63px;
       min-width: 0;
       min-height: 0;
-      padding: 24px;
+      padding: 21.3686px 8px;
+      gap: 4.2737px;
       overflow: hidden;
-      border: 1px solid #dcdcdc;
-      border-radius: 2px;
-      background: #fff;
+      border: 1px solid transparent;
+      border-radius: 2px !important;
+      background:
+        linear-gradient(#fff, #fff) padding-box,
+        linear-gradient(180deg, #dcdcdc 0%, rgb(211 211 211 / 0) 100%) border-box;
       color: inherit;
       font: inherit;
       text-align: left;
@@ -8860,7 +8863,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       position: relative;
       flex: none;
       min-height: 0;
-      padding: 4px 4px 8px 0;
+      padding: 0;
       background: transparent;
       text-align: left;
     }
@@ -8975,8 +8978,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       position: absolute;
       z-index: 2;
       top: 103px;
-      height: 333px;
-      left: calc(381px + 33px + 381px);
+      height: 332.63px;
+      left: calc(380.62px + 33px + 380.62px);
       display: flex;
       align-items: center;
       justify-content: center;
