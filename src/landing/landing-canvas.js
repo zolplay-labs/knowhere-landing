@@ -69,7 +69,8 @@ function initializeHeroCanvas(root, cleanups) {
       rotationSpeed: .03,
       mouthSpeed: .055,
       twistPerStage: 1.95,
-      middleTwist: 1.35,
+      middleTwist: 4.45,
+      baseTwist: -1,
       speedVariation: .04,
       centerPosition: .55,
       fieldScale: .96,
@@ -95,17 +96,22 @@ function initializeHeroCanvas(root, cleanups) {
       depthAlpha: .05,
       overallAlpha: .75,
       redFlowDelay: 0,
-      redFlowDuration: 2.4,
-      redFlowInterval: .45,
-      redFlowLoopPause: 1,
+      redFlowDuration: 6.5,
+      redFlowInterval: 2,
       redFlowLine1ExtraDelay: 0,
       redFlowLine2ExtraDelay: 0,
       redFlowLine3ExtraDelay: 0,
       redFlowLine4ExtraDelay: 0,
       redFlowLine5ExtraDelay: 0,
-      redFlowEntrySpread: .12,
-      redFlowStartAngle: 135,
+      redFlowStartAngle: 215,
       redFlowAngleSpread: 22,
+      redFlowLineAlpha: .95,
+      redFlowLineWidth: 1.1,
+      redFlowSilhouetteFade: .18,
+      redFlowMouthOpen: .9,
+      redFlowBaseOpen: 4.8,
+      emberAmount: .45,
+      emberAlpha: 1.1,
       enabled: false,
       count: 33,
       speed: .02,
@@ -126,7 +132,6 @@ function initializeHeroCanvas(root, cleanups) {
         'redFlowDelay',
         'redFlowDuration',
         'redFlowInterval',
-        'redFlowLoopPause',
         'redFlowLine1ExtraDelay',
         'redFlowLine2ExtraDelay',
         'redFlowLine3ExtraDelay',
@@ -181,12 +186,13 @@ function initializeHeroCanvas(root, cleanups) {
     const floatingFormatIconContext = floatingFormatIconCanvas.getContext('2d');
     const LABEL_Y_KEYS = ['originalDocumentY', 'pageImagesY', 'lightweightNotesY', 'chapterMapY'];
     const HERO_COPY_ACCENTS = [.16, .24, .12, .3, .18, .14, .2, .14, .22, .16, .22, .14, .28, .18, .24];
+    // `length` is the lit window length in vortex stages.
     const RED_FLOW_TRAILS = [
-      { delayKey: 'redFlowLine1ExtraDelay', length: .16 },
-      { delayKey: 'redFlowLine2ExtraDelay', length: .24 },
-      { delayKey: 'redFlowLine3ExtraDelay', length: .19 },
-      { delayKey: 'redFlowLine4ExtraDelay', length: .29 },
-      { delayKey: 'redFlowLine5ExtraDelay', length: .22 }
+      { delayKey: 'redFlowLine1ExtraDelay', length: 5.2 },
+      { delayKey: 'redFlowLine2ExtraDelay', length: 6 },
+      { delayKey: 'redFlowLine3ExtraDelay', length: 5.5 },
+      { delayKey: 'redFlowLine4ExtraDelay', length: 6.4 },
+      { delayKey: 'redFlowLine5ExtraDelay', length: 5.7 }
     ];
     const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -294,9 +300,7 @@ function initializeHeroCanvas(root, cleanups) {
     }
 
     function pointAtStage(layout, trackId, stagePosition, rotationPhase = null, phaseOverride = null) {
-      const finalStage = DATA.length - 1;
-      const exitProgress = Math.max(0, stagePosition - finalStage);
-      const clampedStage = Math.max(0, Math.min(finalStage, stagePosition));
+      const clampedStage = Math.max(0, Math.min(DATA.length - 1, stagePosition));
       const lowerStage = Math.min(DATA.length - 2, Math.floor(clampedStage));
       const stageMix = clampedStage - lowerStage;
       const eased = stageMix * stageMix * (3 - 2 * stageMix);
@@ -355,9 +359,14 @@ function initializeHeroCanvas(root, cleanups) {
         (clampedStage - middleStart) / (middleEnd - middleStart)
       ));
       const middleProgress = middleLinear * middleLinear * (3 - 2 * middleLinear);
+      const baseLinear = Math.max(0, Math.min(1,
+        (clampedStage - middleEnd) / (DATA.length - 1 - middleEnd)
+      ));
+      const baseProgress = baseLinear * baseLinear * (3 - 2 * baseLinear);
       const angle = trackPhase + direction * (
         clampedStage * vortexControls.twistPerStage
           + middleProgress * vortexControls.middleTwist
+          + baseProgress * vortexControls.baseTwist
           + rotation
       );
       const depth = (Math.sin(angle) + 1) * .5;
@@ -373,45 +382,7 @@ function initializeHeroCanvas(root, cleanups) {
       const baseX = localCenter + radialX * rollCosine - depthY * rollSine;
       const baseY = layout.topY + layout.stageGap * clampedStage
         + radialX * rollSine + depthY * rollCosine;
-      if (exitProgress <= 0) {
-        return { x: baseX, y: baseY, depth, shell, angle, stagePosition, radius, localCenter };
-      }
-
-      const priorDelta = .12;
-      const prior = pointAtStage(
-        layout,
-        trackId,
-        finalStage - priorDelta,
-        rotationPhase,
-        phaseOverride
-      );
-      let dAngle = angle - prior.angle;
-      dAngle = Math.atan2(Math.sin(dAngle), Math.cos(dAngle)) / priorDelta;
-      const dRadius = (radius - (prior.radius ?? radius)) / priorDelta;
-      const tau = 1.42;
-      const coast = 1 - Math.exp(-exitProgress / tau);
-      const liveAngle = angle + dAngle * tau * coast;
-      const liveRadius = radius + dRadius * exitProgress / (1 + exitProgress * .62);
-      const liveDepth = (Math.sin(liveAngle) + 1) * .5;
-      const livePerspective = 1 - vortexControls.perspective + liveDepth * vortexControls.perspective;
-      const liveOrbit = Math.min(liveRadius * vortexControls.orbitHeight, layout.stageGap * .3);
-      const liveRadialX = Math.cos(liveAngle) * liveRadius * shell * livePerspective
-        + Math.sin(liveAngle) * liveRadius * shell * vortexControls.cameraYaw;
-      const liveDepthY = Math.sin(liveAngle) * liveOrbit * shell
-        + (liveDepth - .5) * vortexControls.cameraLift;
-      const drop = layout.stageGap * exitProgress / (1 + exitProgress * 1.85);
-      return {
-        x: localCenter + liveRadialX * rollCosine - liveDepthY * rollSine,
-        y: layout.topY + layout.stageGap * finalStage
-          + liveRadialX * rollSine + liveDepthY * rollCosine
-          + drop,
-        depth: liveDepth,
-        shell,
-        angle: liveAngle,
-        stagePosition,
-        radius: liveRadius,
-        localCenter
-      };
+      return { x: baseX, y: baseY, depth, shell, angle, stagePosition, radius, localCenter };
     }
 
     function pointOnSegment(layout, trackId, stage, progress) {
@@ -1218,109 +1189,77 @@ function initializeHeroCanvas(root, cleanups) {
       });
     }
 
-    function selectRedFlowTracks(layout, rotationPhase) {
-      const finalStage = DATA.length - 1;
-      const step = Math.max(1, Math.floor(unitCounts[0] / 56));
-      const scored = [];
-      for (let trackId = 0; trackId < unitCounts[0]; trackId += step) {
-        const mouth = pointAtStage(layout, trackId, finalStage, rotationPhase);
-        const ahead = pointAtStage(layout, trackId, finalStage + .22, rotationPhase);
-        const dx = ahead.x - mouth.x;
-        if (dx <= cell * .15) continue;
-        const backness = 1 - mouth.depth;
-        const rightness = (mouth.x - layout.centerX) / Math.max(1, layout.maxWidth * .5);
-        scored.push({
-          trackId,
-          score: dx * 2.4 + backness * 1.55 + Math.max(-.2, rightness) * 1.05
-        });
-      }
-      scored.sort((left, right) => right.score - left.score);
-      const seed = scored[0]?.trackId ?? Math.round(unitCounts[0] * .62);
-      const armGap = 4;
-      return RED_FLOW_TRAILS.map((_, index) => {
-        const offset = index - (RED_FLOW_TRAILS.length - 1) / 2;
-        return ((Math.round(seed + offset * armGap) % unitCounts[0]) + unitCounts[0]) % unitCounts[0];
-      });
-    }
-
-    function drawRedFlowTrails(layout, time, funnelOpacity) {
-      if (redFlowStartedAt === null) redFlowStartedAt = time;
-      const activeDuration = Math.min(8, Math.max(.6, vortexControls.redFlowDuration));
-      const appearanceDelay = Math.min(10, Math.max(0, vortexControls.redFlowDelay));
-      const trailDelayAt = (trail, index) => index * vortexControls.redFlowInterval
-        + vortexControls[trail.delayKey];
-      const finalDelay = Math.max(...RED_FLOW_TRAILS.map(trailDelayAt));
-      const loopPause = Math.min(5, Math.max(0, vortexControls.redFlowLoopPause));
-      const cycleDuration = appearanceDelay + activeDuration + finalDelay + loopPause;
-      const cycleTime = (time - redFlowStartedAt) % cycleDuration;
-      const unrollSpan = .44;
-      const vortexPortion = .78;
-      const cycleIndex = Math.floor((time - redFlowStartedAt) / cycleDuration);
-      const cycleRotation = reducedMotion
-        ? 0
-        : (redFlowStartedAt + cycleIndex * cycleDuration) * vortexControls.rotationSpeed;
-      const flowTracks = selectRedFlowTracks(layout, cycleRotation);
-
-      RED_FLOW_TRAILS.forEach((trail, index) => {
-        const localTime = cycleTime - appearanceDelay - trailDelayAt(trail, index);
-        const head = (() => {
-          if (reducedMotion) return .42 + index * .06;
-          if (localTime < 0 || localTime > activeDuration) return -1;
-          const t = Math.min(1, localTime / activeDuration);
-          if (t <= vortexPortion) {
-            const vortexT = t / vortexPortion;
-            return vortexT ** 1.12;
-          }
-          const unrollT = (t - vortexPortion) / (1 - vortexPortion);
-          const eased = unrollT * unrollT * (3 - 2 * unrollT);
-          return 1 + eased * unrollSpan;
-        })();
-        if (head < 0) return;
-
-        const start = Math.max(0, head <= 1 ? head - trail.length : Math.min(1 - trail.length * .2, head - trail.length));
-        const end = Math.min(1 + unrollSpan, head);
-        const trackId = flowTracks[index];
-        const sampleCount = Math.max(5, Math.ceil(
-          (end - start) * layout.stageGap * (DATA.length - 1) / (cell * .55)
-        ));
-        for (let sample = 0; sample <= sampleCount; sample += 1) {
-          const progress = start + (end - start) * sample / sampleCount;
-          const stagePosition = progress * (DATA.length - 1);
-          const point = pointAtStage(layout, trackId, stagePosition, cycleRotation);
-          const pathSample = Math.round(stagePosition * layout.stageGap / (cell * .55));
-          const exitStage = point.stagePosition - (DATA.length - 1);
-          const onUnroll = exitStage > 0;
-          if (!onUnroll && stagePosition > .5 && hash(trackId * 97 + pathSample, 293) < .05) continue;
-          const depthVisibility = easeOutCubic((point.depth - .32) / .34);
-          const emerge = easeOutCubic((stagePosition - (DATA.length - 2.55)) / 1.7);
-          const backReveal = emerge * (1 - point.depth);
-          const mouthBlend = easeOutCubic((stagePosition - (DATA.length - 2.15)) / 1.15);
-          const frontVisibility = onUnroll
-            ? .55 + point.depth * .45
-            : Math.max(depthVisibility, mouthBlend, backReveal);
-          if (frontVisibility <= .001) continue;
-          const spiralRidge = ((Math.sin(
-            point.angle * vortexControls.ridgeFrequency + point.stagePosition * .72
-          ) + 1) * .5) ** 2;
-          const tailFade = easeOutCubic(Math.min(1, sample / Math.max(1, sampleCount * .3)));
-          const exitReveal = easeOutCubic(exitStage / .1);
-          const unrollFade = onUnroll
-            ? 1 - easeOutCubic((exitStage - .55) / 2.4)
-            : 1;
-          const verticalVisibility = (
-            funnelFadeAt(layout, point.y)
-              + (1 - funnelFadeAt(layout, point.y)) * exitReveal
-          ) * unrollFade;
-          drawPixel(
-            point.x,
-            point.y,
-            (.56 + point.depth * .3 + spiralRidge * .14)
-              * frontVisibility * tailFade * funnelOpacity
-              * verticalVisibility * vortexControls.overallAlpha,
-            RED_FLOW_COLOR
-          );
+    // The orange lines are not drawn separately: they are the vortex's own
+    // stream particles. Each line owns one track that survives every stage
+    // (the neck keeps only 16 tracks, and those exist in every other stage
+    // too), and a window of stages that travels down the track. Particles of
+    // that track inside the window are lit orange at full density, so the
+    // line is literally the flowing squares with their colour and timing
+    // changed.
+    function selectRedFlowTrack(index, rotationPhase) {
+      const trackCount = unitCounts[0];
+      const direction = vortexControls.direction === 'counterclockwise' ? -1 : 1;
+      const rotation = reducedMotion ? 0 : rotationPhase;
+      const startAngle = vortexControls.redFlowStartAngle * Math.PI / 180;
+      const angleSpread = vortexControls.redFlowAngleSpread * Math.PI / 180;
+      const offset = index - (RED_FLOW_TRAILS.length - 1) / 2;
+      const targetAngle = startAngle + offset * angleSpread;
+      const angleAtMouth = trackId => trackId / trackCount * Math.PI * 2 + direction * rotation;
+      const angularDistance = (a, b) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+      let best = stageTracks[LAYERS.length][0];
+      let bestDistance = Infinity;
+      stageTracks[LAYERS.length].forEach(trackId => {
+        const distance = angularDistance(angleAtMouth(trackId), targetAngle);
+        if (distance < bestDistance) {
+          bestDistance = distance;
+          best = trackId;
         }
       });
+      return best;
+    }
+
+    // Per-frame state of the lines: for each line the track it rides and the
+    // stage window [tail, head] that is currently lit. Every line loops on
+    // its own period of 5 × interval and starts `interval` after the previous
+    // one, so a new line enters while the previous ones are still wrapping.
+    // Returns a Map keyed by trackId so the particle loop can look up
+    // membership in O(1).
+    function redFlowWindowsAt(time) {
+      if (redFlowStartedAt === null) redFlowStartedAt = time;
+      const interval = Math.max(.3, vortexControls.redFlowInterval);
+      const period = interval * RED_FLOW_TRAILS.length;
+      const activeDuration = Math.min(period, Math.max(.6, vortexControls.redFlowDuration));
+      const appearanceDelay = Math.min(10, Math.max(0, vortexControls.redFlowDelay));
+      const finalStage = DATA.length - 1;
+      const elapsed = time - redFlowStartedAt - appearanceDelay;
+
+      const windows = new Map();
+      RED_FLOW_TRAILS.forEach((trail, index) => {
+        const lineDelay = index * interval + vortexControls[trail.delayKey];
+        const lineTime = elapsed - lineDelay;
+        if (!reducedMotion && lineTime < 0) return;
+        const cycleIndex = Math.floor(lineTime / period);
+        const localTime = lineTime - cycleIndex * period;
+        // The head runs from the mouth to one trail length past the base so
+        // the tail leaves the vortex as well.
+        const travel = finalStage + trail.length;
+        const head = (() => {
+          if (reducedMotion) return travel * (.45 + index * .08);
+          if (localTime > activeDuration) return null;
+          return travel * (localTime / activeDuration);
+        })();
+        if (head === null) return;
+        // The track is chosen once per cycle, at the moment the line enters,
+        // so it does not hop tracks while the vortex rotates underneath.
+        const cycleStart = redFlowStartedAt + appearanceDelay + lineDelay + cycleIndex * period;
+        const cycleRotation = reducedMotion ? 0 : cycleStart * vortexControls.rotationSpeed;
+        const trackId = selectRedFlowTrack(index, cycleRotation);
+        const existing = windows.get(trackId);
+        // Two lines on one track: keep the one that is further along.
+        if (existing && existing.head > head) return;
+        windows.set(trackId, { head, tail: head - trail.length, length: trail.length });
+      });
+      return windows;
     }
 
     function drawDataStream(layout, time, funnelOpacity = 1) {
@@ -1331,7 +1270,51 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.textBaseline = 'bottom';
       drawVortexMouth(layout, funnelOpacity);
 
+      const flowWindows = redFlowWindowsAt(time);
+      const silhouetteSoftness = Math.max(.02, vortexControls.redFlowSilhouetteFade);
+      const mouthOpen = Math.max(.05, vortexControls.redFlowMouthOpen);
+      const baseOpen = vortexControls.redFlowBaseOpen;
+      const bandHalfWidth = cell * Math.max(.3, vortexControls.redFlowLineWidth);
+      const trackCount = unitCounts[0];
+      const twistPerStage = vortexControls.twistPerStage;
+      const middleTwist = vortexControls.middleTwist;
+      const baseTwist = vortexControls.baseTwist;
+      const middleStart = 1.15;
+      const middleEnd = LAYERS.length + .15;
+      const baseSpan = DATA.length - 1 - middleEnd;
+      // Tracks keep a constant angular offset from each other at any stage, so
+      // the offset between a particle's track and a line's track is per-track.
+      const wrapAngle = value => Math.atan2(Math.sin(value), Math.cos(value));
+      const lineOffsetsFor = trackId => {
+        const offsets = [];
+        flowWindows.forEach((flowWindow, lineTrackId) => {
+          const angularOffset = Math.abs(wrapAngle((trackId - lineTrackId) / trackCount * Math.PI * 2));
+          // Anything further than this can never fall inside the band.
+          if (angularOffset > .8) return;
+          offsets.push({ flowWindow, angularOffset });
+        });
+        return offsets;
+      };
+      // Perpendicular distance (in surface pixels) from a particle to the
+      // line's spiral path at the particle's stage. The path advances
+      // radius·dθ/ds around and stageGap down per stage; the angular offset
+      // is projected onto the normal of that direction.
+      const distanceToLine = (point, angularOffset) => {
+        const middleLinear = Math.max(0, Math.min(1,
+          (point.stagePosition - middleStart) / (middleEnd - middleStart)
+        ));
+        const baseLinear = Math.max(0, Math.min(1, (point.stagePosition - middleEnd) / baseSpan));
+        const twistRate = twistPerStage
+          + middleTwist * 6 * middleLinear * (1 - middleLinear) / (middleEnd - middleStart)
+          + baseTwist * 6 * baseLinear * (1 - baseLinear) / baseSpan;
+        const surfaceRadius = point.radius * point.shell;
+        const arcOffset = surfaceRadius * angularOffset;
+        const arcPerStage = surfaceRadius * twistRate;
+        return arcOffset * layout.stageGap / Math.hypot(arcPerStage, layout.stageGap);
+      };
+
       stageTracks[0].forEach(trackId => {
+        const lineOffsets = lineOffsetsFor(trackId);
         const totalStages = DATA.length - 1;
         const sampleCount = Math.max(24, Math.round(layout.stageGap * totalStages / cell));
         const flowOffset = reducedMotion
@@ -1339,13 +1322,47 @@ function initializeHeroCanvas(root, cleanups) {
           : (time * vortexControls.flowSpeed * (
             1 + (hash(trackId + 811, 1129) - .5) * 2 * vortexControls.speedVariation
           )) % 1;
+        const gapChance = .035 + hash(trackId + 83, 271) * .065;
         for (let sample = 0; sample < sampleCount; sample += 1) {
-          const gapChance = .035 + hash(trackId + 83, 271) * .065;
-          if (hash(trackId * 97 + sample, 293) < gapChance) continue;
           const streamProgress = (sample / sampleCount + flowOffset) % 1;
           const point = pointAtStage(layout, trackId, streamProgress * totalStages);
           const destinationStage = Math.min(DATA.length - 1, Math.floor(point.stagePosition) + 1);
           if (!stageTrackSets[destinationStage].has(trackId)) continue;
+
+          // Orange line: this particle sits within one cell of a line's path
+          // and inside that line's lit stage window. It is only lit on the
+          // near side of the funnel (the far side stays green, occluded),
+          // except at the open mouth where the back rim is visible for the
+          // first stage or so. Lit particles ignore the random gap and
+          // density gates: the line is the texture with its timing changed.
+          let lineAlpha = 0;
+          lineOffsets.forEach(({ flowWindow, angularOffset }) => {
+            if (point.stagePosition < flowWindow.tail || point.stagePosition > flowWindow.head) return;
+            const bandDistance = distanceToLine(point, angularOffset) / bandHalfWidth;
+            if (bandDistance >= 1) return;
+            const bandWeight = 1 - bandDistance ** 3;
+            const frontVisibility = easeOutCubic((point.depth - .42) / silhouetteSoftness);
+            // The funnel opens upward at both ends, so the far wall of the
+            // mouth and of the base flare is seen from above: the line stays
+            // visible there. Only the near-vertical middle hides its back.
+            const mouthReveal = 1 - easeOutCubic(point.stagePosition / mouthOpen);
+            const baseReveal = easeOutCubic((point.stagePosition - baseOpen) / .8);
+            const tailFade = easeOutCubic(
+              (point.stagePosition - flowWindow.tail) / Math.max(.2, flowWindow.length * .25)
+            );
+            const headFade = easeOutCubic((flowWindow.head - point.stagePosition) / .3);
+            lineAlpha = Math.max(
+              lineAlpha,
+              Math.max(frontVisibility, mouthReveal, baseReveal) * tailFade * headFade * bandWeight
+            );
+          });
+          // A square is either green or coral, never a blend of the two (the
+          // mix reads as brown). Partial lineAlpha instead decides how many
+          // squares of the band have switched, so edges dissolve pixel by
+          // pixel like the rest of the texture.
+          const inLine = lineAlpha > .001
+            && hash(trackId * 173 + sample, 449) < lineAlpha;
+          if (!inLine && hash(trackId * 97 + sample, 293) < gapChance) continue;
           const spiralRidge = ((Math.sin(
             point.angle * vortexControls.ridgeFrequency + point.stagePosition * .72
           ) + 1) * .5) ** 2;
@@ -1356,22 +1373,38 @@ function initializeHeroCanvas(root, cleanups) {
             + spiralRidge * vortexControls.ridgeStrength + middleRidge
             + (1 - point.shell) * .04)
             * vortexControls.streamDensity;
-          if (hash(trackId * 131 + sample, 337) > surfaceDensity) continue;
+          const passesDensity = hash(trackId * 131 + sample, 337) <= surfaceDensity;
+          if (!passesDensity && !inLine) continue;
           const reveal = entranceAt(layout, point.y, trackId + sample);
+          const commonAlpha = reveal * funnelOpacity * funnelFadeAt(layout, point.y)
+            * vortexControls.overallAlpha;
+          if (inLine) {
+            drawPixel(
+              point.x,
+              point.y,
+              vortexControls.redFlowLineAlpha * (.82 + point.depth * .18) * commonAlpha,
+              RED_FLOW_COLOR
+            );
+            continue;
+          }
           const surfaceAlpha = .48 + point.depth * vortexControls.depthAlpha
             + spiralRidge * .34 + middleRidge * .5;
           const particleAlpha = trailAlpha * (.55 + hash(trackId + 211, sample + 419) * .72);
+          // Embers: a minority of particles in the ridge troughs, weighted to
+          // the back of the funnel, turn coral so the shadow side reads as a
+          // faint flame instead of flat green. Same coral as the lines, drawn
+          // at least as solid as a green square, so it never muddies to brown.
+          const shadow = (1 - spiralRidge) ** 2 * (.35 + (1 - point.depth) * .65);
+          const isEmber = hash(trackId * 151 + sample, 401) < shadow * vortexControls.emberAmount;
           drawPixel(
             point.x,
             point.y,
-            particleAlpha * surfaceAlpha * reveal * funnelOpacity * funnelFadeAt(layout, point.y)
-              * vortexControls.overallAlpha,
-            primary500
+            particleAlpha * surfaceAlpha * commonAlpha * (isEmber ? vortexControls.emberAlpha : 1),
+            isEmber ? RED_FLOW_COLOR : primary500
           );
         }
       });
 
-      drawRedFlowTrails(layout, time, funnelOpacity);
       drawLayerOutflows(layout, time, funnelOpacity);
       drawFloatingFormatBadge(layout, time);
 

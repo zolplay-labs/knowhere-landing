@@ -13,7 +13,21 @@ import { colorAlpha, colorHex, materialDark } from './colors'
 
 const STORAGE_KEY = 'knowhere-page-style'
 const HERO_CONTROLS_STORAGE_KEY = 'knowhere-hero-vortex-controls'
-const HERO_LOOP_PAUSE_PATH = 'redParticleFlow.redFlowLoopPause'
+// Stored hero controls whose old default should move to the new default.
+const HERO_CONTROL_MIGRATIONS = [
+  { path: 'redParticleFlow.redFlowLoopPause', from: 5, to: 1 },
+  { path: 'redParticleFlow.redFlowLoopPause', from: 1, to: 0.5 },
+  { path: 'redParticleFlow.redFlowDuration', from: 2.4, to: 5.5 },
+  { path: 'redParticleFlow.redFlowInterval', from: 0.45, to: 0.9 },
+  { path: 'redParticleFlow.redFlowStartAngle', from: 135, to: 215 },
+  { path: 'redParticleFlow.redFlowDuration', from: 5.5, to: 6.5 },
+  { path: 'redParticleFlow.redFlowInterval', from: 0.9, to: 2 },
+  { path: 'fireShadow.emberAmount', from: 0.7, to: 0.45 },
+  // Extra middle twist so the orange lines exit along the base to the right.
+  // (4 is the value a briefly reverted build clamped it to.)
+  { path: 'motion.middleTwist', from: 1.35, to: 4.45 },
+  { path: 'motion.middleTwist', from: 4, to: 4.45 },
+]
 const PALETTE_VERSION = 6
 const FONT_VERSION = 5
 const MAIN_PALETTES = {
@@ -26,11 +40,13 @@ const DEFAULTS = { font: 'geist', chineseFont: 'frex-sans-gb', palette: 'main-3'
 
 try {
   const storedHeroControls = JSON.parse(localStorage.getItem(HERO_CONTROLS_STORAGE_KEY) || 'null')
-  if (storedHeroControls?.baseValues?.[HERO_LOOP_PAUSE_PATH] === 5) {
-    storedHeroControls.baseValues[HERO_LOOP_PAUSE_PATH] = 1
-    if (storedHeroControls.values?.[HERO_LOOP_PAUSE_PATH] === 5) {
-      storedHeroControls.values[HERO_LOOP_PAUSE_PATH] = 1
-    }
+  const migrated = HERO_CONTROL_MIGRATIONS.filter(({ path, from, to }) => {
+    if (storedHeroControls?.baseValues?.[path] !== from) return false
+    storedHeroControls.baseValues[path] = to
+    if (storedHeroControls.values?.[path] === from) storedHeroControls.values[path] = to
+    return true
+  })
+  if (migrated.length) {
     localStorage.setItem(HERO_CONTROLS_STORAGE_KEY, JSON.stringify(storedHeroControls))
   }
 } catch {
@@ -91,19 +107,26 @@ const CONTROLLER_TRANSLATIONS = {
   'Depth Density': '深度密度',
   'Depth Alpha': '深度透明度',
   'Overall Alpha': '整体透明度',
-  'Red Particle Flow': '红色粒子流',
+  'Red Particle Flow': '橙色线条流',
   'Red Flow Delay': '整体出现延迟',
   'Red Flow Duration': '单次持续时间',
-  'Red Flow Interval': '线条出现间隔',
-  'Red Flow Loop Pause': '每轮循环间隔',
+  'Red Flow Interval': '线条出现间隔（周期 = 5×）',
   'Red Flow Line1 Extra Delay': '第 1 条额外延迟',
   'Red Flow Line2 Extra Delay': '第 2 条额外延迟',
   'Red Flow Line3 Extra Delay': '第 3 条额外延迟',
   'Red Flow Line4 Extra Delay': '第 4 条额外延迟',
   'Red Flow Line5 Extra Delay': '第 5 条额外延迟',
-  'Red Flow Entry Spread': '入口位置偏差',
-  'Red Flow Start Angle': '起始角度',
-  'Red Flow Angle Spread': '轨道角度偏差',
+  'Red Flow Start Angle': '入口起始角度',
+  'Red Flow Angle Spread': '线条角度间隔',
+  'Red Flow Silhouette Fade': '轮廓边缘渐隐',
+  'Red Flow Line Alpha': '线条深浅',
+  'Red Flow Line Width': '线条宽度（格）',
+  'Base Twist': '底部附加扭转',
+  'Red Flow Mouth Open': '口部后沿可见长度',
+  'Red Flow Base Open': '底部展开起始层',
+  'Fire Shadow': '火焰阴影',
+  'Ember Amount': '火星比例',
+  'Ember Alpha': '火星透明度',
   Outflow: '输出流',
   Enabled: '启用',
   Count: '数量',
@@ -549,7 +572,8 @@ export function PageStyleControls() {
       rotationSpeed: [0.03, 0, 0.12, 0.002],
       mouthSpeed: [0.055, 0, 0.2, 0.005],
       twistPerStage: [1.95, 0.2, 2.4, 0.05],
-      middleTwist: [1.35, 0, 4, 0.05],
+      middleTwist: [4.45, 0, 6, 0.05],
+      baseTwist: [-1, -3, 3, 0.05],
       speedVariation: [0.04, 0, 0.2, 0.005],
     },
     shape: {
@@ -581,17 +605,24 @@ export function PageStyleControls() {
     },
     redParticleFlow: {
       redFlowDelay: [0, 0, 10, 0.1],
-      redFlowDuration: [2.4, 0.6, 8, 0.05],
-      redFlowInterval: [0.45, 0, 2, 0.05],
-      redFlowLoopPause: [1, 0, 5, 0.5],
+      redFlowDuration: [6.5, 0.6, 12, 0.05],
+      redFlowInterval: [2, 0.3, 4, 0.1],
       redFlowLine1ExtraDelay: [0, 0, 5, 0.05],
       redFlowLine2ExtraDelay: [0, 0, 5, 0.05],
       redFlowLine3ExtraDelay: [0, 0, 5, 0.05],
       redFlowLine4ExtraDelay: [0, 0, 5, 0.05],
       redFlowLine5ExtraDelay: [0, 0, 5, 0.05],
-      redFlowEntrySpread: [0.12, 0, 0.3, 0.01],
-      redFlowStartAngle: [135, 90, 180, 1],
-      redFlowAngleSpread: [22, 4, 30, 1],
+      redFlowStartAngle: [215, 90, 330, 1],
+      redFlowAngleSpread: [22, 0, 40, 1],
+      redFlowLineAlpha: [0.95, 0.3, 1, 0.02],
+      redFlowLineWidth: [1.1, 0.3, 3, 0.1],
+      redFlowSilhouetteFade: [0.18, 0.02, 0.5, 0.01],
+      redFlowMouthOpen: [0.9, 0.05, 2, 0.05],
+      redFlowBaseOpen: [4.8, 3.5, 6, 0.1],
+    },
+    fireShadow: {
+      emberAmount: [0.45, 0, 1.5, 0.05],
+      emberAlpha: [1.1, 0.2, 1.5, 0.05],
     },
     outflow: {
       enabled: false,
