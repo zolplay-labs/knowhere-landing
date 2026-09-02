@@ -8994,6 +8994,17 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         aspect-ratio: 210 / 297;
       }
 
+      #playground .section-node::before {
+        position: absolute;
+        z-index: 4;
+        inset: 0;
+        border: 1.5px solid var(--mineral-green-700, #0E6B5C);
+        border-radius: inherit;
+        clip-path: inset(0 0 var(--document-trace-inset, 100%) 0);
+        content: "";
+        pointer-events: none;
+      }
+
       #playground .section-node::after {
         content: none;
       }

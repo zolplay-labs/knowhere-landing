@@ -840,6 +840,10 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Animation Stage metrics calculated from scrollProgress (0 to 1)
   const p = reducedMotion ? 1 : scrollProgress
 
+  // Trace each intact document from top to bottom before drawing its connections.
+  const pDocumentOutline = isDesktop ? clamp((p - 0.01) / 0.12) : 0
+  const pDocumentConnections = isDesktop ? clamp((p - 0.13) / 0.08) : 1
+
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
   const pSourceCards = clamp((p - 0.34) / 0.10)
@@ -886,7 +890,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </header>
                   <DocumentBranchLine
                     sectionCount={document.sections.length}
-                    clipProgress={1}
+                    clipProgress={pDocumentConnections}
                   />
                   <div
                     className="document-sections"
@@ -904,6 +908,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         <SectionTag
                           className="section-node"
                           key={section.name}
+                          style={{
+                            '--document-trace-inset': `${(1 - pDocumentOutline) * 100}%`,
+                          }}
                           {...(interactive
                             ? {
                                 type: 'button',
@@ -939,12 +946,13 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                 <div
                   className="cross-document-link"
                   aria-label="Relationship"
+                  style={{ opacity: pDocumentConnections }}
                 >
                   <MapFlowSvg
                     className="cross-document-link-rail"
                     viewBox="0 0 101 20"
                     path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
-                    clipProgress={1}
+                    clipProgress={pDocumentConnections}
                     direction="horizontal"
                   />
                   <span>
