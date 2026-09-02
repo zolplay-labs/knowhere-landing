@@ -751,7 +751,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             aria-live="polite"
             style={{
               transform: `translateY(-${cameraShiftY}px)`,
-              transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
+              transition: 'none',
             }}
           >
             {/* STAGE 1: Full-height source documents */}
