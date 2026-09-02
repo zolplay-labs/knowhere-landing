@@ -717,16 +717,16 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Stage 1: the intact rich-text documents remain fully readable on entry.
   const pStage1 = clamp((p - 0.12) / 0.12)
   const docScale = 0.91 + 0.09 * pStage1
-  const pIntactDocumentsOut = clamp((p - 0.24) / 0.08)
+  const pIntactDocumentsOut = clamp((p - 0.48) / 0.08)
   const sourceDocumentsOut = (reducedMotion || !isDesktop) ? 0 : pIntactDocumentsOut
 
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
   const pSourceCards = clamp((p - 0.34) / 0.10)
 
-  // Stage 3: Cross-document relationship (0.42 -> 0.56)
-  const pCrossLine = clamp((p - 0.42) / 0.10)
-  const pCrossBadge = clamp((p - 0.47) / 0.09)
+  // Stage 3: Cross-document relationship follows the source-to-region handoff.
+  const pCrossLine = clamp((p - 0.48) / 0.10)
+  const pCrossBadge = clamp((p - 0.53) / 0.09)
 
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
@@ -782,7 +782,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </header>
                   <DocumentBranchLine
                     sectionCount={document.sections.length}
-                    clipProgress={(reducedMotion || !isDesktop) ? 1 : pIntactDocumentsOut}
+                    clipProgress={(reducedMotion || !isDesktop) ? 1 : pSecToSourceLine}
                   />
                   <div
                     className="document-sections"
@@ -839,7 +839,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             {/* STAGE 2: Extraction lines from the source documents */}
             <SectionToSourceLines
               clipProgress={pSecToSourceLine}
-              opacity={(reducedMotion || !isDesktop) ? 1 : 1 - pSourceCards}
+              opacity={(reducedMotion || !isDesktop) ? 1 : 1 - sourceDocumentsOut}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
             />
