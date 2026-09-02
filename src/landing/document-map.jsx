@@ -725,9 +725,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
   const pSourceCards = clamp((p - 0.34) / 0.10)
 
-  // Stage 3: Cross-document relationship follows the source-to-region handoff.
-  const pCrossLine = clamp((p - 0.48) / 0.10)
-  const pCrossBadge = clamp((p - 0.53) / 0.09)
+  // Stage 3: the related sections connect before their source regions are extracted.
+  const pCrossLine = clamp((p - 0.20) / 0.10)
+  const pCrossBadge = clamp((p - 0.24) / 0.08)
 
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
@@ -758,6 +758,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             <div
               className="document-map-documents"
               data-document-count={activeTheme.documents.length}
+              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
               style={{
                 opacity: 1 - sourceDocumentsOut,
                 visibility: sourceDocumentsOut >= 1 ? 'hidden' : 'visible',
@@ -836,6 +837,32 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </div>
                 </article>
               ))}
+              {showCrossDocumentLink && (
+                <div
+                  className="cross-document-link"
+                  aria-label="Cross-document relationship"
+                  style={{
+                    opacity: pCrossLine > 0.05 ? 1 : 0,
+                  }}
+                >
+                  <MapFlowSvg
+                    className="cross-document-link-rail"
+                    viewBox="0 0 101 20"
+                    path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
+                    clipProgress={pCrossLine}
+                    direction="horizontal"
+                  />
+                  <span
+                    style={{
+                      opacity: pCrossBadge,
+                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
+                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                    }}
+                  >
+                    Cross-document relationship
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* STAGE 2: Extraction lines from the source documents */}
@@ -851,7 +878,6 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               className="source-sections"
               data-source-count={currentSources.length}
               data-document-count={activeTheme.documents.length}
-              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
               style={{
                 opacity: pSourceCards,
                 transform: `translateY(${(1 - pSourceCards) * 14}px)`,
@@ -889,32 +915,6 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </figure>
                 )
               })}
-              {showCrossDocumentLink && (
-                <div
-                  className="cross-document-link"
-                  aria-label="Cross-document relationship"
-                  style={{
-                    opacity: pCrossLine > 0.05 ? 1 : 0,
-                  }}
-                >
-                  <MapFlowSvg
-                    className="cross-document-link-rail"
-                    viewBox="0 0 101 20"
-                    path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
-                    clipProgress={pCrossLine}
-                    direction="horizontal"
-                  />
-                  <span
-                    style={{
-                      opacity: pCrossBadge,
-                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
-                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
-                    }}
-                  >
-                    Cross-document relationship
-                  </span>
-                </div>
-              )}
             </div>
 
             {/* STAGE 5: 3-to-1 Convergence line */}

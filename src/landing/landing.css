@@ -8971,11 +8971,11 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       pointer-events: none;
     }
 
-    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link {
+    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link {
       position: absolute;
-      z-index: 4;
-      top: 0;
-      height: 243px;
+      z-index: 2;
+      top: 103px;
+      height: 333px;
       left: calc(381px + 33px + 381px);
       display: flex;
       align-items: center;
@@ -8983,8 +8983,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       width: 101px;
     }
 
-    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link::before,
-    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link::after {
+    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link::before,
+    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link::after {
       content: none;
     }
 
