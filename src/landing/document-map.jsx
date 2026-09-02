@@ -840,9 +840,8 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Animation Stage metrics calculated from scrollProgress (0 to 1)
   const p = reducedMotion ? 1 : scrollProgress
 
-  // Trace each intact document from top to bottom before drawing its connections.
+  // Trace each intact document from top to bottom before drawing its extraction connections.
   const pDocumentOutline = isDesktop ? clamp((p - 0.01) / 0.12) : 0
-  const pDocumentConnections = isDesktop ? clamp((p - 0.13) / 0.08) : 1
 
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
@@ -890,7 +889,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </header>
                   <DocumentBranchLine
                     sectionCount={document.sections.length}
-                    clipProgress={pDocumentConnections}
+                    clipProgress={1}
                   />
                   <div
                     className="document-sections"
@@ -946,13 +945,12 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                 <div
                   className="cross-document-link"
                   aria-label="Relationship"
-                  style={{ opacity: pDocumentConnections }}
                 >
                   <MapFlowSvg
                     className="cross-document-link-rail"
                     viewBox="0 0 101 20"
                     path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
-                    clipProgress={pDocumentConnections}
+                    clipProgress={1}
                     direction="horizontal"
                   />
                   <span>

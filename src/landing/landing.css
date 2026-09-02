@@ -8998,7 +8998,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         position: absolute;
         z-index: 4;
         inset: 0;
-        border: 1.5px solid var(--mineral-green-700, #0E6B5C);
+        border: 1.5px solid var(--mineral-green-500);
         border-radius: inherit;
         clip-path: inset(0 0 var(--document-trace-inset, 100%) 0);
         content: "";
