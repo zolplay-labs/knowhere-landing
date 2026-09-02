@@ -991,7 +991,7 @@ export function ProductStage() {
   const trackRef = useRef(null)
   const iframeRef = useRef(null)
   const scanFrameRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0.36)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -1013,9 +1013,10 @@ export function ProductStage() {
         return
       }
 
-      // Progress goes 0 -> 1 as user scrolls through the track
+      // Keep the document branches visible on entry, then reveal the deeper source layers on scroll.
       const currentScroll = -rect.top
-      const p = Math.max(0, Math.min(1, currentScroll / totalScroll))
+      const trackProgress = Math.max(0, Math.min(1, currentScroll / totalScroll))
+      const p = 0.36 + trackProgress * 0.64
       setScrollProgress(p)
     }
 

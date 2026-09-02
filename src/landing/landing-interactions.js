@@ -669,6 +669,35 @@ if (!(root instanceof Element)) return () => {};
   $$('.faq-list details').forEach(details => {
     const summary = $('summary', details);
     const syncExpanded = () => summary.setAttribute('aria-expanded', String(details.open));
+    let closeTimer;
+    const finishClosing = () => {
+      if (!details.classList.contains('is-closing')) return;
+      clearTimeout(closeTimer);
+      details.open = false;
+      details.classList.remove('is-closing');
+      syncExpanded();
+    };
+    summary.addEventListener('click', event => {
+      if (!details.open) return;
+      event.preventDefault();
+      if (details.classList.contains('is-closing')) {
+        clearTimeout(closeTimer);
+        details.classList.remove('is-closing');
+        return;
+      }
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        details.open = false;
+        syncExpanded();
+        return;
+      }
+      details.classList.add('is-closing');
+      closeTimer = setTimeout(finishClosing, 260);
+    });
+    details.addEventListener('transitionend', event => {
+      if (event.pseudoElement === '::details-content' && event.propertyName === 'block-size') {
+        finishClosing();
+      }
+    });
     details.addEventListener('toggle', syncExpanded);
     syncExpanded();
   });
