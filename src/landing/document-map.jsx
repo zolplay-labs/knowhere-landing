@@ -3,6 +3,7 @@ import revenueChart from '../../assets/source-chart.png'
 import marginAnalysis from '../../assets/source-margin.png'
 import revenueAnalysis from '../../assets/source-revenue.png'
 import revenueTable from '../../assets/source-table.png'
+import figmaDocumentLogo from '../../assets/figma-document-logo.svg'
 
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
 
@@ -666,14 +667,13 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
   )
 }
 
-function AISummaryDocument({ activeThemeId, opacity = 1, translateY = 0 }) {
-  const summary = themeSummaries[activeThemeId] ?? themeSummaries.growth
+function AIOutputReport({ opacity = 1, translateY = 0 }) {
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
   return (
-    <article
-      className="ai-summary-document"
+    <section
+      className="ai-output-report"
       data-ai-summary-document
       style={{
         opacity,
@@ -681,23 +681,27 @@ function AISummaryDocument({ activeThemeId, opacity = 1, translateY = 0 }) {
         transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
       }}
     >
-      <header>
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 2.75h8.5L19 7.25v14H6z" />
-          <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
-        </svg>
-        <span>AI summary</span>
-      </header>
-      <strong>{summary.topic}</strong>
-      <ul>
-        {summary.hierarchy.map(item => (
-          <li key={item.source}>
-            <span>{item.source}</span>
-            <small>{item.location}</small>
-          </li>
-        ))}
-      </ul>
-    </article>
+      <h3 className="ai-output-label">AI Output</h3>
+      <div className="ai-output-stack">
+        <span className="ai-output-sheet is-back-two" aria-hidden="true" />
+        <span className="ai-output-sheet is-back-one" aria-hidden="true" />
+        <article className="ai-output-document">
+          <div className="ai-output-page-inner">
+            <header className="ai-output-brand">
+              <img src={figmaDocumentLogo} alt="Knowhere" />
+              <time dateTime="2023-11-16">16/11/2023</time>
+            </header>
+            <div className="ai-output-rule" aria-hidden="true" />
+            <p className="ai-output-eyebrow">Q4 2025 market report</p>
+            <h4>Revenue performance</h4>
+            <p className="ai-output-copy">
+              Enterprise software revenue reached <span className="ai-output-mark">$4.8B, up 18.4% year over year</span>, supported by continued demand for cloud, security, and data platforms. Regional performance remained broad-based, with <span className="ai-output-mark">APAC growing 21.6% and Europe growing 19.4%</span>, while North America remained the largest contributor to revenue. Operating income rose to $1.1B as disciplined cost management lifted the <span className="ai-output-mark is-active">operating margin to 22.9%</span>. The underlying trend also remained consistently positive, with <span className="ai-output-mark">revenue increasing in every reported quarter since Q4 2023</span>.
+            </p>
+          </div>
+          <span className="ai-output-anchor" aria-hidden="true" />
+        </article>
+      </div>
+    </section>
   )
 }
 
@@ -751,7 +755,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
   const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
-  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 640
+  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 830
 
   // Stage 5: source regions converge into hierarchy, then connect to AI summary.
   const pConvergenceLine = clamp((p - 0.70) / 0.08)
@@ -975,8 +979,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               clipProgress={pSummaryConnection}
             />
 
-            <AISummaryDocument
-              activeThemeId={activeTheme.id}
+            <AIOutputReport
               opacity={pSummaryDocument}
               translateY={(1 - pSummaryDocument) * 14}
             />
