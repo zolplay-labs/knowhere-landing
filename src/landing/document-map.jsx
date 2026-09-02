@@ -372,11 +372,13 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
   return <canvas className="trace-pixel-reveal" data-pixel-state="idle" ref={canvasRef} aria-hidden="true" />
 }
 
-function getPageMedia(page, showMarginMedia = false) {
+function getPageMedia(page, showExpandedMedia = false) {
   if (page.image === revenueTable) {
     return {
       alt: 'Regional revenue table',
-      caption: 'Q4 2025 revenue increases across all regions, led by APAC (+21.6%) and Europe (+19.4%).',
+      caption: showExpandedMedia
+        ? 'Q4 2025 revenue increased across all regions.'
+        : 'Q4 2025 revenue increases across all regions, led by APAC (+21.6%) and Europe (+19.4%).',
     }
   }
 
@@ -387,18 +389,25 @@ function getPageMedia(page, showMarginMedia = false) {
     }
   }
 
-  if (showMarginMedia && page.image === marginAnalysis) {
+  if (showExpandedMedia && page.image === marginAnalysis) {
     return {
       alt: 'Operating margin analysis',
-      caption: 'Margin expansion was supported by disciplined cost management and improved efficiency in sales and customer success operations.',
+      caption: 'Margin expansion was supported by disciplined cost management.',
+    }
+  }
+
+  if (showExpandedMedia && page.image === revenueAnalysis) {
+    return {
+      alt: 'Revenue and operating income analysis',
+      caption: 'Operating income grew 21.7% year over year to $1.1B.',
     }
   }
 
   return null
 }
 
-function SectionPageContent({ page, showMarginMedia = false }) {
-  const media = getPageMedia(page, showMarginMedia)
+function SectionPageContent({ page, showExpandedMedia = false }) {
+  const media = getPageMedia(page, showExpandedMedia)
 
   if (!media) {
     return <p className="section-source-line"><span className="section-page-reference">PAGE {page.number}</span></p>
@@ -835,8 +844,6 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   const pStage1 = clamp((p - 0.12) / 0.12)
   const docScale = 0.91 + 0.09 * pStage1
   const pSectionCardsIn = (reducedMotion || !isDesktop) ? 1 : clamp((p - 0.06) / 0.10)
-  const pIntactDocumentsOut = clamp((p - 0.48) / 0.08)
-  const sourceDocumentsOut = (reducedMotion || !isDesktop) ? 0 : pIntactDocumentsOut
 
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
@@ -849,7 +856,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
   const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
-  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 903
+  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * (isDesktop ? 1109 : 903)
 
   // Stage 5: source regions converge into hierarchy, then connect to AI summary.
   const pConvergenceLine = clamp((p - 0.70) / 0.08)
@@ -876,12 +883,6 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               className="document-map-documents"
               data-document-count={activeTheme.documents.length}
               data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
-              style={{
-                opacity: 1 - sourceDocumentsOut,
-                visibility: sourceDocumentsOut >= 1 ? 'hidden' : 'visible',
-                transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out',
-                pointerEvents: sourceDocumentsOut < 0.5 ? 'auto' : 'none',
-              }}
             >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
@@ -944,9 +945,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                               {performanceCopy[0]}
                               {!firstPageMedia && <span className="section-page-reference">PAGE {firstPage.number}</span>}
                             </p>
-                            {firstPageMedia && <SectionPageContent page={firstPage} showMarginMedia={isDesktop} />}
+                            {firstPageMedia && <SectionPageContent page={firstPage} showExpandedMedia={isDesktop} />}
                             <p>{performanceCopy[1]}</p>
-                            {remainingPages.map(page => <SectionPageContent page={page} key={page.number} showMarginMedia={isDesktop} />)}
+                            {remainingPages.map(page => <SectionPageContent page={page} key={page.number} showExpandedMedia={isDesktop} />)}
                           </div>
                         </SectionTag>
                       )
@@ -985,7 +986,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             {/* STAGE 2: Extraction lines from the source documents */}
             <SectionToSourceLines
               clipProgress={pSecToSourceLine}
-              opacity={(reducedMotion || !isDesktop) ? 1 : 1 - sourceDocumentsOut}
+              opacity={1}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
             />

@@ -8973,13 +8973,14 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     }
 
     @media (min-width: 1200px) {
+      #playground .section-node {
+        height: 538.31px;
+        max-height: 538.31px;
+        aspect-ratio: 210 / 297;
+      }
+
       #playground .section-node::after {
-        top: 21.3686px;
-        right: 8px;
-        bottom: auto;
-        left: 8px;
-        height: 284.83px;
-        background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, var(--map-fade) 100%);
+        content: none;
       }
 
       #playground .section-node-head > svg {
@@ -8994,10 +8995,13 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         letter-spacing: .8px;
       }
 
-      #playground .section-node-head,
-      #playground .section-body {
+      #playground .section-node-head {
         margin-right: 4px;
         margin-left: 6px;
+      }
+
+      #playground .section-body {
+        margin-inline: 16px;
       }
 
       #playground .section-node-head strong {
@@ -9007,31 +9011,40 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       }
 
       #playground .section-body p {
-        margin-bottom: 7px;
-        font-size: 9px;
-        line-height: 15px;
+        margin-bottom: 5px;
+        font-size: 8px;
+        line-height: 12px;
       }
 
       #playground .section-body > .section-source-line {
         display: none;
       }
 
+      #playground .section-body > p:nth-of-type(2),
+      #playground .section-body > .section-page:nth-of-type(n + 2) {
+        display: block;
+      }
+
       #playground .section-page {
-        margin: 7px 0 0;
+        margin: 5px 0 0;
+      }
+
+      #playground .section-page img {
+        height: auto;
+        aspect-ratio: auto;
+        object-fit: contain;
       }
 
       #playground .section-page figcaption {
         gap: 8px;
-        padding: 5px 0 0;
-        overflow: hidden;
-        font-size: 8px;
-        line-height: 12px;
-        white-space: nowrap;
+        padding: 3px 0 0;
+        font-size: 7px;
+        line-height: 10px;
       }
 
       #playground .section-page figcaption > span,
       #playground .section-page-reference {
-        font: 500 8px/12px "Geist Mono", ui-monospace, monospace !important;
+        font: 500 7px/10px "Geist Mono", ui-monospace, monospace !important;
       }
 
       #playground .section-page figcaption > span {
@@ -9048,8 +9061,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link {
       position: absolute;
       z-index: 2;
-      top: 103px;
-      height: 332.63px;
+      top: 113px;
+      height: 538.31px;
       left: calc(380.62px + 33px + 380.62px);
       display: flex;
       align-items: center;
