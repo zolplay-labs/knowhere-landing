@@ -1031,7 +1031,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         </div>
                       </div>
                     </div>
-                    <TracePixelReveal active={isDesktop && pSourceCards > 0 && isPrimary} />
+                    <TracePixelReveal active={isDesktop && pSourceCards > 0} delay={index * 70} />
                   </figure>
                 )
               })}
