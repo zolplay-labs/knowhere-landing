@@ -284,7 +284,7 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
     }
 
     if (!active || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      host.style.removeProperty('--trace-particle-mask')
+      host.style.removeProperty('--trace-content-clip')
       canvas.dataset.pixelState = 'idle'
       clear()
       return clear
@@ -297,13 +297,6 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
     canvas.width = Math.round(width * dpr)
     canvas.height = Math.round(height * dpr)
     context.setTransform(dpr, 0, 0, dpr, 0, 0)
-
-    const maskCanvas = document.createElement('canvas')
-    maskCanvas.width = canvas.width
-    maskCanvas.height = canvas.height
-    const maskContext = maskCanvas.getContext('2d')
-    if (!maskContext) return clear
-    maskContext.setTransform(dpr, 0, 0, dpr, 0, 0)
 
     const colors = ['#E1F4EF', '#19A88B', '#0A6351']
     const gap = 6
@@ -323,10 +316,9 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
       }
     }
 
-    host.style.setProperty('--trace-particle-mask', 'linear-gradient(transparent, transparent)')
+    host.style.setProperty('--trace-content-clip', 'inset(0 0 100% 0)')
     canvas.dataset.pixelState = 'running'
     const startedAt = performance.now() + delay
-    let lastMaskUpdate = -Infinity
 
     const renderPixels = now => {
       const elapsed = now - startedAt
@@ -342,24 +334,8 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
         : 1 - Math.pow(-2 * travel + 2, 2) / 2
       const headY = -18 + eased * (height + 50)
       const trailWidth = Math.min(118, height * .55)
-
-      if (elapsed - lastMaskUpdate >= 30 || travel === 1) {
-        maskContext.clearRect(0, 0, width, height)
-        maskContext.fillStyle = '#000'
-        pixels.forEach(pixel => {
-          const crossing = ((pixel.y + 18) / (height + 50)) * duration + pixel.settleDelay
-          const age = elapsed - crossing
-          if (age <= 0) return
-          const formation = Math.min(1, age / 68)
-          const grown = formation * formation * (3 - 2 * formation)
-          const cellSize = Math.min(gap + .8, .5 + grown * (gap + .3))
-          maskContext.globalAlpha = Math.min(1, .28 + grown * .72)
-          maskContext.fillRect(pixel.x - cellSize / 2, pixel.y - cellSize / 2, cellSize, cellSize)
-        })
-        maskContext.globalAlpha = 1
-        host.style.setProperty('--trace-particle-mask', `url(${maskCanvas.toDataURL('image/png')})`)
-        lastMaskUpdate = elapsed
-      }
+      const revealed = Math.max(0, Math.min(1, (headY - 6) / height))
+      host.style.setProperty('--trace-content-clip', `inset(0 0 ${(1 - revealed) * 100}% 0)`)
 
       const fade = elapsed < duration ? 1 : Math.max(0, 1 - (elapsed - duration) / 78)
       pixels.forEach(pixel => {
@@ -380,7 +356,7 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
       if (elapsed < duration + 78) {
         animationFrame = window.requestAnimationFrame(renderPixels)
       } else {
-        host.style.setProperty('--trace-particle-mask', 'linear-gradient(#000, #000)')
+        host.style.removeProperty('--trace-content-clip')
         context.clearRect(0, 0, width, height)
         canvas.dataset.pixelState = 'complete'
       }
@@ -389,7 +365,7 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
     animationFrame = window.requestAnimationFrame(renderPixels)
     return () => {
       clear()
-      host.style.removeProperty('--trace-particle-mask')
+      host.style.removeProperty('--trace-content-clip')
     }
   }, [active, delay, duration])
 

@@ -9729,12 +9729,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     #playground .trace-source-card[data-motion-active="true"] > .trace-card-content,
     #playground .trace-summary-card[data-motion-active="true"] > .trace-card-content,
     #playground .ai-output-report[data-motion-active="true"] > .ai-output-stack {
-      -webkit-mask-image: var(--trace-particle-mask, linear-gradient(#000, #000));
-      mask-image: var(--trace-particle-mask, linear-gradient(#000, #000));
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
+      clip-path: var(--trace-content-clip, none);
     }
 
     #playground .trace-source-card[data-motion-active="true"]::before,
