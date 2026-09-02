@@ -6,6 +6,7 @@ import revenueTable from '../../assets/source-table.png'
 import figmaDocumentLogo from '../../assets/figma-document-logo.svg'
 
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
+const DESKTOP_PRODUCT_QUERY = '(min-width: 1200px)'
 
 const themes = [
   {
@@ -298,20 +299,24 @@ function SectionPageContent({ page }) {
   )
 }
 
-function useMobileProductLayout() {
-  const [isMobile, setIsMobile] = useState(() => (
-    typeof window !== 'undefined' && window.matchMedia(MOBILE_PRODUCT_QUERY).matches
+function useProductLayoutQuery(query) {
+  const [matches, setMatches] = useState(() => (
+    typeof window !== 'undefined' && window.matchMedia(query).matches
   ))
 
   useEffect(() => {
-    const media = window.matchMedia(MOBILE_PRODUCT_QUERY)
-    const sync = () => setIsMobile(media.matches)
+    const media = window.matchMedia(query)
+    const sync = () => setMatches(media.matches)
     sync()
     media.addEventListener('change', sync)
     return () => media.removeEventListener('change', sync)
-  }, [])
+  }, [query])
 
-  return isMobile
+  return matches
+}
+
+function useMobileProductLayout() {
+  return useProductLayoutQuery(MOBILE_PRODUCT_QUERY)
 }
 
 function MapFlowSvg({ className, viewBox, path, dots = [], clipProgress = 1, direction = 'vertical' }) {
@@ -377,11 +382,11 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
   )
 }
 
-function SectionToSourceLines({ clipProgress = 1, sourceCount = 3, documentCount = 2 }) {
+function SectionToSourceLines({ clipProgress = 1, opacity = 1, sourceCount = 3, documentCount = 2 }) {
   const height = 32
   if (sourceCount === 2) {
     return (
-      <div className="stage-flow-row is-section-to-source" aria-hidden="true">
+      <div className="stage-flow-row is-section-to-source" aria-hidden="true" style={{ opacity }}>
         <div className="flow-line-slot" style={{ width: 381 }}>
           <MapFlowSvg
             className="stage-flow-line-svg"
@@ -408,7 +413,7 @@ function SectionToSourceLines({ clipProgress = 1, sourceCount = 3, documentCount
   const gapBetweenDocs = documentCount === 3 ? 33 : 101
 
   return (
-    <div className="stage-flow-row is-section-to-source" aria-hidden="true">
+    <div className="stage-flow-row is-section-to-source" aria-hidden="true" style={{ opacity }}>
       <div className="flow-line-slot" style={{ width: 381 }}>
         <MapFlowSvg
           className="stage-flow-line-svg"
@@ -680,6 +685,7 @@ function AIOutputReport({ opacity = 1, translateY = 0 }) {
 
 function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgress = 1 }) {
   const isMobile = useMobileProductLayout()
+  const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const interactive = typeof onOpenTrace === 'function'
   const [selectedName, setSelectedName] = useState(null)
   const openTimer = useRef(0)
@@ -711,24 +717,21 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Stage 1: the intact rich-text documents remain fully readable on entry.
   const pStage1 = clamp((p - 0.12) / 0.12)
   const docScale = 0.91 + 0.09 * pStage1
-  const pIntactDocumentsOut = clamp((p - 0.24) / 0.10)
+  const pIntactDocumentsOut = clamp((p - 0.24) / 0.08)
+  const sourceDocumentsOut = (reducedMotion || !isDesktop) ? 0 : pIntactDocumentsOut
 
   // Stage 2: extraction begins only after the intact-document hold.
-  const pBranchLine = clamp((p - 0.30) / 0.12)
-  const pSectionCards = clamp((p - 0.32) / 0.12)
+  const pSecToSourceLine = clamp((p - 0.28) / 0.08)
+  const pSourceCards = clamp((p - 0.34) / 0.10)
 
   // Stage 3: Cross-document relationship (0.42 -> 0.56)
   const pCrossLine = clamp((p - 0.42) / 0.10)
   const pCrossBadge = clamp((p - 0.47) / 0.09)
 
-  // Stage 4: Flow to extracted source regions (0.54 -> 0.72)
-  const pSecToSourceLine = clamp((p - 0.54) / 0.10)
-  const pSourceCards = clamp((p - 0.60) / 0.12)
-
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
   const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
-  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 830
+  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 903
 
   // Stage 5: source regions converge into hierarchy, then connect to AI summary.
   const pConvergenceLine = clamp((p - 0.70) / 0.08)
@@ -750,12 +753,16 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
             }}
           >
-            {/* STAGES 1, 2, 3: Documents, Branch Lines, Section Cards, Cross Link */}
+            {/* STAGE 1: Full-height source documents */}
             <div
               className="document-map-documents"
               data-document-count={activeTheme.documents.length}
-              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
-              data-document-stage={pIntactDocumentsOut < 1 ? 'source' : 'extracted'}
+              style={{
+                opacity: 1 - sourceDocumentsOut,
+                visibility: sourceDocumentsOut >= 1 ? 'hidden' : 'visible',
+                transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out',
+                pointerEvents: sourceDocumentsOut < 0.5 ? 'auto' : 'none',
+              }}
             >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
@@ -775,7 +782,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </header>
                   <DocumentBranchLine
                     sectionCount={document.sections.length}
-                    clipProgress={pBranchLine}
+                    clipProgress={(reducedMotion || !isDesktop) ? 1 : pIntactDocumentsOut}
                   />
                   <div
                     className="document-sections"
@@ -785,26 +792,17 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                       opacity: 1,
                       transform: 'none',
                       transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
-                      pointerEvents: pSectionCards > 0.5 ? 'auto' : 'none',
                     }}
                   >
                     {document.sections.map((section, sectionIndex) => {
                       const [firstPage, ...remainingPages] = section.pages
                       const firstPageMedia = getPageMedia(firstPage)
-                      const isCrossSource = showCrossDocumentLink && documentIndex === 0 && sectionIndex === 1
-                      const isCrossTarget = showCrossDocumentLink && documentIndex === 1 && sectionIndex === 0
                       const SectionTag = interactive ? 'button' : 'section'
 
                       return (
                         <SectionTag
-                          className={`section-node${isCrossSource ? ' is-cross-source' : ''}${isCrossTarget ? ' is-cross-target' : ''}`}
+                          className="section-node"
                           key={section.name}
-                          style={!isMobile
-                            ? {
-                                height: `${333 - 73 * pIntactDocumentsOut}px`,
-                                maxHeight: `${333 - 73 * pIntactDocumentsOut}px`,
-                              }
-                            : undefined}
                           {...(interactive
                             ? {
                                 type: 'button',
@@ -836,46 +834,22 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </div>
                 </article>
               ))}
-              {showCrossDocumentLink && (
-                <div
-                  className="cross-document-link"
-                  aria-label="Cross-document relationship"
-                  style={{
-                    opacity: pCrossLine > 0.05 ? 1 : 0,
-                  }}
-                >
-                  <MapFlowSvg
-                    className="cross-document-link-rail"
-                    viewBox="0 0 101 20"
-                    path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
-                    clipProgress={pCrossLine}
-                    direction="horizontal"
-                  />
-                  <span
-                    style={{
-                      opacity: pCrossBadge,
-                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
-                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
-                    }}
-                  >
-                    Cross-document relationship
-                  </span>
-                </div>
-              )}
             </div>
 
-            {/* STAGE 4: Flow lines from Sections to Source Documents */}
+            {/* STAGE 2: Extraction lines from the source documents */}
             <SectionToSourceLines
               clipProgress={pSecToSourceLine}
+              opacity={(reducedMotion || !isDesktop) ? 1 : 1 - pSourceCards}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
             />
 
-            {/* STAGE 4: Source Document cards */}
+            {/* STAGES 2–4: Extracted source-region cards and relationship */}
             <div
               className="source-sections"
               data-source-count={currentSources.length}
               data-document-count={activeTheme.documents.length}
+              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
               style={{
                 opacity: pSourceCards,
                 transform: `translateY(${(1 - pSourceCards) * 14}px)`,
@@ -913,6 +887,32 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   </figure>
                 )
               })}
+              {showCrossDocumentLink && (
+                <div
+                  className="cross-document-link"
+                  aria-label="Cross-document relationship"
+                  style={{
+                    opacity: pCrossLine > 0.05 ? 1 : 0,
+                  }}
+                >
+                  <MapFlowSvg
+                    className="cross-document-link-rail"
+                    viewBox="0 0 101 20"
+                    path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
+                    clipProgress={pCrossLine}
+                    direction="horizontal"
+                  />
+                  <span
+                    style={{
+                      opacity: pCrossBadge,
+                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
+                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                    }}
+                  >
+                    Cross-document relationship
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* STAGE 5: 3-to-1 Convergence line */}

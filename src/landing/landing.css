@@ -8807,8 +8807,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       flex-direction: column;
       box-sizing: border-box;
       width: 381px;
-      height: 260px;
-      max-height: 260px;
+      height: 333px;
+      max-height: 333px;
       min-width: 0;
       min-height: 0;
       padding: 24px;
@@ -8836,22 +8836,18 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       right: 0;
       bottom: 0;
       left: 0;
-      height: 46%;
+      height: 76px;
       background: linear-gradient(to bottom, rgb(255 255 255 / 0) 0%, var(--map-fade) 100%);
       pointer-events: none;
       content: "";
     }
 
-    #playground .document-map-documents[data-document-stage="source"] .section-node::after {
-      height: 76px;
-    }
-
-    #playground .document-map-documents[data-document-stage="source"] .section-body > p:nth-of-type(2),
-    #playground .document-map-documents[data-document-stage="source"] .section-body > .section-page:nth-of-type(n + 2) {
+    #playground .section-body > p:nth-of-type(2),
+    #playground .section-body > .section-page:nth-of-type(n + 2) {
       display: none;
     }
 
-    #playground .document-map-documents[data-document-stage="source"] .section-body p {
+    #playground .section-body p {
       font-size: 12px;
       line-height: 18px;
     }
@@ -8975,11 +8971,11 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       pointer-events: none;
     }
 
-    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link {
+    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link {
       position: absolute;
-      z-index: 2;
-      top: 103px;
-      height: 260px;
+      z-index: 4;
+      top: 0;
+      height: 243px;
       left: calc(381px + 33px + 381px);
       display: flex;
       align-items: center;
@@ -8987,8 +8983,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       width: 101px;
     }
 
-    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link::before,
-    #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link::after {
+    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link::before,
+    #playground .source-sections[data-cross-link="s2-s1"] .cross-document-link::after {
       content: none;
     }
 
