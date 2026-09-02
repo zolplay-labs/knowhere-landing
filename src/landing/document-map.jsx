@@ -298,33 +298,6 @@ function SectionPageContent({ page }) {
   )
 }
 
-function RichDocumentPage({ section, pageIndex }) {
-  const page = section.pages[pageIndex] ?? section.pages[0]
-  const media = getPageMedia(page)
-
-  return (
-    <article className="source-document-page">
-      <header className="source-document-page-head">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 2.75h8.5L19 7.25v14H6z" />
-          <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
-        </svg>
-        <span>SECTION {pageIndex + 1}</span>
-      </header>
-      <strong>{section.name}</strong>
-      <p>{performanceCopy[pageIndex % performanceCopy.length]}</p>
-      {media ? (
-        <figure>
-          <img src={page.image} alt={media.alt} />
-          <figcaption>PAGE {page.number} · {media.caption}</figcaption>
-        </figure>
-      ) : (
-        <p className="source-document-page-reference">PAGE {page.number}</p>
-      )}
-    </article>
-  )
-}
-
 function useMobileProductLayout() {
   const [isMobile, setIsMobile] = useState(() => (
     typeof window !== 'undefined' && window.matchMedia(MOBILE_PRODUCT_QUERY).matches
@@ -737,7 +710,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
 
   // Stage 1: the intact rich-text documents remain fully readable on entry.
   const pStage1 = clamp((p - 0.12) / 0.12)
-  const docScale = 1.15 - 0.15 * pStage1
+  const docScale = 0.91 + 0.09 * pStage1
   const pIntactDocumentsOut = clamp((p - 0.24) / 0.10)
 
   // Stage 2: extraction begins only after the intact-document hold.
@@ -777,37 +750,12 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
             }}
           >
-            <div
-              className="source-document-groups"
-              data-document-count={activeTheme.documents.length}
-              data-intact-documents
-              style={{
-                opacity: 1 - pIntactDocumentsOut,
-                transform: `translate(-50%, -${pIntactDocumentsOut * 12}px)`,
-                pointerEvents: pIntactDocumentsOut < 0.5 ? 'auto' : 'none',
-              }}
-            >
-              {activeTheme.documents.map((document, documentIndex) => (
-                <section className="source-document-group" key={document.name}>
-                  <header className="source-document-group-title">
-                    <span>DOCUMENT {documentIndex + 1}</span>
-                    <strong>{document.name}</strong>
-                  </header>
-                  <div className="source-document-pages">
-                    {document.sections.map((section, sectionIndex) => (
-                      <RichDocumentPage section={section} pageIndex={sectionIndex} key={section.name} />
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-
             {/* STAGES 1, 2, 3: Documents, Branch Lines, Section Cards, Cross Link */}
             <div
               className="document-map-documents"
               data-document-count={activeTheme.documents.length}
               data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
-              style={{ opacity: pIntactDocumentsOut }}
+              data-document-stage={pIntactDocumentsOut < 1 ? 'source' : 'extracted'}
             >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
@@ -834,8 +782,8 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     data-section-count={document.sections.length}
                     style={{
                       '--section-count': document.sections.length,
-                      opacity: pSectionCards,
-                      transform: `translateY(${(1 - pSectionCards) * 14}px)`,
+                      opacity: 1,
+                      transform: 'none',
                       transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
                       pointerEvents: pSectionCards > 0.5 ? 'auto' : 'none',
                     }}
@@ -851,6 +799,12 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         <SectionTag
                           className={`section-node${isCrossSource ? ' is-cross-source' : ''}${isCrossTarget ? ' is-cross-target' : ''}`}
                           key={section.name}
+                          style={!isMobile
+                            ? {
+                                height: `${333 - 73 * pIntactDocumentsOut}px`,
+                                maxHeight: `${333 - 73 * pIntactDocumentsOut}px`,
+                              }
+                            : undefined}
                           {...(interactive
                             ? {
                                 type: 'button',
@@ -860,6 +814,10 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                             : {})}
                         >
                           <div className="section-node-head">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M6 2.75h8.5L19 7.25v14H6z" />
+                              <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
+                            </svg>
                             <span>SECTION {sectionIndex + 1}</span>
                             <strong>{section.name}</strong>
                           </div>
