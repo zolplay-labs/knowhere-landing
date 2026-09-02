@@ -717,6 +717,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Stage 1: the intact rich-text documents remain fully readable on entry.
   const pStage1 = clamp((p - 0.12) / 0.12)
   const docScale = 0.91 + 0.09 * pStage1
+  const pSectionCardsIn = (reducedMotion || !isDesktop) ? 1 : clamp((p - 0.06) / 0.10)
   const pIntactDocumentsOut = clamp((p - 0.48) / 0.08)
   const sourceDocumentsOut = (reducedMotion || !isDesktop) ? 0 : pIntactDocumentsOut
 
@@ -789,9 +790,10 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     data-section-count={document.sections.length}
                     style={{
                       '--section-count': document.sections.length,
-                      opacity: 1,
-                      transform: 'none',
+                      opacity: pSectionCardsIn,
+                      transform: `translateY(${(1 - pSectionCardsIn) * 10}px)`,
                       transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                      pointerEvents: pSectionCardsIn > 0.5 ? 'auto' : 'none',
                     }}
                   >
                     {document.sections.map((section, sectionIndex) => {
