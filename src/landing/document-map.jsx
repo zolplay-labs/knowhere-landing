@@ -853,8 +853,8 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * (isDesktop ? 1109 : 903)
 
   // Stage 5: source regions converge into hierarchy, then connect to AI summary.
-  const pConvergenceLine = clamp((p - 0.70) / 0.08)
-  const pHierarchyCard = clamp((p - 0.75) / 0.09)
+  const pConvergenceLine = clamp((p - 0.52) / 0.08)
+  const pHierarchyCard = clamp((p - 0.58) / 0.09)
   const pSummaryConnection = clamp((p - 0.84) / 0.06)
   const pSummaryDocument = clamp((p - 0.89) / 0.08)
 
