@@ -1145,7 +1145,7 @@ function cropScanDemo(frame) {
   syncScanFrameHeight(frame)
 }
 
-export function ProductStage() {
+export function ProductStage({ heading }) {
   const isMobile = useMobileProductLayout()
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
   const trackRef = useRef(null)
@@ -1173,8 +1173,10 @@ export function ProductStage() {
         return
       }
 
-      // Keep the document branches visible on entry, then reveal the deeper source layers on scroll.
-      const currentScroll = -rect.top
+      // Start the animation as soon as the Product heading reaches the sticky header.
+      const currentScroll = window.matchMedia('(min-width: 1200px)').matches
+        ? 68 - rect.top
+        : -rect.top
       // Desktop keeps the completed AI output on screen before sticky release.
       const progressScroll = window.matchMedia('(min-width: 1200px)').matches
         ? totalScroll * 0.86
@@ -1236,6 +1238,7 @@ export function ProductStage() {
   return (
     <div className="playground-scroll-track" ref={trackRef}>
       <div className="playground-sticky">
+        {heading}
         <div className="product-stage-switcher-row">
           <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={setActiveThemeId} />
         </div>
