@@ -148,9 +148,7 @@
         const strand = squareCount === 1 ? 0 : Math.round(index * (this.options.strands - 1) / (squareCount - 1));
         const [x, y] = this.map(this.point(strand, progress, rotationPhase));
         const size = 7 + index % 2 * 2;
-        context.globalAlpha = this.reducedMotion
-          ? this.options.opacity
-          : this.options.opacity * Math.pow(Math.sin(Math.PI * progress), 2);
+        context.globalAlpha = 1 - progress;
         context.fillRect(x - size / 2, y - size / 2, size, size);
       }
     }

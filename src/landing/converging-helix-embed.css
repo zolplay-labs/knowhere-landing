@@ -265,11 +265,6 @@ html[data-theme="dark"] #final-cta .converging-helix-stage > .final-cta-art::bef
     linear-gradient(90deg, color-mix(in srgb, var(--md-sys-color-on-surface) 6%, transparent) 1px, transparent 1px);
 }
 
-html[data-theme="dark"] .landing-page #main #final-cta .final-cta-label {
-  border-color: var(--md-sys-color-on-surface) !important;
-  color: var(--md-sys-color-on-surface) !important;
-}
-
 html[data-theme="dark"] #final-cta h2,
 html[data-theme="dark"] #final-cta .lede,
 html[data-theme="dark"] .converging-helix-benefits {

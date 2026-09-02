@@ -6412,15 +6412,6 @@
       text-transform: none;
     }
 
-    .landing-page #main #final-cta .final-cta-label {
-      width: max-content;
-      padding: 3px 8px;
-      align-self: center;
-      border: 1px solid currentColor;
-      border-radius: 1px;
-      color: var(--coral-signal-500) !important;
-    }
-
     #capabilities .capability-copy-title h3 {
       font-size: 22px;
       font-weight: 400;
@@ -11578,4 +11569,404 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     grid-template-columns: minmax(0, 1fr);
   }
 
+}
+
+/* Figma Get Started and Footer · node 718:6250 */
+.landing-page #main #final-cta.section.shell {
+  position: relative;
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
+  padding: 139px max(80px, calc((100vw - 1280px) / 2));
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+  border: 0;
+  background-color: #12846c;
+  background-image:
+    radial-gradient(46% 82%, rgb(255 255 255 / 6%), rgb(255 255 255 / 3%) 48%, transparent 74%),
+    linear-gradient(90deg, transparent calc(50% - .5px), rgb(255 255 255 / 6%) 50%, transparent calc(50% + .5px)),
+    linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+  background-position: center, center, left top, left top;
+  background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+  color: var(--white);
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+
+.landing-page #main #final-cta::before {
+  position: absolute;
+  z-index: 0;
+  inset: 48px;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 3%) 1px, transparent 1px);
+  background-position: left top;
+  background-size: 16px 16px;
+  content: "" !important;
+  pointer-events: none;
+}
+
+.landing-page #main #final-cta::after {
+  content: none !important;
+}
+
+.landing-page #main #final-cta .converging-helix-pair {
+  z-index: 0;
+}
+
+.landing-page #main #final-cta #final-cta-copy {
+  position: relative;
+  z-index: 1;
+  width: min(800px, 100%);
+  max-width: none;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.landing-page #main #final-cta .final-cta-detail {
+  position: relative;
+  z-index: 1;
+}
+
+.landing-page #main #final-cta h2 {
+  margin: 0;
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 44px !important;
+  font-weight: 400;
+  line-height: 48px !important;
+  letter-spacing: -.75px !important;
+  text-align: center;
+}
+
+.landing-page #main #final-cta .final-cta-detail {
+  width: 496px;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+}
+
+.landing-page #main #final-cta .lede {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 34px;
+  color: rgb(255 255 255 / 65%) !important;
+  opacity: 1;
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 24px;
+  letter-spacing: normal;
+  text-align: center;
+}
+
+.landing-page #main #final-cta #final-cta-actions {
+  width: min(360px, 100%);
+  margin: 0 0 24px;
+  display: grid;
+  justify-self: center;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.landing-page #main #final-cta #final-cta-actions .button {
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--mist-white-950);
+  border-radius: 1px;
+  background: var(--mist-white-950);
+  color: var(--white);
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 24px;
+}
+
+.landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary) {
+  border-color: var(--white) !important;
+  background: var(--white) !important;
+  color: #2e2e2c !important;
+}
+
+.landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary):hover {
+  border-color: rgb(255 255 255 / 88%) !important;
+  background: rgb(255 255 255 / 88%) !important;
+  color: #2e2e2c !important;
+}
+
+.landing-page #main #final-cta #final-cta-actions .button:hover {
+  border-color: var(--mist-white-800);
+  background: var(--mist-white-900);
+  color: var(--white);
+}
+
+.landing-page #main #final-cta #final-cta-actions .button-secondary {
+  border-color: var(--white);
+  background: transparent;
+  color: var(--white);
+}
+
+.landing-page #main #final-cta #final-cta-actions .button-secondary:hover {
+  border-color: var(--white);
+  background: transparent;
+  color: var(--white);
+}
+
+.landing-page #main #final-cta .final-cta-benefits {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-self: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.landing-page #main #final-cta .final-cta-benefits li {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgb(255 255 255 / 88%);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 20px;
+  white-space: nowrap;
+}
+
+.landing-page #main #final-cta .final-cta-benefits svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  color: rgb(255 255 255 / 88%);
+}
+
+.landing-page #main #final-cta .final-cta-benefits svg path {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.landing-page .footer {
+  position: sticky;
+  z-index: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: none;
+  height: 555px;
+  min-height: 555px;
+  margin-inline: auto;
+  padding: 80px max(80px, calc((100vw - 1280px) / 2)) 60px;
+  display: block;
+  overflow: hidden;
+  background: #000;
+  color: var(--white);
+}
+
+.landing-page .footer .footer-inner {
+  position: relative;
+  width: min(1280px, 100%);
+  height: 415px;
+  margin-inline: auto;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.landing-page .footer .footer-inner::before,
+.landing-page .footer .footer-inner::after {
+  content: none;
+}
+
+.landing-page .footer .footer-navigation {
+  width: min(656px, 100%);
+  height: 100%;
+  padding: 24px 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 48px;
+}
+
+.landing-page .footer .footer-brand {
+  width: 37px;
+  height: 42px;
+  padding: 0;
+  display: block;
+}
+
+.landing-page .footer .footer-brand img {
+  width: 37px;
+  height: 42px;
+  display: block;
+  object-fit: contain;
+  filter: none;
+}
+
+.landing-page .footer .footer-navigation-content {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.landing-page .footer .footer-copyright {
+  width: auto;
+  min-height: 0;
+  margin: 0;
+  display: block;
+  color: #5f5e5c !important;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: .08em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.landing-page .footer .footer-links {
+  --footer-link-gap: 48px;
+
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--footer-link-gap);
+}
+
+.landing-page .footer .footer-links a {
+  position: relative;
+  color: var(--white) !important;
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 24.8px;
+  text-align: left;
+  text-decoration: none;
+}
+
+.landing-page .footer .footer-links a + a::before {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--footer-link-gap) / -2);
+  width: 1px;
+  height: 16px;
+  background: rgb(255 255 255 / 20%);
+  content: "";
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.landing-page .footer .footer-links a:hover {
+  color: var(--mineral-green-500) !important;
+}
+
+.landing-page .footer .footer-wordmark {
+  position: absolute;
+  top: 292px;
+  left: 0;
+  width: 100%;
+  height: 183px;
+  display: block;
+  object-fit: contain;
+  object-position: center top;
+  pointer-events: none;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .landing-page #main #final-cta.section.shell {
+    padding: 96px 48px;
+  }
+
+  .landing-page .footer {
+    padding-inline: 48px;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-page #main #final-cta.section.shell {
+    padding: 64px 20px;
+    gap: 16px;
+  }
+
+  .landing-page #main #final-cta h2 {
+    font-size: 36px !important;
+    line-height: 40px !important;
+  }
+
+  .landing-page #main #final-cta .final-cta-detail {
+    width: 100%;
+  }
+
+  .landing-page #main #final-cta .lede {
+    margin-bottom: 32px;
+  }
+
+  .landing-page #main #final-cta .converging-helix-pair {
+    opacity: .78;
+  }
+
+  .landing-page #main #final-cta .final-cta-benefits {
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .landing-page .footer {
+    position: relative;
+    z-index: 2;
+    bottom: auto;
+    height: auto;
+    min-height: 0;
+    padding: 72px 20px 0;
+  }
+
+  .landing-page .footer .footer-inner {
+    height: auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+  }
+
+  .landing-page .footer .footer-navigation {
+    height: auto;
+    padding: 0;
+    gap: 40px;
+  }
+
+  .landing-page .footer .footer-links {
+    --footer-link-gap: clamp(12px, 4vw, 40px);
+
+    flex-wrap: nowrap;
+  }
+
+  .landing-page .footer .footer-wordmark {
+    position: static;
+    height: auto;
+    margin-top: 72px;
+  }
+}
+
+@media (max-width: 479px) {
+  .landing-page #main #final-cta #final-cta-actions {
+    grid-template-columns: 1fr;
+  }
 }

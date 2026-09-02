@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
-import { ConvergingHelixTuner } from './converging-helix-embed'
+import { ConvergingHelixEmbed } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
@@ -468,20 +468,34 @@ export function LandingPage() {
         {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <ConvergingHelixTuner>
-        <div id="final-cta-copy"><p className="section-no final-cta-label">[ GET STARTED ]</p><h2 id="final-title">Ready to build with better document context?</h2><p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p></div>
-        <div id="final-cta-actions"><a className="button final-cta-shimmer" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
-      </ConvergingHelixTuner>
+      <div className="converging-helix-pair" aria-hidden="true">
+        <ConvergingHelixEmbed accentColor="var(--mineral-green-300)" className="converging-helix-embed--left" opacity={1} />
+        <ConvergingHelixEmbed accentColor="var(--mineral-green-300)" className="converging-helix-embed--right" mirror opacity={1} />
+      </div>
+      <div id="final-cta-copy">
+        <h2 id="final-title">Ready to build with better document context?</h2>
+      </div>
+      <div className="final-cta-detail">
+        <p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p>
+        <div id="final-cta-actions"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
+        <ul className="final-cta-benefits" aria-label="Trial benefits">
+          <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.75 9 8.25 10.5 11.25 7.5M15.75 9c0 .886-.175 1.764-.514 2.583a6.75 6.75 0 0 1-3.653 3.653A6.75 6.75 0 0 1 9 15.75a6.75 6.75 0 0 1-2.583-.514 6.75 6.75 0 0 1-3.653-3.653A6.75 6.75 0 0 1 2.25 9a6.75 6.75 0 0 1 13.5 0Z" /></svg>Free 14-day trial</li>
+          <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.75 9 8.25 10.5 11.25 7.5M15.75 9c0 .886-.175 1.764-.514 2.583a6.75 6.75 0 0 1-3.653 3.653A6.75 6.75 0 0 1 9 15.75a6.75 6.75 0 0 1-2.583-.514 6.75 6.75 0 0 1-3.653-3.653A6.75 6.75 0 0 1 2.25 9a6.75 6.75 0 0 1 13.5 0Z" /></svg>No credit card required</li>
+          <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.75 9 8.25 10.5 11.25 7.5M15.75 9c0 .886-.175 1.764-.514 2.583a6.75 6.75 0 0 1-3.653 3.653A6.75 6.75 0 0 1 9 15.75a6.75 6.75 0 0 1-2.583-.514 6.75 6.75 0 0 1-3.653-3.653A6.75 6.75 0 0 1 2.25 9a6.75 6.75 0 0 1 13.5 0Z" /></svg>Cancel anytime</li>
+        </ul>
+      </div>
     </section>
   </main>
   <footer className="footer">
     <div className="footer-inner">
-      <div className="footer-main">
-        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-back-to-top.svg" width={132} height={52} alt="" /></a>
-        <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
+      <div className="footer-navigation">
+        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-footer-mark.svg" width={37} height={42} alt="" /></a>
+        <div className="footer-navigation-content">
+          <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
+          <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
+        </div>
       </div>
-      <div className="footer-divider" aria-hidden="true" />
-      <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
+      <img className="footer-wordmark" src="/assets/knowhere-footer-wordmark.svg" width={1280} height={183} alt="" aria-hidden="true" />
     </div>
   </footer>
   <div className="toast" role="status" aria-live="polite" hidden><p data-toast-message /><button type="button" aria-label="Close notification">×</button></div>
