@@ -1734,6 +1734,12 @@ function initializeFormatGlobe(root, cleanups) {
       return /^#[0-9a-f]{6}$/i.test(color) ? color : '#19A88B';
     }
 
+    function formatFocusColor() {
+      const color = getComputedStyle(document.documentElement)
+        .getPropertyValue('--coral-signal-500').trim();
+      return /^#[0-9a-f]{6}$/i.test(color) ? color : '#FF634A';
+    }
+
     function formatBaseColorWithAlpha(alpha) {
       return colorWithAlpha(formatBaseColor(), alpha);
     }
@@ -1778,7 +1784,7 @@ function initializeFormatGlobe(root, cleanups) {
       };
     }
 
-    function drawTraceHead(ringIndex, ringRadius, reveal, opacity, elapsed, segments) {
+    function drawTraceHead(ringIndex, ringRadius, reveal, opacity, elapsed, segments, color = formatBaseColor()) {
       if (reveal <= 0 || opacity <= 0) return;
       const tailStart = Math.max(0, reveal - 0.16);
       const firstSegment = Math.floor(tailStart * segments);
@@ -1786,7 +1792,7 @@ function initializeFormatGlobe(root, cleanups) {
       const tailLength = Math.max(0.001, reveal - tailStart);
 
       context.save();
-      context.shadowColor = formatBaseColorWithAlpha(0.55);
+      context.shadowColor = colorWithAlpha(color, 0.55);
       context.shadowBlur = 5;
       for (let index = firstSegment; index < lastSegment; index += 1) {
         const start = Math.max(index / segments, tailStart);
@@ -1799,7 +1805,7 @@ function initializeFormatGlobe(root, cleanups) {
         context.moveTo(pointA.x, pointA.y);
         context.lineTo(pointB.x, pointB.y);
         context.lineWidth = 1 + strength * 1.1;
-        context.strokeStyle = formatBaseColorWithAlpha((0.12 + strength * 0.88) * opacity);
+        context.strokeStyle = colorWithAlpha(color, (0.12 + strength * 0.88) * opacity);
         context.stroke();
       }
       context.restore();
@@ -1811,6 +1817,7 @@ function initializeFormatGlobe(root, cleanups) {
       const radiusForRing = ringIndex => ringIndex === 0 ? radius : radius * 1.06;
       const segments = 180;
       const ringIntroStates = ringRotations.map((_, ringIndex) => getRingIntroState(ringIndex, now));
+      const focusedRingIndex = particles[activeLabelIndex]?.ring;
 
       if (!introComplete && ringIntroStates.every(state => state.reveal >= 1)) {
         introComplete = true;
@@ -1819,6 +1826,7 @@ function initializeFormatGlobe(root, cleanups) {
       ringRotations.forEach((_, ringIndex) => {
         const ringRadius = radiusForRing(ringIndex);
         const introState = ringIntroStates[ringIndex];
+        const isFocusedRing = ringIndex === focusedRingIndex;
         if (introState.reveal <= 0) return;
         if (ringIndex === movingDashRingIndex) {
           context.save();
@@ -1833,10 +1841,20 @@ function initializeFormatGlobe(root, cleanups) {
           context.setLineDash([7, 5]);
           context.lineDashOffset = reducedMotion ? 0 : -(elapsed * 0.028) % 12;
           context.lineWidth = 1.1;
-          context.strokeStyle = formatBaseColorWithAlpha(0.78);
+          context.strokeStyle = isFocusedRing
+            ? colorWithAlpha(formatFocusColor(), 0.86)
+            : formatBaseColorWithAlpha(0.78);
           context.stroke();
           context.restore();
-          drawTraceHead(ringIndex, ringRadius, introState.reveal, introState.headOpacity, elapsed, segments);
+          drawTraceHead(
+            ringIndex,
+            ringRadius,
+            introState.reveal,
+            introState.headOpacity,
+            elapsed,
+            segments,
+            isFocusedRing ? formatFocusColor() : formatBaseColor()
+          );
           return;
         }
 
@@ -1857,13 +1875,23 @@ function initializeFormatGlobe(root, cleanups) {
           context.beginPath();
           context.moveTo(pointA.x, pointA.y);
           context.lineTo(pointB.x, pointB.y);
-          context.lineWidth = colorStrength > 0 ? 1.25 : 0.75;
-          context.strokeStyle = colorStrength > 0
+          context.lineWidth = isFocusedRing || colorStrength > 0 ? 1.25 : 0.75;
+          context.strokeStyle = isFocusedRing
+            ? colorWithAlpha(formatFocusColor(), 0.48 + depthAlpha * 0.72)
+            : colorStrength > 0
             ? formatBaseColorWithAlpha(0.18 + colorStrength * 0.78)
             : formatNeutralColorWithAlpha(depthAlpha);
           context.stroke();
         }
-        drawTraceHead(ringIndex, ringRadius, introState.reveal, introState.headOpacity, elapsed, segments);
+        drawTraceHead(
+          ringIndex,
+          ringRadius,
+          introState.reveal,
+          introState.headOpacity,
+          elapsed,
+          segments,
+          isFocusedRing ? formatFocusColor() : formatBaseColor()
+        );
       });
 
       const particlePoints = particles.map((particle, index) => {
@@ -1896,10 +1924,13 @@ function initializeFormatGlobe(root, cleanups) {
       particlePoints.forEach(particle => {
         if (particle.introAlpha <= 0) return;
         const isHovered = hoveredParticle?.index === particle.index;
+        const isFocused = particle.index === activeLabelIndex;
         const isColored = particle.index === 0 || particle.index === 5;
         context.beginPath();
-        context.arc(particle.x, particle.y, isHovered ? 4.8 : particle.radius, 0, Math.PI * 2);
-        context.fillStyle = isHovered || isColored
+        context.arc(particle.x, particle.y, isHovered || isFocused ? 4.8 : particle.radius, 0, Math.PI * 2);
+        context.fillStyle = isFocused
+          ? colorWithAlpha(formatFocusColor(), (0.72 + (particle.z + 1) * 0.14) * particle.introAlpha)
+          : isHovered || isColored
           ? colorWithAlpha(formatBaseColor(), (0.62 + (particle.z + 1) * 0.16) * particle.introAlpha)
           : formatNeutralColorWithAlpha((0.22 + (particle.z + 1) * 0.20) * particle.introAlpha);
         context.fill();
@@ -1929,7 +1960,7 @@ function initializeFormatGlobe(root, cleanups) {
           ? particle.x - labelWidth - 10
           : preferredX;
         const labelY = Math.max(4, Math.min(height - 28, particle.y - 12));
-        const labelColor = formatBaseColor();
+        const labelColor = formatFocusColor();
         context.fillStyle = labelColor;
         context.fillRect(labelX, labelY, labelWidth, 24);
         const frameX = labelX - 2;
@@ -1974,7 +2005,7 @@ function initializeFormatGlobe(root, cleanups) {
 
       if (activeLabelParticle) {
         stage.dataset.activeFormatLabel = activeLabelParticle.label;
-        stage.dataset.activeFormatColor = formatBaseColor();
+        stage.dataset.activeFormatColor = formatFocusColor();
       } else {
         delete stage.dataset.activeFormatLabel;
         delete stage.dataset.activeFormatColor;

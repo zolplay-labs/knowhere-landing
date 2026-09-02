@@ -448,7 +448,7 @@ export function CatenoidFieldTuner() {
       <CatenoidFieldEmbed
         viewRotation={viewRotation}
         accentColor="var(--mineral-green-500)"
-        secondaryColor="var(--mineral-green-500)"
+        secondaryColor="var(--coral-signal-500)"
         backgroundColor={colors.backgroundColor === DEFAULT_COLORS.backgroundColor ? 'var(--white-100)' : colors.backgroundColor}
         cycleSpeed={cycleSpeed}
         fieldOffsetX={fieldLayout.x}

@@ -6195,7 +6195,7 @@
       z-index: 0;
       left: 50%;
       width: 100%;
-      background-image: radial-gradient(circle, var(--black-10) 0 1.5px, transparent 1.6px);
+      background-image: radial-gradient(circle, color-mix(in srgb, var(--coral-signal-500) 14%, transparent) 0 1.5px, transparent 1.6px);
       background-position: 0 0;
       background-size: 18px 18px;
       content: "";
@@ -7163,13 +7163,13 @@
   position: absolute;
   z-index: 4;
   inset: -116px 0 0;
-  border-bottom: 1px solid var(--mineral-green-500);
+  border-bottom: 1px solid var(--coral-signal-500);
   background-image:
-    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
+    repeating-linear-gradient(to right, color-mix(in srgb, var(--coral-signal-500) 32%, transparent) 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
     repeating-linear-gradient(to right, var(--mist-white-100) 0 1px, transparent 1px var(--pricing-major-tick, 25%)),
-    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
+    repeating-linear-gradient(to right, color-mix(in srgb, var(--coral-signal-500) 32%, transparent) 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
     repeating-linear-gradient(to right, var(--mist-white-100) 0 1px, transparent 1px var(--pricing-medium-tick, 5%)),
-    repeating-linear-gradient(to right, var(--mineral-green-500) 0 1px, transparent 1px var(--pricing-minor-tick, 1.25%));
+    repeating-linear-gradient(to right, color-mix(in srgb, var(--coral-signal-500) 32%, transparent) 0 1px, transparent 1px var(--pricing-minor-tick, 1.25%));
   background-position: left bottom, left bottom, left bottom, left bottom, left bottom;
   background-repeat: no-repeat;
   background-size: 100% 100%, 100% 100%, 100% 52px, 100% 52px, 100% 36px;
@@ -7211,7 +7211,7 @@
   display: inline-block;
   flex: 0 0 auto;
   border: 0;
-  background: var(--black-90);
+  background: var(--mineral-green-500);
   color: var(--white);
   font-family: "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 12px;
@@ -7220,7 +7220,7 @@
 }
 
 #integration .steps li:first-child .integration-step-number {
-  background: var(--mineral-green-500);
+  background: var(--coral-signal-500);
   color: var(--white);
 }
 
@@ -7353,6 +7353,46 @@
   font-size: 15px;
   font-weight: 400;
   line-height: 24px;
+}
+
+#integration .mcp {
+  transition: background-color 140ms ease;
+}
+
+#integration .mcp:focus-within {
+  background-color: var(--mist-white-200);
+}
+
+#integration .mcp .text-link {
+  transition: color 140ms ease;
+}
+
+#integration .mcp .text-link i {
+  transition: transform 140ms ease;
+}
+
+#integration .mcp .text-link:is(:hover, :focus-visible) {
+  color: var(--main-700, var(--mineral-green-700));
+}
+
+@media (hover: hover) and (pointer: fine) {
+  #integration .mcp:hover {
+    background-color: var(--mist-white-200);
+  }
+
+  #integration .mcp .text-link:hover i {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #integration .mcp .text-link i {
+    transition: none;
+  }
+
+  #integration .mcp .text-link:hover i {
+    transform: none;
+  }
 }
 
 /* Global neutral text roles use the Mist White design-system scale. */
@@ -8246,7 +8286,6 @@ html[data-theme="dark"] .footer-brand img {
 html[data-theme="dark"] .landing-page .site-header .nav-actions .button,
 html[data-theme="dark"] #top.hero-b-layout .hero-copy .button-row .button:not(.button-secondary),
 html[data-theme="dark"] #enterprise .sales-link,
-html[data-theme="dark"] #integration .steps li:first-child .integration-step-number,
 html[data-theme="dark"] #pricing .pricing-result-value {
   border-color: var(--md-sys-color-primary) !important;
   background-color: var(--md-sys-color-primary) !important;
@@ -8254,9 +8293,13 @@ html[data-theme="dark"] #pricing .pricing-result-value {
 }
 
 html[data-theme="dark"] #pricing .pricing-result-value strong,
-html[data-theme="dark"] #pricing .pricing-result-value small,
-html[data-theme="dark"] #integration .steps li:first-child .integration-step-number {
+html[data-theme="dark"] #pricing .pricing-result-value small {
   color: var(--md-sys-color-on-primary) !important;
+}
+
+html[data-theme="dark"] #integration .steps li:first-child .integration-step-number {
+  background: var(--coral-signal-500);
+  color: var(--white);
 }
 
 html[data-theme="dark"] #final-cta h2,

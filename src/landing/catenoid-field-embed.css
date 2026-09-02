@@ -45,9 +45,9 @@
   z-index: 2;
   inset: 0;
   background-image:
-    linear-gradient(color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--mineral-green-500) 8%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
+    linear-gradient(color-mix(in srgb, var(--coral-signal-500) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--coral-signal-500) 7%, transparent) 1px, transparent 1px);
+  background-size: calc(100% / 24) calc(100% / 17);
   content: "";
   pointer-events: none;
 }
@@ -94,6 +94,17 @@
   background: var(--white-100);
   opacity: 0;
   clip-path: inset(50%);
+  transition: border-color 140ms ease;
+}
+
+.integration-code-frame:focus-within .integration-code-frame__card {
+  border-color: var(--mineral-green-500);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .integration-code-frame:hover .integration-code-frame__card {
+    border-color: var(--mineral-green-500);
+  }
 }
 
 .integration-code-frame__header {
@@ -124,6 +135,12 @@
   font: inherit;
   line-height: 16px;
   cursor: pointer;
+  transition: border-color 140ms ease, color 140ms ease;
+}
+
+.integration-code-frame__tabs button:not(.is-active):is(:hover, :focus-visible) {
+  border-color: var(--main-700, var(--mineral-green-700));
+  color: var(--main-700, var(--mineral-green-700));
 }
 
 .integration-code-frame__tabs button.is-active {
@@ -155,6 +172,11 @@
   color: var(--mineral-green-500);
   font-size: 16px;
   line-height: 16px;
+  transition: color 140ms ease;
+}
+
+#integration .integration-code-frame__copy:is(:hover, :focus-visible) i {
+  color: var(--main-700, var(--mineral-green-700));
 }
 
 .integration-code-frame pre {

@@ -6,6 +6,8 @@
   const PATH_REVEAL_MS = 1200;
   const PATH_STAGGER_MS = 40;
   const RING_CYCLE_MS = 5600;
+  const RING_ORANGE_PROGRESS = 0.2;
+  const RING_COLOR_TRANSITION_END_PROGRESS = 0.36;
   const DATA_PULSE_DELAY_MS = 900;
   const POINTER_EASE = 0.055;
   const DEFAULT_COLORS = {
@@ -25,6 +27,14 @@
   function rgba(hex, alpha) {
     const channels = [1, 3, 5].map(index => parseInt(hex.slice(index, index + 2), 16));
     return `rgba(${channels[0]}, ${channels[1]}, ${channels[2]}, ${alpha})`;
+  }
+
+  function mixHex(from, to, amount) {
+    const fromChannels = [1, 3, 5].map(index => parseInt(from.slice(index, index + 2), 16));
+    const toChannels = [1, 3, 5].map(index => parseInt(to.slice(index, index + 2), 16));
+    const progress = clamp(amount);
+    const channels = fromChannels.map((channel, index) => Math.round(channel + (toChannels[index] - channel) * progress));
+    return `#${channels.map(channel => channel.toString(16).padStart(2, '0')).join('')}`;
   }
 
   function seededRandom(seed) {
@@ -221,7 +231,7 @@
       return easeInOut((now - this.introStart - index * PATH_STAGGER_MS) / PATH_REVEAL_MS);
     }
 
-    drawPath(points, reveal, opacity, lineWidth) {
+    drawPath(points, reveal, opacity, lineWidth, color) {
       if (reveal <= 0) return;
       const context = this.context;
       const finalIndex = Math.max(1, Math.ceil((points.length - 1) * reveal));
@@ -231,7 +241,7 @@
         context.lineTo(points[index].x, points[index].y);
       }
       context.lineWidth = lineWidth;
-      context.strokeStyle = rgba(this.colors.accent, opacity);
+      context.strokeStyle = rgba(color, opacity);
       context.stroke();
     }
 
@@ -252,7 +262,7 @@
       if (this.reduceMotion || this.introStart === null || now - this.introStart < DATA_PULSE_DELAY_MS) return;
       const context = this.context;
       context.save();
-      context.fillStyle = this.colors.accent;
+      context.fillStyle = this.colors.secondary;
       this.dataPulses.forEach(pulse => {
         const elapsed = this.cycleElapsed + pulse.offset;
         const activation = Math.floor(elapsed / pulse.period);
@@ -280,15 +290,22 @@
         const averageDepth = points.reduce((sum, point) => sum + point.z, 0) / points.length;
         const edgeFade = Math.min(clamp(progress / 0.08), clamp((1 - progress) / 0.08));
         const edgeOpacity = movingRing ? 0.35 + edgeFade * 0.65 : 1;
-        return { path, points, index, averageDepth, edgeOpacity, reveal: this.pathReveal(index, now) };
+        return { path, points, index, movingRing, progress, averageDepth, edgeOpacity, reveal: this.pathReveal(index, now) };
       }).sort((a, b) => a.averageDepth - b.averageDepth);
 
       sampledPaths.forEach(item => {
         const isRing = item.path.type === 'ring';
+        const colorTransition = easeInOut(
+          (item.progress - RING_ORANGE_PROGRESS)
+          / (RING_COLOR_TRANSITION_END_PROGRESS - RING_ORANGE_PROGRESS)
+        );
+        const color = item.movingRing && !this.reduceMotion
+          ? mixHex(this.colors.secondary, this.colors.accent, colorTransition)
+          : this.colors.accent;
         const depthOpacity = isRing
           ? clamp(0.68 + (item.averageDepth + 1) * 0.14, 0.62, 0.96)
           : clamp(0.2 + (item.averageDepth + 1) * 0.12, 0.18, 0.46);
-        this.drawPath(item.points, item.reveal, depthOpacity * item.edgeOpacity, isRing ? 1.15 : 0.85);
+        this.drawPath(item.points, item.reveal, depthOpacity * item.edgeOpacity, isRing ? 1.15 : 0.85, color);
       });
       this.drawDataPulses(now);
     }
