@@ -938,7 +938,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               {showCrossDocumentLink && (
                 <div
                   className="cross-document-link"
-                  aria-label="Cross-document relationship"
+                  aria-label="Relationship"
                 >
                   <MapFlowSvg
                     className="cross-document-link-rail"
@@ -948,7 +948,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     direction="horizontal"
                   />
                   <span>
-                    Cross-document relationship
+                    Relationship
                   </span>
                 </div>
               )}

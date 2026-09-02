@@ -9059,6 +9059,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     }
 
     #playground .document-map-documents[data-cross-link="s2-s1"] .cross-document-link {
+      --relationship-line: color-mix(in srgb, var(--mineral-green-700, #0E6B5C) 82%, transparent);
       position: absolute;
       z-index: 2;
       top: 113px;
@@ -9086,17 +9087,26 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       overflow: visible;
     }
 
+    #playground .cross-document-link .map-flow-stroke {
+      stroke: var(--relationship-line);
+      stroke-width: 1.25px;
+    }
+
+    #playground .cross-document-link .map-flow-dot {
+      fill: var(--relationship-line);
+    }
+
     #playground .cross-document-link span {
       position: absolute;
-      top: 50%;
+      top: calc(50% - 14px);
       left: 50%;
       z-index: 1;
       display: block;
       width: max-content;
-      max-width: 92px;
-      padding: 4px 0;
+      max-width: none;
+      padding: 0;
       border: 0;
-      background: var(--white, #fff);
+      background: transparent;
       color: var(--mineral-green-700, #0E6B5C);
       font: 500 10px/16px "Geist Mono", ui-monospace, monospace !important;
       letter-spacing: 0;
