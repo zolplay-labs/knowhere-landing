@@ -9656,6 +9656,35 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       white-space: nowrap;
     }
 
+    @media (min-width: 1200px) {
+      #playground .trace-summary-card {
+        width: min(720px, calc(100% - 48px));
+        min-height: 164px;
+      }
+
+      #playground .trace-hierarchy {
+        min-height: 128px;
+        padding-inline: 20px;
+      }
+
+      #playground .trace-hierarchy-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      #playground .trace-hierarchy-node {
+        min-height: 58px;
+      }
+
+      #playground .trace-hierarchy-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2px;
+      }
+
+      #playground .trace-hierarchy-detail {
+        text-align: left;
+      }
+    }
+
     #playground .hierarchy-summary-connection {
       display: block;
       width: 10px;
