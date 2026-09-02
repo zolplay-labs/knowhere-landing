@@ -372,7 +372,7 @@ function TracePixelReveal({ active, delay = 0, duration = 800 }) {
   return <canvas className="trace-pixel-reveal" data-pixel-state="idle" ref={canvasRef} aria-hidden="true" />
 }
 
-function getPageMedia(page) {
+function getPageMedia(page, showMarginMedia = false) {
   if (page.image === revenueTable) {
     return {
       alt: 'Regional revenue table',
@@ -387,11 +387,18 @@ function getPageMedia(page) {
     }
   }
 
+  if (showMarginMedia && page.image === marginAnalysis) {
+    return {
+      alt: 'Operating margin analysis',
+      caption: 'Margin expansion was supported by disciplined cost management and improved efficiency in sales and customer success operations.',
+    }
+  }
+
   return null
 }
 
-function SectionPageContent({ page }) {
-  const media = getPageMedia(page)
+function SectionPageContent({ page, showMarginMedia = false }) {
+  const media = getPageMedia(page, showMarginMedia)
 
   if (!media) {
     return <p className="section-source-line"><span className="section-page-reference">PAGE {page.number}</span></p>
@@ -909,7 +916,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   >
                     {document.sections.map((section, sectionIndex) => {
                       const [firstPage, ...remainingPages] = section.pages
-                      const firstPageMedia = getPageMedia(firstPage)
+                      const firstPageMedia = getPageMedia(firstPage, isDesktop)
                       const SectionTag = interactive ? 'button' : 'section'
 
                       return (
@@ -937,9 +944,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                               {performanceCopy[0]}
                               {!firstPageMedia && <span className="section-page-reference">PAGE {firstPage.number}</span>}
                             </p>
-                            {firstPageMedia && <SectionPageContent page={firstPage} />}
+                            {firstPageMedia && <SectionPageContent page={firstPage} showMarginMedia={isDesktop} />}
                             <p>{performanceCopy[1]}</p>
-                            {remainingPages.map(page => <SectionPageContent page={page} key={page.number} />)}
+                            {remainingPages.map(page => <SectionPageContent page={page} key={page.number} showMarginMedia={isDesktop} />)}
                           </div>
                         </SectionTag>
                       )
