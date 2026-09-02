@@ -841,7 +841,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   const p = reducedMotion ? 1 : scrollProgress
 
   // Trace each intact document from top to bottom before drawing its extraction connections.
-  const pDocumentOutline = isDesktop ? clamp((p - 0.01) / 0.12) : 0
+  const pDocumentOutline = isDesktop ? clamp((p - 0.08) / 0.12) : 0
 
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
