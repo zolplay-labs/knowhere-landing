@@ -591,7 +591,7 @@ function SourcePreviewContent({ source }) {
   )
 }
 
-function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0 }) {
+function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0, motionActive = false }) {
   const summary = themeSummaries[activeThemeId] ?? themeSummaries.growth
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -600,6 +600,7 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
     <aside
       className="trace-summary-card"
       data-trace-summary-card
+      data-motion-active={motionActive ? 'true' : undefined}
       aria-label="Cross-document hierarchy for the selected source"
       style={{
         opacity,
@@ -641,11 +642,12 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
           </ul>
         </div>
       </div>
+      <span className="trace-pixel-reveal" aria-hidden="true" />
     </aside>
   )
 }
 
-function AIOutputReport({ opacity = 1, translateY = 0 }) {
+function AIOutputReport({ opacity = 1, translateY = 0, motionActive = false }) {
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -653,6 +655,7 @@ function AIOutputReport({ opacity = 1, translateY = 0 }) {
     <section
       className="ai-output-report"
       data-ai-summary-document
+      data-motion-active={motionActive ? 'true' : undefined}
       style={{
         opacity,
         transform: `translateY(${translateY}px)`,
@@ -679,6 +682,7 @@ function AIOutputReport({ opacity = 1, translateY = 0 }) {
           <span className="ai-output-anchor" aria-hidden="true" />
         </article>
       </div>
+      <span className="trace-pixel-reveal" aria-hidden="true" />
     </section>
   )
 }
@@ -894,6 +898,8 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     key={source.id}
                     data-source-slot={slot}
                     data-region={source.type}
+                    data-motion-active={pSourceCards > 0 ? 'true' : undefined}
+                    style={{ '--trace-motion-delay': `${index * 70}ms` }}
                   >
                     <div className="trace-card-content">
                       <figcaption>
@@ -912,6 +918,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         </div>
                       </div>
                     </div>
+                    <span className="trace-pixel-reveal" aria-hidden="true" />
                   </figure>
                 )
               })}
@@ -929,6 +936,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               activeThemeId={activeTheme.id}
               opacity={pHierarchyCard}
               translateY={(1 - pHierarchyCard) * 14}
+              motionActive={pHierarchyCard > 0}
             />
 
             <MapFlowSvg
@@ -942,6 +950,7 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
             <AIOutputReport
               opacity={pSummaryDocument}
               translateY={(1 - pSummaryDocument) * 14}
+              motionActive={pSummaryDocument > 0}
             />
 
           </div>

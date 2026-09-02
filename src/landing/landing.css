@@ -8513,6 +8513,9 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       --map-line-vertical: repeating-linear-gradient(to bottom, var(--map-line) 0 4px, transparent 4px 7px);
       --map-line-horizontal: repeating-linear-gradient(to right, var(--map-line) 0 4px, transparent 4px 7px);
       --map-fade: var(--white, #fff);
+      --trace-accent: var(--mineral-green-700, #0E6B5C);
+      --trace-accent-light: var(--mineral-green-500, #138D75);
+      --trace-accent-soft: color-mix(in srgb, var(--mineral-green-500, #138D75) 16%, #fff);
       position: relative;
       display: flex;
       flex-direction: column;
@@ -9500,8 +9503,8 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
     }
 
     #playground .trace-hierarchy-node.is-active {
-      border-color: var(--trace-accent-light, #3d7ee8);
-      background: var(--main-50, #f4f8ff);
+      border-color: var(--trace-accent-light);
+      background: color-mix(in srgb, var(--trace-accent-light) 8%, #fff);
       color: rgba(0, 0, 0, .9);
     }
 
@@ -9574,7 +9577,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       margin: 0 0 12px;
       padding: 4px 0 4px 17px;
       align-items: center;
-      background: linear-gradient(#7d89ac, #7d89ac) left center / 7px 7px no-repeat;
+      background: linear-gradient(var(--trace-accent), var(--trace-accent)) left center / 7px 7px no-repeat;
       color: #181818;
       font: 500 15px/24px var(--sans, "Geist Sans", "Helvetica Neue", Arial, sans-serif);
       letter-spacing: 0;
@@ -9675,14 +9678,14 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
 
     #playground .ai-output-mark {
       padding: 1px 4px;
-      background: #eef0f5;
-      color: #202227;
+      background: var(--trace-accent-soft);
+      color: var(--trace-accent);
       box-decoration-break: clone;
       -webkit-box-decoration-break: clone;
     }
 
     #playground .ai-output-mark.is-active {
-      background: #909aba;
+      background: var(--trace-accent-light);
       color: #fff;
     }
 
@@ -9693,7 +9696,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       left: calc(100% + 48px);
       width: 88px;
       height: 1px;
-      background: #aab2ce;
+      background: color-mix(in srgb, var(--trace-accent-light) 54%, transparent);
     }
 
     #playground .ai-output-anchor::before {
@@ -9703,8 +9706,106 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #8994b7;
+      background: var(--trace-accent-light);
       content: "";
+    }
+
+    /* Restored from the previous trace walkthrough: green shell, pixel sweep,
+       staggered hierarchy, and report-highlight entrances. */
+    #playground .trace-pixel-reveal {
+      position: absolute;
+      z-index: 7;
+      inset: 0;
+      display: block;
+      opacity: 0;
+      background-image:
+        radial-gradient(circle, var(--trace-accent-light) 0 1px, transparent 1.4px),
+        radial-gradient(circle, var(--trace-accent) 0 .75px, transparent 1.15px);
+      background-position: 0 0, 3px 3px;
+      background-size: 6px 6px;
+      mask-image: linear-gradient(180deg, transparent 0%, #000 30%, #000 66%, transparent 100%);
+      pointer-events: none;
+      transform: translate3d(0, -28%, 0);
+      will-change: transform, opacity;
+    }
+
+    #playground .trace-source-card > .trace-pixel-reveal {
+      clip-path: polygon(0 0, 33.63% 0, 36.58% 5.54%, 100% 5.54%, 100% 100%, 0 100%);
+    }
+
+    #playground [data-motion-active="true"] > .trace-pixel-reveal {
+      animation: trace-green-pixel-sweep 800ms cubic-bezier(.23, 1, .32, 1) var(--trace-motion-delay, 0ms) both;
+    }
+
+    #playground .trace-source-card[data-motion-active="true"]::before,
+    #playground .trace-source-card[data-motion-active="true"]::after,
+    #playground .trace-summary-card[data-motion-active="true"]::before {
+      animation: trace-source-shell-enter 880ms linear var(--trace-motion-delay, 0ms) both;
+    }
+
+    #playground .trace-source-card[data-motion-active="true"] > .trace-card-content,
+    #playground .trace-summary-card[data-motion-active="true"] > .trace-card-content,
+    #playground .ai-output-report[data-motion-active="true"] > .ai-output-label,
+    #playground .ai-output-report[data-motion-active="true"] > .ai-output-stack {
+      animation: trace-green-content-enter 260ms cubic-bezier(.23, 1, .32, 1) var(--trace-motion-delay, 0ms) both;
+    }
+
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-topic,
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-node {
+      animation: trace-hierarchy-item-enter 220ms cubic-bezier(.23, 1, .32, 1) both;
+    }
+
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-topic { animation-delay: 120ms; }
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-node:nth-child(1) { animation-delay: 190ms; }
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-node:nth-child(2) { animation-delay: 260ms; }
+    #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-node:nth-child(3) { animation-delay: 330ms; }
+
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-sheet.is-back-one,
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-sheet.is-back-two {
+      animation: trace-output-sheet-enter 220ms cubic-bezier(.23, 1, .32, 1) both;
+    }
+
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-sheet.is-back-one { animation-delay: 70ms; }
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-sheet.is-back-two { animation-delay: 140ms; }
+
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-mark {
+      animation: trace-output-mark-enter 260ms ease-out both;
+    }
+
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-mark:nth-of-type(1) { animation-delay: 180ms; }
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-mark:nth-of-type(2) { animation-delay: 250ms; }
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-mark:nth-of-type(3) { animation-delay: 320ms; }
+    #playground .ai-output-report[data-motion-active="true"] .ai-output-mark:nth-of-type(4) { animation-delay: 390ms; }
+
+    @keyframes trace-source-shell-enter {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes trace-green-content-enter {
+      from { opacity: 0; clip-path: inset(100% 0 0); }
+      to { opacity: 1; clip-path: inset(0); }
+    }
+
+    @keyframes trace-green-pixel-sweep {
+      0% { opacity: 0; transform: translate3d(0, -28%, 0); }
+      16% { opacity: .78; }
+      82% { opacity: .72; }
+      100% { opacity: 0; transform: translate3d(0, 108%, 0); }
+    }
+
+    @keyframes trace-hierarchy-item-enter {
+      from { opacity: 0; transform: translate3d(0, 8px, 0); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes trace-output-sheet-enter {
+      from { opacity: 0; transform: translate3d(-18px, -12px, 0); }
+      to { opacity: 1; transform: none; }
+    }
+
+    @keyframes trace-output-mark-enter {
+      from { background: transparent; color: inherit; }
     }
 
     @media (hover: hover) and (pointer: fine) {
@@ -9998,6 +10099,7 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       #playground .product-stage-track { transition: none; }
       #playground .document-map.reveal { opacity: 1; transform: none; transition: none; }
       #playground .document-map-content { animation: none; }
+      #playground .trace-pixel-reveal { display: none; }
       #playground .section-page img { transition: none; }
       #playground .map-flow-stroke { clip-path: none !important; animation: none !important; }
       #playground .document-node,
@@ -10568,6 +10670,56 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
   /* The page-style workbench is a desktop-only authoring tool. */
   .dialkit-root {
     display: none !important;
+  }
+
+  #playground .document-map {
+    --trace-accent: #1e5fc2;
+    --trace-accent-light: #3d7ee8;
+    --trace-accent-soft: #eef0f5;
+  }
+
+  #playground .trace-hierarchy-node.is-active {
+    border-color: #3d7ee8;
+    background: #f4f8ff;
+  }
+
+  #playground .ai-output-label {
+    background: linear-gradient(#7d89ac, #7d89ac) left center / 7px 7px no-repeat;
+  }
+
+  #playground .ai-output-mark {
+    background: #eef0f5;
+    color: #202227;
+  }
+
+  #playground .ai-output-mark.is-active {
+    background: #909aba;
+    color: #fff;
+  }
+
+  #playground .ai-output-anchor {
+    background: #aab2ce;
+  }
+
+  #playground .ai-output-anchor::before {
+    background: #8994b7;
+  }
+
+  #playground .trace-pixel-reveal {
+    display: none;
+  }
+
+  #playground .trace-source-card[data-motion-active="true"]::before,
+  #playground .trace-source-card[data-motion-active="true"]::after,
+  #playground .trace-summary-card[data-motion-active="true"]::before,
+  #playground [data-motion-active="true"] > .trace-card-content,
+  #playground .ai-output-report[data-motion-active="true"] > .ai-output-label,
+  #playground .ai-output-report[data-motion-active="true"] > .ai-output-stack,
+  #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-topic,
+  #playground .trace-summary-card[data-motion-active="true"] .trace-hierarchy-node,
+  #playground .ai-output-report[data-motion-active="true"] .ai-output-sheet,
+  #playground .ai-output-report[data-motion-active="true"] .ai-output-mark {
+    animation: none !important;
   }
 }
 
