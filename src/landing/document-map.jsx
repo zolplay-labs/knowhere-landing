@@ -297,6 +297,33 @@ function SectionPageContent({ page }) {
   )
 }
 
+function RichDocumentPage({ section, pageIndex }) {
+  const page = section.pages[pageIndex] ?? section.pages[0]
+  const media = getPageMedia(page)
+
+  return (
+    <article className="source-document-page">
+      <header className="source-document-page-head">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 2.75h8.5L19 7.25v14H6z" />
+          <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
+        </svg>
+        <span>SECTION {pageIndex + 1}</span>
+      </header>
+      <strong>{section.name}</strong>
+      <p>{performanceCopy[pageIndex % performanceCopy.length]}</p>
+      {media ? (
+        <figure>
+          <img src={page.image} alt={media.alt} />
+          <figcaption>PAGE {page.number} · {media.caption}</figcaption>
+        </figure>
+      ) : (
+        <p className="source-document-page-reference">PAGE {page.number}</p>
+      )}
+    </article>
+  )
+}
+
 function useMobileProductLayout() {
   const [isMobile, setIsMobile] = useState(() => (
     typeof window !== 'undefined' && window.matchMedia(MOBILE_PRODUCT_QUERY).matches
@@ -585,7 +612,7 @@ function SourcePreviewContent({ source }) {
   )
 }
 
-function AISummaryCard({ activeThemeId, opacity = 1, translateY = 0, onOpenTrace }) {
+function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0 }) {
   const summary = themeSummaries[activeThemeId] ?? themeSummaries.growth
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -639,6 +666,41 @@ function AISummaryCard({ activeThemeId, opacity = 1, translateY = 0, onOpenTrace
   )
 }
 
+function AISummaryDocument({ activeThemeId, opacity = 1, translateY = 0 }) {
+  const summary = themeSummaries[activeThemeId] ?? themeSummaries.growth
+  const reducedMotion = typeof window !== 'undefined'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  return (
+    <article
+      className="ai-summary-document"
+      data-ai-summary-document
+      style={{
+        opacity,
+        transform: `translateY(${translateY}px)`,
+        transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+      }}
+    >
+      <header>
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 2.75h8.5L19 7.25v14H6z" />
+          <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
+        </svg>
+        <span>AI summary</span>
+      </header>
+      <strong>{summary.topic}</strong>
+      <ul>
+        {summary.hierarchy.map(item => (
+          <li key={item.source}>
+            <span>{item.source}</span>
+            <small>{item.location}</small>
+          </li>
+        ))}
+      </ul>
+    </article>
+  )
+}
+
 function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgress = 1 }) {
   const isMobile = useMobileProductLayout()
   const interactive = typeof onOpenTrace === 'function'
@@ -669,30 +731,33 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Animation Stage metrics calculated from scrollProgress (0 to 1)
   const p = reducedMotion ? 1 : scrollProgress
 
-  // Stage 1: Initial & Zoom (0.00 -> 0.16)
-  const pStage1 = clamp(p / 0.16)
+  // Stage 1: the intact rich-text documents remain fully readable on entry.
+  const pStage1 = clamp((p - 0.12) / 0.12)
   const docScale = 1.15 - 0.15 * pStage1
+  const pIntactDocumentsOut = clamp((p - 0.24) / 0.10)
 
-  // Stage 2: Branch lines & Section document entrance (0.14 -> 0.36)
-  const pBranchLine = clamp((p - 0.14) / 0.14)
-  const pSectionCards = clamp((p - 0.22) / 0.14)
+  // Stage 2: extraction begins only after the intact-document hold.
+  const pBranchLine = clamp((p - 0.30) / 0.12)
+  const pSectionCards = clamp((p - 0.32) / 0.12)
 
-  // Stage 3: Cross-document relationship (0.34 -> 0.50)
-  const pCrossLine = clamp((p - 0.34) / 0.12)
-  const pCrossBadge = clamp((p - 0.40) / 0.10)
+  // Stage 3: Cross-document relationship (0.42 -> 0.56)
+  const pCrossLine = clamp((p - 0.42) / 0.10)
+  const pCrossBadge = clamp((p - 0.47) / 0.09)
 
-  // Stage 4: Flow to Source Documents (0.48 -> 0.70)
-  const pSecToSourceLine = clamp((p - 0.48) / 0.12)
-  const pSourceCards = clamp((p - 0.56) / 0.14)
+  // Stage 4: Flow to extracted source regions (0.54 -> 0.72)
+  const pSecToSourceLine = clamp((p - 0.54) / 0.10)
+  const pSourceCards = clamp((p - 0.60) / 0.12)
 
-  // Camera shift Y (pan viewport upward to bring Stages 4 and 5 into view) (0.50 -> 0.86)
-  const pCamera = clamp((p - 0.50) / 0.36)
+  // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
+  const pCamera = clamp((p - 0.48) / 0.48)
   const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
-  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 350
+  const cameraShiftY = (reducedMotion || isMobile) ? 0 : cameraEase * 640
 
-  // Stage 5: Convergence & AI Summary (0.68 -> 0.88)
-  const pConvergenceLine = clamp((p - 0.68) / 0.12)
-  const pSummaryCard = clamp((p - 0.76) / 0.12)
+  // Stage 5: source regions converge into hierarchy, then connect to AI summary.
+  const pConvergenceLine = clamp((p - 0.70) / 0.08)
+  const pHierarchyCard = clamp((p - 0.75) / 0.09)
+  const pSummaryConnection = clamp((p - 0.84) / 0.06)
+  const pSummaryDocument = clamp((p - 0.89) / 0.08)
 
   return (
     <section className="document-map reveal" aria-labelledby="document-map-title" inert={inactive ? '' : undefined}>
@@ -708,12 +773,37 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
             }}
           >
-            
+            <div
+              className="source-document-groups"
+              data-document-count={activeTheme.documents.length}
+              data-intact-documents
+              style={{
+                opacity: 1 - pIntactDocumentsOut,
+                transform: `translate(-50%, -${pIntactDocumentsOut * 12}px)`,
+                pointerEvents: pIntactDocumentsOut < 0.5 ? 'auto' : 'none',
+              }}
+            >
+              {activeTheme.documents.map((document, documentIndex) => (
+                <section className="source-document-group" key={document.name}>
+                  <header className="source-document-group-title">
+                    <span>DOCUMENT {documentIndex + 1}</span>
+                    <strong>{document.name}</strong>
+                  </header>
+                  <div className="source-document-pages">
+                    {document.sections.map((section, sectionIndex) => (
+                      <RichDocumentPage section={section} pageIndex={sectionIndex} key={section.name} />
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+
             {/* STAGES 1, 2, 3: Documents, Branch Lines, Section Cards, Cross Link */}
             <div
               className="document-map-documents"
               data-document-count={activeTheme.documents.length}
               data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
+              style={{ opacity: pIntactDocumentsOut }}
             >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
@@ -870,12 +960,25 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
               documentCount={activeTheme.documents.length}
             />
 
-            {/* STAGE 5: AI Summary Result Card */}
-            <AISummaryCard
+            {/* STAGE 5: Cross-document hierarchy */}
+            <CrossDocumentHierarchyCard
               activeThemeId={activeTheme.id}
-              opacity={pSummaryCard}
-              translateY={(1 - pSummaryCard) * 14}
-              onOpenTrace={onOpenTrace}
+              opacity={pHierarchyCard}
+              translateY={(1 - pHierarchyCard) * 14}
+            />
+
+            <MapFlowSvg
+              className="hierarchy-summary-connection"
+              viewBox="0 0 10 48"
+              path="M5 0 V48"
+              dots={[[5, 0], [5, 48]]}
+              clipProgress={pSummaryConnection}
+            />
+
+            <AISummaryDocument
+              activeThemeId={activeTheme.id}
+              opacity={pSummaryDocument}
+              translateY={(1 - pSummaryDocument) * 14}
             />
 
           </div>
