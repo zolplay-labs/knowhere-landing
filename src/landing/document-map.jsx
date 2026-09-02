@@ -840,18 +840,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   // Animation Stage metrics calculated from scrollProgress (0 to 1)
   const p = reducedMotion ? 1 : scrollProgress
 
-  // Stage 1: the intact rich-text documents remain fully readable on entry.
-  const pStage1 = clamp((p - 0.12) / 0.12)
-  const docScale = 0.91 + 0.09 * pStage1
-  const pSectionCardsIn = (reducedMotion || !isDesktop) ? 1 : clamp((p - 0.06) / 0.10)
-
   // Stage 2: extraction begins only after the intact-document hold.
   const pSecToSourceLine = clamp((p - 0.28) / 0.08)
   const pSourceCards = clamp((p - 0.34) / 0.10)
-
-  // Stage 3: the related sections connect before their source regions are extracted.
-  const pCrossLine = clamp((p - 0.20) / 0.10)
-  const pCrossBadge = clamp((p - 0.24) / 0.08)
 
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
@@ -889,30 +880,19 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   className={`document-branch${selectedName === document.name ? ' is-selected' : ''}`}
                   key={document.name}
                 >
-                  <header
-                    className="document-node"
-                    style={{
-                      transform: `scale(${docScale})`,
-                      transformOrigin: 'bottom center',
-                      transition: reducedMotion ? 'none' : 'transform 0.1s ease-out',
-                    }}
-                  >
+                  <header className="document-node">
                     <span>DOCUMENT {documentIndex + 1}</span>
                     <strong>{document.name}</strong>
                   </header>
                   <DocumentBranchLine
                     sectionCount={document.sections.length}
-                    clipProgress={(reducedMotion || !isDesktop) ? 1 : pSecToSourceLine}
+                    clipProgress={1}
                   />
                   <div
                     className="document-sections"
                     data-section-count={document.sections.length}
                     style={{
                       '--section-count': document.sections.length,
-                      opacity: pSectionCardsIn,
-                      transform: 'none',
-                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out',
-                      pointerEvents: pSectionCardsIn > 0.5 ? 'auto' : 'none',
                     }}
                   >
                     {document.sections.map((section, sectionIndex) => {
@@ -959,24 +939,15 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                 <div
                   className="cross-document-link"
                   aria-label="Cross-document relationship"
-                  style={{
-                    opacity: pCrossLine > 0.05 ? 1 : 0,
-                  }}
                 >
                   <MapFlowSvg
                     className="cross-document-link-rail"
                     viewBox="0 0 101 20"
                     path="M0 10 H101 M0.5 0 V20 M100.5 0 V20"
-                    clipProgress={pCrossLine}
+                    clipProgress={1}
                     direction="horizontal"
                   />
-                  <span
-                    style={{
-                      opacity: pCrossBadge,
-                      transform: `translate(-50%, -50%) scale(${0.9 + 0.1 * pCrossBadge})`,
-                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
-                    }}
-                  >
+                  <span>
                     Cross-document relationship
                   </span>
                 </div>
