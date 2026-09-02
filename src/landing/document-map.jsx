@@ -791,8 +791,8 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                     style={{
                       '--section-count': document.sections.length,
                       opacity: pSectionCardsIn,
-                      transform: `translateY(${(1 - pSectionCardsIn) * 10}px)`,
-                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
+                      transform: 'none',
+                      transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out',
                       pointerEvents: pSectionCardsIn > 0.5 ? 'auto' : 'none',
                     }}
                   >
