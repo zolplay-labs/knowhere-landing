@@ -13103,6 +13103,15 @@ html[data-theme="dark"] .landing-page .footer .footer-wordmark {
   }
 }
 
+#playground .mobile-narrative-stage,
+#playground .mobile-summary-sequence-item {
+  display: contents;
+}
+
+#playground .mobile-sequence-connector {
+  display: none;
+}
+
 @media (max-width: 767px) {
   html[data-theme="dark"] .site-header,
   html[data-theme="dark"] .site-header.scrolled,
@@ -13153,21 +13162,191 @@ html[data-theme="dark"] .landing-page .footer .footer-wordmark {
     display: block;
   }
 
-  /* Let each document heading leave with its branch instead of covering its cards. */
-  #playground .document-map {
-    --mobile-section-gap: min(240px, 28svh);
+  /* A swipe advances one complete narrative region and its outgoing connector. */
+  #playground .mobile-narrative-stage.is-mobile-sequence {
+    --mobile-sequence-card-height: min(280px, 30svh);
+    --mobile-sequence-content-bottom: calc(118px + var(--mobile-sequence-card-height));
+    --mobile-section-stack-step: 12px;
+    position: relative;
+    display: block;
+    width: 100%;
+    height: calc(var(--mobile-sequence-content-bottom) + 48px);
+    min-height: 0;
+    overflow: hidden;
+    isolation: isolate;
   }
 
-  #playground .document-node {
+  #playground .document-map-hierarchy {
+    touch-action: pan-y;
+    overscroll-behavior-x: none;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-map-documents,
+  #playground .mobile-narrative-stage.is-mobile-sequence .source-sections {
+    display: contents !important;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-map-documents::after,
+  #playground .mobile-narrative-stage.is-mobile-sequence .source-sections::after {
+    content: none;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-branch,
+  #playground .mobile-narrative-stage.is-mobile-sequence .trace-source-card,
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-summary-sequence-item {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    margin: 0 !important;
+    opacity: 0 !important;
+    overflow: visible;
+    pointer-events: none !important;
+    transform: translateY(80px) !important;
+    transition:
+      opacity 300ms cubic-bezier(.22, 1, .36, 1),
+      transform 300ms cubic-bezier(.22, 1, .36, 1) !important;
+    will-change: opacity, transform;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .is-mobile-active {
+    z-index: 2;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateY(0) !important;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .is-mobile-before {
+    transform: translateY(-80px) !important;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-branch {
+    top: 0;
+    display: flex;
+    height: var(--mobile-sequence-content-bottom);
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-node {
     position: relative;
     top: auto;
+    flex: 0 0 66px;
+    min-height: 66px;
+    background: var(--white);
+    transform: none;
+    transition: none;
   }
 
-  #playground .document-branch-line {
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-branch-line {
+    flex: 0 0 40px;
     height: 40px;
   }
 
-  #playground .stage-flow-row.is-section-to-source.mobile-source-connection {
-    height: clamp(104px, 14svh, 128px);
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-sections,
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-sections[data-section-count="2"] {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: calc(var(--mobile-sequence-card-height) + var(--mobile-section-stack-step));
+    overflow: visible;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .section-node {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--mobile-sequence-card-height);
+    max-height: var(--mobile-sequence-card-height);
+    margin: 0;
+    opacity: 1;
+    transform: none;
+    transition: none;
+    will-change: auto;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-sections .section-node:nth-child(2) {
+    top: var(--mobile-section-stack-step);
+    z-index: 5;
+    margin: 0;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .document-sections::after {
+    display: none;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .trace-source-card {
+    top: calc(var(--mobile-sequence-content-bottom) - 243px);
+    height: 243px;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-summary-sequence-item {
+    top: calc(var(--mobile-sequence-content-bottom) - 276px);
+    display: block;
+    height: 276px;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-summary-sequence-item .trace-summary-card {
+    position: relative;
+    width: 100%;
+    min-height: 276px;
+    margin: 0;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-sequence-connector {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    z-index: 6;
+    display: block;
+    width: 1px;
+    height: 48px;
+    background: repeating-linear-gradient(
+      to bottom,
+      var(--map-line) 0 5px,
+      transparent 5px 10px
+    );
+    clip-path: inset(0 0 100% 0);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-50%);
+    transition:
+      clip-path 120ms cubic-bezier(.22, 1, .36, 1) 180ms,
+      opacity 60ms linear 180ms;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-sequence-connector::before,
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-sequence-connector::after {
+    position: absolute;
+    left: 50%;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--map-line);
+    content: "";
+    transform: translateX(-50%);
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-sequence-connector::before { top: 0; }
+  #playground .mobile-narrative-stage.is-mobile-sequence .mobile-sequence-connector::after { bottom: 0; }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence .is-mobile-active > .mobile-sequence-connector {
+    clip-path: inset(0);
+    opacity: 1;
+  }
+
+  #playground .mobile-narrative-stage.is-mobile-sequence > .stage-flow-row,
+  #playground .mobile-narrative-stage.is-mobile-sequence > .stage-convergence-row,
+  #playground .mobile-narrative-stage.is-mobile-sequence > .hierarchy-summary-connection,
+  #playground .mobile-narrative-stage.is-mobile-sequence .cross-document-link {
+    display: none !important;
+  }
+
+  #playground .document-map[data-mobile-sequence-complete="false"] .ai-output-report {
+    visibility: hidden;
+    opacity: 0 !important;
+    pointer-events: none;
   }
 }

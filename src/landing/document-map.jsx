@@ -886,20 +886,184 @@ function DocumentMap({
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const interactive = typeof onOpenTrace === 'function'
   const [selectedName, setSelectedName] = useState(null)
+  const [mobileSequenceIndex, setMobileSequenceIndex] = useState(0)
   const openTimer = useRef(0)
+  const mobileMapRef = useRef(null)
+  const mobileSequenceIndexRef = useRef(0)
   const activeTheme = themes.find(theme => theme.id === activeThemeId) ?? themes[0]
   const currentSources = themeSourcesMap[activeTheme.id] ?? themeSourcesMap.growth
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const showCrossDocumentLink = activeTheme.documents.length === 2
     && activeTheme.documents[0].sections.length >= 2
+  const mobileSequenceItemCount = activeTheme.documents.length + currentSources.length + 1
+  const mobileSequenceEnabled = isMobile && !reducedMotion && mobileSequenceItemCount > 1
 
   useEffect(() => () => window.clearTimeout(openTimer.current), [])
 
   useEffect(() => {
     window.clearTimeout(openTimer.current)
     setSelectedName(null)
+    mobileSequenceIndexRef.current = 0
+    setMobileSequenceIndex(0)
   }, [activeThemeId])
+
+  useEffect(() => {
+    const root = mobileMapRef.current
+    const stage = root?.querySelector('.mobile-narrative-stage')
+    if (!root || !stage || !mobileSequenceEnabled) return undefined
+
+    let animationTimer = 0
+    let wheelGestureTimer = 0
+    let wheelGestureActive = false
+    let wheelGestureEligible = false
+    let wheelGestureResolved = false
+    let wheelGestureConsumed = false
+    let touchStartY = null
+    let touchGestureEligible = false
+    let touchGestureResolved = false
+    let touchGestureConsumed = false
+    let animationLocked = false
+
+    const isStageActive = () => {
+      const rect = stage.getBoundingClientRect()
+      const activationTop = Math.min(96, window.innerHeight * 0.12)
+      return rect.top <= activationTop && rect.bottom >= window.innerHeight * 0.42
+    }
+
+    const canAdvance = direction => (
+      direction > 0
+        ? mobileSequenceIndexRef.current < mobileSequenceItemCount - 1
+        : mobileSequenceIndexRef.current > 0
+    )
+
+    const advance = direction => {
+      if (animationLocked || !canAdvance(direction)) return
+      const nextIndex = clamp(
+        mobileSequenceIndexRef.current + direction,
+        0,
+        mobileSequenceItemCount - 1,
+      )
+      mobileSequenceIndexRef.current = nextIndex
+      setMobileSequenceIndex(nextIndex)
+      animationLocked = true
+      window.clearTimeout(animationTimer)
+      animationTimer = window.setTimeout(() => {
+        animationLocked = false
+      }, 320)
+    }
+
+    const onWheel = event => {
+      if (Math.abs(event.deltaY) < 0.5) return
+
+      if (!wheelGestureActive) {
+        wheelGestureActive = true
+        wheelGestureEligible = isStageActive()
+        wheelGestureResolved = false
+        wheelGestureConsumed = false
+      }
+
+      window.clearTimeout(wheelGestureTimer)
+      wheelGestureTimer = window.setTimeout(() => {
+        wheelGestureActive = false
+        wheelGestureEligible = false
+        wheelGestureResolved = false
+        wheelGestureConsumed = false
+      }, 160)
+
+      if (wheelGestureResolved) {
+        if (wheelGestureConsumed) event.preventDefault()
+        return
+      }
+
+      const direction = event.deltaY > 0 ? 1 : -1
+      const shouldConsume = wheelGestureEligible && canAdvance(direction)
+      if (shouldConsume) event.preventDefault()
+      if (Math.abs(event.deltaY) < 8) return
+
+      wheelGestureResolved = true
+      if (!wheelGestureEligible) return
+
+      if (animationLocked) {
+        wheelGestureConsumed = true
+        event.preventDefault()
+        return
+      }
+
+      if (!canAdvance(direction)) return
+
+      wheelGestureConsumed = true
+      advance(direction)
+    }
+
+    const onTouchStart = event => {
+      touchStartY = event.touches[0]?.clientY ?? null
+      touchGestureEligible = isStageActive()
+      touchGestureResolved = false
+      touchGestureConsumed = false
+    }
+
+    const onTouchMove = event => {
+      if (touchStartY === null) return
+      const currentY = event.touches[0]?.clientY
+      if (typeof currentY !== 'number') return
+
+      if (touchGestureResolved) {
+        if (touchGestureConsumed) event.preventDefault()
+        return
+      }
+
+      const delta = touchStartY - currentY
+      if (Math.abs(delta) < 0.5) return
+      const direction = delta > 0 ? 1 : -1
+      const shouldConsume = touchGestureEligible && canAdvance(direction)
+      if (shouldConsume) event.preventDefault()
+      if (Math.abs(delta) < 24) return
+      touchGestureResolved = true
+      if (!touchGestureEligible) return
+
+      if (animationLocked) {
+        touchGestureConsumed = true
+        event.preventDefault()
+        return
+      }
+
+      if (!canAdvance(direction)) return
+
+      touchGestureConsumed = true
+      advance(direction)
+    }
+
+    const onTouchEnd = () => {
+      touchStartY = null
+      touchGestureEligible = false
+      touchGestureResolved = false
+      touchGestureConsumed = false
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: false })
+    window.addEventListener('touchstart', onTouchStart, { passive: true })
+    window.addEventListener('touchmove', onTouchMove, { passive: false })
+    window.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      window.removeEventListener('wheel', onWheel)
+      window.removeEventListener('touchstart', onTouchStart)
+      window.removeEventListener('touchmove', onTouchMove)
+      window.removeEventListener('touchend', onTouchEnd)
+      window.clearTimeout(animationTimer)
+      window.clearTimeout(wheelGestureTimer)
+    }
+  }, [activeThemeId, mobileSequenceEnabled, mobileSequenceItemCount])
+
+  const getMobileSequenceClass = itemIndex => {
+    if (!mobileSequenceEnabled) return ''
+    if (itemIndex === mobileSequenceIndex) return ' is-mobile-active'
+    return itemIndex < mobileSequenceIndex ? ' is-mobile-before' : ' is-mobile-after'
+  }
+
+  const isMobileSequenceItemHidden = itemIndex => (
+    mobileSequenceEnabled && itemIndex !== mobileSequenceIndex
+  )
 
   const openTrace = document => {
     if (!interactive) return
@@ -909,8 +1073,8 @@ function DocumentMap({
     openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
   }
 
-  // Every visual state is derived from the same scroll progress so scrolling back
-  // naturally reverses the sequence without a second animation state machine.
+  // Desktop narrative stages remain scroll-linked; mobile document switching uses
+  // the discrete gesture state above.
   const p = reducedMotion ? 1 : scrollProgress
   const progressBetween = (start, end) => clamp((p - start) / (end - start))
   const smoothProgressBetween = (start, end) => {
@@ -949,6 +1113,11 @@ function DocumentMap({
   return (
     <section
       className="document-map reveal"
+      ref={mobileMapRef}
+      data-mobile-sequence-index={mobileSequenceEnabled ? mobileSequenceIndex : undefined}
+      data-mobile-sequence-complete={mobileSequenceEnabled
+        ? mobileSequenceIndex === mobileSequenceItemCount - 1 ? 'true' : 'false'
+        : undefined}
       data-product-stage-index={activeStageIndex}
       style={{ '--document-outline-clip': `${(1 - pDocumentOutline) * 100}%` }}
       aria-labelledby="document-map-title"
@@ -966,16 +1135,19 @@ function DocumentMap({
               transition: 'none',
             }}
           >
-            {/* STAGE 1: Full-height source documents */}
-            <div
-              className="document-map-documents"
-              data-document-count={activeTheme.documents.length}
-              data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
-            >
+            <div className={`mobile-narrative-stage${mobileSequenceEnabled ? ' is-mobile-sequence' : ''}`}>
+              {/* STAGE 1: Full-height source documents */}
+              <div
+                className="document-map-documents"
+                data-document-count={activeTheme.documents.length}
+                data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
+              >
               {activeTheme.documents.map((document, documentIndex) => (
                 <article
-                  className={`document-branch${selectedName === document.name ? ' is-selected' : ''}`}
+                  className={`document-branch${selectedName === document.name ? ' is-selected' : ''}${getMobileSequenceClass(documentIndex)}`}
                   key={document.name}
+                  aria-hidden={isMobileSequenceItemHidden(documentIndex) ? 'true' : undefined}
+                  inert={isMobileSequenceItemHidden(documentIndex) ? '' : undefined}
                 >
                   <header className="document-node">
                     <span>DOCUMENT {documentIndex + 1}</span>
@@ -1030,6 +1202,7 @@ function DocumentMap({
                       )
                     })}
                   </div>
+                  <span className="mobile-sequence-connector" aria-hidden="true" />
                 </article>
               ))}
               {showCrossDocumentLink && (
@@ -1049,42 +1222,45 @@ function DocumentMap({
                   </span>
                 </div>
               )}
-            </div>
+              </div>
 
-            {/* STAGE 2: Extraction lines from the source documents */}
-            <SectionToSourceLines
-              clipProgress={pSecToSourceLine}
-              opacity={1}
-              sourceCount={currentSources.length}
-              documentCount={activeTheme.documents.length}
-              className={isMobile ? 'mobile-source-connection' : ''}
-              mobileReveal={isMobile}
-              revealKey={activeTheme.id}
-            />
+              {/* STAGE 2: Extraction lines from the source documents */}
+              <SectionToSourceLines
+                clipProgress={pSecToSourceLine}
+                opacity={1}
+                sourceCount={currentSources.length}
+                documentCount={activeTheme.documents.length}
+                className={isMobile ? 'mobile-source-connection' : ''}
+                mobileReveal={isMobile}
+                revealKey={activeTheme.id}
+              />
 
-            {/* STAGES 2–4: Extracted source-region cards and relationship */}
-            <div
-              className="source-sections"
-              data-source-count={currentSources.length}
-              data-document-count={activeTheme.documents.length}
-              style={{
-                opacity: pSourceCards,
-                transform: `translateY(${(1 - pSourceCards) * 18}px)`,
-                transition: 'none',
-                pointerEvents: pSourceCards > 0.5 ? 'auto' : 'none',
-              }}
-            >
+              {/* STAGES 2–4: Extracted source-region cards and relationship */}
+              <div
+                className="source-sections"
+                data-source-count={currentSources.length}
+                data-document-count={activeTheme.documents.length}
+                style={{
+                  opacity: pSourceCards,
+                  transform: `translateY(${(1 - pSourceCards) * 18}px)`,
+                  transition: 'none',
+                  pointerEvents: pSourceCards > 0.5 ? 'auto' : 'none',
+                }}
+              >
               {currentSources.map((source, index) => {
                 const isPrimary = index === 0
                 const slot = isPrimary ? 'primary' : index === 1 ? 'secondary-one' : 'secondary-two'
+                const sequenceIndex = activeTheme.documents.length + index
                 return (
                   <figure
-                    className="trace-source-card"
+                    className={`trace-source-card${getMobileSequenceClass(sequenceIndex)}`}
                     key={source.id}
                     data-source-slot={slot}
                     data-region={source.type}
                     data-motion-active={pSourceCards > 0.05 ? 'true' : undefined}
                     style={{ '--trace-motion-delay': `${index * 70}ms` }}
+                    aria-hidden={isMobileSequenceItemHidden(sequenceIndex) ? 'true' : undefined}
+                    inert={isMobileSequenceItemHidden(sequenceIndex) ? '' : undefined}
                   >
                     <div className="trace-card-content">
                       <figcaption>
@@ -1109,32 +1285,41 @@ function DocumentMap({
                       active={pSourceCards > 0.05}
                       delay={index * 70}
                     />
+                    <span className="mobile-sequence-connector" aria-hidden="true" />
                   </figure>
                 )
               })}
+              </div>
+
+              {/* STAGE 3: 3-to-1 convergence and cross-document hierarchy */}
+              <ConvergenceLine
+                clipProgress={pConvergenceLine}
+                sourceCount={currentSources.length}
+                documentCount={activeTheme.documents.length}
+              />
+
+              <div
+                className={`mobile-summary-sequence-item${getMobileSequenceClass(mobileSequenceItemCount - 1)}`}
+                aria-hidden={isMobileSequenceItemHidden(mobileSequenceItemCount - 1) ? 'true' : undefined}
+                inert={isMobileSequenceItemHidden(mobileSequenceItemCount - 1) ? '' : undefined}
+              >
+                <CrossDocumentHierarchyCard
+                  activeThemeId={activeTheme.id}
+                  opacity={pHierarchyCard}
+                  translateY={(1 - pHierarchyCard) * 18}
+                  motionActive={pHierarchyCard > 0.05}
+                />
+                <span className="mobile-sequence-connector" aria-hidden="true" />
+              </div>
+
+              <MapFlowSvg
+                className="hierarchy-summary-connection"
+                viewBox={`0 0 10 ${48 + CONNECTION_LINE_EXTENSION}`}
+                path={`M5 0 V${48 + CONNECTION_LINE_EXTENSION}`}
+                dots={[[5, 0], [5, 48 + CONNECTION_LINE_EXTENSION]]}
+                clipProgress={pSummaryConnection}
+              />
             </div>
-
-            {/* STAGE 3: 3-to-1 convergence and cross-document hierarchy */}
-            <ConvergenceLine
-              clipProgress={pConvergenceLine}
-              sourceCount={currentSources.length}
-              documentCount={activeTheme.documents.length}
-            />
-
-            <CrossDocumentHierarchyCard
-              activeThemeId={activeTheme.id}
-              opacity={pHierarchyCard}
-              translateY={(1 - pHierarchyCard) * 18}
-              motionActive={pHierarchyCard > 0.05}
-            />
-
-            <MapFlowSvg
-              className="hierarchy-summary-connection"
-              viewBox={`0 0 10 ${48 + CONNECTION_LINE_EXTENSION}`}
-              path={`M5 0 V${48 + CONNECTION_LINE_EXTENSION}`}
-              dots={[[5, 0], [5, 48 + CONNECTION_LINE_EXTENSION]]}
-              clipProgress={pSummaryConnection}
-            />
 
             <AIOutputReport
               documentCount={activeTheme.documents.length}
