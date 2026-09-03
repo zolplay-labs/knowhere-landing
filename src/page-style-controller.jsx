@@ -540,7 +540,6 @@ function applySettings(targetDocument, settings) {
 }
 
 export function PageStyleControls() {
-  const defaultOpen = !matchMedia('(max-width: 767px)').matches
   const [colorTheme, setColorTheme] = useState(() => document.documentElement.dataset.theme || 'light')
   const [vortexCopyTarget, setVortexCopyTarget] = useState(null)
   const [copyState, setCopyState] = useState('idle')
@@ -960,7 +959,7 @@ export function PageStyleControls() {
   return (
     <>
       <style>{`:root{${paletteStyles(initialPalette)};${colorTokenStyles()};--page-primary:${initialMainColor};--page-primary-foreground:${readableForeground(initialMainColor)};--accent:${initialMainColor};--figma-primary:${initialPalette[600]}}${CONTROLLER_LAYOUT_STYLES}`}</style>
-      <DialRoot position="top-right" defaultOpen={defaultOpen} theme={colorTheme} />
+      <DialRoot position="top-right" defaultOpen={false} theme={colorTheme} />
       {vortexCopyTarget && createPortal(
         <div className="hero-vortex-action-buttons">
           <button
