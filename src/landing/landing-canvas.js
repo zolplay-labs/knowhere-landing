@@ -1583,6 +1583,7 @@ function initializeFormatGlobe(root, cleanups) {
     canvas.dataset.formatGlobeOwned = 'true';
 
     const context = canvas.getContext('2d');
+    const layout = stage.closest('.format-orbit-layout');
     const currentColor = (property, fallback) => getComputedStyle(document.documentElement)
       .getPropertyValue(property).trim() || fallback;
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1641,7 +1642,7 @@ function initializeFormatGlobe(root, cleanups) {
     const controller = new AbortController();
     const { signal } = controller;
     let active = true;
-    const introRingDuration = 1200;
+    const introRingDuration = 800;
     const introRingStagger = 140;
     const autoLabelInterval = 10000;
     const labelFadeDuration = 800;
@@ -1650,6 +1651,8 @@ function initializeFormatGlobe(root, cleanups) {
     let labelTransitionStartedAt = 0;
     let previousHoveredParticleIndex = null;
     let autoLabelTimer = 0;
+
+    if (reducedMotion) layout?.classList.add('is-format-intro-visible');
 
     function nextLabelIndex(currentIndex) {
       return (currentIndex + 1) % particles.length;
@@ -2049,7 +2052,10 @@ function initializeFormatGlobe(root, cleanups) {
     resizeObserver.observe(stage);
     const intersectionObserver = new IntersectionObserver(entries => {
       const nextVisible = entries[0].isIntersecting;
-      if (nextVisible && introStartedAt === null) introStartedAt = animationElapsed;
+      if (nextVisible && introStartedAt === null) {
+        introStartedAt = animationElapsed;
+        layout?.classList.add('is-format-intro-visible');
+      }
       if (nextVisible && !visible) {
         visible = true;
         scheduleAutoLabel();
@@ -2088,5 +2094,6 @@ function initializeFormatGlobe(root, cleanups) {
       delete stage.dataset.activeFormatLabel;
       delete stage.dataset.activeFormatColor;
       stage.style.removeProperty('cursor');
+      layout?.classList.remove('is-format-intro-visible');
     });
   }

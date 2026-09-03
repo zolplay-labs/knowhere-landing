@@ -3,7 +3,7 @@
 
   const SELECTOR = 'canvas[data-animation="catenoid-field"]';
   const TAU = Math.PI * 2;
-  const PATH_REVEAL_MS = 1200;
+  const PATH_REVEAL_MS = 800;
   const PATH_STAGGER_MS = 40;
   const RING_CYCLE_MS = 5600;
   const RING_ORANGE_PROGRESS = 0.2;

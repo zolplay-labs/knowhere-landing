@@ -1,10 +1,28 @@
 import { useEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
-import { CTA_HELIX_FALLBACK, ConvergingHelixControls, ConvergingHelixEmbed, useConvergingHelixSettings } from './converging-helix-embed'
+import { CTA_HELIX_FALLBACK, ConvergingHelixEmbed, useConvergingHelixSettings } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 import { ProductStage } from './document-map'
+import ShinyText from './ShinyText'
+import { FlickeringGrid } from '@/registry/magicui/flickering-grid'
+
+function SectionShinyText({ text }) {
+  return (
+    <ShinyText
+      text={text}
+      speed={2}
+      delay={0}
+      color="currentColor"
+      shineColor="var(--figma-primary)"
+      spread={120}
+      direction="left"
+      yoyo={false}
+      pauseOnHover={false}
+    />
+  )
+}
 
 const structureTreeRows = [
   { label: 'Document map', level: 0, open: false },
@@ -165,7 +183,7 @@ function CapabilityProductPreview({ story }) {
 }
 
 function FinalCtaHelix() {
-  const { settings, paletteAccent, settingsSaved, setValue, setRotation, saveSettings, resetDefaults } = useConvergingHelixSettings(CTA_HELIX_FALLBACK)
+  const { settings } = useConvergingHelixSettings(CTA_HELIX_FALLBACK)
   const accentColor = settings.accentColor ?? 'var(--mineral-green-300)'
   const embedProps = { ...settings, accentColor }
 
@@ -175,15 +193,6 @@ function FinalCtaHelix() {
         <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--left" />
         <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--right" mirror />
       </div>
-      <ConvergingHelixControls
-        settings={settings}
-        paletteAccent={paletteAccent}
-        settingsSaved={settingsSaved}
-        onSetValue={setValue}
-        onSetRotation={setRotation}
-        onSave={saveSettings}
-        onReset={resetDefaults}
-      />
     </>
   )
 }
@@ -281,7 +290,7 @@ export function LandingPage() {
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <ProductStage heading={(
-        <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="playground-title">From complex documents to agent-ready context.</h2><p>Turn PDFs, spreadsheets, presentations, and scans into structured, navigable data without losing layouts, visual regions, or source links.</p></div>
+        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PRODUCT DEMO ]" /></p><h2 id="playground-title"><SectionShinyText text="See how Knowhere turns documents into structured, traceable context." /></h2><p>Explore how Knowhere preserves layouts, visual regions, and source links across PDFs, spreadsheets, presentations, and scans.</p></div>
       )} />
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">
@@ -311,7 +320,7 @@ export function LandingPage() {
     <div className="capabilities-scroll-track">
       <section className="section shell narrative reveal" id="capabilities" aria-labelledby="capabilities-title">
         <div className="capabilities-sticky">
-          <div className="section-heading"><p className="section-no">[ PROCESS ]</p><h2 id="capabilities-title">A document pipeline that keeps context connected.</h2></div>
+          <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PROCESS ]" /></p><h2 id="capabilities-title"><SectionShinyText text="A document pipeline that keeps context connected." /></h2><p>From ingestion to structured output, every step keeps the document connected to its original source.</p></div>
           <div className="narrative-grid">
             <div className="story-card-stack">
               <article className="story-canvas story-card" id="story-panel-structure" data-story="structure">
@@ -337,14 +346,14 @@ export function LandingPage() {
     </div>
     <div className="formats-scroll-track">
       <section className="section shell reveal" id="formats" aria-labelledby="formats-title">
-        <div className="section-heading"><p className="section-no">[ PRODUCT ]</p><h2 id="formats-title">Core capabilities.</h2><p>Send a document, receive structured results, and connect the output to the tools your agents already use.</p></div>
+        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ CAPABILITIES ]" /></p><h2 id="formats-title"><SectionShinyText text="Built for documents that plain text cannot capture." /></h2><p>Preserve page structure, visual meaning, formulas, and source relationships across complex file formats.</p></div>
         <div className="formats-grid">
           <article className="format-feature format-feature--formats">
-            <div className="format-orbit-layout">
+            <div className="format-orbit-layout format-intro-ready">
               <span className="format-orbit-halo format-orbit-halo--supported" aria-hidden="true" />
               <span className="format-orbit-halo format-orbit-halo--coming" aria-hidden="true" />
               <div className="format-orbit-copy format-orbit-copy--supported">
-                <p>Works with common file formats, including</p>
+                <p>Works with common document, presentation,<br />spreadsheet, image, and text formats:</p>
                 <p>DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.</p>
               </div>
               <div className="format-orbit-stage format-orbit-stage--thread-globe" aria-label="Illustrative formats">
@@ -375,8 +384,7 @@ export function LandingPage() {
                 </div>
               </div>
               <div className="format-orbit-copy format-orbit-copy--coming">
-                <p>Support for</p>
-                <p>EPUB, HTML, XML, MP4, MP3, and skills.md is <span>coming soon.</span></p>
+                <p>Support for EPUB, HTML, XML, MP4,<br />MP3, and SKILL.md is <span>coming soon.</span></p>
               </div>
             </div>
           </article>
@@ -399,19 +407,19 @@ export function LandingPage() {
     </div>
     <section className="section shell reveal" id="comparison" aria-labelledby="comparison-title">
       <div className="section-heading">
-        <p className="section-no">[ COMPARISON ]</p>
-        <h2 id="comparison-title">See how Knowhere handles complex documents differently.</h2>
-        <p>Compare how different approaches handle document structure, complex layouts, visual context, and source tracing.</p>
+        <p className="section-no"><SectionShinyText text="[ COMPARISON ]" /></p>
+        <h2 id="comparison-title"><SectionShinyText text="Compare document understanding across structure, accuracy, and traceability." /></h2>
+        <p>See how Knowhere and other document-processing tools compare across efficiency, accuracy, structure, and source tracing.</p>
       </div>
       <div className="comparison-frame" aria-label="Illustrative document pipeline comparison">
         <div className="comparison-dashboard">
           <div className="comparison-chart">
             <div className="comparison-chart-header">
-              <p className="comparison-chart-note">Comparison performance</p>
+              <p className="comparison-chart-note">Performance comparison</p>
               <div className="comparison-legend" aria-label="Compared document processing tools"><span><i />Raw Docs</span><span><i className="unstructured-key" />Unstructured</span><span><i className="knowhere-key" />Knowhere</span><span><i className="mineru-key" />MinerU</span><span><i className="markitdown-key" />Markitdown</span></div>
             </div>
             <div className="comparison-plot">
-              <div className="comparison-axis-y comparison-axis-y--left" aria-hidden="true"><strong>token used</strong><div className="comparison-axis-ticks"><span>2000</span><span>1500</span><span>1000</span><span>500</span><span>0</span></div></div>
+              <div className="comparison-axis-y comparison-axis-y--left" aria-hidden="true"><strong>Tokens used</strong><div className="comparison-axis-ticks"><span>2000</span><span>1500</span><span>1000</span><span>500</span><span>0</span></div></div>
               <div className="comparison-plot-body">
                 <div className="comparison-metrics" aria-hidden="true">
                   <div className="comparison-metric"><i data-value={1630} style={{height: '81.5%'}} /><i data-value={1886} style={{height: '94.3%'}} /><i data-value={1574} style={{height: '78.7%'}} /><i data-value={1670} style={{height: '83.5%'}} /><i data-value={1503} style={{height: '75.15%'}} /></div>
@@ -421,29 +429,29 @@ export function LandingPage() {
                   <div className="comparison-metric"><i data-value="0.53" style={{height: '53%'}} /><i data-value="0.69" style={{height: '69%'}} /><i data-value="0.79" style={{height: '79%'}} /><i data-value="0.64" style={{height: '64%'}} /><i data-value="0.54" style={{height: '54%'}} /></div>
                   <div className="comparison-metric"><i data-value="0.74" style={{height: '74%'}} /><i data-value="0.77" style={{height: '77%'}} /><i data-value="0.82" style={{height: '82%'}} /><i data-value="0.78" style={{height: '78%'}} /><i data-value="0.76" style={{height: '76%'}} /></div>
                 </div>
-                <div className="comparison-metric-labels"><span>token used</span><span>time used</span><span>agent loops</span><span>first-time acc</span><span>acc with user feedback</span><span>recall</span></div>
+                <div className="comparison-metric-labels"><span>Tokens used</span><span>Processing time</span><span>Agent iterations</span><span>First-pass accuracy</span><span>Accuracy after feedback</span><span>Recall</span></div>
               </div>
-              <div className="comparison-axis-y comparison-axis-y--right" aria-hidden="true"><div className="comparison-axis-ticks"><span>25</span><span>20</span><span>15</span><span>10</span><span>5</span><span>0</span></div><strong>time used (s)</strong></div>
-              <div className="comparison-axis-y comparison-axis-y--right comparison-axis-y--outer" aria-hidden="true"><div className="comparison-axis-ticks"><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span></div><strong>agent loops</strong></div>
+              <div className="comparison-axis-y comparison-axis-y--right" aria-hidden="true"><div className="comparison-axis-ticks"><span>25</span><span>20</span><span>15</span><span>10</span><span>5</span><span>0</span></div><strong>Processing time (s)</strong></div>
+              <div className="comparison-axis-y comparison-axis-y--right comparison-axis-y--outer" aria-hidden="true"><div className="comparison-axis-ticks"><span>5</span><span>4</span><span>3</span><span>2</span><span>1</span><span>0</span></div><strong>Agent iterations</strong></div>
             </div>
           </div>
         </div>
         <div className="comparison-scoreboard is-expanded" role="group" aria-label="Document understanding capability matrix">
           <div className="comparison-scoreboard-head"><strong>Capability matrix</strong></div>
           <div className="comparison-scoreboard-body" id="comparison-table" aria-hidden="false"><div className="comparison-scoreboard-grid">
-              <div className="scoreboard-cell scoreboard-head-cell">Feature</div><div className="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div className="scoreboard-cell scoreboard-head-cell">Others</div>
-              <div className="scoreboard-cell scoreboard-feature">Document hierarchy</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Table boundaries</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Source tracing</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Bad</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Progressive context</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />No</span></div>
-              <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Yes</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-fill" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-head-cell">Feature</div><div className="scoreboard-cell scoreboard-head-cell scoreboard-knowhere">Knowhere</div><div className="scoreboard-cell scoreboard-head-cell">Typical document parsers</div>
+              <div className="scoreboard-cell scoreboard-feature">Document hierarchy</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Complex merged cells</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Table boundaries</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />Not supported</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Source tracing</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--bad"><i className="ri-error-warning-fill" aria-hidden="true" />Limited</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Progressive context</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--no"><i className="ri-close-circle-fill" aria-hidden="true" />Not supported</span></div>
+              <div className="scoreboard-cell scoreboard-feature">Visual understanding</div><div className="scoreboard-cell scoreboard-knowhere"><span className="scoreboard-mark scoreboard-mark--yes"><i className="ri-checkbox-circle-fill" aria-hidden="true" />Supported</span></div><div className="scoreboard-cell"><span className="scoreboard-mark scoreboard-mark--limited"><i className="ri-subtract-fill" aria-hidden="true" />Limited</span></div>
             </div></div>
         </div>
       </div>
     </section>
     <section className="section shell reveal" id="integration" aria-labelledby="integration-title">
-      <div className="section-heading"><p className="section-no">[ INTEGRATION ]</p><h2 id="integration-title">Add document understanding to your workflow in minutes.</h2><p>Send a document, receive structured results, and connect them to the tools your agents already use.</p></div>
+      <div className="section-heading"><p className="section-no"><SectionShinyText text="[ INTEGRATION ]" /></p><h2 id="integration-title"><SectionShinyText text="Add document understanding to your workflow in minutes." /></h2><p>Submit a document through the API, receive structured results, and connect them to your existing agent workflow.</p></div>
       <div className="integration-grid">
         <ol className="steps"><li><div><h3><span className="integration-step-number">01</span>Get an API key</h3><p>Sign up and generate your API key from the dashboard.</p></div></li><li><div><h3><span className="integration-step-number">02</span>Submit a document</h3><p>Send a URL or upload a file to the processing queue.</p></div></li><li><div><h3><span className="integration-step-number">03</span>Receive structured results</h3><p>Get structured JSON through webhook or polling.</p></div></li></ol>
         <div className="integration-plinth">
@@ -455,7 +463,7 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="pricing" aria-labelledby="pricing-title">
       <div className="pricing-card">
-        <div className="pricing-heading"><p className="section-no">[ PRICING ]</p><h2 id="pricing-title">Simple, transparent pricing.</h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
+        <div className="pricing-heading"><p className="section-no"><SectionShinyText text="[ PRICING ]" /></p><h2 id="pricing-title"><SectionShinyText text="Simple, transparent pricing." /></h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
         <div className="pricing-calculator">
           <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
@@ -469,8 +477,8 @@ export function LandingPage() {
     </section>
     <section className="section shell reveal" id="enterprise" aria-labelledby="enterprise-title">
       <div className="enterprise-content">
-        <p className="section-no enterprise-label">[ ENTERPRISE ]</p>
-        <div className="enterprise-copy"><h2 id="enterprise-title">Need custom limits or deployment support?</h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
+        <p className="section-no enterprise-label"><SectionShinyText text="[ ENTERPRISE ]" /></p>
+        <div className="enterprise-copy"><h2 id="enterprise-title"><SectionShinyText text="Need custom limits or deployment support?" /></h2><div className="enterprise-copy-detail"><p className="lede">Custom limits, deployment, support, and SLAs.</p><a className="button sales-link" href="mailto:team@knowhereto.ai">Talk to our team</a></div></div>
         <ul className="enterprise-metrics">
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="limits" /></div><div className="enterprise-metric-copy"><strong>Custom rate limits</strong><p>Discuss throughput limits for your production traffic.</p></div></li>
           <li className="enterprise-metric"><div className="enterprise-metric-visual" aria-hidden="true"><EnterpriseIllustration type="priority" /></div><div className="enterprise-metric-copy"><strong>Priority processing</strong><p>Plan priority handling for time-sensitive workloads.</p></div></li>
@@ -482,7 +490,7 @@ export function LandingPage() {
       </div>
     </section>
     <section className="section shell reveal" id="faq" aria-labelledby="faq-title">
-        <div className="section-heading"><p className="section-no">[ FAQ ]</p><h2 id="faq-title">Frequently asked questions.</h2></div>
+        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ FAQ ]" /></p><h2 id="faq-title"><SectionShinyText text="Frequently asked questions." /></h2></div>
         <div className="faq-list">
           <details open><summary aria-expanded="true" aria-controls="faq-answer-1">When am I charged?<span aria-hidden="true">↓</span></summary><p id="faq-answer-1">Page credits are deducted when a job completes successfully. Failed jobs do not consume credits.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
@@ -495,8 +503,8 @@ export function LandingPage() {
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
       <FinalCtaHelix />
       <div id="final-cta-copy">
-        <p className="section-no">[ GET STARTED ]</p>
-        <h2 id="final-title">Ready to build with better document context?</h2>
+        <p className="section-no"><SectionShinyText text="[ GET STARTED ]" /></p>
+        <h2 id="final-title"><SectionShinyText text="Ready to build with better document context?" /></h2>
       </div>
       <div className="final-cta-detail">
         <p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p>
@@ -510,6 +518,15 @@ export function LandingPage() {
     </section>
   </main>
   <footer className="footer">
+    <FlickeringGrid
+      className="footer-flickering-grid"
+      squareSize={4}
+      gridGap={6}
+      color="#6B7280"
+      maxOpacity={0.05}
+      flickerChance={0.1}
+      aria-hidden="true"
+    />
     <div className="footer-inner">
       <div className="footer-navigation">
         <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-footer-mark.svg" width={37} height={42} alt="" /></a>
@@ -518,7 +535,7 @@ export function LandingPage() {
           <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
         </div>
       </div>
-      <img className="footer-wordmark" src="/assets/knowhere-footer-wordmark.svg" width={1280} height={183} alt="" aria-hidden="true" />
+      <span className="footer-wordmark" aria-hidden="true" />
     </div>
   </footer>
   <div className="toast" role="status" aria-live="polite" hidden><p data-toast-message /><button type="button" aria-label="Close notification">×</button></div>

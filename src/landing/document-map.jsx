@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useMotionValueEvent, useScroll } from 'motion/react'
 import revenueChart from '../../assets/source-chart.png'
 import marginAnalysis from '../../assets/source-margin.png'
 import revenueAnalysis from '../../assets/source-revenue.png'
@@ -8,29 +9,26 @@ import { TextReveal } from '@/registry/magicui/text-reveal'
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
 const DESKTOP_PRODUCT_QUERY = '(min-width: 1200px)'
 const PRODUCT_STICKY_TOP = 68
-const PRODUCT_PIN_SNAP_DISTANCE = 180
 const PRODUCT_STAGE_COUNT = 5
-const PRODUCT_STAGE_SCROLL_STEP = 225
-const PRODUCT_STAGE_INDEX_EPSILON = 1
-const SUMMARY_INK_STEP_COUNT = 2
-const WHEEL_GESTURE_IDLE_MS = 180
-const WHEEL_SCROLL_SYNC_WINDOW_MS = 180
-const REVERSE_RELEASE_GUARD_MS = 220
-const DOCUMENT_EXTRACTION_START_PROGRESS = 0.28
-const DOCUMENT_SOURCES_START_PROGRESS = 0.34
+const PRODUCT_STAGE_SCROLL_VH = 60
+const DOCUMENT_OUTLINE_END_PROGRESS = 0.14
+const DOCUMENT_EXTRACTION_START_PROGRESS = 0.08
+const DOCUMENT_EXTRACTION_END_PROGRESS = 0.20
+const DOCUMENT_SOURCES_START_PROGRESS = 0.18
+const DOCUMENT_SOURCES_END_PROGRESS = 0.34
 const CONNECTION_LINE_EXTENSION = 24
 const SOURCE_REVEAL_CAMERA_SHIFT = 560
 const HIERARCHY_REVEAL_CAMERA_SHIFT = 860
 const SUMMARY_REVEAL_CAMERA_SHIFT = HIERARCHY_REVEAL_CAMERA_SHIFT + 80
-const DOCUMENT_HIERARCHY_END_PROGRESS = 0.67
+const DOCUMENT_HIERARCHY_END_PROGRESS = 0.72
 
 const themes = [
   {
     id: 'growth',
-    label: 'Q4 growth & outlook',
+    label: 'Q4 performance summary',
     documents: [
       {
-        name: 'Q4 market update.pdf',
+        name: 'Q4 Market Update.pdf',
         sections: [
           {
             name: 'Revenue and operating performance',
@@ -49,7 +47,7 @@ const themes = [
         ],
       },
       {
-        name: 'Financial summary.pdf',
+        name: 'Financial Summary.pdf',
         sections: [
           {
             name: 'Operating outlook',
@@ -145,26 +143,26 @@ const themeSourcesMap = {
       format: 'PDF',
       page: 'PAGE 06 & 08',
       type: 'table',
-      title: 'FY2026 commercial schedule',
-      widths: [34, 22, 22, 22],
-      columns: ['Item', 'Qty', 'FY25', 'FY26'],
+      title: 'Revenue by region',
+      widths: [26, 23, 29, 22],
+      columns: ['Region', 'Metric', 'Result', 'Signal'],
       rows: [
-        ['Platform seats', '1,200', '$402k', '$420k'],
-        ['24×7 support', '1', '$48k', '$50k'],
-        ['Total annual fee', '—', '$450k', '$470k'],
+        ['North America', 'Revenue', 'Largest contributor', 'Positive'],
+        ['Europe', 'YoY growth', '+19.4%', 'Positive'],
+        ['APAC', 'YoY growth', '+21.6%', 'Fastest growth'],
       ],
       image: revenueTable,
-      alt: 'Original master service agreement excerpt',
+      alt: 'Revenue by region table',
     },
     {
       id: 'src-growth-2',
-      format: 'XLSX',
+      format: 'PDF',
       page: 'PAGE 09 & 10',
       type: 'document',
-      kicker: 'Service schedule · §11.4',
-      title: 'Availability credits & margin',
-      copy: 'Monthly availability below 99.9% earns a 5% service credit; below 99.5% earns 10%.',
-      note: 'Claims must be submitted within 30 days of the affected month.',
+      kicker: 'Operating review · PAGE 09 & 10',
+      title: 'Operating margin expansion',
+      copy: 'Operating income grew 21.7% year over year to $1.1B.',
+      note: 'Operating margin reached 22.9%, up from 21.3% a year earlier.',
       image: marginAnalysis,
       alt: 'Operating margin review',
     },
@@ -173,7 +171,7 @@ const themeSourcesMap = {
       format: 'PDF',
       page: 'PAGE 12 & 14',
       type: 'line',
-      title: 'Active-seat utilization (%)',
+      title: 'Six-month active-seat utilization',
       chart: 'usage',
       image: revenueChart,
       alt: 'Financial summary source chart excerpt',
@@ -253,11 +251,11 @@ const themeSourcesMap = {
 
 const themeSummaries = {
   growth: {
-    topic: 'Renewal decision brief',
+    topic: 'Q4 performance brief',
     hierarchy: [
-      { source: 'Master service agreement.pdf', location: '8.2 and 11.4', type: 'doc', isActive: true },
-      { source: 'Pricing schedule.xlsx', location: 'FY26 rates', type: 'table', isActive: false },
-      { source: 'Seat utilization.csv', location: '6-month trend', type: 'chart', isActive: false },
+      { source: 'Q4 Market Update.pdf', location: 'Revenue by region', type: 'doc', isActive: true },
+      { source: 'Q4 Market Update.pdf', location: 'Operating margin', type: 'table', isActive: false },
+      { source: 'Financial Summary.pdf', location: 'Seat utilization trend', type: 'chart', isActive: false },
     ],
   },
   regional: {
@@ -526,19 +524,12 @@ function SectionToSourceLines({
   sourceCount = 3,
   documentCount = 2,
   className = '',
-  connectionState,
-  onConnectionComplete,
   mobileReveal = false,
   revealKey,
 }) {
   const height = 32 + CONNECTION_LINE_EXTENSION
   const rootRef = useRef(null)
   const rootClassName = `stage-flow-row is-section-to-source${className ? ` ${className}` : ''}`
-  const handleAnimationEnd = event => {
-    if (event.animationName === 'document-connection-reveal') {
-      onConnectionComplete?.()
-    }
-  }
 
   useEffect(() => {
     if (!mobileReveal || !rootRef.current) return undefined
@@ -568,8 +559,6 @@ function SectionToSourceLines({
       <div
         ref={rootRef}
         className={rootClassName}
-        data-document-connection-state={connectionState}
-        onAnimationEnd={handleAnimationEnd}
         aria-hidden="true"
         style={{ opacity }}
       >
@@ -602,8 +591,6 @@ function SectionToSourceLines({
     <div
       ref={rootRef}
       className={rootClassName}
-      data-document-connection-state={connectionState}
-      onAnimationEnd={handleAnimationEnd}
       aria-hidden="true"
       style={{ opacity }}
     >
@@ -794,7 +781,7 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
       className="trace-summary-card"
       data-trace-summary-card
       data-motion-active={motionActive ? 'true' : undefined}
-      aria-label="Cross-document hierarchy for the selected source"
+      aria-label="Source-backed context for the selected source"
       style={{
         opacity,
         transform: `translateY(${translateY}px)`,
@@ -803,7 +790,7 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
       }}
     >
       <div className="trace-card-content">
-        <span className="trace-summary-label">Cross-document hierarchy</span>
+        <span className="trace-summary-label">Source-backed context</span>
         <div className="trace-hierarchy" data-trace-summary>
           <div className="trace-hierarchy-topic" data-trace-hierarchy-topic>{summary.topic}</div>
           <ul className="trace-hierarchy-list">
@@ -840,14 +827,14 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
   )
 }
 
-const AI_OUTPUT_TEXT = `Enterprise software revenue reached $4.8B, up 18.4% year over year, supported by continued demand for cloud, security, and data platforms. Regional performance remained broad-based, with APAC growing 21.6% and Europe growing 19.4%, while North America remained the largest contributor to revenue. Operating income rose to $1.1B as disciplined cost management lifted the operating margin to 22.9%. The underlying trend also remained consistently positive, with revenue increasing in every reported quarter since Q4 2023.`
+const AI_OUTPUT_TEXT = `Enterprise software revenue reached $4.8B in Q4 2025, up 18.4% year over year. Growth was broad-based, led by APAC at 21.6% and Europe at 19.4%, while North America remained the largest contributor. Operating income rose to $1.1B and operating margin improved to 22.9%. Active-seat utilization averaged 78% over the past six months, supporting a positive outlook.`
 
 const AI_OUTPUT_HIGHLIGHTS = [
-  { startWord: 5, endWord: 7 },
-  { startWord: 26, endWord: 32 },
-  { startWord: 46, endWord: 46 },
-  { startWord: 56, endWord: 56 },
-  { startWord: 72, endWord: 73 },
+  { startWord: 5, endWord: 10 },
+  { startWord: 19, endWord: 25 },
+  { startWord: 37, endWord: 37 },
+  { startWord: 43, endWord: 43 },
+  { startWord: 47, endWord: 47 },
 ]
 
 function AIOutputReport({
@@ -882,8 +869,8 @@ function AIOutputReport({
         {AI_OUTPUT_TEXT}
       </TextReveal>
       <div className="ai-output-attribution">
-        <p className="ai-output-attribution-title">AI Output</p>
-        <p>Based on {sourceLabel} · {documentLabel}</p>
+        <p className="ai-output-attribution-title">AI-generated brief</p>
+        <p>Synthesized from {sourceLabel} across {documentLabel}</p>
       </div>
     </section>
   )
@@ -894,17 +881,6 @@ function DocumentMap({
   onOpenTrace,
   inactive = false,
   scrollProgress = 1,
-  documentOutlineState = 'complete',
-  documentConnectionState = 'complete',
-  sourceRevealState = 'complete',
-  convergenceState = 'complete',
-  hierarchyRevealState = 'complete',
-  summaryRevealState = 'complete',
-  summaryInkState = 'complete',
-  summaryInkStep = SUMMARY_INK_STEP_COUNT,
-  activeStageIndex = PRODUCT_STAGE_COUNT,
-  onDocumentOutlineComplete,
-  onDocumentConnectionComplete,
 }) {
   const isMobile = useMobileProductLayout()
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
@@ -933,48 +909,48 @@ function DocumentMap({
     openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
   }
 
-  // Downstream stage metrics calculated from scrollProgress (0 to 1).
-  // On desktop, scroll-scrubbed stages start only after the automatic reveal sequence.
+  // Every visual state is derived from the same scroll progress so scrolling back
+  // naturally reverses the sequence without a second animation state machine.
   const p = reducedMotion ? 1 : scrollProgress
-
-  const pSecToSourceLine = clamp((p - DOCUMENT_EXTRACTION_START_PROGRESS) / 0.08)
-  const pSourceCards = clamp((p - DOCUMENT_SOURCES_START_PROGRESS) / 0.10)
-
-  // Keep the hierarchy nearly anchored while revealing the summary in the space below.
-  const pCamera = clamp((p - 0.48) / 0.48)
-  const cameraEase = pCamera * pCamera * (3 - 2 * pCamera)
-  const stagedCameraShift = ['running', 'complete'].includes(hierarchyRevealState)
-    ? ['running', 'complete'].includes(summaryRevealState)
-      ? SUMMARY_REVEAL_CAMERA_SHIFT
-      : HIERARCHY_REVEAL_CAMERA_SHIFT
-    : ['running', 'complete'].includes(sourceRevealState)
-      ? SOURCE_REVEAL_CAMERA_SHIFT
-      : 0
+  const progressBetween = (start, end) => clamp((p - start) / (end - start))
+  const smoothProgressBetween = (start, end) => {
+    const progress = progressBetween(start, end)
+    return progress * progress * (3 - 2 * progress)
+  }
+  const pDocumentOutline = progressBetween(0, DOCUMENT_OUTLINE_END_PROGRESS)
+  const pSecToSourceLine = progressBetween(
+    DOCUMENT_EXTRACTION_START_PROGRESS,
+    DOCUMENT_EXTRACTION_END_PROGRESS,
+  )
+  const pSourceCards = progressBetween(
+    DOCUMENT_SOURCES_START_PROGRESS,
+    DOCUMENT_SOURCES_END_PROGRESS,
+  )
+  const pSourceCamera = smoothProgressBetween(0.12, 0.30)
+  const pHierarchyCamera = smoothProgressBetween(0.34, 0.54)
+  const pSummaryCamera = smoothProgressBetween(0.56, 0.74)
+  const cameraScale = isDesktop ? 1 : 903 / SUMMARY_REVEAL_CAMERA_SHIFT
+  const scrollLinkedCameraShift = (
+    SOURCE_REVEAL_CAMERA_SHIFT * pSourceCamera
+    + (HIERARCHY_REVEAL_CAMERA_SHIFT - SOURCE_REVEAL_CAMERA_SHIFT) * pHierarchyCamera
+    + (SUMMARY_REVEAL_CAMERA_SHIFT - HIERARCHY_REVEAL_CAMERA_SHIFT) * pSummaryCamera
+  ) * cameraScale
   const cameraShiftY = (reducedMotion || isMobile)
     ? 0
-    : Math.max(
-      stagedCameraShift,
-      Math.min(cameraEase * (isDesktop ? 1109 : 903), SUMMARY_REVEAL_CAMERA_SHIFT),
-    )
+    : scrollLinkedCameraShift
 
-  // Downstream metrics for convergence, hierarchy, and the AI summary.
-  const pConvergenceLine = clamp((p - 0.52) / 0.08)
-  const pHierarchyCard = clamp((p - 0.58) / 0.09)
-  const pSummaryConnection = clamp((p - 0.68) / 0.06)
-  const pSummaryDocument = clamp((p - 0.73) / 0.08)
-  const pSummaryInk = clamp((p - DOCUMENT_HIERARCHY_END_PROGRESS) / (1 - DOCUMENT_HIERARCHY_END_PROGRESS))
+  const pConvergenceLine = progressBetween(0.34, 0.46)
+  const pHierarchyCard = progressBetween(0.42, 0.58)
+  const pSummaryConnection = progressBetween(0.56, 0.66)
+  const pSummaryDocument = progressBetween(0.62, DOCUMENT_HIERARCHY_END_PROGRESS)
+  const pSummaryInk = progressBetween(DOCUMENT_HIERARCHY_END_PROGRESS, 1)
+  const activeStageIndex = Math.min(PRODUCT_STAGE_COUNT, Math.floor(p * PRODUCT_STAGE_COUNT))
 
   return (
     <section
       className="document-map reveal"
-      data-document-outline-state={documentOutlineState}
-      data-source-reveal-state={sourceRevealState}
-      data-convergence-state={convergenceState}
-      data-hierarchy-reveal-state={hierarchyRevealState}
-      data-summary-reveal-state={summaryRevealState}
-      data-summary-ink-state={summaryInkState}
-      data-summary-ink-step={summaryInkStep}
       data-product-stage-index={activeStageIndex}
+      style={{ '--document-outline-clip': `${(1 - pDocumentOutline) * 100}%` }}
       aria-labelledby="document-map-title"
       inert={inactive ? '' : undefined}
     >
@@ -987,16 +963,7 @@ function DocumentMap({
             aria-live="polite"
             style={{
               transform: `translateY(-${cameraShiftY}px)`,
-              transition: isDesktop && (
-                sourceRevealState === 'running'
-                || sourceRevealState === 'reversing'
-                || hierarchyRevealState === 'running'
-                || hierarchyRevealState === 'reversing'
-                || summaryRevealState === 'running'
-                || summaryRevealState === 'reversing'
-              )
-                ? 'transform 900ms cubic-bezier(.23, 1, .32, 1)'
-                : 'none',
+              transition: 'none',
             }}
           >
             {/* STAGE 1: Full-height source documents */}
@@ -1034,13 +1001,6 @@ function DocumentMap({
                         <SectionTag
                           className="section-node"
                           key={section.name}
-                          onAnimationEnd={documentIndex === 0 && sectionIndex === 0
-                            ? event => {
-                                if (event.animationName === 'document-outline-reveal') {
-                                  onDocumentOutlineComplete?.()
-                                }
-                              }
-                            : undefined}
                           {...(interactive
                             ? {
                                 type: 'button',
@@ -1093,15 +1053,11 @@ function DocumentMap({
 
             {/* STAGE 2: Extraction lines from the source documents */}
             <SectionToSourceLines
-              clipProgress={isDesktop
-                ? documentConnectionState === 'complete' ? 1 : 0
-                : pSecToSourceLine}
+              clipProgress={pSecToSourceLine}
               opacity={1}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
               className={isMobile ? 'mobile-source-connection' : ''}
-              connectionState={isDesktop ? documentConnectionState : undefined}
-              onConnectionComplete={isDesktop ? onDocumentConnectionComplete : undefined}
               mobileReveal={isMobile}
               revealKey={activeTheme.id}
             />
@@ -1112,14 +1068,10 @@ function DocumentMap({
               data-source-count={currentSources.length}
               data-document-count={activeTheme.documents.length}
               style={{
-                opacity: isDesktop ? undefined : pSourceCards,
-                transform: isDesktop ? undefined : `translateY(${(1 - pSourceCards) * 14}px)`,
-                transition: isDesktop || reducedMotion
-                  ? 'none'
-                  : 'opacity 0.15s ease-out, transform 0.15s ease-out',
-                pointerEvents: isDesktop
-                  ? sourceRevealState === 'complete' ? 'auto' : 'none'
-                  : pSourceCards > 0.5 ? 'auto' : 'none',
+                opacity: pSourceCards,
+                transform: `translateY(${(1 - pSourceCards) * 18}px)`,
+                transition: 'none',
+                pointerEvents: pSourceCards > 0.5 ? 'auto' : 'none',
               }}
             >
               {currentSources.map((source, index) => {
@@ -1131,7 +1083,7 @@ function DocumentMap({
                     key={source.id}
                     data-source-slot={slot}
                     data-region={source.type}
-                    data-motion-active={isDesktop && ['running', 'complete'].includes(sourceRevealState) ? 'true' : undefined}
+                    data-motion-active={pSourceCards > 0.05 ? 'true' : undefined}
                     style={{ '--trace-motion-delay': `${index * 70}ms` }}
                   >
                     <div className="trace-card-content">
@@ -1154,7 +1106,7 @@ function DocumentMap({
                       </div>
                     </div>
                     <TracePixelReveal
-                      active={isDesktop && ['running', 'complete'].includes(sourceRevealState)}
+                      active={pSourceCards > 0.05}
                       delay={index * 70}
                     />
                   </figure>
@@ -1164,24 +1116,16 @@ function DocumentMap({
 
             {/* STAGE 3: 3-to-1 convergence and cross-document hierarchy */}
             <ConvergenceLine
-              clipProgress={isDesktop
-                ? convergenceState === 'complete' ? 1 : 0
-                : pConvergenceLine}
+              clipProgress={pConvergenceLine}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
             />
 
             <CrossDocumentHierarchyCard
               activeThemeId={activeTheme.id}
-              opacity={isDesktop
-                ? ['reversing', 'complete'].includes(hierarchyRevealState) ? 1 : 0
-                : pHierarchyCard}
-              translateY={isDesktop
-                ? hierarchyRevealState === 'complete' ? 0 : 14
-                : (1 - pHierarchyCard) * 14}
-              motionActive={isDesktop
-                ? ['running', 'complete'].includes(hierarchyRevealState)
-                : pHierarchyCard > 0}
+              opacity={pHierarchyCard}
+              translateY={(1 - pHierarchyCard) * 18}
+              motionActive={pHierarchyCard > 0.05}
             />
 
             <MapFlowSvg
@@ -1189,22 +1133,14 @@ function DocumentMap({
               viewBox={`0 0 10 ${48 + CONNECTION_LINE_EXTENSION}`}
               path={`M5 0 V${48 + CONNECTION_LINE_EXTENSION}`}
               dots={[[5, 0], [5, 48 + CONNECTION_LINE_EXTENSION]]}
-              clipProgress={isDesktop
-                ? summaryRevealState === 'complete' ? 1 : 0
-                : pSummaryConnection}
+              clipProgress={pSummaryConnection}
             />
 
             <AIOutputReport
               documentCount={activeTheme.documents.length}
-              opacity={isDesktop
-                ? ['reversing', 'complete'].includes(summaryRevealState) ? 1 : 0
-                : pSummaryDocument}
-              translateY={isDesktop
-                ? summaryRevealState === 'complete' ? 0 : 14
-                : (1 - pSummaryDocument) * 14}
-              motionActive={isDesktop
-                ? ['running', 'complete'].includes(summaryRevealState)
-                : pSummaryDocument > 0}
+              opacity={pSummaryDocument}
+              translateY={(1 - pSummaryDocument) * 18}
+              motionActive={pSummaryDocument > 0.05}
               inkProgress={pSummaryInk}
               sourceCount={currentSources.length}
             />
@@ -1316,523 +1252,27 @@ function cropScanDemo(frame) {
   syncScanFrameHeight(frame)
 }
 
-function useTimedStageCompletion({ state, setState, duration }) {
-  useEffect(() => {
-    if (state !== 'running' && state !== 'reversing') return undefined
-    const completionTimer = window.setTimeout(
-      () => setState(state === 'running' ? 'complete' : 'idle'),
-      duration,
-    )
-    return () => window.clearTimeout(completionTimer)
-  }, [duration, setState, state])
-}
-
 export function ProductStage({ heading }) {
   const isMobile = useMobileProductLayout()
-  const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
-  const [documentOutlineState, setDocumentOutlineState] = useState('idle')
-  const [documentConnectionState, setDocumentConnectionState] = useState('idle')
-  const [sourceRevealState, setSourceRevealState] = useState('idle')
-  const [convergenceState, setConvergenceState] = useState('idle')
-  const [hierarchyRevealState, setHierarchyRevealState] = useState('idle')
-  const [summaryRevealState, setSummaryRevealState] = useState('idle')
-  const [summaryInkState, setSummaryInkState] = useState('idle')
-  const [summaryInkStep, setSummaryInkStep] = useState(0)
-  const [activeStageIndex, setActiveStageIndex] = useState(0)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const trackRef = useRef(null)
   const iframeRef = useRef(null)
   const scanFrameRef = useRef(null)
-  const wheelGestureActive = useRef(false)
-  const wheelGestureTimer = useRef(0)
-  const wheelGestureStartedAt = useRef(0)
-  const lastWheelEventAt = useRef(0)
-  const lastWheelDelta = useRef(0)
-  const lastWheelInputAt = useRef(Number.NEGATIVE_INFINITY)
-  const queuedWheelDirection = useRef(0)
-  const pendingReverseAnchor = useRef(null)
-  const wasStageAnimating = useRef(false)
-  const reverseReleaseUntil = useRef(0)
-  const [scrollProgress, setScrollProgress] = useState(0)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-  useEffect(() => () => window.clearTimeout(wheelGestureTimer.current), [])
-
-  useEffect(() => {
-    if (reducedMotion || !isDesktop) {
-      setDocumentOutlineState('complete')
-      setDocumentConnectionState('complete')
-      setSourceRevealState('complete')
-      setConvergenceState('complete')
-      setHierarchyRevealState('complete')
-      setSummaryRevealState('complete')
-      setSummaryInkState('complete')
-      setSummaryInkStep(SUMMARY_INK_STEP_COUNT)
-      setActiveStageIndex(PRODUCT_STAGE_COUNT)
-      pendingReverseAnchor.current = null
-      wasStageAnimating.current = false
-      reverseReleaseUntil.current = 0
-      return
-    }
-
-    setDocumentOutlineState('idle')
-    setDocumentConnectionState('idle')
-    setSourceRevealState('idle')
-    setConvergenceState('idle')
-    setHierarchyRevealState('idle')
-    setSummaryRevealState('idle')
-    setSummaryInkState('idle')
-    setSummaryInkStep(0)
-    setActiveStageIndex(0)
-    wheelGestureActive.current = false
-    window.clearTimeout(wheelGestureTimer.current)
-    wheelGestureStartedAt.current = 0
-    lastWheelEventAt.current = 0
-    lastWheelDelta.current = 0
-    lastWheelInputAt.current = Number.NEGATIVE_INFINITY
-    queuedWheelDirection.current = 0
-    pendingReverseAnchor.current = null
-    wasStageAnimating.current = false
-    reverseReleaseUntil.current = 0
-    setScrollProgress(0)
-  }, [isDesktop, reducedMotion])
-
-  useEffect(() => {
-    if (reducedMotion || !isDesktop) return undefined
-    if (documentOutlineState !== 'idle') return undefined
-
-    const armOutline = () => {
-      const track = trackRef.current
-      if (!track || track.getBoundingClientRect().top > PRODUCT_STICKY_TOP) return
-
-      setDocumentOutlineState(state => state === 'idle' ? 'armed' : state)
-    }
-
-    armOutline()
-    window.addEventListener('scroll', armOutline, { passive: true })
-    return () => window.removeEventListener('scroll', armOutline)
-  }, [documentOutlineState, isDesktop, reducedMotion])
-
-  useTimedStageCompletion({
-    state: documentOutlineState,
-    setState: setDocumentOutlineState,
-    duration: 650,
+  const { scrollYProgress } = useScroll({
+    target: trackRef,
+    offset: [`start ${PRODUCT_STICKY_TOP}px`, 'end end'],
   })
 
-  useTimedStageCompletion({
-    state: documentConnectionState,
-    setState: setDocumentConnectionState,
-    duration: 650,
-  })
-
-  useTimedStageCompletion({
-    state: sourceRevealState,
-    setState: setSourceRevealState,
-    duration: 1050,
-  })
-
-  useTimedStageCompletion({
-    state: convergenceState,
-    setState: setConvergenceState,
-    duration: 700,
-  })
-
-  useTimedStageCompletion({
-    state: hierarchyRevealState,
-    setState: setHierarchyRevealState,
-    duration: 1050,
-  })
-
-  useTimedStageCompletion({
-    state: summaryRevealState,
-    setState: setSummaryRevealState,
-    duration: 1200,
-  })
-
-  useTimedStageCompletion({
-    state: summaryInkState,
-    setState: setSummaryInkState,
-    duration: 1050,
+  useMotionValueEvent(scrollYProgress, 'change', latest => {
+    setScrollProgress(reducedMotion || isMobile ? 1 : clamp(latest))
   })
 
   useEffect(() => {
-    if (reducedMotion || !isDesktop) return
-    if (summaryRevealState !== 'complete' || summaryInkStep !== 0 || summaryInkState !== 'idle') return
-
-    setSummaryInkStep(1)
-    setSummaryInkState('running')
-  }, [isDesktop, reducedMotion, summaryInkState, summaryInkStep, summaryRevealState])
-
-  const isStageAnimating = [
-    documentOutlineState,
-    documentConnectionState,
-    sourceRevealState,
-    convergenceState,
-    hierarchyRevealState,
-    summaryRevealState,
-    summaryInkState,
-  ].some(state => state === 'running' || state === 'reversing')
-
-  const isProductSequenceComplete = activeStageIndex === PRODUCT_STAGE_COUNT
-    && summaryRevealState === 'complete'
-    && summaryInkStep === SUMMARY_INK_STEP_COUNT
-  const hasCompletedStage = activeStageIndex > 0
-
-  const advanceStage = useCallback(() => {
-    if (activeStageIndex >= PRODUCT_STAGE_COUNT) return null
-
-    const targetStage = activeStageIndex + 1
-    setActiveStageIndex(targetStage)
-
-    if (targetStage === 1) {
-      setDocumentOutlineState('running')
-      setDocumentConnectionState('running')
-    } else if (targetStage === 2) {
-      setSourceRevealState('running')
-    } else if (targetStage === 3) {
-      setConvergenceState('running')
-      setHierarchyRevealState('running')
-    } else if (targetStage === 4) {
-      setSummaryRevealState('running')
-    } else if (targetStage === 5) {
-      setSummaryInkStep(SUMMARY_INK_STEP_COUNT)
-      setSummaryInkState('running')
-    }
-
-    return targetStage
-  }, [activeStageIndex])
-
-  const reverseStage = useCallback(() => {
-    if (activeStageIndex <= 0) return null
-
-    const targetStage = activeStageIndex - 1
-    setActiveStageIndex(targetStage)
-
-    if (activeStageIndex === 5) {
-      setSummaryInkStep(SUMMARY_INK_STEP_COUNT - 1)
-      setSummaryInkState('reversing')
-    } else if (activeStageIndex === 4) {
-      setScrollProgress(0)
-      setSummaryInkStep(0)
-      setSummaryInkState('reversing')
-      setSummaryRevealState('reversing')
-    } else if (activeStageIndex === 3) {
-      setScrollProgress(0)
-      setSummaryRevealState('idle')
-      setHierarchyRevealState('reversing')
-      setConvergenceState('reversing')
-      setSummaryInkState('idle')
-      setSummaryInkStep(0)
-    } else if (activeStageIndex === 2) {
-      setScrollProgress(0)
-      setConvergenceState('idle')
-      setHierarchyRevealState('idle')
-      setSummaryRevealState('idle')
-      setSummaryInkState('idle')
-      setSummaryInkStep(0)
-      setSourceRevealState('reversing')
-    } else if (activeStageIndex === 1) {
-      setScrollProgress(0)
-      setSourceRevealState('idle')
-      setConvergenceState('idle')
-      setHierarchyRevealState('idle')
-      setSummaryRevealState('idle')
-      setSummaryInkState('idle')
-      setSummaryInkStep(0)
-      setDocumentOutlineState('reversing')
-      setDocumentConnectionState('reversing')
-    }
-
-    return targetStage
-  }, [activeStageIndex])
-
-  const syncStagesToScrollPosition = useCallback((stageIndex, isAtStickyStart) => {
-    pendingReverseAnchor.current = null
-    reverseReleaseUntil.current = 0
-    setActiveStageIndex(stageIndex)
-    setDocumentOutlineState(stageIndex >= 1 ? 'complete' : isAtStickyStart ? 'armed' : 'idle')
-    setDocumentConnectionState(stageIndex >= 1 ? 'complete' : 'idle')
-    setSourceRevealState(stageIndex >= 2 ? 'complete' : 'idle')
-    setConvergenceState(stageIndex >= 3 ? 'complete' : 'idle')
-    setHierarchyRevealState(stageIndex >= 3 ? 'complete' : 'idle')
-    setSummaryRevealState(stageIndex >= 4 ? 'complete' : 'idle')
-    const inkStep = Math.max(0, Math.min(SUMMARY_INK_STEP_COUNT, stageIndex - 3))
-    setSummaryInkStep(inkStep)
-    setSummaryInkState(inkStep > 0 ? 'complete' : 'idle')
-  }, [])
-
-  const scrollToStage = useCallback(stageIndex => {
-    const track = trackRef.current
-    if (!track) return
-    const rect = track.getBoundingClientRect()
-    const trackTop = window.scrollY + rect.top
-    const pinnedScrollY = Math.max(0, trackTop - PRODUCT_STICKY_TOP)
-    lastWheelInputAt.current = performance.now()
-    window.scrollTo({
-      top: pinnedScrollY + stageIndex * PRODUCT_STAGE_SCROLL_STEP,
-      behavior: 'instant',
-    })
-  }, [])
-
-  const runStageDirection = useCallback(direction => {
-    const targetStage = direction > 0 ? advanceStage() : reverseStage()
-    if (targetStage === null) return false
-    if (direction > 0) {
-      pendingReverseAnchor.current = null
-      scrollToStage(targetStage)
-    } else {
-      pendingReverseAnchor.current = targetStage
-    }
-    return true
-  }, [advanceStage, reverseStage, scrollToStage])
-
-  useEffect(() => {
-    const animationJustSettled = wasStageAnimating.current && !isStageAnimating
-    wasStageAnimating.current = isStageAnimating
-    if (!animationJustSettled || pendingReverseAnchor.current === null) return
-
-    const targetStage = pendingReverseAnchor.current
-    pendingReverseAnchor.current = null
-    scrollToStage(targetStage)
-    if (targetStage === 0) {
-      reverseReleaseUntil.current = performance.now() + REVERSE_RELEASE_GUARD_MS
-    }
-  }, [isStageAnimating, scrollToStage])
-
-  useEffect(() => {
-    if (reducedMotion || !isDesktop || isStageAnimating || queuedWheelDirection.current === 0) {
-      return undefined
-    }
-
-    const direction = queuedWheelDirection.current
-    queuedWheelDirection.current = 0
-    const rafId = window.requestAnimationFrame(() => runStageDirection(direction))
-    return () => window.cancelAnimationFrame(rafId)
-  }, [isDesktop, isStageAnimating, reducedMotion, runStageDirection])
-
-  useEffect(() => {
-    if (reducedMotion || !isDesktop) return undefined
-
-    const beginWheelGesture = (deltaY, deltaMode) => {
-      const now = performance.now()
-      const magnitude = Math.abs(deltaY)
-      const previousMagnitude = Math.abs(lastWheelDelta.current)
-      const timeSinceLastEvent = now - lastWheelEventAt.current
-      const directionChanged = wheelGestureActive.current
-        && timeSinceLastEvent >= 24
-        && Math.sign(deltaY) !== Math.sign(lastWheelDelta.current)
-      const hasFreshTrackpadImpulse = wheelGestureActive.current
-        && now - wheelGestureStartedAt.current > 70
-        && timeSinceLastEvent >= 24
-        && magnitude >= Math.max(8, previousMagnitude * 1.45)
-      const hasDiscreteWheelStep = wheelGestureActive.current
-        && deltaMode !== 0
-        && timeSinceLastEvent >= 40
-      const isNewGesture = !wheelGestureActive.current
-        || directionChanged
-        || hasFreshTrackpadImpulse
-        || hasDiscreteWheelStep
-
-      if (isNewGesture) wheelGestureStartedAt.current = now
-      wheelGestureActive.current = true
-      lastWheelEventAt.current = now
-      lastWheelDelta.current = deltaY
-      window.clearTimeout(wheelGestureTimer.current)
-      wheelGestureTimer.current = window.setTimeout(() => {
-        wheelGestureActive.current = false
-      }, WHEEL_GESTURE_IDLE_MS)
-      return isNewGesture
-    }
-
-    const onWheel = event => {
-      if (Math.abs(event.deltaY) < 1) return
-
-      const track = trackRef.current
-      if (!track) return
-      const rect = track.getBoundingClientRect()
-      const deltaY = event.deltaY * (event.deltaMode === 1
-        ? 16
-        : event.deltaMode === 2 ? window.innerHeight : 1)
-      lastWheelInputAt.current = performance.now()
-      const distanceToSticky = rect.top - PRODUCT_STICKY_TOP
-      const trackTop = window.scrollY + rect.top
-      const pinnedScrollY = Math.max(0, trackTop - PRODUCT_STICKY_TOP)
-      const stickyEndScrollY = pinnedScrollY + PRODUCT_STAGE_COUNT * PRODUCT_STAGE_SCROLL_STEP
-      const isWithinStageRail = window.scrollY >= pinnedScrollY - 1
-        && window.scrollY <= stickyEndScrollY + 1
-
-      if (deltaY > 0
-        && distanceToSticky > 1
-        && (distanceToSticky <= PRODUCT_PIN_SNAP_DISTANCE || deltaY >= distanceToSticky)) {
-        event.preventDefault()
-        beginWheelGesture(deltaY, event.deltaMode)
-        scrollToStage(0)
-        return
-      }
-
-      const entersStageRailFromBelow = deltaY < 0
-        && window.scrollY > stickyEndScrollY + 1
-        && Math.abs(deltaY) >= window.scrollY - stickyEndScrollY
-
-      if (entersStageRailFromBelow) {
-        event.preventDefault()
-        const isNewGesture = beginWheelGesture(deltaY, event.deltaMode)
-        if (isStageAnimating) {
-          if (isNewGesture) queuedWheelDirection.current = -1
-          scrollToStage(PRODUCT_STAGE_COUNT)
-        } else if (isNewGesture) {
-          scrollToStage(PRODUCT_STAGE_COUNT)
-          if (!runStageDirection(-1)) scrollToStage(PRODUCT_STAGE_COUNT)
-        } else {
-          scrollToStage(PRODUCT_STAGE_COUNT)
-        }
-        return
-      }
-
-      if (!isWithinStageRail) return
-
-      if (deltaY < 0
-        && activeStageIndex === 0
-        && performance.now() < reverseReleaseUntil.current) {
-        event.preventDefault()
-        beginWheelGesture(deltaY, event.deltaMode)
-        reverseReleaseUntil.current = performance.now() + REVERSE_RELEASE_GUARD_MS
-        return
-      }
-
-      if (isStageAnimating) {
-        event.preventDefault()
-        const gestureWasActive = wheelGestureActive.current
-        const isNewGesture = beginWheelGesture(deltaY, event.deltaMode)
-        if (isNewGesture && !gestureWasActive) {
-          queuedWheelDirection.current = Math.sign(deltaY)
-        }
-        return
-      }
-
-      if (deltaY > 0) {
-        if (isProductSequenceComplete) {
-          if (window.scrollY >= stickyEndScrollY - 1) return
-          event.preventDefault()
-          const isNewGesture = beginWheelGesture(deltaY, event.deltaMode)
-          if (isNewGesture) scrollToStage(PRODUCT_STAGE_COUNT)
-          return
-        }
-        event.preventDefault()
-        const isNewGesture = beginWheelGesture(deltaY, event.deltaMode)
-        if (isNewGesture) runStageDirection(1)
-        return
-      }
-
-      if (deltaY < 0 && hasCompletedStage) {
-        event.preventDefault()
-        const isNewGesture = beginWheelGesture(deltaY, event.deltaMode)
-        if (isNewGesture) runStageDirection(-1)
-      }
-    }
-
-    const onScroll = () => {
-      const track = trackRef.current
-      if (!track) return
-      // Wheel gestures own timed animations. Other scroll sources (scrollbar,
-      // keyboard, restored position) map to stable completed stages.
-      if (performance.now() - lastWheelInputAt.current < WHEEL_SCROLL_SYNC_WINDOW_MS) return
-
-      const rect = track.getBoundingClientRect()
-      const trackTop = window.scrollY + rect.top
-      const pinnedScrollY = Math.max(0, trackTop - PRODUCT_STICKY_TOP)
-      const scrollOffset = Math.max(0, window.scrollY - pinnedScrollY)
-      const stageIndex = Math.min(
-        PRODUCT_STAGE_COUNT,
-        Math.ceil(Math.max(0, scrollOffset - PRODUCT_STAGE_INDEX_EPSILON) / PRODUCT_STAGE_SCROLL_STEP),
-      )
-
-      syncStagesToScrollPosition(stageIndex, rect.top <= PRODUCT_STICKY_TOP + 1)
-    }
-
-    window.addEventListener('wheel', onWheel, { passive: false })
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => {
-      window.removeEventListener('wheel', onWheel)
-      window.removeEventListener('scroll', onScroll)
-    }
-  }, [
-    convergenceState,
-    activeStageIndex,
-    documentConnectionState,
-    documentOutlineState,
-    hasCompletedStage,
-    hierarchyRevealState,
-    isDesktop,
-    isProductSequenceComplete,
-    isStageAnimating,
-    reducedMotion,
-    runStageDirection,
-    scrollToStage,
-    sourceRevealState,
-    summaryRevealState,
-    syncStagesToScrollPosition,
-  ])
-
-  useEffect(() => {
-    if (reducedMotion || isMobile) {
-      setScrollProgress(1)
-      return undefined
-    }
-
-    let rafId
-    const updateProgress = () => {
-      const track = trackRef.current
-      if (!track) return
-
-      const rect = track.getBoundingClientRect()
-      const totalScroll = rect.height - window.innerHeight
-      if (totalScroll <= 0) {
-        setScrollProgress(1)
-        return
-      }
-
-      // Start the animation as soon as the Product heading reaches the sticky header.
-      const currentScroll = window.matchMedia('(min-width: 1200px)').matches
-        ? PRODUCT_STICKY_TOP - rect.top
-        : -rect.top
-      // Desktop keeps the completed AI output on screen before sticky release.
-      const progressScroll = window.matchMedia('(min-width: 1200px)').matches
-        ? totalScroll * 0.86
-        : totalScroll
-
-      let p
-      if (isDesktop) {
-        if (hierarchyRevealState !== 'complete') {
-          p = 0
-        } else {
-          p = DOCUMENT_HIERARCHY_END_PROGRESS
-            + (summaryInkStep / SUMMARY_INK_STEP_COUNT) * (1 - DOCUMENT_HIERARCHY_END_PROGRESS)
-        }
-      } else {
-        p = currentScroll / progressScroll
-      }
-
-      p = Math.max(0, Math.min(1, p))
-      setScrollProgress(p)
-    }
-
-    const onScroll = () => {
-      cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(updateProgress)
-    }
-
-    updateProgress()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    window.addEventListener('resize', onScroll, { passive: true })
-
-    return () => {
-      cancelAnimationFrame(rafId)
-      window.removeEventListener('scroll', onScroll)
-      window.removeEventListener('resize', onScroll)
-    }
-  }, [hierarchyRevealState, isDesktop, reducedMotion, isMobile, summaryInkStep])
+    setScrollProgress(reducedMotion || isMobile ? 1 : clamp(scrollYProgress.get()))
+  }, [isMobile, reducedMotion, scrollYProgress])
 
   useEffect(() => {
     const frame = iframeRef.current
@@ -1868,22 +1308,11 @@ export function ProductStage({ heading }) {
     })
   }
 
-  const completeDocumentOutline = () => {
-    if (documentOutlineState !== 'running') return
-    setScrollProgress(0)
-    setDocumentOutlineState('complete')
-  }
-
-  const completeDocumentConnection = () => {
-    if (documentConnectionState !== 'running') return
-    setDocumentConnectionState('complete')
-  }
-
   return (
     <div
       className="playground-scroll-track"
       ref={trackRef}
-      style={{ '--product-stage-scroll-distance': `${PRODUCT_STAGE_COUNT * PRODUCT_STAGE_SCROLL_STEP}px` }}
+      style={{ '--product-stage-scroll-distance': `${PRODUCT_STAGE_COUNT * PRODUCT_STAGE_SCROLL_VH}svh` }}
     >
       <div className="playground-sticky">
         {heading}
@@ -1896,17 +1325,6 @@ export function ProductStage({ heading }) {
               activeThemeId={activeThemeId}
               onOpenTrace={revealTrace}
               scrollProgress={scrollProgress}
-              documentOutlineState={documentOutlineState}
-              documentConnectionState={documentConnectionState}
-              sourceRevealState={sourceRevealState}
-              convergenceState={convergenceState}
-              hierarchyRevealState={hierarchyRevealState}
-              summaryRevealState={summaryRevealState}
-              summaryInkState={summaryInkState}
-              summaryInkStep={summaryInkStep}
-              activeStageIndex={activeStageIndex}
-              onDocumentOutlineComplete={completeDocumentOutline}
-              onDocumentConnectionComplete={completeDocumentConnection}
             />
             <div className="section-scan-frame" ref={scanFrameRef} hidden>
               <iframe

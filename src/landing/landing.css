@@ -103,12 +103,59 @@
     #top .hero-copy > * { animation: none !important; opacity: 1 !important; transform: none !important; }
     .hero-copy .eyebrow { margin: 0; }
     .hero-copy h1 { position: relative; max-width: 880px; margin: 0; font-size: 56px; line-height: 1.08; text-wrap: balance; }
-    .title-type-cursor { position: absolute; display: inline; margin-left: .08em; font: inherit; color: currentColor; animation: title-cursor-blink .8s steps(1, end) infinite; }
-    .title-type-reserve { visibility: hidden; }
-    .js.title-type-ready .type-title.is-waiting { color: transparent; }
-    @keyframes title-cursor-blink { 50% { opacity: 0; } }
+    .shiny-text {
+      display: inline;
+      color: var(--shiny-color, currentColor);
+      background-image:
+        linear-gradient(
+          110deg,
+          transparent calc(50% - var(--shiny-spread, 120px)),
+          var(--shiny-shine-color, var(--figma-primary)) 50%,
+          transparent calc(50% + var(--shiny-spread, 120px))
+        ),
+        linear-gradient(var(--shiny-color, currentColor), var(--shiny-color, currentColor));
+      background-position: var(--shiny-start, 120%) center, 0 0;
+      background-size: 240% 100%, 100% 100%;
+      background-repeat: no-repeat, no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .shiny-text.is-shining {
+      animation: shiny-text-sweep var(--shiny-duration, 2s) linear var(--shiny-delay, 0s) 1 forwards;
+    }
+    .shiny-text--yoyo.is-shining { animation-direction: alternate; animation-iteration-count: 2; }
+    .shiny-text--pause-on-hover:hover { animation-play-state: paused; }
+    .shiny-text.is-shine-complete { background: none; -webkit-text-fill-color: currentColor; }
+    @keyframes shiny-text-sweep { to { background-position: var(--shiny-end, -120%) center, 0 0; } }
     .js .text-enter { opacity: 0; transform: translateY(14px); }
     .js .text-enter.is-text-visible { opacity: 1; transform: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); }
+    .js #capabilities .story-card.card-enter,
+    .js #formats .formats-secondary-grid .format-feature.card-enter,
+    .js #enterprise .enterprise-metric.card-enter {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .js #capabilities .story-card.card-enter.is-card-visible,
+    .js #formats .formats-secondary-grid .format-feature.card-enter.is-card-visible,
+    .js #enterprise .enterprise-metric.card-enter.is-card-visible {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity .8s cubic-bezier(.22,1,.36,1) var(--card-enter-delay, 0ms),
+        transform .8s cubic-bezier(.22,1,.36,1) var(--card-enter-delay, 0ms);
+    }
+    .js .content-enter {
+      opacity: 0;
+      transform: translateY(24px);
+    }
+    .js .content-enter.is-content-visible {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity .8s cubic-bezier(.22,1,.36,1),
+        transform .8s cubic-bezier(.22,1,.36,1);
+    }
     .hero-copy .lede { max-width: 680px; margin: 0; font-size: 18px; line-height: 1.55; text-wrap: balance; }
     .hero-copy .button-row { margin-top: 8px; }
     @media (min-width: 768px) {
@@ -392,7 +439,7 @@
     .comparison-metric > i:nth-child(3) { background: var(--black-20); }
     .comparison-metric > i:nth-child(4) { background: var(--black-10); }
     .comparison-metric > i:nth-child(5) { background: var(--black-10); }
-    #comparison.is-visible .comparison-metric > i { transform-origin: center bottom; animation: comparison-bar-rise .7s cubic-bezier(.22,1,.36,1) both; }
+    #comparison.is-visible .comparison-metric > i { transform-origin: center bottom; animation: comparison-bar-rise .8s cubic-bezier(.22,1,.36,1) both; }
     #comparison.is-visible .comparison-metric:nth-child(2) > i { animation-delay: .06s; }
     #comparison.is-visible .comparison-metric:nth-child(3) > i { animation-delay: .12s; }
     #comparison.is-visible .comparison-metric:nth-child(4) > i { animation-delay: .18s; }
@@ -627,8 +674,16 @@
     @media (prefers-reduced-motion: reduce) {
       .logo-loop-track, .drift-wall-column, #formats .format-chips button.is-active { animation: none; }
       #comparison.is-visible .comparison-metric > i { animation: none; }
-      .title-type-cursor { animation: none; }
+      .shiny-text { animation: none; background: none; -webkit-text-fill-color: currentColor; }
       .js .text-enter { opacity: 1; transform: none; }
+      .js #capabilities .story-card.card-enter,
+      .js #formats .formats-secondary-grid .format-feature.card-enter,
+      .js #enterprise .enterprise-metric.card-enter,
+      .js .content-enter {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
       #capabilities .story-canvas { display: grid !important; transform: none !important; }
     }
     @media (prefers-reduced-motion: reduce) and (min-width: 768px) {
@@ -2798,6 +2853,20 @@
       border-radius: 50%;
       opacity: .4;
       pointer-events: none;
+    }
+
+    .js #formats .format-orbit-layout.format-intro-ready .format-orbit-copy,
+    .js #formats .format-orbit-layout.format-intro-ready .format-orbit-halo {
+      opacity: 0;
+      transition: opacity 800ms cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .js #formats .format-orbit-layout.is-format-intro-visible .format-orbit-copy {
+      opacity: 1;
+    }
+
+    .js #formats .format-orbit-layout.is-format-intro-visible .format-orbit-halo {
+      opacity: .4;
     }
 
     #formats .format-orbit-halo--supported {
@@ -9007,31 +9076,6 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       margin-left: 0;
     }
 
-    @keyframes document-outline-reveal {
-      from { clip-path: inset(0 0 100% 0); }
-      to { clip-path: inset(0); }
-    }
-
-    @keyframes document-connection-reveal {
-      from { clip-path: inset(0 0 100% 0); }
-      to { clip-path: inset(0); }
-    }
-
-    @keyframes document-source-reveal {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: none; }
-    }
-
-    @keyframes document-convergence-reveal {
-      from { clip-path: inset(0 0 100% 0); }
-      to { clip-path: inset(0); }
-    }
-
-    @keyframes document-hierarchy-reveal {
-      from { opacity: 0; transform: translateY(18px); }
-      to { opacity: 1; transform: none; }
-    }
-
     @media (min-width: 1200px) {
       #playground .section-node {
         height: 538.31px;
@@ -9045,94 +9089,10 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
         inset: 0;
         border: 1.5px solid var(--mineral-green-500);
         border-radius: inherit;
-        clip-path: inset(0 0 100% 0);
+        clip-path: inset(0 0 var(--document-outline-clip, 100%) 0);
         content: "";
         pointer-events: none;
-      }
-
-      #playground .document-map[data-document-outline-state="running"] .section-node::before {
-        animation: document-outline-reveal 600ms cubic-bezier(.77, 0, .175, 1) both;
         will-change: clip-path;
-      }
-
-      #playground .document-map[data-document-outline-state="reversing"] .section-node::before {
-        animation: document-outline-reveal 600ms cubic-bezier(.77, 0, .175, 1) both reverse;
-        will-change: clip-path;
-      }
-
-      #playground .document-map[data-document-outline-state="complete"] .section-node::before {
-        clip-path: inset(0);
-      }
-
-      #playground .stage-flow-row[data-document-connection-state="running"] .stage-flow-line-svg {
-        animation: document-connection-reveal 600ms cubic-bezier(.77, 0, .175, 1) both;
-        will-change: clip-path;
-      }
-
-      #playground .stage-flow-row[data-document-connection-state="reversing"] .stage-flow-line-svg {
-        animation: document-connection-reveal 600ms cubic-bezier(.77, 0, .175, 1) both reverse;
-        will-change: clip-path;
-      }
-
-      #playground .stage-flow-row[data-document-connection-state="complete"] .stage-flow-line-svg {
-        clip-path: inset(0);
-      }
-
-      #playground .document-map[data-source-reveal-state="idle"] .source-sections,
-      #playground .document-map[data-source-reveal-state="armed"] .source-sections {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-
-      #playground .document-map[data-source-reveal-state="running"] .source-sections {
-        animation: document-source-reveal 900ms cubic-bezier(.23, 1, .32, 1) both;
-      }
-
-      #playground .document-map[data-source-reveal-state="reversing"] .source-sections {
-        animation: document-source-reveal 900ms cubic-bezier(.23, 1, .32, 1) both reverse;
-      }
-
-      #playground .document-map[data-source-reveal-state="complete"] .source-sections {
-        opacity: 1;
-        transform: none;
-      }
-
-      #playground .document-map[data-convergence-state="running"] .stage-convergence-line-svg {
-        animation: document-convergence-reveal 620ms cubic-bezier(.77, 0, .175, 1) both;
-        will-change: clip-path;
-      }
-
-      #playground .document-map[data-convergence-state="reversing"] .stage-convergence-line-svg {
-        animation: document-convergence-reveal 620ms cubic-bezier(.77, 0, .175, 1) both reverse;
-        will-change: clip-path;
-      }
-
-      #playground .document-map[data-convergence-state="complete"] .stage-convergence-line-svg {
-        clip-path: inset(0);
-      }
-
-      #playground .document-map[data-hierarchy-reveal-state="running"] .trace-summary-card {
-        animation: document-hierarchy-reveal 900ms cubic-bezier(.23, 1, .32, 1) both;
-      }
-
-      #playground .document-map[data-hierarchy-reveal-state="reversing"] .trace-summary-card {
-        animation: document-hierarchy-reveal 900ms cubic-bezier(.23, 1, .32, 1) both reverse;
-      }
-
-      #playground .document-map[data-summary-reveal-state="running"] .hierarchy-summary-connection {
-        animation: document-connection-reveal 520ms cubic-bezier(.77, 0, .175, 1) both;
-      }
-
-      #playground .document-map[data-summary-reveal-state="reversing"] .hierarchy-summary-connection {
-        animation: document-connection-reveal 520ms 500ms cubic-bezier(.77, 0, .175, 1) both reverse;
-      }
-
-      #playground .document-map[data-summary-reveal-state="running"] .ai-output-report {
-        animation: document-source-reveal 800ms 300ms cubic-bezier(.23, 1, .32, 1) both;
-      }
-
-      #playground .document-map[data-summary-reveal-state="reversing"] .ai-output-report {
-        animation: document-source-reveal 700ms cubic-bezier(.23, 1, .32, 1) both reverse;
       }
 
       #playground .section-node::after {
@@ -10115,9 +10075,39 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
         height: auto;
       }
 
+      #playground .trace-source-mini-table th,
+      #playground .trace-source-mini-table td {
+        height: auto;
+        padding: 3px 4px;
+        line-height: 12px;
+        vertical-align: top;
+        overflow-wrap: normal;
+      }
+
       #playground .trace-summary-card {
         width: 100%;
         margin: 20px 0 0;
+      }
+
+      #playground .trace-hierarchy-node {
+        align-items: flex-start;
+      }
+
+      #playground .trace-hierarchy-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0;
+      }
+
+      #playground [data-trace-hierarchy-label] {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        overflow-wrap: anywhere;
+      }
+
+      #playground .trace-hierarchy-detail {
+        text-align: left;
+        white-space: normal;
       }
 
       #playground .ai-output-report {
@@ -12158,13 +12148,13 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
 .landing-page #main #final-cta .section-no {
   display: inline-block;
   margin: 0;
-  padding: 3px 7px;
+  padding: 4px 10px;
   background: var(--coral-signal-500);
   color: #fff;
   font-family: var(--figma-mono);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
-  line-height: 16px;
+  line-height: 20px;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -12316,10 +12306,27 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
   overflow: hidden;
   background: var(--paper);
   color: var(--ink);
+  isolation: isolate;
+}
+
+.landing-page .footer .footer-flickering-grid {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom, var(--black-100), transparent);
+  mask-image: linear-gradient(to bottom, var(--black-100), transparent);
+}
+
+.landing-page .footer .footer-flickering-grid canvas {
+  display: block;
 }
 
 .landing-page .footer .footer-inner {
   position: relative;
+  z-index: 1;
   width: min(1280px, 100%);
   height: 415px;
   margin-inline: auto;
@@ -12427,11 +12434,12 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
   left: 0;
   width: 100%;
   height: 183px;
+  aspect-ratio: 1280 / 183;
   display: block;
-  object-fit: contain;
-  object-position: center top;
+  background: var(--black-3);
   pointer-events: none;
-  filter: invert(1);
+  -webkit-mask: url('/assets/knowhere-footer-wordmark.svg') center top / contain no-repeat;
+  mask: url('/assets/knowhere-footer-wordmark.svg') center top / contain no-repeat;
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {

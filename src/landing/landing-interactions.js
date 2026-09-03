@@ -396,10 +396,10 @@ if (!(root instanceof Element)) return () => {};
   const originalText = new WeakMap();
   const originalAttributes = new WeakMap();
   const headingSourceText = new WeakMap();
-  $$('#main h1, #main h2').forEach(heading => headingSourceText.set(heading, heading.textContent.trim()));
+  $$('[data-heading-primary]').forEach(heading => headingSourceText.set(heading, heading.textContent.trim()));
   let activeLanguage = 'en';
   let storyReady = false;
-  let titleTypeReady = false;
+  let headingEmphasisReady = false;
   let pricingReady = false;
   function localizeText(value) {
     if (activeLanguage !== 'zh') return value;
@@ -462,7 +462,7 @@ if (!(root instanceof Element)) return () => {};
     translatePage();
     syncScanFrameLanguage();
     if (storyReady) renderStoryCanvas();
-    if (titleTypeReady) refreshTypedHeadings();
+    if (headingEmphasisReady) refreshHeadingEmphasis();
     if (pricingReady) syncPricingCalculator();
     if (announce) showToast(isChinese ? localizeText('Language state: Chinese.') : 'Language state: English.');
   }
@@ -718,15 +718,6 @@ if (!(root instanceof Element)) return () => {};
   storyReady = true;
   renderStoryCanvas();
 
-  const typedHeadings = $$('#main h1, #main h2').filter(heading => !heading.closest('#playground'));
-  const headingTypingTimers = new WeakMap();
-  let titleObserver;
-  function stopHeadingTyping(heading) {
-    const timer = headingTypingTimers.get(heading);
-    clearTimeout(timer);
-    cancelAnimationFrame(timer);
-    headingTypingTimers.delete(heading);
-  }
   function replaceHeadingText(heading, text) {
     const emphasis = heading.dataset.headingPrimary
       ? { phrase: heading.dataset.headingPrimary, className: 'heading-primary' }
@@ -745,93 +736,14 @@ if (!(root instanceof Element)) return () => {};
       document.createTextNode(text.slice(phraseIndex + emphasis.phrase.length))
     );
   }
-  function showHeading(heading, text) {
-    stopHeadingTyping(heading);
-    replaceHeadingText(heading, text);
-    heading.setAttribute('aria-label', text);
-    heading.classList.remove('is-waiting', 'is-typing');
-    heading.classList.add('is-typed');
+  function refreshHeadingEmphasis() {
+    $$('[data-heading-primary]').forEach(heading => replaceHeadingText(
+      heading,
+      localizeText(headingSourceText.get(heading) || heading.textContent.trim())
+    ));
   }
-  function typeHeading(heading, text) {
-    stopHeadingTyping(heading);
-    const typedText = document.createTextNode('');
-    const reservedText = document.createElement('span');
-    reservedText.className = 'title-type-reserve';
-    reservedText.setAttribute('aria-hidden', 'true');
-    reservedText.textContent = text;
-    heading.setAttribute('aria-label', text);
-    heading.classList.remove('is-waiting', 'is-typed');
-    heading.classList.add('is-typing');
-    const cursor = document.createElement('span');
-    cursor.className = 'title-type-cursor';
-    cursor.setAttribute('aria-hidden', 'true');
-    cursor.textContent = '|';
-    heading.replaceChildren(typedText, cursor, reservedText);
-    const characters = [...text];
-    const duration = 500;
-    const startedAt = performance.now();
-    let renderedCount = 0;
-    const typeNext = now => {
-      const nextCount = Math.min(characters.length, Math.ceil(((now - startedAt) / duration) * characters.length));
-      if (nextCount > renderedCount) {
-        typedText.nodeValue = characters.slice(0, nextCount).join('');
-        reservedText.textContent = characters.slice(nextCount).join('');
-        renderedCount = nextCount;
-      }
-      if (renderedCount >= characters.length) {
-        cursor.remove();
-        reservedText.remove();
-        replaceHeadingText(heading, text);
-        heading.classList.remove('is-typing');
-        heading.classList.add('is-typed');
-        heading.style.minHeight = '';
-        return;
-      }
-      headingTypingTimers.set(heading, requestAnimationFrame(typeNext));
-    };
-    headingTypingTimers.set(heading, requestAnimationFrame(typeNext));
-  }
-  function prepareTypedHeadings() {
-    if (titleObserver) titleObserver.disconnect();
-    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    typedHeadings.forEach(heading => {
-      stopHeadingTyping(heading);
-      const text = localizeText(headingSourceText.get(heading) || heading.textContent.trim());
-      replaceHeadingText(heading, text);
-      heading.setAttribute('aria-label', text);
-      heading.style.minHeight = '';
-      heading.classList.add('type-title');
-      heading.classList.remove('is-waiting', 'is-typing', 'is-typed');
-      heading.style.minHeight = `${Math.ceil(heading.getBoundingClientRect().height)}px`;
-      if (reducedMotion) showHeading(heading, text);
-      else heading.classList.add('is-waiting');
-    });
-    $$('[data-heading-primary]')
-      .filter(heading => !typedHeadings.includes(heading))
-      .forEach(heading => replaceHeadingText(
-        heading,
-        localizeText(headingSourceText.get(heading) || heading.textContent.trim())
-      ));
-    document.documentElement.classList.add('title-type-ready');
-    if (reducedMotion || !('IntersectionObserver' in window)) {
-      typedHeadings.forEach(heading => showHeading(heading, localizeText(headingSourceText.get(heading))));
-      return;
-    }
-    titleObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const heading = entry.target;
-        titleObserver.unobserve(heading);
-        typeHeading(heading, localizeText(headingSourceText.get(heading)));
-      });
-    }, { threshold: 0, rootMargin: '0px 0px -30% 0px' });
-    typedHeadings.forEach(heading => titleObserver.observe(heading));
-  }
-  function refreshTypedHeadings() {
-    requestAnimationFrame(prepareTypedHeadings);
-  }
-  titleTypeReady = true;
-  refreshTypedHeadings();
+  headingEmphasisReady = true;
+  refreshHeadingEmphasis();
 
   const enteringText = $$([
     '#main p',
@@ -845,7 +757,17 @@ if (!(root instanceof Element)) return () => {};
   ].join(',')).filter(element => (
     !element.closest('[hidden], #top, #playground')
     && !element.closest('.converging-helix-controls')
-    && !element.matches('#enterprise .enterprise-metric')
+    && !element.closest('.story-card, .formats-secondary-grid .format-feature')
+    && !element.closest([
+      '.format-orbit-copy',
+      '#comparison .comparison-chart',
+      '#integration .integration-grid',
+      '#pricing .pricing-calculator',
+      '#pricing .pricing-file-limits',
+      '#enterprise .enterprise-metric',
+      '#faq .faq-list'
+    ].join(', '))
+    && !element.matches('.section-no')
   ));
   const reducedTextMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
   enteringText.forEach(element => element.classList.add('text-enter'));
@@ -859,8 +781,63 @@ if (!(root instanceof Element)) return () => {};
         entry.target.classList.add('is-text-visible');
         textEnterObserver.unobserve(entry.target);
       });
-    }, { threshold: 0, rootMargin: '0px 0px -30% 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px -20% 0px' });
     enteringText.forEach(element => textEnterObserver.observe(element));
+  }
+
+  const enteringCardGroups = [
+    $('#capabilities .story-card-stack'),
+    $('#formats .formats-secondary-grid'),
+    $('#enterprise .enterprise-metrics')
+  ].filter(Boolean);
+  enteringCardGroups.forEach(group => {
+    [...group.children].forEach((card, index) => {
+      card.classList.add('card-enter');
+      card.style.setProperty('--card-enter-delay', `${index * 60}ms`);
+    });
+  });
+  const showCardGroup = group => {
+    [...group.children].forEach(card => card.classList.add('is-card-visible'));
+  };
+  if (reducedTextMotion || !('IntersectionObserver' in window)) {
+    enteringCardGroups.forEach(showCardGroup);
+  } else {
+    const cardEnterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        showCardGroup(entry.target);
+        cardEnterObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -20% 0px' });
+    enteringCardGroups.forEach(group => cardEnterObserver.observe(group));
+  }
+
+  const enteringContent = $$([
+    '#comparison .comparison-chart',
+    '#integration .integration-grid',
+    '#pricing .pricing-calculator',
+    '#faq .faq-list'
+  ].join(', '));
+  const pricingFileLimits = $('#pricing .pricing-file-limits');
+  enteringContent.forEach(content => content.classList.add('content-enter'));
+  pricingFileLimits?.classList.add('content-enter');
+  const showContent = content => {
+    content.classList.add('is-content-visible');
+    if (content.matches('#pricing .pricing-calculator')) {
+      pricingFileLimits?.classList.add('is-content-visible');
+    }
+  };
+  if (reducedTextMotion || !('IntersectionObserver' in window)) {
+    enteringContent.forEach(showContent);
+  } else {
+    const contentEnterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        showContent(entry.target);
+        contentEnterObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0, rootMargin: '0px 0px -20% 0px' });
+    enteringContent.forEach(content => contentEnterObserver.observe(content));
   }
 
 const pricingPages = $('#pricing-pages');
