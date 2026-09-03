@@ -14583,3 +14583,8 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
     transform: none;
   }
 }
+
+/* Keep the style system active without exposing its authoring control in the site UI. */
+.dialkit-panel {
+  display: none !important;
+}
