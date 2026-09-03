@@ -352,3 +352,8 @@ html[data-theme="dark"] #final-cta .button-secondary:hover {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* The tuning workbench is not part of the public landing-page UI. */
+#final-cta .converging-helix-controls {
+  display: none !important;
+}

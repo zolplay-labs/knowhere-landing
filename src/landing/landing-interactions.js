@@ -485,23 +485,35 @@ if (!(root instanceof Element)) return () => {};
 
   const menuButton = $('.menu-toggle');
   const menu = $('#mobile-menu');
-  const closeButton = $('.menu-close');
+  const menuButtonLabel = $('.sr-only', menuButton);
   let menuReturnFocus;
+  let menuCloseTimer;
   function openMenu() {
+    clearTimeout(menuCloseTimer);
     menuReturnFocus = document.activeElement;
     menu.hidden = false;
+    header.classList.add('menu-open');
     menuButton.setAttribute('aria-expanded', 'true');
+    menuButton.setAttribute('aria-label', 'Close menu');
+    menuButtonLabel.textContent = 'Close menu';
     document.body.style.overflow = 'hidden';
-    closeButton.focus();
+    requestAnimationFrame(() => menu.classList.add('is-open'));
+    $('a', menu)?.focus();
   }
   function closeMenu() {
-    menu.hidden = true;
+    menu.classList.remove('is-open');
+    header.classList.remove('menu-open');
     menuButton.setAttribute('aria-expanded', 'false');
+    menuButton.setAttribute('aria-label', 'Open menu');
+    menuButtonLabel.textContent = 'Open menu';
     document.body.style.overflow = '';
     (menuReturnFocus || menuButton).focus();
+    menuCloseTimer = setTimeout(() => { menu.hidden = true; }, 520);
   }
-  menuButton.addEventListener('click', openMenu);
-  closeButton.addEventListener('click', closeMenu);
+  menuButton.addEventListener('click', () => {
+    if (menu.hidden) openMenu();
+    else closeMenu();
+  });
   $$('a', menu).forEach(link => link.addEventListener('click', () => { if (!link.classList.contains('prototype-link')) closeMenu(); }));
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
@@ -509,7 +521,7 @@ if (!(root instanceof Element)) return () => {};
       else if (!toast.hidden) toast.hidden = true;
     }
     if (event.key === 'Tab' && !menu.hidden) {
-      const focusables = $$('button,a', menu);
+      const focusables = [menuButton, ...$$('button,a', menu)];
       const first = focusables[0], last = focusables[focusables.length - 1];
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
       if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
@@ -1466,7 +1478,9 @@ syncPricingCalculator();
       const maxWidth = (width < 1100
         ? visualRect.width * .96
         : Math.min(width * .92, 1080)) * SETTINGS.fieldScale;
-      const stageSpan = Math.min(visualRect.height * .98, 580) * 1.2;
+      const stageSpan = width < 768
+        ? visualRect.height * .86
+        : Math.min(visualRect.height * .98, 580) * 1.2;
       const isDesktopLayout = width >= 768;
       const navHeight = header?.getBoundingClientRect().height || 68;
       const topY = isDesktopLayout
