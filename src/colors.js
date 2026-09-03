@@ -115,6 +115,7 @@ export const colorHex = {
 export const colorAlpha = {
   black: {
     1: 'rgb(0 0 0 / 1%)',
+    2: 'rgb(0 0 0 / 2%)',
     3: 'rgb(0 0 0 / 3%)',
     6: 'rgb(0 0 0 / 6%)',
     10: 'rgb(0 0 0 / 10%)',

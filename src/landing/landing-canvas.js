@@ -161,17 +161,34 @@ function initializeHeroCanvas(root, cleanups) {
       { count: 48, width: .28 },
       { count: 112, width: .68 }
     ];
-    const LAYERS = [
-      { label: 'ORIGINAL DOCUMENT', detail: 'The document stays intact.' },
-      { label: 'PAGE IMAGES', detail: 'Every page, ready to inspect.' },
-      { label: 'LIGHTWEIGHT NOTES', detail: 'Topics stay tied to their chapters.' },
-      { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
-    ];
+    const LAYER_COPY = {
+      en: [
+        { label: 'ORIGINAL DOCUMENT', detail: 'The document stays intact.' },
+        { label: 'PAGE IMAGES', detail: 'Every page, ready to inspect.' },
+        { label: 'LIGHTWEIGHT NOTES', detail: 'Topics stay tied to their chapters.' },
+        { label: 'CHAPTER MAP', detail: 'A clear path back to the source.' }
+      ],
+      zh: [
+        { label: '原始文档', detail: '文档内容保持完整。' },
+        { label: '页面图像', detail: '每一页都可随时查看。' },
+        { label: '轻量笔记', detail: '主题始终关联对应章节。' },
+        { label: '章节地图', detail: '清晰返回原始来源的路径。' }
+      ]
+    };
+    let heroLanguage = document.body.dataset.language === 'zh' ? 'zh' : 'en';
+    const LAYERS = LAYER_COPY[heroLanguage].map(layer => ({ ...layer }));
+    let liveDataPassLabel = heroLanguage === 'zh' ? '实时数据流' : 'Live data pass';
+    const syncHeroLanguage = event => {
+      heroLanguage = event.detail?.language === 'zh' ? 'zh' : 'en';
+      LAYER_COPY[heroLanguage].forEach((layer, index) => Object.assign(LAYERS[index], layer));
+      liveDataPassLabel = heroLanguage === 'zh' ? '实时数据流' : 'Live data pass';
+    };
+    window.addEventListener('knowhere-language-change', syncHeroLanguage, { signal });
     const LABEL_ICON_PATHS = [
-      'M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z',
-      'M2.9918 21C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918ZM20 15V5H4V19L14 9L20 15ZM20 17.8284L14 11.8284L6.82843 19H20V17.8284ZM8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11Z',
-      'M21 15L15 20.996L4.00221 21C3.4487 21 3 20.5551 3 20.0066V3.9934C3 3.44476 3.44495 3 3.9934 3H20.0066C20.5552 3 21 3.45576 21 4.00247V15ZM19 5H5V19H13V14C13 13.4872 13.386 13.0645 13.8834 13.0067L14 13L19 12.999V5ZM18.171 14.999L15 15V18.169L18.171 14.999Z',
-      'M10 2C10.5523 2 11 2.44772 11 3V7C11 7.55228 10.5523 8 10 8H8V10H13V9C13 8.44772 13.4477 8 14 8H20C20.5523 8 21 8.44772 21 9V13C21 13.5523 20.5523 14 20 14H14C13.4477 14 13 13.5523 13 13V12H8V18H13V17C13 16.4477 13.4477 16 14 16H20C20.5523 16 21 16.4477 21 17V21C21 21.5523 20.5523 22 20 22H14C13.4477 22 13 21.5523 13 21V20H7C6.44772 20 6 19.5523 6 19V8H4C3.44772 8 3 7.55228 3 7V3C3 2.44772 3.44772 2 4 2H10ZM19 18H15V20H19V18ZM19 10H15V12H19V10ZM9 4H5V6H9V4Z'
+      'M21 9V20.9925C21 21.5511 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.44694 2 3.99826 2H14V8C14 8.55228 14.4477 9 15 9H21ZM21 7H16V2.00318L21 7ZM8 7V9H11V7H8ZM8 11V13H16V11H8ZM8 15V17H16V15H8Z',
+      'M20 5H4V19L13.2923 9.70649C13.6828 9.31595 14.3159 9.31591 14.7065 9.70641L20 15.0104V5ZM2 3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082C21.556 3 22 3.44495 22 3.9934V20.0066C22 20.5552 21.5447 21 21.0082 21H2.9918C2.44405 21 2 20.5551 2 20.0066V3.9934ZM8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11Z',
+      'M15 14L14.8834 14.0067C14.4243 14.0601 14.0601 14.4243 14.0067 14.8834L14 15V21H3.99826C3.44694 21 3 20.5551 3 20.0066V3.9934C3 3.44476 3.44495 3 3.9934 3H20.0066C20.5552 3 21 3.44749 21 3.9985V14H15ZM21 16L16 20.997V16H21Z',
+      'M7.10508 15.2101C8.21506 15.6501 9 16.7334 9 18C9 19.6569 7.65685 21 6 21C4.34315 21 3 19.6569 3 18C3 16.6938 3.83481 15.5825 5 15.1707V8.82929C3.83481 8.41746 3 7.30622 3 6C3 4.34315 4.34315 3 6 3C7.65685 3 9 4.34315 9 6C9 7.30622 8.16519 8.41746 7 8.82929V11.9996C7.83566 11.3719 8.87439 11 10 11H14C15.3835 11 16.5482 10.0635 16.8949 8.78991C15.7849 8.34988 15 7.26661 15 6C15 4.34315 16.3431 3 18 3C19.6569 3 21 4.34315 21 6C21 7.3332 20.1303 8.46329 18.9274 8.85392C18.5222 11.2085 16.4703 13 14 13H10C8.61653 13 7.45179 13.9365 7.10508 15.2101Z'
     ].map(path => new Path2D(path));
     const LABEL_Y_KEYS = ['originalDocumentY', 'pageImagesY', 'lightweightNotesY', 'chapterMapY'];
     const HERO_COPY_ACCENTS = [.16, .24, .12, .3, .18, .14, .2, .14, .22, .16, .22, .14, .28, .18, .24];
@@ -208,7 +225,6 @@ function initializeHeroCanvas(root, cleanups) {
         length: 5.7
       }
     ];
-    const displayLabel = label => label[0] + label.slice(1).toLowerCase();
     const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
     const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
     const unitCounts = DATA.map(stage => stage.count);
@@ -251,10 +267,13 @@ function initializeHeroCanvas(root, cleanups) {
     let intro = 0;
     let lastFrame = 0;
     let frameId = 0;
+    let resizeFrameId = 0;
     let animationTime = 0;
     let redFlowStartedAt = null;
     const MORPH_DURATION = .46;
     const MORPH_POINT_COUNT = 680;
+    const SHAPE_ANNOTATION_MIN_GAP = 24;
+    const SHAPE_ANNOTATION_MAX_GAP = 40;
 
     const hash = (x, y) => {
       const value = Math.sin(x * 127.1 + y * 311.7 + SETTINGS.seed * .13) * 43758.5453;
@@ -262,11 +281,16 @@ function initializeHeroCanvas(root, cleanups) {
     };
     const wrapAngle = value => Math.atan2(Math.sin(value), Math.cos(value));
 
-    function resize() {
+    function applyCanvasSize() {
       const rect = canvas.getBoundingClientRect();
-      width = Math.max(1, Math.round(rect.width));
-      height = Math.max(1, Math.round(rect.height));
-      dpr = Math.min(devicePixelRatio || 1, 2);
+      const nextWidth = Math.max(1, Math.round(rect.width));
+      const nextHeight = Math.max(1, Math.round(rect.height));
+      const nextDpr = Math.min(devicePixelRatio || 1, 2);
+      if (width === nextWidth && height === nextHeight && dpr === nextDpr) return;
+
+      width = nextWidth;
+      height = nextHeight;
+      dpr = nextDpr;
       cell = SETTINGS.cellSize;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
@@ -274,6 +298,18 @@ function initializeHeroCanvas(root, cleanups) {
       cols = Math.ceil(width / cell) + 1;
       rows = Math.ceil(height / cell) + 1;
       heat = new Float32Array(cols * rows);
+      pointerX = -1;
+      pointerY = -1;
+      previousX = -1;
+      previousY = -1;
+    }
+
+    function resize() {
+      cancelAnimationFrame(resizeFrameId);
+      resizeFrameId = requestAnimationFrame(() => {
+        resizeFrameId = 0;
+        applyCanvasSize();
+      });
     }
 
     function buildLayout() {
@@ -283,20 +319,30 @@ function initializeHeroCanvas(root, cleanups) {
       const visualLeft = visualRect.left - canvasRect.left;
       const visualTop = visualRect.top - canvasRect.top;
       const isTwoColumnHero = width >= 1100;
+      const viewportWidth = window.innerWidth;
+      const compactDesktopProgress = Math.max(0, Math.min(1, (viewportWidth - 1200) / (1366 - 1200)));
+      const compactDesktopScale = .72 + compactDesktopProgress * .1;
+      const desktopCenterPosition = .43;
       const centerX = isTwoColumnHero
-        ? visualLeft + visualRect.width * vortexControls.centerPosition
+        ? visualLeft + visualRect.width * desktopCenterPosition
         : visualLeft + visualRect.width * .5;
-      const maxWidth = (isTwoColumnHero
+      const desktopMaxWidth = isTwoColumnHero
         ? Math.min(width * .92, 1080)
-        : visualRect.width * .96) * vortexControls.fieldScale;
+        : visualRect.width * .96;
+      const maxWidth = desktopMaxWidth
+        * (isTwoColumnHero ? compactDesktopScale : 1)
+        * vortexControls.fieldScale;
       const stageSpan = Math.min(visualRect.height * .98, 580) * 1.2;
       const isDesktopLayout = isTwoColumnHero;
       const navHeight = header?.getBoundingClientRect().height || 68;
       const topY = isDesktopLayout
         ? navHeight + 2
         : visualTop + Math.max(18, visualRect.height * .018);
-      const stageGap = stageSpan / (LAYERS.length + .25) * vortexControls.stageSpacing;
       const heroBottom = heroRect.bottom - canvasRect.top;
+      const isStackedLayout = !isTwoColumnHero;
+      const stageGap = isStackedLayout
+        ? Math.max(38, (heroBottom - topY - 96) / (DATA.length - 1))
+        : stageSpan / (LAYERS.length + .25) * vortexControls.stageSpacing;
       return {
         centerX,
         maxWidth,
@@ -308,7 +354,7 @@ function initializeHeroCanvas(root, cleanups) {
         visualWidth: visualRect.width,
         visualHeight: visualRect.height,
         isDesktopLayout,
-        showLayerCards: isTwoColumnHero
+        showLayerCards: width >= 1024
       };
     }
 
@@ -535,10 +581,13 @@ function initializeHeroCanvas(root, cleanups) {
       const shape = PIXEL_SHAPES[layerIndex];
       const centerY = layout.visualTop + layout.visualHeight / 2;
       const shapeScale = width < 768 ? 1.48 : 1.68;
+      const compactShift = width >= 768 && width < 1200
+        ? Math.min(cell * 6, (1200 - width) * .18)
+        : 0;
       const shapeCenterX = 17;
       const shapeCenterY = 18;
       return normalizeMorphPoints(shape.map(point => ({
-        x: layout.centerX + (point.x - shapeCenterX) * cell * shapeScale,
+        x: layout.centerX - compactShift + (point.x - shapeCenterX) * cell * shapeScale,
         y: centerY + (point.y - shapeCenterY) * cell * shapeScale,
         alpha: point.alpha
       })));
@@ -669,7 +718,6 @@ function initializeHeroCanvas(root, cleanups) {
     }
 
     function drawShapeAnnotation(layout, time) {
-      if (!layout.showLayerCards) return;
       const presentation = shapeCardPresentation(time);
       if (presentation.layerIndex === null || presentation.visibility <= .001) return;
 
@@ -685,69 +733,48 @@ function initializeHeroCanvas(root, cleanups) {
       }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
       const shapeCenterY = (bounds.minY + bounds.maxY) / 2;
       const visibility = presentation.visibility;
-      const rightInset = width < 768 ? 12 : 50;
-      const cardWidth = Math.min(273, width - rightInset * 2);
-      const cardHeight = 95;
-      const rightLimit = width - cardWidth - rightInset;
-      const targetX = width < 768
-        ? rightLimit
-        : Math.min(rightLimit, layout.centerX + layout.maxWidth * .21);
-      const targetY = Math.max(layout.topY + cell, shapeCenterY - cardHeight / 2);
-      const cardX = targetX + (1 - visibility) * cell * 3.2;
-      const cardY = targetY + (1 - visibility) * cell * .8;
-      const lineStart = bounds.maxX + cell * 1.15;
-      const lineEnd = cardX;
-      const lineWidth = Math.max(20, lineEnd - lineStart) * visibility;
+      const rightInset = width < 1024 ? 16 : Math.max(24, width * .02);
+      const labelWidth = Math.min(200, width - rightInset * 2);
+      const gapProgress = Math.max(0, Math.min(1, (width - 1024) / (1440 - 1024)));
+      const annotationGap = SHAPE_ANNOTATION_MIN_GAP
+        + (SHAPE_ANNOTATION_MAX_GAP - SHAPE_ANNOTATION_MIN_GAP) * gapProgress;
+      const preferredX = bounds.maxX + cell + annotationGap;
+      const safeRight = Math.min(width - rightInset, layout.visualLeft + layout.visualWidth);
+      const rightLimit = safeRight - labelWidth;
+      const sideBySide = width >= 768 && preferredX <= rightLimit;
+      const labelX = sideBySide
+        ? rightLimit + (1 - visibility) * cell * 2
+        : Math.max(rightInset, Math.min(
+          width - rightInset - labelWidth,
+          (bounds.minX + bounds.maxX - labelWidth) / 2
+        ));
+      const labelY = sideBySide
+        ? shapeCenterY - 31
+        : bounds.maxY + cell * 3;
 
       ctx.save();
-      ctx.fillStyle = color;
-      const connectorY = Math.round(shapeCenterY / cell) * cell + 1;
-      for (let lineX = lineStart; lineX < lineStart + lineWidth; lineX += cell) {
-        const column = Math.round(lineX / cell);
-        ctx.globalAlpha = (.46 + hash(column, layerIndex + 1621) * .18) * visibility;
-        ctx.fillRect(column * cell + 1, connectorY, cell - 3, cell - 3);
+      if (sideBySide) {
+        ctx.fillStyle = color;
+        const connectorY = Math.round(shapeCenterY / cell) * cell + 1;
+        const lineStart = bounds.maxX + cell;
+        const lineEnd = labelX - cell;
+        for (let lineX = lineStart; lineX < lineEnd; lineX += cell) {
+          const column = Math.round(lineX / cell);
+          ctx.globalAlpha = (.46 + hash(column, layerIndex + 1621) * .18) * visibility;
+          ctx.fillRect(column * cell + 1, connectorY, cell - 3, cell - 3);
+        }
       }
 
-      ctx.translate(cardX + cardWidth / 2, cardY + cardHeight / 2);
-      const scale = .94 + visibility * .06;
-      ctx.scale(scale, scale);
-      ctx.translate(-cardWidth / 2, -cardHeight / 2);
-
-      ctx.globalAlpha = visibility;
-      ctx.fillStyle = currentColor('--white-100', '#FFFFFF');
-      ctx.fillRect(0, 0, cardWidth, cardHeight);
-      ctx.strokeStyle = currentColor('--mist-white-600', '#BBBCB3');
-      ctx.lineWidth = 1;
-      ctx.strokeRect(.5, .5, cardWidth - 1, cardHeight - 1);
-
-      const textX = 16;
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
-      ctx.fillStyle = currentColor('--mist-white-950', '#1B1C1A');
-      ctx.font = '500 14px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(displayLabel(layer.label), textX, 16);
-      ctx.fillStyle = currentColor('--mist-white-950', '#1B1C1A');
-      ctx.font = '400 13px "Fellix-TRIAL", "ABC Schengen Greek Variable Trial", Arial, sans-serif';
-      ctx.fillText(layer.detail, textX, 40);
-
-      const statusY = 66;
-      ctx.globalAlpha = .4 * visibility;
-      ctx.fillStyle = currentColor('--black-100', '#000000');
-      ctx.fillText('Live data pass', textX, statusY);
-      const statusColors = [
-        currentColor('--mineral-green-100', '#7EFEDD'),
-        currentColor('--mineral-green-300', '#23D6B1'),
-        currentColor('--mineral-green-200', '#27EFC6'),
-        ...Array(4).fill(currentColor('--mineral-green-50', '#CAFFEE'))
-      ];
-      const statusStartX = cardWidth - 118;
-      statusColors.forEach((statusColor, index) => {
-        const phase = ((time * 1.15 - index * .11) % 1 + 1) % 1;
-        const pulse = phase < .3 ? Math.sin(phase / .3 * Math.PI) : 0;
-        ctx.globalAlpha = (.18 + pulse * .7) * visibility;
-        ctx.fillStyle = statusColor;
-        ctx.fillRect(statusStartX + index * 16, statusY + 7, 6, 6);
-      });
+      ctx.fillStyle = heroLabelTitleColor;
+      ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(layer.label, labelX, labelY, labelWidth);
+      ctx.fillStyle = heroLabelSubtitleColor;
+      ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.fillText(layer.detail, labelX, labelY + 24, labelWidth);
+      ctx.globalAlpha = .48 * visibility;
+      ctx.fillText(liveDataPassLabel, labelX, labelY + 48, labelWidth);
       ctx.restore();
     }
 
@@ -813,7 +840,7 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.translate(Math.round(x), Math.round(y));
       ctx.scale(iconSize / 24, iconSize / 24);
       ctx.fillStyle = RED_FLOW_COLOR;
-      ctx.fill(LABEL_ICON_PATHS[layerIndex]);
+      ctx.fill(LABEL_ICON_PATHS[layerIndex], 'evenodd');
       ctx.restore();
     }
 
@@ -908,7 +935,18 @@ function initializeHeroCanvas(root, cleanups) {
     const SCAN_TRAIL_ALPHA = .56;
     const SCAN_GRID_UNIT = 6;
 
-    const scanRevealTargets = [header, copy, visual].filter(Boolean);
+    const scanRevealTargets = [header, visual].filter(Boolean);
+    let headerRevealForced = window.scrollY > 24 || hero.getBoundingClientRect().bottom <= 0;
+
+    function revealHeaderImmediately() {
+      if (!header) return;
+      headerRevealForced = true;
+      header.style.opacity = '1';
+      header.style.clipPath = 'none';
+      header.style.willChange = 'auto';
+    }
+
+    if (headerRevealForced) revealHeaderImmediately();
 
     function scanState() {
       const scan = (intro - .067) / .933;
@@ -924,8 +962,11 @@ function initializeHeroCanvas(root, cleanups) {
     function syncScanReveal() {
       if (reducedMotion) return;
       const { scan, headY } = scanState();
+      const activeRevealTargets = headerRevealForced
+        ? scanRevealTargets.filter(element => element !== header)
+        : scanRevealTargets;
       if (scan >= 1) {
-        scanRevealTargets.forEach(element => {
+        activeRevealTargets.forEach(element => {
           element.style.opacity = '1';
           element.style.clipPath = 'none';
           element.style.willChange = 'auto';
@@ -933,7 +974,7 @@ function initializeHeroCanvas(root, cleanups) {
         return;
       }
       const lineY = canvas.getBoundingClientRect().top + headY;
-      const states = scanRevealTargets.map(element => {
+      const states = activeRevealTargets.map(element => {
         const rect = element.getBoundingClientRect();
         const progress = Math.max(0, Math.min(1, (lineY - rect.top) / Math.max(1, rect.height)));
         return { element, progress };
@@ -1066,20 +1107,34 @@ function initializeHeroCanvas(root, cleanups) {
       ), layout.centerX);
     }
 
-    function layerLabelX(layout, labelWidth) {
-      return Math.min(
-        width - labelWidth - Math.max(20, width * .018),
-        layout.centerX + layout.maxWidth * .33
-      );
+    function layerLabelBoxWidth() {
+      ctx.save();
+      ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      const titleWidth = Math.max(...LAYERS.map(layer => ctx.measureText(layer.label).width));
+      ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      const detailWidth = Math.max(...LAYERS.map(layer => ctx.measureText(layer.detail).width));
+      ctx.restore();
+      return Math.max(28 + titleWidth, detailWidth);
+    }
+
+    function layerLabelBoxX(layout) {
+      const groupWidth = layerLabelBoxWidth();
+      const safeRight = layout.visualLeft + layout.visualWidth;
+      const safeAlignedX = safeRight - groupWidth + 28;
+      const minimumGapX = Math.max(...LAYERS.map((_, layerIndex) => {
+        const y = layerLabelY(layout, layerIndex);
+        return layerRightEdge(layout, layerIndex, y);
+      })) + 20 + 28;
+      const viewportLimitX = width - 20 - groupWidth + 28;
+      return Math.min(viewportLimitX, Math.max(safeAlignedX, minimumGapX));
     }
 
     function drawLayerOutflows(layout, time, funnelOpacity) {
       if (!layout.showLayerCards || !vortexControls.enabled || vortexControls.count < 1) return;
-      const labelWidth = Math.min(230, width - 24);
 
+      const labelX = layerLabelBoxX(layout);
       LAYERS.forEach((_, layerIndex) => {
         const y = layerLabelY(layout, layerIndex);
-        const labelX = layerLabelX(layout, labelWidth);
         const rightEdge = layerRightEdge(layout, layerIndex, y);
         const sourceX = Math.min(labelX - cell * 12, rightEdge + cell);
         const endX = labelX - cell * 2.5;
@@ -1346,18 +1401,17 @@ function initializeHeroCanvas(root, cleanups) {
 
       drawLayerOutflows(layout, time, funnelOpacity);
 
+      const layerLabelX = layout.showLayerCards ? layerLabelBoxX(layout) : 0;
       if (layout.showLayerCards) LAYERS.forEach((layer, layerIndex) => {
         const y = layerLabelY(layout, layerIndex);
         const isSelected = selectedLayer === layerIndex;
         const isActive = hoveredLayer === layerIndex || isSelected;
-        const labelWidth = Math.min(230, width - 24);
-        const labelX = layerLabelX(layout, labelWidth);
         const labelReveal = entranceAt(layout, y, layerIndex + 701);
         const cardVisibility = layerCardVisibility(layerIndex, time);
         const layerFade = funnelFadeAt(layout, y);
         const labelOffsetX = (1 - cardVisibility) * cell * 1.8;
 
-        const markerX = labelX + labelOffsetX;
+        const markerX = layerLabelX + labelOffsetX;
         ctx.globalAlpha = (isSelected ? 1 : isActive ? .9 : .74) * labelReveal * cardVisibility * layerFade;
         drawLabelIcon(markerX - 28, y - 10, layerIndex);
 
@@ -1541,27 +1595,31 @@ function initializeHeroCanvas(root, cleanups) {
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(hero);
+    resizeObserver.observe(visual);
     const intersectionObserver = new IntersectionObserver(entries => {
       visible = entries[0].isIntersecting;
       if (visible) startAnimation();
       else {
+        revealHeaderImmediately();
         stopAnimation();
         tooltip.classList.remove('is-visible');
       }
     }, { threshold: 0 });
     intersectionObserver.observe(hero);
 
-    resize();
+    applyCanvasSize();
     startAnimation();
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopAnimation();
       else startAnimation();
     }, { signal });
+    window.addEventListener('resize', resize, { signal });
     window.addEventListener('pagehide', stopAnimation, { once: true, signal });
     cleanups.push(() => {
       active = false;
       controller.abort();
       stopAnimation();
+      cancelAnimationFrame(resizeFrameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       hero.classList.remove('is-data-layer-hovered');
@@ -1835,22 +1893,14 @@ function initializeFormatGlobe(root, cleanups) {
           const angleB = Math.min((index + 1) / segments, introState.reveal) * Math.PI * 2;
           const pointA = project(pointOnRing(ringIndex, angleA, elapsed), ringRadius);
           const pointB = project(pointOnRing(ringIndex, angleB, elapsed), ringRadius);
-          const colorPhase = ringIndex === 0
-            ? 0.88
-            : (elapsed * 0.000055 + ringIndex * 0.21) % 1;
-          const normalized = index / segments;
-          const distance = Math.min(Math.abs(normalized - colorPhase), 1 - Math.abs(normalized - colorPhase));
-          const colorStrength = Math.max(0, 1 - distance / 0.12);
           const depthAlpha = 0.22 + (pointA.z + 1) * 0.16;
 
           context.beginPath();
           context.moveTo(pointA.x, pointA.y);
           context.lineTo(pointB.x, pointB.y);
-          context.lineWidth = isFocusedRing || colorStrength > 0 ? 1.25 : 0.75;
+          context.lineWidth = isFocusedRing ? 1.25 : 0.75;
           context.strokeStyle = isFocusedRing
             ? colorWithAlpha(formatFocusColor(), 0.48 + depthAlpha * 0.72)
-            : colorStrength > 0
-            ? formatBaseColorWithAlpha(0.18 + colorStrength * 0.78)
             : formatNeutralColorWithAlpha(depthAlpha);
           context.stroke();
         }

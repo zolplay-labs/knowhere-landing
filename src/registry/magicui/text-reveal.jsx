@@ -47,27 +47,35 @@ export function TextReveal({ children, className = '', highlights = [], progress
   return (
     <div className={`text-reveal ${className}`.trim()} aria-label={children}>
       <span className="text-reveal-content" aria-hidden="true">
-        {paragraphs.map((paragraph, paragraphIndex) => (
-          <Fragment key={`${paragraphIndex}-${paragraph}`}>
-            {paragraphIndex > 0 && <span className="text-reveal-paragraph-break" />}
-            {paragraph.split(/\s+/).map(word => {
-              const start = wordIndex / wordCount
-              wordIndex += 1
-              const end = wordIndex / wordCount
+        {paragraphs.map((paragraph, paragraphIndex) => {
+          const renderedWords = paragraph.split(/\s+/).map(word => {
+            const start = wordIndex / wordCount
+            wordIndex += 1
+            const end = wordIndex / wordCount
 
-              return (
-                <TextRevealWord
-                  highlighted={highlightedWords.has(wordIndex)}
-                  key={`${wordIndex}-${word}`}
-                  progress={progressValue}
-                  range={[start, end]}
-                >
-                  {word}
-                </TextRevealWord>
-              )
-            })}
-          </Fragment>
-        ))}
+            return (
+              <TextRevealWord
+                highlighted={highlightedWords.has(wordIndex)}
+                key={`${wordIndex}-${word}`}
+                progress={progressValue}
+                range={[start, end]}
+              >
+                {word}
+              </TextRevealWord>
+            )
+          })
+          const tailWordCount = Math.min(4, renderedWords.length)
+
+          return (
+            <Fragment key={`${paragraphIndex}-${paragraph}`}>
+              {paragraphIndex > 0 && <span className="text-reveal-paragraph-break" />}
+              {renderedWords.slice(0, -tailWordCount)}
+              <span className="text-reveal-tail">
+                {renderedWords.slice(-tailWordCount)}
+              </span>
+            </Fragment>
+          )
+        })}
       </span>
     </div>
   )

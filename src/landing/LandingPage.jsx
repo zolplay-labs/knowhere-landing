@@ -24,6 +24,32 @@ function SectionShinyText({ text }) {
   )
 }
 
+function GlobalIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z" />
+    </svg>
+  )
+}
+
+function GitHubIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.91-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.72c.85 0 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z" />
+    </svg>
+  )
+}
+
+function TokenIcon({ src, className = '' }) {
+  return (
+    <span
+      className={`token-icon ${className}`.trim()}
+      style={{ '--token-icon-source': `url("${src}")` }}
+      aria-hidden="true"
+    />
+  )
+}
+
 const structureTreeRows = [
   { label: 'Document map', level: 0, open: false },
   { label: 'Headings', level: 0, open: false },
@@ -41,12 +67,29 @@ const structureTreeRows = [
 function CapabilityTree({ className = '', rows }) {
   return (
     <div className={`capability-figma-tree ${className}`.trim()}>
-      {rows.map((row) => (
+      {rows.map((row, rowIndex) => (
         <div className="capability-tree-row" data-level={row.level} key={row.label}>
-          <span className="capability-tree-trail" />
-          <span className="capability-tree-leading"><img src={row.leaf ? '/assets/process-checkbox.svg' : row.open ? '/assets/process-arrow-down.svg' : '/assets/process-arrow-right.svg'} alt="" /></span>
+          {Array.from({ length: row.level }, (_, depth) => (
+            <span
+              className="capability-tree-trail"
+              style={{
+                '--tree-depth': depth,
+                '--tree-bottom': (rows[rowIndex + 1]?.level ?? 0) > depth ? '-50%' : '50%',
+              }}
+              aria-hidden="true"
+              key={depth}
+            />
+          ))}
+          {row.level > 0 ? (
+            <span
+              className="capability-tree-branch"
+              style={{ '--tree-depth': row.level - 1 }}
+              aria-hidden="true"
+            />
+          ) : null}
+          <span className="capability-tree-leading"><TokenIcon src={row.leaf ? '/assets/process-checkbox.svg' : row.open ? '/assets/process-arrow-down.svg' : '/assets/process-arrow-right.svg'} /></span>
           <span className="capability-tree-label">{row.label}</span>
-          <span className="capability-tree-actions"><img src="/assets/process-check.svg" alt="" /><img src="/assets/process-more.svg" alt="" /><img src="/assets/process-action-arrow.svg" alt="" /></span>
+          <span className="capability-tree-actions"><TokenIcon src="/assets/process-check.svg" /><TokenIcon src="/assets/process-more.svg" /><TokenIcon src="/assets/process-action-arrow.svg" /></span>
         </div>
       ))}
     </div>
@@ -106,7 +149,7 @@ function CapabilityProductPreview({ story }) {
       <div className="capability-product-preview capability-product-preview--ingest" aria-hidden="true">
         <div className="capability-figma-upload">
           <span className="capability-corner capability-corner--top" />
-          <div className="capability-upload-header"><div><strong>Ingest documents</strong><small>Add supported formats securely.</small></div><img src="/assets/process-close.svg" alt="" /></div>
+          <div className="capability-upload-header"><div><strong>Ingest documents</strong><small>Add supported formats securely.</small></div><TokenIcon src="/assets/process-close.svg" /></div>
           <div className="capability-upload-drop"><img className="capability-upload-icon" src="/assets/process-upload-file.svg" alt="" /><div className="capability-upload-drop-copy"><strong>Drag and drop documents</strong><small>PDF, XLSX, PPTX, scans, and more</small></div><button type="button" tabIndex={-1}>Select file</button></div>
           <div className="capability-upload-files"><strong>Ingested files</strong><div><img className="capability-file-icon" src="/assets/process-upload-file.svg" alt="" /><span><b>Annual report.pdf</b><small>48 pages · Processing</small></span><button type="button" tabIndex={-1}>×</button></div><div><img className="capability-file-icon" src="/assets/process-upload-file.svg" alt="" /><span><b>Forecast.xlsx</b><small>6 sheets · Ready</small></span><button type="button" tabIndex={-1}>×</button></div></div>
           <div className="capability-upload-actions"><button type="button" tabIndex={-1}>Cancel</button><button type="button" tabIndex={-1}>Attach file</button></div>
@@ -255,8 +298,14 @@ export function LandingPage() {
         <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a>
       </div>
       <div className="nav-actions">
-        <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.59 2 12.26c0 4.53 2.87 8.37 6.84 9.73.5.1.68-.22.68-.49 0-.24-.01-1.05-.01-1.91-2.78.62-3.37-1.21-3.37-1.21-.45-1.18-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.89 1.57 2.34 1.12 2.91.85.09-.66.35-1.12.63-1.37-2.22-.26-4.56-1.14-4.56-5.07 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.72c.85 0 1.71.12 2.51.35 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.8-4.57 5.06.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.59 17.52 2 12 2Z" /></svg></a>
-        <button className="language-toggle desktop-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><g fill="currentColor"><line x1="2.25" y1="4.25" x2="10.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="6.25" y1="2.25" x2="6.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M4.25,4.25c.091,2.676,1.916,4.981,4.5,5.684" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M8.25,4.25c-.4,5.625-6,6-6,6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><polyline points="9.25 15.75 12.25 7.75 12.75 7.75 15.75 15.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="10.188" y1="13.25" x2="14.813" y2="13.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></g></svg></button>
+        <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
+        <div className="language-menu" data-language-menu>
+          <button className="language-toggle header-language" type="button" data-language-menu-toggle aria-haspopup="menu" aria-expanded="false" aria-controls="language-options" aria-label="Choose language" title="Choose language"><GlobalIcon /></button>
+          <div className="language-dropdown" id="language-options" data-language-dropdown role="menu" aria-label="Language" hidden>
+            <button type="button" role="menuitemradio" aria-checked="true" tabIndex={-1} data-language-option="en">English</button>
+            <button type="button" role="menuitemradio" aria-checked="false" tabIndex={-1} data-language-option="zh">中文</button>
+          </div>
+        </div>
         <button className="theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
@@ -267,10 +316,10 @@ export function LandingPage() {
     </nav>
     <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
       <nav aria-label="Mobile navigation">
-        <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href="https://knowhereto.ai/github">GitHub</a><a href="https://blog.knowhereto.ai/">Blog</a>
+        <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href="https://blog.knowhereto.ai/">Blog</a>
       </nav>
       <div className="mobile-menu-utilities">
-        <button className="language-toggle mobile-language" type="button" data-language-toggle aria-label="Switch to Chinese" title="Switch to Chinese"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><g fill="currentColor"><line x1="2.25" y1="4.25" x2="10.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="6.25" y1="2.25" x2="6.25" y2="4.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M4.25,4.25c.091,2.676,1.916,4.981,4.5,5.684" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><path d="M8.25,4.25c-.4,5.625-6,6-6,6" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><polyline points="9.25 15.75 12.25 7.75 12.75 7.75 15.75 15.75" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /><line x1="10.188" y1="13.25" x2="14.813" y2="13.25" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" /></g></svg></button>
+        <a className="github-link mobile-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
         <button className="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
@@ -296,7 +345,7 @@ export function LandingPage() {
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <ProductStage heading={(
-        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PRODUCT DEMO ]" /></p><h2 id="playground-title"><SectionShinyText text="See how Knowhere turns documents into structured, traceable context." /></h2><p>Explore how Knowhere preserves layouts, visual regions, and source links across PDFs, spreadsheets, presentations, and scans.</p></div>
+        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PRODUCT ]" /></p><h2 id="playground-title"><SectionShinyText text="See how Knowhere turns documents into structured, traceable context." /></h2><p>Explore how Knowhere preserves layouts, visual regions, and source links across PDFs, spreadsheets, presentations, and scans.</p></div>
       )} />
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">
@@ -502,7 +551,6 @@ export function LandingPage() {
           <details><summary aria-expanded="false" aria-controls="faq-answer-2">Do unused pages roll over?<span aria-hidden="true">↓</span></summary><p id="faq-answer-2">Page credits expire 3 months after purchase.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-3">Can I get a refund?<span aria-hidden="true">↓</span></summary><p id="faq-answer-3">Contact team@knowhereto.ai for refund requests within 14 days of purchase.</p></details>
           <details><summary aria-expanded="false" aria-controls="faq-answer-4">What payment methods are accepted?<span aria-hidden="true">↓</span></summary><p id="faq-answer-4">We accept all major credit cards through Stripe: Visa, Mastercard, American Express, and more.</p></details>
-          <details><summary aria-expanded="false" aria-controls="faq-answer-5">When does Knowhere use visual understanding?<span aria-hidden="true">↓</span></summary><p id="faq-answer-5">Knowhere uses Text Parse for clean electronic content and Vision Map when layouts, drawings, diagrams, scans, or spatial relationships carry meaning. Both remain connected through the same document map, so agents can retrieve text or reopen the original page as needed.</p></details>
         </div>
         {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
@@ -528,8 +576,8 @@ export function LandingPage() {
       className="footer-flickering-grid"
       squareSize={4}
       gridGap={6}
-      color="#6B7280"
-      maxOpacity={0.05}
+      color={theme === 'dark' ? 'var(--md-sys-color-on-surface-variant)' : 'var(--mist-white-700)'}
+      maxOpacity={theme === 'dark' ? 0.16 : 0.05}
       flickerChance={0.1}
       aria-hidden="true"
     />

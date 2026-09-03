@@ -24,7 +24,11 @@ export function FlickeringGrid({
     const context = canvas.getContext('2d')
     if (!context) return 'rgba(0, 0, 0,'
 
-    context.fillStyle = color
+    const tokenMatch = color.match(/^var\((--[^,)]+)(?:,\s*([^)]+))?\)$/)
+    const resolvedColor = tokenMatch
+      ? getComputedStyle(document.documentElement).getPropertyValue(tokenMatch[1]).trim() || tokenMatch[2] || color
+      : color
+    context.fillStyle = resolvedColor
     context.fillRect(0, 0, 1, 1)
     const [red, green, blue] = context.getImageData(0, 0, 1, 1).data
     return `rgba(${red}, ${green}, ${blue},`

@@ -39,7 +39,7 @@ if (!(root instanceof Element)) return () => {};
     '06 / PRODUCT VISION': '06 / 产品愿景', 'POWERED BY KNOWHERE': '由 KNOWHERE 驱动', 'Product vision · BRAIN is a working name': '产品愿景 · BRAIN 为暂定名称', 'One memory. Every agent.': '一份记忆，每个智能体。', 'BRAIN turns your document knowledge into reusable memory that different agents can retrieve and share.': 'BRAIN 将你的文档知识转化为可复用的记忆，供不同智能体检索和共享。', 'Learn more': '了解更多', 'This prototype imagines document knowledge processed once and recalled by different tools.': '此原型设想：文档知识处理一次，即可被不同工具调用。', 'Product availability, storage boundaries, and client support are not yet confirmed.': '产品可用性、存储边界和客户端支持尚未确认。', 'KNOWHERE remains the document-understanding foundation for this vision.': 'KNOWHERE 仍是该愿景的文档理解基础。', 'DOCUMENT': '文档', 'Reusable memory': '可复用记忆', 'Other agents': '其他智能体', 'Process once → Store as reusable document memory → Connect through MCP or CLI → Source review from different agents': '处理一次 → 存为可复用文档记忆 → 通过 MCP 或 CLI 连接 → 从不同智能体中调用',
     '07 / PRICING': '07 / 价格', 'Illustrative units calculator.': '简单、透明的价格。', 'Pricing details are being confirmed.': '价格细节正在确认。', 'No price, unit, credit, or billing commitment is represented in this prototype.': '此原型不代表任何价格、计量单位、额度或结算承诺。', 'View pricing': '查看价格', '08 / ENTERPRISE': '08 / 企业版', 'Enterprise options · subject to confirmation': '企业版选项 · 待确认', 'Enterprise planning preview.': '需要更多控制力？', 'The options below are planning placeholders. Availability, architecture, service levels, and commercial terms are unconfirmed.': '私有化部署，设置自定义限额和 SLA，并为你的组织获得专属支持。', 'Talk to Sales': '联系销售', 'Deployment options pending': '私有化部署', 'Limits pending': '自定义限额', 'Processing options pending': '优先处理', 'Service terms pending': 'SLA 与支持', 'Commercial terms pending': '批量价格', 'Billing terms pending': '发票结算',
     '09 / FAQ': '09 / 常见问题', 'Questions, answered honestly.': '坦诚回答常见问题。', 'The answers below describe this interactive prototype only.': '以下产品细节以当前已发布文档为准。', 'Which file formats are supported?': '支持哪些文件格式？', 'When does Knowhere use visual understanding?': 'Knowhere 何时使用视觉理解？', 'Can every result be traced back to the source?': '每项结果都能追溯至来源吗？', 'Can Knowhere connect knowledge across multiple documents?': 'Knowhere 能连接多份文档中的知识吗？', 'How is page usage calculated?': '页面用量如何计算？', 'What happens when a job fails?': '任务失败时会怎样？', 'Can Knowhere be deployed on-premise?': 'Knowhere 可以私有化部署吗？', 'Expand': '展开', 'Collapse': '收起', 'Product details are being confirmed for this prototype. See the documentation for the current specification.': '此原型的产品细节仍在确认中。请参阅文档获取当前规格。',
-    '10 / GET STARTED': '10 / 开始使用', 'Explore structured document context with a prepared example.': '让你的文档真正为 AI 所用。', 'Start with a sample document.': '从一份示例文档开始。', 'Docs': '文档', 'Contact': '联系', 'Prototype only — destinations and legal links are not connected. © 2026 KNOWHERE': '仅为原型 — 页面跳转和法律链接尚未连接。© 2026 KNOWHERE', 'Prototype only — destination not connected.': '仅为原型 — 目标页面尚未连接。', 'Prototype only — sales form not connected.': '仅为原型 — 销售表单尚未连接。', 'Copy unavailable — select the code manually.': '无法复制，请手动选择代码。', 'Copied': '已复制', 'Code copied to clipboard.': '代码已复制到剪贴板。', 'Language state: English.': '语言状态：英文。', 'Language state: Chinese.': '语言状态：中文。', 'Toggle comparison details': '展开或收起对比详情'
+    '10 / GET STARTED': '10 / 开始使用', 'Explore structured document context with a prepared example.': '让你的文档真正为 AI 所用。', 'Start with a sample document.': '从一份示例文档开始。', 'Docs': '文档', 'Contact': '联系', 'Prototype only — destinations and legal links are not connected. © 2026 KNOWHERE': '仅为原型 — 页面跳转和法律链接尚未连接。© 2026 KNOWHERE', 'Prototype only — destination not connected.': '仅为原型 — 目标页面尚未连接。', 'Prototype only — sales form not connected.': '仅为原型 — 销售表单尚未连接。', 'Copy unavailable — select the code manually.': '无法复制，请手动选择代码。', 'Copied': '已复制', 'Code copied to clipboard.': '代码已复制到剪贴板。', 'Language state: English.': '语言状态：英文。', 'Language state: Chinese.': '语言状态：中文。', 'Choose language': '选择语言', 'Language': '语言', 'Toggle comparison details': '展开或收起对比详情'
   };
   Object.assign(zh, {
     'PRODUCT': '产品', 'SCOPE': '范围', 'CAPABILITY': '能力', 'INTEGRATION': '集成',
@@ -347,6 +347,7 @@ if (!(root instanceof Element)) return () => {};
     'Document hierarchy': '文档层级', 'Table boundaries': '表格边界', 'Source tracing': '来源追溯',
     'Progressive context': '渐进式上下文', 'Visual understanding': '视觉理解',
     'Add document understanding to your workflow in minutes.': '几分钟内为你的工作流加入文档理解能力。',
+    'Submit a document through the API, receive structured results, and connect them to your existing agent workflow.': '通过 API 提交文档、接收结构化结果，并将其接入现有的智能体工作流。',
     'Send a document, receive structured results, and connect them to the tools your agents already use.': '发送文档、接收结构化结果，并将其连接到智能体已经使用的工具。',
     'Use Knowhere through MCP': '通过 MCP 使用 Knowhere',
     'Bring structured document context into Cursor, VS Code, Claude, or Codex.': '将结构化文档上下文带入 Cursor、VS Code、Claude 或 Codex。',
@@ -392,6 +393,42 @@ if (!(root instanceof Element)) return () => {};
     'Compared document processing tools': '参与对比的文档处理工具',
     'Document understanding capability matrix': '文档理解能力矩阵', 'Code examples': '代码示例',
     'Close notification': '关闭通知',
+    'See how Knowhere turns documents into structured, traceable context.': '查看 Knowhere 如何将文档转化为结构化、可追溯的上下文。',
+    'Explore how Knowhere preserves layouts, visual regions, and source links across PDFs, spreadsheets, presentations, and scans.': '了解 Knowhere 如何在 PDF、电子表格、演示文稿和扫描件中保留版式、视觉区域与来源链接。',
+    'Q4 performance summary': '第四季度业绩摘要',
+    'Q4 performance': '第四季度业绩',
+    'summary': '摘要',
+    'Regional': '区域',
+    'performance': '表现',
+    'Operating': '运营',
+    'efficiency': '效率',
+    'Q4 Market Update.pdf': '第四季度市场更新.pdf',
+    'Financial Summary.pdf': '财务摘要.pdf',
+    'Regional review.pdf': '区域回顾.pdf',
+    'EMEA forecast.xlsx': 'EMEA 预测.xlsx',
+    'APAC briefing.pptx': '亚太地区简报.pptx',
+    'Operating model.pdf': '运营模型.pdf',
+    'Automation Review.xlsx': '自动化回顾.xlsx',
+    'Source-backed context': '有来源支撑的上下文',
+    'AI-generated brief': 'AI 生成摘要',
+    'Synthesized from': '综合自',
+    'source region': '个来源区域',
+    'source regions': '个来源区域',
+    'across': '涉及',
+    'From ingestion to structured output, every step keeps the document connected to its original source.': '从接收文档到输出结构化结果，每一步都让内容与原始来源保持关联。',
+    'Works with common document, presentation,': '支持常见的文档、演示文稿、',
+    'spreadsheet, image, and text formats:': '电子表格、图片与文本格式：',
+    'Support for EPUB, HTML, XML, MP4,': '即将支持 EPUB、HTML、XML、MP4、',
+    'MP3, and SKILL.md is': 'MP3 和 SKILL.md，',
+    'coming soon.': '敬请期待。',
+    'Compare document understanding across structure, accuracy, and traceability.': '从结构、准确性与可追溯性维度对比文档理解能力。',
+    'See how Knowhere and other document-processing tools compare across efficiency, accuracy, structure, and source tracing.': '比较 Knowhere 与其他文档处理工具在效率、准确性、结构和来源追溯方面的表现。',
+    'Typical document parsers': '常见文档解析器',
+    'Supported': '支持',
+    'Not supported': '不支持',
+    'Get an API key': '获取 API 密钥',
+    'Sign up and generate your API key from the dashboard.': '注册并从控制台生成 API 密钥。',
+    'Get structured JSON through webhook or polling.': '通过 Webhook 或轮询获取结构化 JSON。',
   });
   const originalText = new WeakMap();
   const originalAttributes = new WeakMap();
@@ -403,6 +440,10 @@ if (!(root instanceof Element)) return () => {};
   let pricingReady = false;
   function localizeText(value) {
     if (activeLanguage !== 'zh') return value;
+    const sourceCountMatch = value.match(/^(\d+) source regions?$/);
+    if (sourceCountMatch) return `${sourceCountMatch[1]} 个来源区域`;
+    const documentCountMatch = value.match(/^(\d+) documents?$/);
+    if (documentCountMatch) return `${documentCountMatch[1]} 份文档`;
     return zh[value] || value.replaceAll('Illustrative only — no real endpoint', '仅作示意 — 非真实接口');
   }
   function translatePage() {
@@ -423,7 +464,6 @@ if (!(root instanceof Element)) return () => {};
       node.nodeValue = `${leading}${localizeText(key)}${trailing}`;
     });
     $$('[aria-label], [title], [placeholder], [alt]').forEach(element => {
-      if (element.matches('[data-language-toggle]')) return;
       if (!originalAttributes.has(element)) originalAttributes.set(element, new Map());
       const attributes = originalAttributes.get(element);
       ['aria-label', 'title', 'placeholder', 'alt'].forEach(attribute => {
@@ -433,7 +473,18 @@ if (!(root instanceof Element)) return () => {};
       });
     });
   }
-  const languageToggles = $$('[data-language-toggle]');
+  const languageMenu = $('[data-language-menu]');
+  const languageMenuToggle = $('[data-language-menu-toggle]', languageMenu);
+  const languageDropdown = $('[data-language-dropdown]', languageMenu);
+  const languageOptions = $$('[data-language-option]', languageMenu);
+  function setLanguageMenuOpen(open, focusSelected = false) {
+    languageDropdown.hidden = !open;
+    languageMenu.classList.toggle('is-open', open);
+    languageMenuToggle.setAttribute('aria-expanded', String(open));
+    if (open && focusSelected) {
+      (languageOptions.find(option => option.getAttribute('aria-checked') === 'true') || languageOptions[0])?.focus();
+    }
+  }
   const scanFrame = $('.section-scan-frame iframe');
   function syncScanFrameLanguage() {
     try {
@@ -443,31 +494,60 @@ if (!(root instanceof Element)) return () => {};
     }
   }
   scanFrame?.addEventListener('load', syncScanFrameLanguage);
-  function setLanguage(language, announce = true) {
+  function setLanguage(language) {
     const isChinese = language === 'zh';
     activeLanguage = language;
     document.documentElement.lang = isChinese ? 'zh-CN' : 'en';
     document.body.dataset.language = language;
+    window.dispatchEvent(new CustomEvent('knowhere-language-change', { detail: { language } }));
     document.title = isChinese ? 'KNOWHERE — 面向智能体的文档上下文' : 'KNOWHERE — Document context for agents';
     const description = document.querySelector('meta[name="description"]');
     if (description) description.content = isChinese
       ? 'Knowhere 将复杂文档转化为供智能体使用的结构化、可导航、可追溯上下文。'
       : 'Knowhere turns complex documents into structured, navigable, and source-linked context for agents.';
-    languageToggles.forEach(button => {
-      const nextLanguage = isChinese ? 'en' : 'zh';
-      const label = nextLanguage === 'zh' ? 'Switch to Chinese' : '切换至英文';
-      button.setAttribute('aria-label', label);
-      button.setAttribute('title', label);
+    languageOptions.forEach(option => {
+      const selected = option.dataset.languageOption === language;
+      option.setAttribute('aria-checked', String(selected));
+      option.classList.toggle('is-active', selected);
     });
     translatePage();
     syncScanFrameLanguage();
     if (storyReady) renderStoryCanvas();
     if (headingEmphasisReady) refreshHeadingEmphasis();
     if (pricingReady) syncPricingCalculator();
-    if (announce) showToast(isChinese ? localizeText('Language state: Chinese.') : 'Language state: English.');
   }
-  languageToggles.forEach(button => button.addEventListener('click', () => setLanguage(activeLanguage === 'zh' ? 'en' : 'zh')));
-  setLanguage('en', false);
+  languageMenuToggle.addEventListener('click', () => {
+    const open = languageDropdown.hidden;
+    setLanguageMenuOpen(open, open);
+  });
+  languageOptions.forEach((option, index) => {
+    option.addEventListener('click', () => {
+      if (option.dataset.languageOption !== activeLanguage) setLanguage(option.dataset.languageOption);
+      setLanguageMenuOpen(false);
+      languageMenuToggle.focus();
+    });
+    option.addEventListener('keydown', event => {
+      let next;
+      if (event.key === 'ArrowDown') next = (index + 1) % languageOptions.length;
+      if (event.key === 'ArrowUp') next = (index - 1 + languageOptions.length) % languageOptions.length;
+      if (event.key === 'Home') next = 0;
+      if (event.key === 'End') next = languageOptions.length - 1;
+      if (next !== undefined) {
+        event.preventDefault();
+        languageOptions[next].focus();
+      }
+    });
+  });
+  languageMenuToggle.addEventListener('keydown', event => {
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    event.preventDefault();
+    setLanguageMenuOpen(true);
+    languageOptions[event.key === 'ArrowDown' ? 0 : languageOptions.length - 1]?.focus();
+  });
+  document.addEventListener('pointerdown', event => {
+    if (!languageDropdown.hidden && !languageMenu.contains(event.target)) setLanguageMenuOpen(false);
+  });
+  setLanguage('en');
 
   $('.skip-link').addEventListener('click', () => {
     setTimeout(() => $('#main').focus({ preventScroll: true }), 0);
@@ -490,6 +570,7 @@ if (!(root instanceof Element)) return () => {};
   let menuCloseTimer;
   function openMenu() {
     clearTimeout(menuCloseTimer);
+    setLanguageMenuOpen(false);
     menuReturnFocus = document.activeElement;
     menu.hidden = false;
     header.classList.add('menu-open');
@@ -517,7 +598,10 @@ if (!(root instanceof Element)) return () => {};
   $$('a', menu).forEach(link => link.addEventListener('click', () => { if (!link.classList.contains('prototype-link')) closeMenu(); }));
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
-      if (!menu.hidden) closeMenu();
+      if (!languageDropdown.hidden) {
+        setLanguageMenuOpen(false);
+        languageMenuToggle.focus();
+      } else if (!menu.hidden) closeMenu();
       else if (!toast.hidden) toast.hidden = true;
     }
     if (event.key === 'Tab' && !menu.hidden) {
@@ -637,7 +721,7 @@ if (!(root instanceof Element)) return () => {};
     if ((event.key === 'Enter' || event.key === ' ') && activeSampleKey === null) { event.preventDefault(); moveSample(sampleButtons[0]); }
   });
   renderSample('research');
-  languageToggles.forEach(button => button.addEventListener('click', () => {
+  languageOptions.forEach(button => button.addEventListener('click', () => {
     if (activeSampleKey) renderSample(activeSampleKey);
   }));
   $$('[data-hero-source]').forEach(button => button.addEventListener('click', () => {
