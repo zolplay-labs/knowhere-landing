@@ -7,6 +7,9 @@ import figmaDocumentLogo from '../../assets/figma-document-logo.svg'
 
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
 const DESKTOP_PRODUCT_QUERY = '(min-width: 1200px)'
+const DOCUMENT_OUTLINE_SCROLL_TRIGGER = 24
+const DOCUMENT_EXTRACTION_START_PROGRESS = 0.28
+const DOCUMENT_SOURCES_START_PROGRESS = 0.34
 
 const themes = [
   {
@@ -504,11 +507,59 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
   )
 }
 
-function SectionToSourceLines({ clipProgress = 1, opacity = 1, sourceCount = 3, documentCount = 2 }) {
+function SectionToSourceLines({
+  clipProgress = 1,
+  opacity = 1,
+  sourceCount = 3,
+  documentCount = 2,
+  className = '',
+  connectionState,
+  onConnectionComplete,
+  mobileReveal = false,
+  revealKey,
+}) {
   const height = 32
+  const rootRef = useRef(null)
+  const rootClassName = `stage-flow-row is-section-to-source${className ? ` ${className}` : ''}`
+  const handleAnimationEnd = event => {
+    if (event.animationName === 'document-connection-reveal') {
+      onConnectionComplete?.()
+    }
+  }
+
+  useEffect(() => {
+    if (!mobileReveal || !rootRef.current) return undefined
+    const line = rootRef.current
+    line.classList.remove('is-visible')
+
+    if (
+      typeof IntersectionObserver === 'undefined'
+      || window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      line.classList.add('is-visible')
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return
+      line.classList.add('is-visible')
+      observer.disconnect()
+    }, { threshold: 0.8 })
+
+    observer.observe(line)
+    return () => observer.disconnect()
+  }, [mobileReveal, revealKey])
+
   if (sourceCount === 2) {
     return (
-      <div className="stage-flow-row is-section-to-source" aria-hidden="true" style={{ opacity }}>
+      <div
+        ref={rootRef}
+        className={rootClassName}
+        data-document-connection-state={connectionState}
+        onAnimationEnd={handleAnimationEnd}
+        aria-hidden="true"
+        style={{ opacity }}
+      >
         <div className="flow-line-slot" style={{ width: 381 }}>
           <MapFlowSvg
             className="stage-flow-line-svg"
@@ -535,7 +586,14 @@ function SectionToSourceLines({ clipProgress = 1, opacity = 1, sourceCount = 3, 
   const gapBetweenDocs = documentCount === 3 ? 33 : 101
 
   return (
-    <div className="stage-flow-row is-section-to-source" aria-hidden="true" style={{ opacity }}>
+    <div
+      ref={rootRef}
+      className={rootClassName}
+      data-document-connection-state={connectionState}
+      onAnimationEnd={handleAnimationEnd}
+      aria-hidden="true"
+      style={{ opacity }}
+    >
       <div className="flow-line-slot" style={{ width: 381 }}>
         <MapFlowSvg
           className="stage-flow-line-svg"
@@ -809,7 +867,16 @@ function AIOutputReport({ opacity = 1, translateY = 0, motionActive = false }) {
   )
 }
 
-function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgress = 1 }) {
+function DocumentMap({
+  activeThemeId,
+  onOpenTrace,
+  inactive = false,
+  scrollProgress = 1,
+  documentOutlineState = 'complete',
+  documentConnectionState = 'complete',
+  onDocumentOutlineComplete,
+  onDocumentConnectionComplete,
+}) {
   const isMobile = useMobileProductLayout()
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const interactive = typeof onOpenTrace === 'function'
@@ -837,15 +904,12 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
     openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
   }
 
-  // Animation Stage metrics calculated from scrollProgress (0 to 1)
+  // Downstream stage metrics calculated from scrollProgress (0 to 1).
+  // On desktop, this progress starts only after the document outlines finish.
   const p = reducedMotion ? 1 : scrollProgress
 
-  // Trace each intact document from top to bottom before drawing its extraction connections.
-  const pDocumentOutline = isDesktop ? clamp((p - 0.08) / 0.12) : 0
-
-  // Stage 2: extraction begins only after the intact-document hold.
-  const pSecToSourceLine = clamp((p - 0.28) / 0.08)
-  const pSourceCards = clamp((p - 0.34) / 0.10)
+  const pSecToSourceLine = clamp((p - DOCUMENT_EXTRACTION_START_PROGRESS) / 0.08)
+  const pSourceCards = clamp((p - DOCUMENT_SOURCES_START_PROGRESS) / 0.10)
 
   // Pan far enough to keep the hierarchy, its outgoing connection, and summary in view.
   const pCamera = clamp((p - 0.48) / 0.48)
@@ -859,7 +923,12 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
   const pSummaryDocument = clamp((p - 0.73) / 0.08)
 
   return (
-    <section className="document-map reveal" aria-labelledby="document-map-title" inert={inactive ? '' : undefined}>
+    <section
+      className="document-map reveal"
+      data-document-outline-state={documentOutlineState}
+      aria-labelledby="document-map-title"
+      inert={inactive ? '' : undefined}
+    >
       <span className="sr-only" id="document-map-title">Document map</span>
       <div className="document-map-hierarchy">
         <div className="document-map-hierarchy-canvas" data-document-count={activeTheme.documents.length} style={{ '--document-count': activeTheme.documents.length }}>
@@ -907,9 +976,13 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                         <SectionTag
                           className="section-node"
                           key={section.name}
-                          style={{
-                            '--document-trace-inset': `${(1 - pDocumentOutline) * 100}%`,
-                          }}
+                          onAnimationEnd={documentIndex === 0 && sectionIndex === 0
+                            ? event => {
+                                if (event.animationName === 'document-outline-reveal') {
+                                  onDocumentOutlineComplete?.()
+                                }
+                              }
+                            : undefined}
                           {...(interactive
                             ? {
                                 type: 'button',
@@ -962,10 +1035,17 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
 
             {/* STAGE 2: Extraction lines from the source documents */}
             <SectionToSourceLines
-              clipProgress={pSecToSourceLine}
+              clipProgress={isDesktop
+                ? documentConnectionState === 'complete' ? 1 : 0
+                : pSecToSourceLine}
               opacity={1}
               sourceCount={currentSources.length}
               documentCount={activeTheme.documents.length}
+              className={isMobile ? 'mobile-source-connection' : ''}
+              connectionState={isDesktop ? documentConnectionState : undefined}
+              onConnectionComplete={isDesktop ? onDocumentConnectionComplete : undefined}
+              mobileReveal={isMobile}
+              revealKey={activeTheme.id}
             />
 
             {/* STAGES 2–4: Extracted source-region cards and relationship */}
@@ -994,7 +1074,9 @@ function DocumentMap({ activeThemeId, onOpenTrace, inactive = false, scrollProgr
                   >
                     <div className="trace-card-content">
                       <figcaption>
-                        <span className="trace-folder-tab">Original file</span>
+                        <span className="trace-folder-tab">
+                          Original file<span className="mobile-source-index"> {String(index + 1).padStart(2, '0')}</span>
+                        </span>
                         <span data-trace-coordinate>{source.format} · {source.page}</span>
                       </figcaption>
                       <div className="trace-source-thumb">
@@ -1153,13 +1235,72 @@ function cropScanDemo(frame) {
 
 export function ProductStage({ heading }) {
   const isMobile = useMobileProductLayout()
+  const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
+  const [documentOutlineState, setDocumentOutlineState] = useState('idle')
+  const [documentConnectionState, setDocumentConnectionState] = useState('idle')
   const trackRef = useRef(null)
   const iframeRef = useRef(null)
   const scanFrameRef = useRef(null)
-  const [scrollProgress, setScrollProgress] = useState(0.36)
+  const documentOutlineStartScrollY = useRef(null)
+  const downstreamStartPosition = useRef(null)
+  const [scrollProgress, setScrollProgress] = useState(0)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+  useEffect(() => {
+    if (reducedMotion || !isDesktop) {
+      setDocumentOutlineState('complete')
+      setDocumentConnectionState('complete')
+      documentOutlineStartScrollY.current = null
+      downstreamStartPosition.current = null
+      return
+    }
+
+    setDocumentOutlineState('idle')
+    setDocumentConnectionState('idle')
+    documentOutlineStartScrollY.current = null
+    downstreamStartPosition.current = null
+    setScrollProgress(0)
+  }, [isDesktop, reducedMotion])
+
+  useEffect(() => {
+    if (reducedMotion || !isDesktop) return undefined
+    if (documentOutlineState !== 'idle') return undefined
+
+    const documents = trackRef.current?.querySelector('.document-map-documents')
+    if (!documents || typeof IntersectionObserver === 'undefined') {
+      setDocumentOutlineState('running')
+      return undefined
+    }
+
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting)) return
+      documentOutlineStartScrollY.current = window.scrollY
+      setDocumentOutlineState('armed')
+      observer.disconnect()
+    }, {
+      threshold: 0.5,
+    })
+
+    observer.observe(documents)
+    return () => observer.disconnect()
+  }, [documentOutlineState, isDesktop, reducedMotion])
+
+  useEffect(() => {
+    if (documentOutlineState !== 'armed') return undefined
+
+    const triggerOutline = () => {
+      const startScrollY = documentOutlineStartScrollY.current ?? window.scrollY
+      documentOutlineStartScrollY.current = startScrollY
+      if (window.scrollY - startScrollY < DOCUMENT_OUTLINE_SCROLL_TRIGGER) return
+      documentOutlineStartScrollY.current = null
+      setDocumentOutlineState('running')
+    }
+
+    window.addEventListener('scroll', triggerOutline, { passive: true })
+    return () => window.removeEventListener('scroll', triggerOutline)
+  }, [documentOutlineState])
 
   useEffect(() => {
     if (reducedMotion || isMobile) {
@@ -1187,7 +1328,25 @@ export function ProductStage({ heading }) {
       const progressScroll = window.matchMedia('(min-width: 1200px)').matches
         ? totalScroll * 0.86
         : totalScroll
-      const p = Math.max(0, Math.min(1, currentScroll / progressScroll))
+
+      let p
+      if (isDesktop) {
+        if (documentConnectionState !== 'complete') {
+          p = 0
+        } else {
+          if (downstreamStartPosition.current === null) {
+            downstreamStartPosition.current = currentScroll
+          }
+          const downstreamDistance = Math.max(1, progressScroll - downstreamStartPosition.current)
+          const downstreamProgress = (currentScroll - downstreamStartPosition.current) / downstreamDistance
+          p = DOCUMENT_SOURCES_START_PROGRESS
+            + downstreamProgress * (1 - DOCUMENT_SOURCES_START_PROGRESS)
+        }
+      } else {
+        p = currentScroll / progressScroll
+      }
+
+      p = Math.max(0, Math.min(1, p))
       setScrollProgress(p)
     }
 
@@ -1205,7 +1364,7 @@ export function ProductStage({ heading }) {
       window.removeEventListener('scroll', onScroll)
       window.removeEventListener('resize', onScroll)
     }
-  }, [reducedMotion, isMobile])
+  }, [documentConnectionState, isDesktop, reducedMotion, isMobile])
 
   useEffect(() => {
     const frame = iframeRef.current
@@ -1241,6 +1400,21 @@ export function ProductStage({ heading }) {
     })
   }
 
+  const completeDocumentOutline = () => {
+    if (documentOutlineState === 'complete') return
+    setScrollProgress(0)
+    setDocumentOutlineState('complete')
+    setDocumentConnectionState('running')
+  }
+
+  const completeDocumentConnection = () => {
+    if (documentConnectionState === 'complete') return
+    const trackTop = trackRef.current?.getBoundingClientRect().top
+    downstreamStartPosition.current = typeof trackTop === 'number' ? 68 - trackTop : 0
+    setScrollProgress(DOCUMENT_SOURCES_START_PROGRESS)
+    setDocumentConnectionState('complete')
+  }
+
   return (
     <div className="playground-scroll-track" ref={trackRef}>
       <div className="playground-sticky">
@@ -1254,6 +1428,10 @@ export function ProductStage({ heading }) {
               activeThemeId={activeThemeId}
               onOpenTrace={revealTrace}
               scrollProgress={scrollProgress}
+              documentOutlineState={documentOutlineState}
+              documentConnectionState={documentConnectionState}
+              onDocumentOutlineComplete={completeDocumentOutline}
+              onDocumentConnectionComplete={completeDocumentConnection}
             />
             <div className="section-scan-frame" ref={scanFrameRef} hidden>
               <iframe

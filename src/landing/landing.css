@@ -8987,6 +8987,16 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       margin-left: 0;
     }
 
+    @keyframes document-outline-reveal {
+      from { clip-path: inset(0 0 100% 0); }
+      to { clip-path: inset(0); }
+    }
+
+    @keyframes document-connection-reveal {
+      from { clip-path: inset(0 0 100% 0); }
+      to { clip-path: inset(0); }
+    }
+
     @media (min-width: 1200px) {
       #playground .section-node {
         height: 538.31px;
@@ -9000,9 +9010,27 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
         inset: 0;
         border: 1.5px solid var(--mineral-green-500);
         border-radius: inherit;
-        clip-path: inset(0 0 var(--document-trace-inset, 100%) 0);
+        clip-path: inset(0 0 100% 0);
         content: "";
         pointer-events: none;
+      }
+
+      #playground .document-map[data-document-outline-state="running"] .section-node::before {
+        animation: document-outline-reveal 900ms cubic-bezier(.77, 0, .175, 1) both;
+        will-change: clip-path;
+      }
+
+      #playground .document-map[data-document-outline-state="complete"] .section-node::before {
+        clip-path: inset(0);
+      }
+
+      #playground .stage-flow-row[data-document-connection-state="running"] .stage-flow-line-svg {
+        animation: document-connection-reveal 600ms cubic-bezier(.77, 0, .175, 1) both;
+        will-change: clip-path;
+      }
+
+      #playground .stage-flow-row[data-document-connection-state="complete"] .stage-flow-line-svg {
+        clip-path: inset(0);
       }
 
       #playground .section-node::after {
@@ -9264,6 +9292,10 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       font: 500 15px/24px var(--sans, "Geist Sans", "Helvetica Neue", Arial, sans-serif);
       letter-spacing: 0;
       text-transform: none;
+    }
+
+    #playground .mobile-source-index {
+      display: none;
     }
 
     #playground .trace-source-card figcaption {
@@ -10233,6 +10265,10 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
       #playground .trace-pixel-reveal { display: none; }
       #playground .section-page img { transition: none; }
       #playground .map-flow-stroke { clip-path: none !important; animation: none !important; }
+      #playground .document-map .section-node::before {
+        clip-path: inset(0);
+        animation: none;
+      }
       #playground .document-node,
       #playground .document-sections,
       #playground .source-sections,
@@ -12476,5 +12512,168 @@ html[data-theme="dark"] #final-cta-actions .button:not(.button-secondary):hover 
 @media (max-width: 479px) {
   .landing-page #main #final-cta #final-cta-actions {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Product narrative: mobile uses bounded sticky stacks instead of the desktop scrubbed canvas. */
+@keyframes mobile-source-connection-reveal {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0); }
+}
+
+@media (max-width: 767px) {
+  #playground .document-map {
+    --mobile-document-top: clamp(72px, 10svh, 84px);
+    --mobile-section-top: clamp(150px, 19svh, 160px);
+    --mobile-source-top: clamp(88px, 16svh, 136px);
+    --mobile-section-gap: min(408px, 48svh);
+    --mobile-source-gap: min(488px, 58svh);
+  }
+
+  #playground .document-map,
+  #playground .document-map-hierarchy,
+  #playground .document-map-hierarchy-canvas,
+  #playground .document-map-content,
+  #playground .document-map-documents,
+  #playground .document-branch,
+  #playground .document-sections,
+  #playground .source-sections {
+    overflow: visible;
+  }
+
+  #playground .document-map-content {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  #playground .document-sections {
+    gap: var(--mobile-section-gap) !important;
+  }
+
+  #playground .source-sections {
+    gap: var(--mobile-source-gap) !important;
+  }
+
+  #playground .document-node {
+    position: sticky;
+    top: var(--mobile-document-top);
+    z-index: 8;
+    background: var(--white);
+  }
+
+  #playground .section-node {
+    position: sticky;
+    top: var(--mobile-section-top);
+    z-index: 4;
+    max-height: min(280px, calc(100svh - var(--mobile-section-top) - 28px));
+  }
+
+  #playground .document-sections .section-node:nth-child(2) {
+    top: calc(var(--mobile-section-top) + 12px);
+    z-index: 5;
+  }
+
+  #playground .document-sections::after,
+  #playground .source-sections::after {
+    display: block;
+    flex: 0 0 min(240px, 38svh);
+    height: min(240px, 38svh);
+    content: "";
+  }
+
+  #playground .document-sections::after {
+    margin-top: calc(0px - var(--mobile-section-gap));
+  }
+
+  #playground .source-sections::after {
+    margin-top: calc(0px - var(--mobile-source-gap));
+  }
+
+  #playground .stage-flow-row.is-section-to-source.mobile-source-connection {
+    display: flex;
+    width: 10px;
+    max-width: 10px;
+    height: clamp(128px, 30svh, 240px);
+    margin: 0 auto;
+    opacity: 1;
+    overflow: visible;
+    transform: none;
+  }
+
+  #playground .mobile-source-connection .flow-line-slot {
+    width: 10px !important;
+  }
+
+  #playground .mobile-source-connection .flow-line-gap,
+  #playground .mobile-source-connection .flow-line-slot ~ .flow-line-slot {
+    display: none;
+  }
+
+  #playground .mobile-source-connection .stage-flow-line-svg {
+    width: 10px;
+    height: 100%;
+    clip-path: inset(0 0 100% 0);
+  }
+
+  #playground .mobile-source-connection.is-visible .stage-flow-line-svg {
+    animation: mobile-source-connection-reveal 900ms cubic-bezier(.77, 0, .175, 1) both;
+    will-change: clip-path;
+  }
+
+  #playground .source-sections {
+    margin-top: 0;
+    transform: none !important;
+    transition: none !important;
+    pointer-events: auto !important;
+  }
+
+  #playground .trace-source-card {
+    position: sticky;
+    top: var(--mobile-source-top);
+  }
+
+  #playground .trace-source-card:nth-child(2) {
+    top: calc(var(--mobile-source-top) + 8px);
+    z-index: 4;
+  }
+
+  #playground .trace-source-card:nth-child(3) {
+    top: calc(var(--mobile-source-top) + 16px);
+    z-index: 5;
+  }
+
+  #playground .mobile-source-index {
+    display: inline;
+  }
+
+  html[data-theme="dark"] #playground .document-node {
+    background: var(--md-sys-color-surface);
+  }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  #playground .document-node,
+  #playground .section-node,
+  #playground .trace-source-card {
+    position: relative;
+    top: auto !important;
+  }
+
+  #playground .document-sections {
+    gap: 16px !important;
+  }
+
+  #playground .source-sections {
+    gap: 20px !important;
+  }
+
+  #playground .document-sections::after,
+  #playground .source-sections::after {
+    display: none;
+  }
+
+  #playground .mobile-source-connection .stage-flow-line-svg {
+    clip-path: inset(0);
+    animation: none;
   }
 }
