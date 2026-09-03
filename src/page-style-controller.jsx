@@ -23,10 +23,10 @@ const HERO_CONTROL_MIGRATIONS = [
   { path: 'redParticleFlow.redFlowDuration', from: 5.5, to: 6.5 },
   { path: 'redParticleFlow.redFlowInterval', from: 0.9, to: 2 },
   { path: 'fireShadow.emberAmount', from: 0.7, to: 0.45 },
-  // Extra middle twist so the orange lines exit along the base to the right.
   // (4 is the value a briefly reverted build clamped it to.)
   { path: 'motion.middleTwist', from: 1.35, to: 4.45 },
   { path: 'motion.middleTwist', from: 4, to: 4.45 },
+  { path: 'motion.baseTwist', from: -2.2, to: -1 },
 ]
 const PALETTE_VERSION = 6
 const FONT_VERSION = 5
@@ -46,7 +46,32 @@ try {
     if (storedHeroControls.values?.[path] === from) storedHeroControls.values[path] = to
     return true
   })
-  if (migrated.length) {
+  let expandedLineAngles = false
+  for (const bucketName of ['baseValues', 'values']) {
+    const bucket = storedHeroControls?.[bucketName]
+    if (!bucket || Number.isFinite(bucket['redParticleFlow.redFlowLine1StartAngle'])) continue
+    const startAngle = Number.isFinite(bucket['redParticleFlow.redFlowStartAngle'])
+      ? bucket['redParticleFlow.redFlowStartAngle']
+      : 215
+    const endAngle = Number.isFinite(bucket['redParticleFlow.redFlowEndAngle'])
+      ? bucket['redParticleFlow.redFlowEndAngle']
+      : 135
+    const angleSpread = Number.isFinite(bucket['redParticleFlow.redFlowAngleSpread'])
+      ? bucket['redParticleFlow.redFlowAngleSpread']
+      : 22
+    const normalizeAngle = angle => ((angle % 360) + 360) % 360
+    for (let index = 1; index <= 5; index += 1) {
+      const offset = index - 3
+      bucket[`redParticleFlow.redFlowLine${index}StartAngle`] = normalizeAngle(
+        startAngle + offset * angleSpread
+      )
+      bucket[`redParticleFlow.redFlowLine${index}EndAngle`] = normalizeAngle(
+        endAngle + offset * angleSpread
+      )
+    }
+    expandedLineAngles = true
+  }
+  if (migrated.length || expandedLineAngles) {
     localStorage.setItem(HERO_CONTROLS_STORAGE_KEY, JSON.stringify(storedHeroControls))
   }
 } catch {
@@ -107,7 +132,18 @@ const CONTROLLER_TRANSLATIONS = {
   'Depth Density': '深度密度',
   'Depth Alpha': '深度透明度',
   'Overall Alpha': '整体透明度',
-  'Red Particle Flow': '橙色线条流',
+  'Red Particle Flow': '橙色线条：路径与节奏',
+  'Red Flow Line1 Start Angle': '第 1 条 · 入口角度',
+  'Red Flow Line1 End Angle': '第 1 条 · 出口角度',
+  'Red Flow Line2 Start Angle': '第 2 条 · 入口角度',
+  'Red Flow Line2 End Angle': '第 2 条 · 出口角度',
+  'Red Flow Line3 Start Angle': '第 3 条 · 入口角度',
+  'Red Flow Line3 End Angle': '第 3 条 · 出口角度',
+  'Red Flow Line4 Start Angle': '第 4 条 · 入口角度',
+  'Red Flow Line4 End Angle': '第 4 条 · 出口角度',
+  'Red Flow Line5 Start Angle': '第 5 条 · 入口角度',
+  'Red Flow Line5 End Angle': '第 5 条 · 出口角度',
+  'Red Flow Turn Position': '共享转折位置（0入口 / 1出口）',
   'Red Flow Delay': '整体出现延迟',
   'Red Flow Duration': '单次持续时间',
   'Red Flow Interval': '线条出现间隔（周期 = 5×）',
@@ -116,8 +152,6 @@ const CONTROLLER_TRANSLATIONS = {
   'Red Flow Line3 Extra Delay': '第 3 条额外延迟',
   'Red Flow Line4 Extra Delay': '第 4 条额外延迟',
   'Red Flow Line5 Extra Delay': '第 5 条额外延迟',
-  'Red Flow Start Angle': '入口起始角度',
-  'Red Flow Angle Spread': '线条角度间隔',
   'Red Flow Silhouette Fade': '轮廓边缘渐隐',
   'Red Flow Line Alpha': '线条深浅',
   'Red Flow Line Width': '线条宽度（格）',
@@ -559,6 +593,32 @@ export function PageStyleControls() {
   })
   paramsRef.current = params
   const vortexParams = useDialKit('Hero Vortex', {
+    redParticleFlow: {
+      redFlowLine1StartAngle: [171, 0, 359, 1],
+      redFlowLine1EndAngle: [91, 0, 359, 1],
+      redFlowLine2StartAngle: [193, 0, 359, 1],
+      redFlowLine2EndAngle: [113, 0, 359, 1],
+      redFlowLine3StartAngle: [215, 0, 359, 1],
+      redFlowLine3EndAngle: [135, 0, 359, 1],
+      redFlowLine4StartAngle: [237, 0, 359, 1],
+      redFlowLine4EndAngle: [157, 0, 359, 1],
+      redFlowLine5StartAngle: [259, 0, 359, 1],
+      redFlowLine5EndAngle: [179, 0, 359, 1],
+      redFlowTurnPosition: [0.62, 0.2, 0.9, 0.01],
+      redFlowDelay: [0, 0, 10, 0.1],
+      redFlowDuration: [6.5, 0.6, 12, 0.05],
+      redFlowInterval: [2, 0.3, 4, 0.1],
+      redFlowLine1ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine2ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine3ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine4ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLine5ExtraDelay: [0, 0, 5, 0.05],
+      redFlowLineAlpha: [0.95, 0.3, 1, 0.02],
+      redFlowLineWidth: [1.1, 0.3, 3, 0.1],
+      redFlowSilhouetteFade: [0.18, 0.02, 0.5, 0.01],
+      redFlowMouthOpen: [0.9, 0.05, 2, 0.05],
+      redFlowBaseOpen: [4.8, 3.5, 6, 0.1],
+    },
     motion: {
       direction: {
         type: 'select',
@@ -602,23 +662,6 @@ export function PageStyleControls() {
       depthDensity: [0.5, 0, 0.5, 0.01],
       depthAlpha: [0.05, 0, 0.8, 0.01],
       overallAlpha: [0.75, 0.2, 1.5, 0.05],
-    },
-    redParticleFlow: {
-      redFlowDelay: [0, 0, 10, 0.1],
-      redFlowDuration: [6.5, 0.6, 12, 0.05],
-      redFlowInterval: [2, 0.3, 4, 0.1],
-      redFlowLine1ExtraDelay: [0, 0, 5, 0.05],
-      redFlowLine2ExtraDelay: [0, 0, 5, 0.05],
-      redFlowLine3ExtraDelay: [0, 0, 5, 0.05],
-      redFlowLine4ExtraDelay: [0, 0, 5, 0.05],
-      redFlowLine5ExtraDelay: [0, 0, 5, 0.05],
-      redFlowStartAngle: [215, 90, 330, 1],
-      redFlowAngleSpread: [22, 0, 40, 1],
-      redFlowLineAlpha: [0.95, 0.3, 1, 0.02],
-      redFlowLineWidth: [1.1, 0.3, 3, 0.1],
-      redFlowSilhouetteFade: [0.18, 0.02, 0.5, 0.01],
-      redFlowMouthOpen: [0.9, 0.05, 2, 0.05],
-      redFlowBaseOpen: [4.8, 3.5, 6, 0.1],
     },
     fireShadow: {
       emberAmount: [0.45, 0, 1.5, 0.05],
