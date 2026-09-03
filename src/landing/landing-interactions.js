@@ -2779,4 +2779,5 @@ syncPricingCalculator();
     if (!reducedMotion) frameId = requestAnimationFrame(frame);
     addEventListener('pagehide', () => cancelAnimationFrame(frameId), { once: true });
   })();
+  return () => {};
 }

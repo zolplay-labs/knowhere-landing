@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
-import { ConvergingHelixEmbed } from './converging-helix-embed'
+import { CTA_HELIX_FALLBACK, ConvergingHelixControls, ConvergingHelixEmbed, useConvergingHelixSettings } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
@@ -161,6 +161,30 @@ function CapabilityProductPreview({ story }) {
         <CapabilityCodeCard variant="right" />
       </div>
     </div>
+  )
+}
+
+function FinalCtaHelix() {
+  const { settings, paletteAccent, settingsSaved, setValue, setRotation, saveSettings, resetDefaults } = useConvergingHelixSettings(CTA_HELIX_FALLBACK)
+  const accentColor = settings.accentColor ?? 'var(--mineral-green-300)'
+  const embedProps = { ...settings, accentColor }
+
+  return (
+    <>
+      <div className="converging-helix-pair" aria-hidden="true" style={{ '--converging-helix-y': `${settings.yPosition}px` }}>
+        <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--left" />
+        <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--right" mirror />
+      </div>
+      <ConvergingHelixControls
+        settings={settings}
+        paletteAccent={paletteAccent}
+        settingsSaved={settingsSaved}
+        onSetValue={setValue}
+        onSetRotation={setRotation}
+        onSave={saveSettings}
+        onReset={resetDefaults}
+      />
+    </>
   )
 }
 
@@ -469,11 +493,9 @@ export function LandingPage() {
         {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <div className="converging-helix-pair" aria-hidden="true">
-        <ConvergingHelixEmbed accentColor="var(--mineral-green-300)" className="converging-helix-embed--left" opacity={1} />
-        <ConvergingHelixEmbed accentColor="var(--mineral-green-300)" className="converging-helix-embed--right" mirror opacity={1} />
-      </div>
+      <FinalCtaHelix />
       <div id="final-cta-copy">
+        <p className="section-no">[ GET STARTED ]</p>
         <h2 id="final-title">Ready to build with better document context?</h2>
       </div>
       <div className="final-cta-detail">

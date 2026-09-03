@@ -25,6 +25,8 @@
     scale: 1,
     showDataSquares: true,
     squareAccent: '#fff',
+    squareCount: 4,
+    squareSize: 12,
     speed: 1,
     strands: 7,
     turnSpread: 0.42,
@@ -137,19 +139,41 @@
     drawDataSquares(rotationPhase, elapsed) {
       if (!this.options.showDataSquares) return;
       const context = this.context;
-      const squareCount = Math.min(4, this.options.strands);
+      const squareCount = 4;
+      const size = this.options.squareSize ?? 12;
+      const phases = this.options.mirror
+        ? (this.options.squarePhases ?? [0.06, 0.20, 0.34, 0.50])
+        : (this.options.squarePhases ?? [0.00, 0.13, 0.27, 0.42]);
+      const lastStrand = Math.max(0, this.options.strands - 1);
+      const strands = this.options.squareStrands ?? (this.options.mirror
+        ? [lastStrand, Math.round(lastStrand * 1 / 3), Math.round(lastStrand * 2 / 3), 0]
+        : [0, Math.round(lastStrand * 1 / 3), Math.round(lastStrand * 2 / 3), lastStrand]);
+      const loop = this.reducedMotion ? 0 : (elapsed / LOOP_MS) % 1;
+      const squares = [];
+      for (let index = 0; index < squareCount; index += 1) {
+        let progress = (loop + phases[index]) % 1;
+        const strand = strands[index];
+        let [x, y] = this.map(this.point(strand, progress, rotationPhase));
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          const stacked = squares.some((other) => {
+            const dx = other.x - x;
+            const dy = other.y - y;
+            return dx * dx + dy * dy < 28 * 28;
+          });
+          if (!stacked) break;
+          progress = (progress + 0.07) % 1;
+          [x, y] = this.map(this.point(strand, progress, rotationPhase));
+        }
+        squares.push({ progress, strand, x, y });
+      }
       context.setLineDash([]);
       context.lineDashOffset = 0;
       context.fillStyle = this.options.squareAccent;
-      for (let index = 0; index < squareCount; index += 1) {
-        const progress = this.reducedMotion
-          ? (index + 1) / (squareCount + 1)
-          : (elapsed / LOOP_MS + index / squareCount) % 1;
-        const strand = squareCount === 1 ? 0 : Math.round(index * (this.options.strands - 1) / (squareCount - 1));
-        const [x, y] = this.map(this.point(strand, progress, rotationPhase));
-        const size = 7 + index % 2 * 2;
-        context.globalAlpha = 1 - progress;
-        context.fillRect(x - size / 2, y - size / 2, size, size);
+      for (const square of squares) {
+        const fade = Math.max(0, 1 - square.progress / 0.66);
+        if (fade < 0.08) continue;
+        context.globalAlpha = fade;
+        context.fillRect(square.x - size / 2, square.y - size / 2, size, size);
       }
     }
 
@@ -202,7 +226,7 @@
       const numeric = {
         amplitude: [0.05, 1.5], centerGap: [0, 320], compression: [0.2, 4], dashGap: [0.5, 40], dashLength: [0.5, 40],
         decay: [0.2, 4], horizontalSpan: [0.5, 1.3], lineWidth: [0.25, 8], opacity: [0, 1],
-        scale: [0.5, 1.5], speed: [0, 4], strands: [1, 16], turns: [0.25, 8]
+        scale: [0.5, 1.5], speed: [0, 4], squareCount: [1, 16], squareSize: [1, 32], strands: [1, 16], turns: [0.25, 8]
       };
       Object.entries(numeric).forEach(([key, range]) => {
         const value = Number(options[key]);

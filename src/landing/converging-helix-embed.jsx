@@ -122,6 +122,8 @@ export function ConvergingHelixEmbed({
   scale = DEFAULT_SETTINGS.scale,
   showDataSquares = DEFAULT_SETTINGS.showDataSquares,
   speed = DEFAULT_SETTINGS.speed,
+  squareCount = 4,
+  squareSize = 12,
   strands = DEFAULT_SETTINGS.strands,
   turns = DEFAULT_SETTINGS.turns,
 }) {
@@ -143,10 +145,12 @@ export function ConvergingHelixEmbed({
     scale,
     showDataSquares,
     squareAccent: dataSquareColor,
+    squareCount,
+    squareSize,
     speed,
     strands,
     turns,
-  }), [accentColor, amplitude, backgroundColor, centerGap, compression, dashGap, dashLength, dataSquareColor, decay, horizontalSpan, lineWidth, mirror, opacity, rotation, scale, showDataSquares, speed, strands, turns])
+  }), [accentColor, amplitude, backgroundColor, centerGap, compression, dashGap, dashLength, dataSquareColor, decay, horizontalSpan, lineWidth, mirror, opacity, rotation, scale, showDataSquares, speed, squareCount, squareSize, strands, turns])
   const optionsRef = useRef(options)
 
   useEffect(() => {
@@ -202,13 +206,23 @@ function ToggleControl({ label, onChange, value }) {
   )
 }
 
-export function ConvergingHelixTuner({ children }) {
-  const initialSettings = useMemo(loadSavedSettings, [])
+export const CTA_HELIX_FALLBACK = {
+  ...DEFAULT_SETTINGS,
+  opacity: 1,
+}
+
+export function useConvergingHelixSettings(fallback = DEFAULT_SETTINGS) {
+  const initialSettings = useMemo(() => {
+    try {
+      if (localStorage.getItem(SETTINGS_STORAGE_KEY)) return loadSavedSettings()
+    } catch {
+      // Keep the in-memory fallback when storage is unavailable.
+    }
+    return { ...fallback, rotation: [...fallback.rotation] }
+  }, [fallback])
   const [settings, setSettings] = useState(initialSettings)
   const [paletteAccent, setPaletteAccent] = useState('#FFFFFF')
   const [settingsSaved, setSettingsSaved] = useState(false)
-  const accentColor = settings.accentColor ?? 'var(--main-400)'
-  const embedProps = { ...settings, accentColor }
 
   useEffect(() => {
     const updatePaletteAccent = () => {
@@ -233,7 +247,62 @@ export function ConvergingHelixTuner({ children }) {
     localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings))
     setSettingsSaved(true)
   }
-  const resetDefaults = () => setSettings({ ...DEFAULT_SETTINGS, rotation: [...DEFAULT_SETTINGS.rotation] })
+  const resetDefaults = () => setSettings({ ...fallback, rotation: [...fallback.rotation] })
+
+  return { settings, paletteAccent, settingsSaved, setValue, setRotation, saveSettings, resetDefaults }
+}
+
+export function ConvergingHelixControls({
+  paletteAccent,
+  settings,
+  settingsSaved,
+  onReset,
+  onSave,
+  onSetRotation,
+  onSetValue,
+}) {
+  return (
+    <details className="converging-helix-controls">
+      <summary><span>Adjust Converging Helix</span><small>{settings.strands} strands · {settings.speed}×</small></summary>
+      <div className="converging-helix-controls__body">
+        <p className="converging-helix-mode" role="status">Mirrored pair · shared parameters · 8.4s synchronized loop</p>
+        <div className="converging-helix-control-grid">
+          <RangeControl label="Speed" min={0} max={4} step={0.05} value={settings.speed} suffix="×" onChange={value => onSetValue('speed', value)} />
+          <RangeControl label="Line width" min={0.25} max={4} step={0.25} value={settings.lineWidth} suffix="px" onChange={value => onSetValue('lineWidth', value)} />
+          <RangeControl label="Dash length" min={0.5} max={20} step={0.5} value={settings.dashLength} suffix="px" onChange={value => onSetValue('dashLength', value)} />
+          <RangeControl label="Dash gap" min={0.5} max={20} step={0.5} value={settings.dashGap} suffix="px" onChange={value => onSetValue('dashGap', value)} />
+          <RangeControl label="Turns" min={0.25} max={8} step={0.05} value={settings.turns} onChange={value => onSetValue('turns', value)} />
+          <RangeControl label="Amplitude" min={0.05} max={1.5} step={0.01} value={settings.amplitude} onChange={value => onSetValue('amplitude', value)} />
+          <RangeControl label="Decay" min={0.2} max={4} step={0.05} value={settings.decay} onChange={value => onSetValue('decay', value)} />
+          <RangeControl label="Compression" min={0.2} max={4} step={0.05} value={settings.compression} onChange={value => onSetValue('compression', value)} />
+          <RangeControl label="Horizontal span" min={0.5} max={1.3} step={0.01} value={settings.horizontalSpan} onChange={value => onSetValue('horizontalSpan', value)} />
+          <RangeControl label="Center gap" min={0} max={320} step={4} value={settings.centerGap} suffix="px" onChange={value => onSetValue('centerGap', value)} />
+          <RangeControl label="Overall size" min={0.5} max={1.5} step={0.01} value={settings.scale} suffix="×" onChange={value => onSetValue('scale', value)} />
+          <RangeControl label="Y position" min={-200} max={200} step={1} value={settings.yPosition} suffix="px" onChange={value => onSetValue('yPosition', value)} />
+          <RangeControl label="Strands" min={1} max={16} value={settings.strands} onChange={value => onSetValue('strands', value)} />
+          <RangeControl label="Opacity" min={0} max={1} step={0.01} value={settings.opacity} onChange={value => onSetValue('opacity', value)} />
+          <RangeControl label="X / Pitch" min={-180} max={180} step={0.01} value={settings.rotation[0]} suffix="°" onChange={value => onSetRotation(0, value)} />
+          <RangeControl label="Y / Yaw" min={-180} max={180} step={0.01} value={settings.rotation[1]} suffix="°" onChange={value => onSetRotation(1, value)} />
+          <RangeControl label="Z / Roll" min={-180} max={180} step={0.01} value={settings.rotation[2]} suffix="°" onChange={value => onSetRotation(2, value)} />
+          <ToggleControl label="Data squares" value={settings.showDataSquares} onChange={value => onSetValue('showDataSquares', value)} />
+        </div>
+        <div className="converging-helix-color-row">
+          <ColorControl label="Accent" value={settings.accentColor ?? paletteAccent} onChange={value => onSetValue('accentColor', value)} />
+          <button type="button" onClick={() => onSetValue('accentColor', null)}>Use brand token</button>
+        </div>
+        <div className="converging-helix-actions">
+          <button type="button" onClick={onSave}>{settingsSaved ? 'Saved' : 'Save settings'}</button>
+          <button type="button" onClick={onReset}>Reset defaults</button>
+        </div>
+      </div>
+    </details>
+  )
+}
+
+export function ConvergingHelixTuner({ children }) {
+  const { settings, paletteAccent, settingsSaved, setValue, setRotation, saveSettings, resetDefaults } = useConvergingHelixSettings()
+  const accentColor = settings.accentColor ?? 'var(--main-400)'
+  const embedProps = { ...settings, accentColor }
 
   return (
     <div className="converging-helix-workbench">
@@ -251,40 +320,15 @@ export function ConvergingHelixTuner({ children }) {
           <li>Cancel anytime</li>
         </ul>
       </div>
-      <details className="converging-helix-controls">
-        <summary><span>Adjust Converging Helix</span><small>{settings.strands} strands · {settings.speed}×</small></summary>
-        <div className="converging-helix-controls__body">
-          <p className="converging-helix-mode" role="status">Mirrored pair · shared parameters · 8.4s synchronized loop</p>
-          <div className="converging-helix-control-grid">
-            <RangeControl label="Speed" min={0} max={4} step={0.05} value={settings.speed} suffix="×" onChange={value => setValue('speed', value)} />
-            <RangeControl label="Line width" min={0.25} max={4} step={0.25} value={settings.lineWidth} suffix="px" onChange={value => setValue('lineWidth', value)} />
-            <RangeControl label="Dash length" min={0.5} max={20} step={0.5} value={settings.dashLength} suffix="px" onChange={value => setValue('dashLength', value)} />
-            <RangeControl label="Dash gap" min={0.5} max={20} step={0.5} value={settings.dashGap} suffix="px" onChange={value => setValue('dashGap', value)} />
-            <RangeControl label="Turns" min={0.25} max={8} step={0.05} value={settings.turns} onChange={value => setValue('turns', value)} />
-            <RangeControl label="Amplitude" min={0.05} max={1.5} step={0.01} value={settings.amplitude} onChange={value => setValue('amplitude', value)} />
-            <RangeControl label="Decay" min={0.2} max={4} step={0.05} value={settings.decay} onChange={value => setValue('decay', value)} />
-            <RangeControl label="Compression" min={0.2} max={4} step={0.05} value={settings.compression} onChange={value => setValue('compression', value)} />
-            <RangeControl label="Horizontal span" min={0.5} max={1.3} step={0.01} value={settings.horizontalSpan} onChange={value => setValue('horizontalSpan', value)} />
-            <RangeControl label="Center gap" min={0} max={320} step={4} value={settings.centerGap} suffix="px" onChange={value => setValue('centerGap', value)} />
-            <RangeControl label="Overall size" min={0.5} max={1.5} step={0.01} value={settings.scale} suffix="×" onChange={value => setValue('scale', value)} />
-            <RangeControl label="Y position" min={-200} max={200} step={1} value={settings.yPosition} suffix="px" onChange={value => setValue('yPosition', value)} />
-            <RangeControl label="Strands" min={1} max={16} value={settings.strands} onChange={value => setValue('strands', value)} />
-            <RangeControl label="Opacity" min={0} max={1} step={0.01} value={settings.opacity} onChange={value => setValue('opacity', value)} />
-            <RangeControl label="X / Pitch" min={-180} max={180} step={0.01} value={settings.rotation[0]} suffix="°" onChange={value => setRotation(0, value)} />
-            <RangeControl label="Y / Yaw" min={-180} max={180} step={0.01} value={settings.rotation[1]} suffix="°" onChange={value => setRotation(1, value)} />
-            <RangeControl label="Z / Roll" min={-180} max={180} step={0.01} value={settings.rotation[2]} suffix="°" onChange={value => setRotation(2, value)} />
-            <ToggleControl label="Data squares" value={settings.showDataSquares} onChange={value => setValue('showDataSquares', value)} />
-          </div>
-          <div className="converging-helix-color-row">
-            <ColorControl label="Accent" value={settings.accentColor ?? paletteAccent} onChange={value => setValue('accentColor', value)} />
-            <button type="button" onClick={() => setValue('accentColor', null)}>Use brand token</button>
-          </div>
-          <div className="converging-helix-actions">
-            <button type="button" onClick={saveSettings}>{settingsSaved ? 'Saved' : 'Save settings'}</button>
-            <button type="button" onClick={resetDefaults}>Reset defaults</button>
-          </div>
-        </div>
-      </details>
+      <ConvergingHelixControls
+        settings={settings}
+        paletteAccent={paletteAccent}
+        settingsSaved={settingsSaved}
+        onSetValue={setValue}
+        onSetRotation={setRotation}
+        onSave={saveSettings}
+        onReset={resetDefaults}
+      />
     </div>
   )
 }

@@ -126,15 +126,20 @@ html.js #final-cta .converging-helix-benefits li {
 }
 
 #final-cta .converging-helix-controls {
-  position: relative;
-  z-index: 3;
-  width: min(820px, 100%);
-  margin-top: 16px;
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  z-index: 5;
+  display: block !important;
+  width: min(820px, calc(100% - 32px));
+  margin-top: 0;
   border: 1px solid var(--white-20);
   border-radius: 3px;
   background: var(--white-100);
   color: var(--mist-white-900);
   text-align: left;
+  transform: translateX(-50%);
+  pointer-events: auto;
 }
 
 #final-cta .converging-helix-controls > summary {
