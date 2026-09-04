@@ -225,9 +225,9 @@ function CapabilityProductPreview({ story }) {
   )
 }
 
-function FinalCtaHelix() {
+function FinalCtaHelix({ theme }) {
   const { settings } = useConvergingHelixSettings(CTA_HELIX_FALLBACK)
-  const accentColor = settings.accentColor ?? 'var(--mineral-green-300)'
+  const accentColor = settings.accentColor ?? (theme === 'dark' ? 'var(--mineral-green-900)' : 'var(--mineral-green-300)')
   const embedProps = { ...settings, accentColor }
 
   return (
@@ -408,7 +408,7 @@ export function LandingPage() {
               <span className="format-orbit-halo format-orbit-halo--supported" aria-hidden="true" />
               <span className="format-orbit-halo format-orbit-halo--coming" aria-hidden="true" />
               <div className="format-orbit-copy format-orbit-copy--supported">
-                <p>Works with common document, presentation,<br />spreadsheet, image, and text formats:</p>
+                <p>Works with common document, presentation,<br /> spreadsheet, image, and text formats:</p>
                 <p>DOCX, PDF, JPG, PPTX, XLSX, CSV, PNG, MD, JSON, and TXT.</p>
               </div>
               <div className="format-orbit-stage format-orbit-stage--thread-globe" aria-label="Illustrative formats">
@@ -555,7 +555,7 @@ export function LandingPage() {
         {/* BRAIN FAQ intentionally hidden pending public status confirmation. */}
     </section>
     <section className="section shell final-cta reveal" id="final-cta" aria-labelledby="final-title">
-      <FinalCtaHelix />
+      <FinalCtaHelix theme={theme} />
       <div id="final-cta-copy">
         <p className="section-no"><SectionShinyText text="[ GET STARTED ]" /></p>
         <h2 id="final-title"><SectionShinyText text="Ready to build with better document context?" /></h2>

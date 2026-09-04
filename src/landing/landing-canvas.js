@@ -1672,15 +1672,40 @@ function initializeFormatGlobe(root, cleanups) {
       radius: index % 5 === 0 ? 3.4 : 2.1,
       label: formatLabels[index]
     }));
-    const formatIconImages = new Map(Object.entries(formatIconPaths).map(([label, source]) => {
+    const iconCssSize = 16;
+    const iconDecodeSize = 64;
+    const formatIconImages = new Map();
+    Object.entries(formatIconPaths).forEach(([label, source]) => {
       const image = new Image();
-      image.src = source;
-      return [label, image];
-    }));
+      image.decoding = 'async';
+      formatIconImages.set(label, image);
+      fetch(source)
+        .then(response => response.ok ? response.text() : Promise.reject(response.status))
+        .then(svg => {
+          const sized = /<svg\b[^>]*\bwidth=/.test(svg)
+            ? svg
+            : svg.replace(/<svg\b/, `<svg width="${iconDecodeSize}" height="${iconDecodeSize}"`);
+          image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(sized)}`;
+        })
+        .catch(() => {
+          image.src = source;
+        });
+    });
     const whiteIconCanvas = document.createElement('canvas');
-    whiteIconCanvas.width = 16;
-    whiteIconCanvas.height = 16;
     const whiteIconContext = whiteIconCanvas.getContext('2d');
+
+    function formatIconPixelSize() {
+      return Math.max(1, Math.round(iconCssSize * Math.min(devicePixelRatio || 1, 2)));
+    }
+
+    function syncWhiteIconCanvas() {
+      const pixelSize = formatIconPixelSize();
+      if (whiteIconCanvas.width !== pixelSize || whiteIconCanvas.height !== pixelSize) {
+        whiteIconCanvas.width = pixelSize;
+        whiteIconCanvas.height = pixelSize;
+      }
+      return pixelSize;
+    }
 
     let width = 1;
     let height = 1;
@@ -2007,14 +2032,22 @@ function initializeFormatGlobe(root, cleanups) {
         context.stroke();
         const icon = formatIconImages.get(particle.label);
         if (whiteIconContext && icon?.complete && icon.naturalWidth > 0) {
-          whiteIconContext.clearRect(0, 0, 16, 16);
+          const pixelSize = syncWhiteIconCanvas();
+          const pixelRatio = Math.min(devicePixelRatio || 1, 2);
+          whiteIconContext.imageSmoothingEnabled = true;
+          whiteIconContext.imageSmoothingQuality = 'high';
+          whiteIconContext.clearRect(0, 0, pixelSize, pixelSize);
           whiteIconContext.globalCompositeOperation = 'source-over';
-          whiteIconContext.drawImage(icon, 0, 0, 16, 16);
+          whiteIconContext.drawImage(icon, 0, 0, pixelSize, pixelSize);
           whiteIconContext.globalCompositeOperation = 'source-in';
           whiteIconContext.fillStyle = currentColor('--white-100', '#FFFFFF');
-          whiteIconContext.fillRect(0, 0, 16, 16);
+          whiteIconContext.fillRect(0, 0, pixelSize, pixelSize);
           whiteIconContext.globalCompositeOperation = 'source-over';
-          context.drawImage(whiteIconCanvas, labelX + 4, labelY + 4, 16, 16);
+          const iconX = Math.round((labelX + 4) * pixelRatio) / pixelRatio;
+          const iconY = Math.round((labelY + 4) * pixelRatio) / pixelRatio;
+          context.imageSmoothingEnabled = false;
+          context.drawImage(whiteIconCanvas, iconX, iconY, iconCssSize, iconCssSize);
+          context.imageSmoothingEnabled = true;
         }
         context.fillStyle = currentColor('--white-100', '#FFFFFF');
         context.fillText(particle.label, labelX + 27, labelY + 12);
@@ -2120,6 +2153,11 @@ function initializeFormatGlobe(root, cleanups) {
     }, { threshold: 0 });
     intersectionObserver.observe(stage);
 
+    formatIconImages.forEach(image => {
+      image.addEventListener('load', () => {
+        draw(reducedMotion ? 0 : animationElapsed, animationElapsed);
+      }, { signal });
+    });
     resize();
     scheduleAutoLabel();
     startAnimation();

@@ -1,3 +1,5 @@
+import NumberFlow from 'number-flow'
+
 // Initializes the non-canvas landing-page integrations after React mounts.
 export function initializeLandingInteractions(root) {
 if (!(root instanceof Element)) return () => {};
@@ -449,7 +451,9 @@ if (!(root instanceof Element)) return () => {};
   function translatePage() {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
-        return node.parentElement && !node.parentElement.closest('script, style') && node.nodeValue.trim()
+        return node.parentElement
+          && !node.parentElement.closest('script, style, [data-pricing-pages], [data-pricing-price], [data-pricing-pdf], [data-pricing-large]')
+          && node.nodeValue.trim()
           ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });
@@ -940,21 +944,65 @@ const pricingPages = $('#pricing-pages');
 const pricingRangeHandle = $('[data-pricing-range-handle]');
 const pricingRangeBudget = $('[data-pricing-range-budget]');
 const pricingRangeControl = pricingRangeHandle.parentElement;
+function pricingNumberFlow(host) {
+  let flow = host.querySelector('number-flow');
+  if (!(flow instanceof NumberFlow)) {
+    flow = new NumberFlow();
+    host.replaceChildren(flow);
+  }
+  return flow;
+}
+function syncPricingNumber(host, { locales, format, prefix = '', suffix = '', value }) {
+  const flow = pricingNumberFlow(host);
+  flow.locales = locales;
+  flow.format = format;
+  flow.numberPrefix = prefix;
+  flow.numberSuffix = suffix;
+  const hydrate = !flow.hasAttribute('data-pricing-ready');
+  if (hydrate) flow.animated = false;
+  flow.update(value);
+  if (hydrate) {
+    flow.animated = true;
+    flow.setAttribute('data-pricing-ready', '');
+  }
+}
 function syncPricingCalculator() {
   const pages = Number(pricingPages.value);
   const amount = (pages / 100) * 1.5;
   const rangeMin = Number(pricingPages.min);
   const rangeMax = Number(pricingPages.max);
   const locale = activeLanguage === 'zh' ? 'zh-CN' : 'en-US';
-  const priceLabel = new Intl.NumberFormat(locale, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(amount);
   const pageLabel = `${pages.toLocaleString(locale)} ${localizeText('pages')}`;
   const pdfCount = Math.floor(pages / 100);
   const largeDocumentCount = Math.floor(pages / 500);
-  const documentLabel = count => `${count.toLocaleString(locale)} ${localizeText(count === 1 ? 'document' : 'documents')}`;
-  $('[data-pricing-pages]').textContent = pageLabel;
-  $$('[data-pricing-price]').forEach(element => { element.textContent = priceLabel; });
-  $('[data-pricing-pdf]').textContent = documentLabel(pdfCount);
-  $('[data-pricing-large]').textContent = documentLabel(largeDocumentCount);
+  const integerFormat = { maximumFractionDigits: 0 };
+  const priceFormat = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
+  syncPricingNumber($('[data-pricing-pages]'), {
+    locales: locale,
+    format: integerFormat,
+    suffix: ` ${localizeText('pages')}`,
+    value: pages,
+  });
+  $$('[data-pricing-price]').forEach(element => {
+    syncPricingNumber(element, {
+      locales: locale,
+      format: priceFormat,
+      prefix: '$',
+      value: amount,
+    });
+  });
+  syncPricingNumber($('[data-pricing-pdf]'), {
+    locales: locale,
+    format: integerFormat,
+    suffix: ` ${localizeText(pdfCount === 1 ? 'document' : 'documents')}`,
+    value: pdfCount,
+  });
+  syncPricingNumber($('[data-pricing-large]'), {
+    locales: locale,
+    format: integerFormat,
+    suffix: ` ${localizeText(largeDocumentCount === 1 ? 'document' : 'documents')}`,
+    value: largeDocumentCount,
+  });
   const progress = `${((pages - rangeMin) / (rangeMax - rangeMin)) * 100}%`;
   pricingRangeControl.style.setProperty('--pricing-progress', progress);
   pricingRangeHandle.style.setProperty('--pricing-progress', progress);
