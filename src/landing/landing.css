@@ -10712,10 +10712,20 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       --map-line: var(--md-sys-color-primary);
       --map-fade: var(--md-sys-color-surface);
       border-color: var(--md-sys-color-outline-variant);
+    }
+
+    html[data-theme="dark"] #playground .product-stage {
       background-color: var(--md-sys-color-surface);
       background-image:
-        linear-gradient(var(--md-sys-color-outline-variant) 1px, transparent 1px),
-        linear-gradient(90deg, var(--md-sys-color-outline-variant) 1px, transparent 1px);
+        linear-gradient(to bottom, transparent 23px, var(--black-3) 23px 24px, transparent 24px 47px, var(--black-3) 47px 48px),
+        linear-gradient(to right, transparent 23px, var(--black-3) 23px 24px, transparent 24px 47px, var(--black-3) 47px 48px);
+      background-repeat: repeat;
+      background-size: 48px 48px;
+    }
+
+    html[data-theme="dark"] #playground .document-map {
+      background-color: transparent;
+      background-image: none;
     }
 
     html[data-theme="dark"] #playground .document-map-switcher,
@@ -13630,9 +13640,7 @@ html[data-theme="dark"] .landing-page .footer .footer-wordmark {
 /* Dark-mode texture contrast: retain the authored grids and motion while
    tinting each texture through the corresponding semantic foreground role. */
 html[data-theme="dark"] #playground .document-map {
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--md-sys-color-on-surface) 10%, transparent) 1px, transparent 1px);
+  background-image: none;
 }
 
 html[data-theme="dark"] #formats .formats-secondary-grid .format-feature::before {
