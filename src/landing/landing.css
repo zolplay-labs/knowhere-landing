@@ -1031,7 +1031,7 @@
     #playground,
     #playground * { font-family: var(--sans) !important; }
     #playground .section-heading h2 { font-weight: 300; letter-spacing: .5px; }
-    #playground .section-heading > p:last-child { font-weight: 300; letter-spacing: 0; }
+    #playground .section-heading > p:last-child { font-weight: 400; letter-spacing: 0; }
     .section-scan-frame {
       width: 100%;
       height: clamp(670px, calc(37.15vw + 80px), 680px);
@@ -1194,6 +1194,7 @@
       grid-row: 2;
     }
 
+    #playground .section-heading > p:last-child:not(.section-no),
     #capabilities .section-heading > p:last-child:not(.section-no),
     #formats .section-heading > p:last-child:not(.section-no),
     #comparison .section-heading > p:last-child:not(.section-no),
@@ -2491,13 +2492,16 @@
         line-height: 1.08;
       }
 
+      #playground .section-heading > p:last-child:not(.section-no),
       #capabilities .section-heading > p:last-child:not(.section-no),
       #formats .section-heading > p:last-child:not(.section-no),
       #comparison .section-heading > p:last-child:not(.section-no),
       #integration .section-heading > p:last-child:not(.section-no),
       #pricing .pricing-heading > p:last-child:not(.section-no) {
-        font-size: 16px;
-        line-height: 24px;
+        font-size: 15px;
+        line-height: 22px;
+        font-weight: 400;
+        letter-spacing: 0;
       }
 
       #capabilities .narrative-grid {
@@ -3763,8 +3767,10 @@
       }
 
       #playground .section-heading > p:last-child {
-        font-size: 16px;
-        line-height: 24px;
+        font-size: 15px;
+        line-height: 22px;
+        font-weight: 400;
+        letter-spacing: 0;
       }
     }
 
@@ -4506,8 +4512,8 @@
       #enterprise .enterprise-metrics {
         order: 3;
         margin-top: 28px;
-        grid-template-columns: minmax(0, 172fr) minmax(0, 186fr);
-        gap: 16px 0;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px 20px;
       }
 
       #enterprise h2 {
@@ -4515,13 +4521,25 @@
         line-height: 1.08;
       }
 
+      #enterprise .lede {
+        font-size: 15px;
+        font-weight: 400;
+        line-height: 22px;
+      }
+
       #enterprise .enterprise-metric strong {
         font-size: 18px;
         font-weight: 500;
         line-height: 24px;
         letter-spacing: 0;
-        width: max-content;
+        width: auto;
         white-space: nowrap;
+      }
+
+      #enterprise .enterprise-metric:nth-child(3) strong,
+      #enterprise .enterprise-metric:nth-child(4) strong {
+        width: auto;
+        white-space: normal;
       }
 
       #enterprise .enterprise-metric {
@@ -4543,7 +4561,13 @@
         text-align: left;
         text-wrap: pretty;
         font-size: 13px;
-        line-height: 24px;
+        line-height: 21px;
+      }
+
+      #enterprise .enterprise-metric:nth-child(3) p {
+        width: max-content;
+        max-width: 176px;
+        white-space: normal;
       }
 
       #enterprise .enterprise-metric-visual {
@@ -6492,7 +6516,7 @@
     #playground .section-heading > p:last-child {
       font-size: 18px;
       font-weight: 400;
-      line-height: 24px;
+      line-height: 27px;
     }
 
     .landing-page #main .section-no {
@@ -10826,8 +10850,8 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
 
   /* Keep the mobile scrollbar close to the metric labels without crowding them. */
   #comparison .comparison-chart {
-    min-height: 320px;
-    height: 320px;
+    min-height: 296px;
+    height: 296px;
   }
 
   #comparison .comparison-metrics,
@@ -10899,15 +10923,18 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
   }
 
   #pricing .pricing-file-limits dl {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
+    padding-inline: 12px;
   }
 
   #pricing .pricing-file-limits dl > div {
-    min-height: 68px;
-    padding: 12px;
+    min-height: 0;
+    padding: 8px 4px;
+    padding-inline: 0;
     border: 0;
-    border-right: 1px solid var(--black-10);
-    border-bottom: 1px solid var(--black-10);
+    border-right: 0;
+    border-bottom: 0;
   }
 
   #pricing .pricing-file-limits dl > div:nth-child(2n) {
@@ -11532,9 +11559,12 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
 
   #integration .mcp {
     width: 100%;
+    min-height: 0;
     margin-top: 16px;
     margin-inline: 0;
-    padding: 8px 20px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-inline: 20px;
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
     align-items: start;
@@ -11716,6 +11746,11 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
 
   #faq {
     row-gap: var(--space-heading-content-mobile);
+  }
+
+  #faq details[open] > summary {
+    min-height: 56px;
+    padding-bottom: 8px;
   }
 
   #faq details p {
@@ -13879,6 +13914,8 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
     position: static;
     font-size: 15px;
     line-height: 22px;
+    font-weight: 400;
+    letter-spacing: 0;
     transform: none !important;
   }
 
@@ -13918,6 +13955,24 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   #playground .text-reveal-word-active { color: var(--demo-ink); }
   #playground .text-reveal-word.is-highlighted .text-reveal-word-muted { color: var(--demo-success); opacity: .28; }
   #playground .text-reveal-word.is-highlighted .text-reveal-word-active { color: var(--demo-success); }
+
+  #capabilities .section-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+  }
+
+  #capabilities .section-heading h2 {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
+  }
+
+  #capabilities .section-heading > p:last-child:not(.section-no) {
+    grid-column: 1;
+    grid-row: 3;
+    text-align: left;
+  }
 
   #capabilities .story-card-stack {
     row-gap: 44px;
@@ -13989,25 +14044,38 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   }
 
   #pricing .pricing-file-limits dl {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
+    padding-inline: 12px;
   }
 
   #pricing .pricing-file-limits dl > div {
-    min-height: 68px;
-    padding: 12px;
-    gap: 8px;
+    min-height: 0;
+    padding: 8px 4px;
+    padding-inline: 0;
+    gap: 4px;
     border: 0;
-    border-right: 1px solid var(--black-10);
-    border-bottom: 1px solid var(--black-10);
-  }
-
-  #pricing .pricing-file-limits dl > div:nth-child(2n) {
     border-right: 0;
+    border-bottom: 0;
   }
 
-  #pricing .pricing-file-limits dl > div:nth-last-child(-n + 2) {
+  #pricing .pricing-file-limits dl > div:nth-child(2n),
+  #pricing .pricing-file-limits dl > div:nth-last-child(-n + 2),
+  #pricing .pricing-file-limits dl > div:last-child {
+    border: 0;
+    border-right: 0;
     border-bottom: 0;
+  }
+
+  #pricing .pricing-file-limits dt {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  #pricing .pricing-file-limits dd {
+    margin-top: 0;
+    font-size: 18px;
+    line-height: 24px;
   }
 
   .landing-page #main #final-cta .final-cta-benefits {
@@ -14817,5 +14885,15 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
 
   #formats .formats-secondary-grid .format-feature > * {
     flex-shrink: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  .landing-page #main > .formats-scroll-track {
+    margin-top: 0;
+  }
+
+  .landing-page #main > .formats-scroll-track > #formats {
+    padding-top: 16px;
   }
 }
