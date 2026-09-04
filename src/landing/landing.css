@@ -14942,6 +14942,6 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   }
 
   .landing-page #main > .formats-scroll-track > #formats {
-    padding-top: 16px;
+    padding-top: 40px;
   }
 }
