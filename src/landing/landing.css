@@ -2639,6 +2639,7 @@
 
       #pricing .pricing-facts {
         padding-top: 0;
+        margin-top: 20px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 4px 20px;
       }
@@ -14870,6 +14871,19 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
 
   #formats .format-orbit-copy--supported br {
     display: none;
+  }
+
+  #formats .format-orbit-copy,
+  #formats .format-orbit-copy p,
+  #formats .format-orbit-copy--supported p,
+  #formats .format-orbit-copy--coming p,
+  #formats .format-feature .format-orbit-copy p,
+  #formats .format-feature .format-orbit-copy--supported p,
+  #formats .format-feature .format-orbit-copy--coming p,
+  #formats .format-orbit-copy span,
+  #formats .format-feature .format-orbit-copy--coming span {
+    font-size: 15px;
+    line-height: 22px;
   }
 }
 
