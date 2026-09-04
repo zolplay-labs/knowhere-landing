@@ -13047,7 +13047,7 @@ html[data-theme="dark"] .landing-page #main #final-cta {
 }
 
 html[data-theme="dark"] .landing-page #main #final-cta .converging-helix-pair {
-  opacity: 0.5;
+  opacity: 1;
   filter: none;
 }
 

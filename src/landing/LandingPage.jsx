@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
-import { CTA_HELIX_FALLBACK, ConvergingHelixEmbed, useConvergingHelixSettings } from './converging-helix-embed'
+import { CTA_HELIX_FALLBACK, ConvergingHelixEmbed } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
 import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
@@ -226,13 +226,12 @@ function CapabilityProductPreview({ story }) {
 }
 
 function FinalCtaHelix({ theme }) {
-  const { settings } = useConvergingHelixSettings(CTA_HELIX_FALLBACK)
-  const accentColor = settings.accentColor ?? (theme === 'dark' ? 'var(--mineral-green-900)' : 'var(--mineral-green-300)')
-  const embedProps = { ...settings, accentColor }
+  const accentColor = theme === 'dark' ? 'var(--mineral-green-600)' : 'var(--mineral-green-300)'
+  const embedProps = { ...CTA_HELIX_FALLBACK, accentColor }
 
   return (
     <>
-      <div className="converging-helix-pair" aria-hidden="true" style={{ '--converging-helix-y': `${settings.yPosition}px` }}>
+      <div className="converging-helix-pair" aria-hidden="true" style={{ '--converging-helix-y': `${CTA_HELIX_FALLBACK.yPosition}px` }}>
         <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--left" />
         <ConvergingHelixEmbed {...embedProps} className="converging-helix-embed--right" mirror />
       </div>
