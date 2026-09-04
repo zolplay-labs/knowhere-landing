@@ -7149,6 +7149,27 @@
   }
 }
 
+@media (min-width: 768px) {
+  #capabilities .section-heading {
+    grid-template-rows: auto auto auto;
+  }
+
+  #capabilities .section-heading h2 {
+    grid-column: 1 / span 6;
+    grid-row: 2;
+    align-self: start;
+    text-align: left;
+  }
+
+  #capabilities .section-heading > p:last-child:not(.section-no) {
+    grid-column: 1 / span 6;
+    grid-row: 3;
+    align-self: start;
+    text-align: left;
+    max-width: 100%;
+  }
+}
+
 @media (min-width: 768px) and (max-width: 1199px) {
   #playground .section-heading,
   #capabilities .section-heading,
