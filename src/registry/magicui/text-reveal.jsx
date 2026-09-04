@@ -45,7 +45,7 @@ export function TextReveal({ children, className = '', highlights = [], progress
   }, [progress, progressValue, reducedMotion])
 
   return (
-    <div className={`text-reveal ${className}`.trim()} aria-label={children}>
+    <div className={`text-reveal ${className}`.trim()} translate="no" aria-label={children}>
       <span className="text-reveal-content" aria-hidden="true">
         {paragraphs.map((paragraph, paragraphIndex) => {
           const renderedWords = paragraph.split(/\s+/).map(word => {

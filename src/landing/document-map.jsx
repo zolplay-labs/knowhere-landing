@@ -1037,6 +1037,7 @@ function AIOutputReport({
   return (
     <section
       className="ai-output-report"
+      translate="no"
       data-ai-summary-document
       data-motion-active={motionActive ? 'true' : undefined}
       style={{

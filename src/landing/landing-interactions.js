@@ -451,10 +451,12 @@ if (!(root instanceof Element)) return () => {};
   function translatePage() {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode(node) {
-        return node.parentElement
-          && !node.parentElement.closest('script, style, [data-pricing-pages], [data-pricing-price], [data-pricing-pdf], [data-pricing-large]')
-          && node.nodeValue.trim()
-          ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        const parent = node.parentElement;
+        if (!parent || !node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        if (parent.closest('script, style, [data-pricing-pages], [data-pricing-price], [data-pricing-pdf], [data-pricing-large], .ai-output-report, .text-reveal, .text-reveal-content, [translate="no"], [data-no-translate]')) {
+          return NodeFilter.FILTER_REJECT;
+        }
+        return NodeFilter.FILTER_ACCEPT;
       }
     });
     const nodes = [];
@@ -468,6 +470,7 @@ if (!(root instanceof Element)) return () => {};
       node.nodeValue = `${leading}${localizeText(key)}${trailing}`;
     });
     $$('[aria-label], [title], [placeholder], [alt]').forEach(element => {
+      if (element.closest('.ai-output-report, .text-reveal, .text-reveal-content, [translate="no"], [data-no-translate]')) return;
       if (!originalAttributes.has(element)) originalAttributes.set(element, new Map());
       const attributes = originalAttributes.get(element);
       ['aria-label', 'title', 'placeholder', 'alt'].forEach(attribute => {
