@@ -64,14 +64,14 @@
       this.visible = false;
       this.width = 1;
       this.height = 1;
-      this.introElapsed = 0;
+      this.introElapsed = 1000;
       this.lastFrameAt = null;
 
       this.resizeObserver = new ResizeObserver(() => this.resize());
       this.intersectionObserver = new IntersectionObserver(entries => {
-        this.visible = entries[0]?.isIntersecting ?? false;
+        this.visible = entries[0]?.isIntersecting ?? this.intersectsViewport();
         this.visible ? this.start() : this.stop();
-      });
+      }, { rootMargin: '20% 0px' });
       this.motionQuery.addEventListener('change', event => {
         this.reducedMotion = event.matches;
         this.restart();
@@ -79,9 +79,12 @@
       document.addEventListener('visibilitychange', () => {
         document.hidden ? this.stop() : this.start();
       }, { signal: this.abortController.signal });
+      window.addEventListener('scroll', () => this.syncVisibility(), { signal: this.abortController.signal, passive: true });
+      window.addEventListener('hashchange', () => this.syncVisibility(), { signal: this.abortController.signal });
       this.resizeObserver.observe(canvas);
       this.intersectionObserver.observe(canvas);
       this.resize();
+      this.syncVisibility();
       canvas.dataset.animationReady = 'true';
       canvas.dataset.animationState = 'paused';
     }
@@ -190,7 +193,9 @@
       for (let strand = 0; strand < this.options.strands; strand += 1) {
         const points = [];
         for (let segment = 0; segment <= 260; segment += 1) points.push(this.point(strand, segment / 260, rotationPhase));
-        const reveal = this.reducedMotion ? 1 : clamp((this.introElapsed - strand * 45) / 760, 0, 1);
+        const reveal = this.reducedMotion || !this.visible
+          ? 1
+          : clamp((this.introElapsed - strand * 45) / 760, 0, 1);
         this.drawPath(points, 1 - Math.pow(1 - reveal, 3), elapsed);
       }
       this.drawDataSquares(rotationPhase, elapsed);
@@ -210,6 +215,24 @@
       this.frame = requestAnimationFrame(this.tick);
     };
 
+    intersectsViewport() {
+      const bounds = this.canvas.getBoundingClientRect();
+      if (bounds.width < 2 || bounds.height < 2) return false;
+      return bounds.bottom > 0 && bounds.top < window.innerHeight && bounds.right > 0 && bounds.left < window.innerWidth;
+    }
+
+    syncVisibility() {
+      const next = this.intersectsViewport();
+      if (next === this.visible) {
+        if (next) this.start();
+        else this.render();
+        return;
+      }
+      this.visible = next;
+      next ? this.start() : this.stop();
+      if (!next) this.render();
+    }
+
     resize() {
       const bounds = this.canvas.getBoundingClientRect();
       if (bounds.width < 2 || bounds.height < 2) return;
@@ -219,6 +242,7 @@
       this.canvas.width = Math.round(this.width * dpr);
       this.canvas.height = Math.round(this.height * dpr);
       this.context.setTransform(dpr, 0, 0, dpr, 0, 0);
+      this.syncVisibility();
       this.render();
     }
 
@@ -247,7 +271,7 @@
 
     restart() {
       this.stop();
-      this.introElapsed = this.reducedMotion ? 1000 : 0;
+      this.introElapsed = 1000;
       this.lastFrameAt = null;
       this.render();
       this.start();

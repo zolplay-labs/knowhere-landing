@@ -85,19 +85,28 @@ function loadAnimation() {
   if (animationLoad) return animationLoad
   animationLoad = new Promise((resolve, reject) => {
     const existing = document.querySelector('script[data-converging-helix-embed]')
+    if (existing && getAnimationApi()) {
+      resolve()
+      return
+    }
     const script = existing ?? document.createElement('script')
-    const onLoad = () => resolve()
+    const finish = () => {
+      if (getAnimationApi()) resolve()
+      else reject(new Error('Unable to load the converging helix animation.'))
+    }
     const onError = () => {
       animationLoad = null
       reject(new Error('Unable to load the converging helix animation.'))
     }
-    script.addEventListener('load', onLoad, { once: true })
+    script.addEventListener('load', finish, { once: true })
     script.addEventListener('error', onError, { once: true })
     if (!existing) {
       script.src = animationUrl
       script.async = true
       script.dataset.convergingHelixEmbed = 'true'
       document.head.appendChild(script)
+    } else if (existing.src && (existing.readyState === 'complete' || existing.dataset.convergingHelixEmbed)) {
+      queueMicrotask(finish)
     }
   })
   return animationLoad
@@ -161,8 +170,11 @@ export function ConvergingHelixEmbed({
       .then(() => {
         if (disposed) return
         getAnimationApi()?.initialize(canvas)
-        canvas.__convergingHelixAnimation?.setOptions(resolveOptions(optionsRef.current))
-        canvas.__convergingHelixAnimation?.restart()
+        const animation = canvas.__convergingHelixAnimation
+        animation?.setOptions(resolveOptions(optionsRef.current))
+        animation?.restart()
+        animation?.syncVisibility?.()
+        if (animation && !animation.visible) animation.render()
       })
       .catch(() => {
         canvas.dataset.animationError = 'true'
