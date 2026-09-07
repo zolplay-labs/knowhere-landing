@@ -12499,7 +12499,7 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
 #capabilities .capability-code-card::before,
 #capabilities .capability-code-card::after { display: none; content: none; }
 #capabilities .capability-code-card code,
-#capabilities .capability-code-card code span { font-family: var(--mono); font-size: 21px; font-weight: 400; line-height: 28px; letter-spacing: 0; }
+#capabilities .capability-code-card code span { font-family: var(--sans); font-size: 21px; font-weight: 400; line-height: 28px; letter-spacing: 0; }
 #capabilities .capability-code-card--center code,
 #capabilities .capability-code-card--center code span { font-size: 26px; line-height: 32px; }
 #capabilities .capability-code-corner { position: absolute; z-index: 3; display: none; background: var(--capability-accent); }
