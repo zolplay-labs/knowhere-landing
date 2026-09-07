@@ -1,13 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { DialRoot, useDialKit } from 'dialkit'
-import '@fontsource/geist-sans/300.css'
-import '@fontsource/geist-sans/400.css'
-import '@fontsource/geist-sans/500.css'
-import '@fontsource/geist-sans/600.css'
-import '@fontsource/poppins/400.css'
-import '@fontsource/poppins/500.css'
-import '@fontsource/poppins/600.css'
 import 'dialkit/styles.css'
 import { colorAlpha, colorHex, materialDark } from './colors'
 
@@ -29,7 +22,7 @@ const HERO_CONTROL_MIGRATIONS = [
   { path: 'motion.baseTwist', from: -2.2, to: -1 },
 ]
 const PALETTE_VERSION = 6
-const FONT_VERSION = 5
+const FONT_VERSION = 6
 const MAIN_PALETTES = {
   'main-3': colorHex['mineral-green'],
 }
@@ -78,15 +71,11 @@ try {
   // Keep the in-memory defaults when browser storage is unavailable or invalid.
 }
 const FONT_STACKS = {
-  poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial, sans-serif',
-  geist: '"Geist Sans", "Helvetica Neue", Arial, sans-serif',
+  geist: '"Geist", "Frex Sans GB VF", sans-serif',
 }
-const ENGLISH_FONT_FACES = {
-  poppins: '"Poppins", "Helvetica Neue", Helvetica, Arial',
-  geist: '"Geist Sans", "Helvetica Neue", Arial',
-}
+const MONO_FONT_STACK = '"Geist Mono", "Frex Sans GB VF", monospace'
 const CHINESE_FONT_STACKS = {
-  'frex-sans-gb': '"Frex Sans GB", "Noto Sans SC", "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+  'frex-sans-gb': '"Frex Sans GB VF", sans-serif',
 }
 
 const CONTROLLER_TRANSLATIONS = {
@@ -501,15 +490,15 @@ function applySettings(targetDocument, settings) {
   if (!targetDocument?.documentElement) return
 
   const rootStyle = targetDocument.documentElement.style
-  const englishFont = FONT_STACKS[settings.font] || FONT_STACKS[DEFAULTS.font]
-  const englishFaces = ENGLISH_FONT_FACES[settings.font] || ENGLISH_FONT_FACES[DEFAULTS.font]
-  const chineseFont = CHINESE_FONT_STACKS[settings.chineseFont] || CHINESE_FONT_STACKS[DEFAULTS.chineseFont]
-  const fontStack = settings.language === 'zh' ? `${englishFaces}, ${chineseFont}` : englishFont
+  const fontStack = FONT_STACKS[settings.font] || FONT_STACKS[DEFAULTS.font]
   const palette = MAIN_PALETTES[settings.palette] || MAIN_PALETTES[DEFAULTS.palette]
   const mainColor = MAIN_COLOR_VALUES[settings.palette] || MAIN_COLOR_VALUES[DEFAULTS.palette]
 
-  for (const property of ['--sans', '--serif', '--mono', '--figma-display', '--figma-mono']) {
+  for (const property of ['--sans', '--serif', '--figma-display']) {
     rootStyle.setProperty(property, fontStack)
+  }
+  for (const property of ['--mono', '--figma-mono']) {
+    rootStyle.setProperty(property, MONO_FONT_STACK)
   }
   for (const [stop, color] of Object.entries(palette)) {
     rootStyle.setProperty(`--main-${stop}`, color)
@@ -580,8 +569,7 @@ export function PageStyleControls() {
       fontFamily: {
         type: 'select',
         options: [
-          { value: 'geist', label: 'Geist Sans · 默认' },
-          { value: 'poppins', label: 'Poppins' },
+          { value: 'geist', label: 'Geist · 默认' },
         ],
         default: initialSettings.font,
       },

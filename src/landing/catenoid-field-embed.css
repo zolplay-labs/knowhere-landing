@@ -78,8 +78,12 @@
   width: min(486px, calc(100% - 32px));
   height: 206px;
   color: var(--mineral-green-500);
-  font: 400 12px/16px "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font: 400 12px/16px var(--mono);
   transform: translate(-50%, -50%);
+}
+
+#integration .integration-code-frame {
+  font-family: var(--mono);
 }
 
 .integration-code-frame__card {
@@ -164,7 +168,7 @@
 
 #integration .integration-code-frame__copy.is-copied {
   color: var(--mineral-green-500);
-  font: 400 12px/16px "Geist Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+  font: 400 12px/16px var(--mono);
 }
 
 .integration-code-frame__copy i {

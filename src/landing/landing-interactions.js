@@ -1951,19 +1951,19 @@ syncPricingCalculator();
       const textX = width < 768 ? 15 : 18;
       ctx.textBaseline = 'alphabetic';
       ctx.globalAlpha = .54 * visibility;
-      ctx.font = '600 8px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '600 8px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.fillText(`LAYER 0${layerIndex + 1} / 04 · ACTIVE VIEW`, textX, 18);
 
       ctx.globalAlpha = visibility;
-      ctx.font = `600 ${width < 768 ? 11 : 12}px "ABC Schengen Greek Variable Trial", Arial, sans-serif`;
+      ctx.font = `600 ${width < 768 ? 11 : 12}px "Geist", "Frex Sans GB VF", sans-serif`;
       ctx.fillText(layer.label, textX, width < 768 ? 38 : 42);
       ctx.globalAlpha = .68 * visibility;
-      ctx.font = '500 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '500 9px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.fillText(layer.detail, textX, width < 768 ? 54 : 59);
 
       const statusY = cardHeight - 14;
       ctx.globalAlpha = .48 * visibility;
-      ctx.font = '600 7px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '600 7px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.fillText('LIVE DATA PASS', textX, statusY + 2);
       for (let index = 0; index < 7; index += 1) {
         const phase = ((time * 1.15 - index * .11) % 1 + 1) % 1;
@@ -2249,7 +2249,7 @@ syncPricingCalculator();
       unitHitAreas = [];
 
       ctx.save();
-      ctx.font = '600 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '600 9px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.textBaseline = 'bottom';
 
       DATA.forEach((stage, stageIndex) => {
@@ -2392,10 +2392,10 @@ syncPricingCalculator();
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility;
         ctx.fillStyle = isActive ? LAYER_COLORS[layerIndex] : SETTINGS.inkColor;
-        ctx.font = '600 10px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.font = '600 10px "Geist", "Frex Sans GB VF", sans-serif';
         ctx.fillText(layer.label, textX, cardY + 20);
         ctx.globalAlpha = (isActive ? .76 : .52) * labelReveal * cardVisibility;
-        ctx.font = '500 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.font = '500 9px "Geist", "Frex Sans GB VF", sans-serif';
         ctx.fillText(layer.detail, textX, cardY + 35);
       });
       drawShapeAnnotation(layout, time);
@@ -2802,7 +2802,7 @@ syncPricingCalculator();
 
       if (hoveredParticle) {
         context.save();
-        context.font = '500 15px Fellix-TRIAL, "ABC Schengen Greek Variable Trial", sans-serif';
+        context.font = '500 15px "Geist", "Frex Sans GB VF", sans-serif';
         context.textBaseline = 'middle';
         const textWidth = context.measureText(hoveredParticle.label).width;
         const labelWidth = textWidth + 12;

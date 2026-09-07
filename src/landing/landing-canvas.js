@@ -768,10 +768,10 @@ function initializeHeroCanvas(root, cleanups) {
       ctx.textBaseline = 'top';
       ctx.globalAlpha = visibility;
       ctx.fillStyle = heroLabelTitleColor;
-      ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '500 13px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.fillText(layer.label, labelX, labelY, labelWidth);
       ctx.fillStyle = heroLabelSubtitleColor;
-      ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '400 13px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.fillText(layer.detail, labelX, labelY + 24, labelWidth);
       ctx.globalAlpha = .48 * visibility;
       ctx.fillText(liveDataPassLabel, labelX, labelY + 48, labelWidth);
@@ -1109,9 +1109,9 @@ function initializeHeroCanvas(root, cleanups) {
 
     function layerLabelBoxWidth() {
       ctx.save();
-      ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '500 13px "Geist", "Frex Sans GB VF", sans-serif';
       const titleWidth = Math.max(...LAYERS.map(layer => ctx.measureText(layer.label).width));
-      ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '400 13px "Geist", "Frex Sans GB VF", sans-serif';
       const detailWidth = Math.max(...LAYERS.map(layer => ctx.measureText(layer.detail).width));
       ctx.restore();
       return Math.max(28 + titleWidth, detailWidth);
@@ -1239,7 +1239,7 @@ function initializeHeroCanvas(root, cleanups) {
       const trailAlpha = .48 + (SETTINGS.trailDecay - .75) / .22 * .08;
 
       ctx.save();
-      ctx.font = '600 9px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+      ctx.font = '600 9px "Geist", "Frex Sans GB VF", sans-serif';
       ctx.textBaseline = 'bottom';
       drawVortexMouth(layout, funnelOpacity);
 
@@ -1419,11 +1419,11 @@ function initializeHeroCanvas(root, cleanups) {
         ctx.textBaseline = 'alphabetic';
         ctx.globalAlpha = (isActive ? 1 : .88) * labelReveal * cardVisibility * layerFade;
         ctx.fillStyle = isSelected ? primary500 : heroLabelTitleColor;
-        ctx.font = '500 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.font = '500 13px "Geist", "Frex Sans GB VF", sans-serif';
         ctx.fillText(layer.label, titleX, y + 5);
         ctx.globalAlpha = (isActive ? .76 : .68) * labelReveal * cardVisibility * layerFade;
         ctx.fillStyle = heroLabelSubtitleColor;
-        ctx.font = '400 13px "ABC Schengen Greek Variable Trial", Arial, sans-serif';
+        ctx.font = '400 13px "Geist", "Frex Sans GB VF", sans-serif';
         ctx.fillText(layer.detail, markerX - 28, y + 31);
       });
       drawShapeAnnotation(layout, time);
@@ -1997,7 +1997,7 @@ function initializeFormatGlobe(root, cleanups) {
         if (!particle || opacity <= 0) return;
         context.save();
         context.globalAlpha = opacity;
-        context.font = '500 15px Fellix-TRIAL, "ABC Schengen Greek Variable Trial", sans-serif';
+        context.font = '500 15px "Geist", "Frex Sans GB VF", sans-serif';
         context.textBaseline = 'middle';
         const textWidth = context.measureText(particle.label).width;
         const labelWidth = textWidth + 36;
