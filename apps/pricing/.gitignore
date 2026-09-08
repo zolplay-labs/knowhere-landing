@@ -1,0 +1,15 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+.amp/in/artifacts/*
+.amp/portals/*
+__unconfig*
+todos.json

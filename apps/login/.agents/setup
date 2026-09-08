@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "Installing pnpm dependencies..."
+time pnpm install --frozen-lockfile
+
+echo "Starting orb services..."
+time amp orb services ensure
