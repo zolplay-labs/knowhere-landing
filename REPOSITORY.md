@@ -40,7 +40,7 @@ Landing 继续使用根目录的 `wrangler.jsonc` 和 `dist`。三个子应用�
 
 `apps/wrangler.jsonc` 是空配置边界：阻止 Nitro 向上读取 landing 的账号、兼容日期和静态资源配置。不要删除它，也不要用它部署；部署使用对应应用生成的 `.output/server/wrangler.json`。
 
-在原 Cloudflare 账号、原 Worker 下部署，继续使用原有域名、路由、环境变量和 secrets。代码合并不迁移这些平台设置，不创建替代 Worker，也不改写页面里的外链。
+后续更新使用下方记录的 Cloudflare 账号与 Worker，保留已有域名、路由、环境变量和 secrets。代码合并不自动迁移这些平台设置，也不改写页面里的外链。
 
 如果原项目通过 Git 自动部署，在原项目内将源码仓库改为 `zolplay-labs/knowhere-landing`，并把 Root directory 改成表格中的目录；保留原分支、安装 / 构建 / 部署命令及其他设置。若配置了构建监听路径，同步改为对应目录。平台上的仓库绑定需要在原部署账号中单独核对，Git 提交不会自动更改绑定。
 
@@ -54,12 +54,24 @@ pnpm wrangler deploy --config .output/server/wrangler.json
 
 Login 的原 README 仍包含通用 Node 服务部署示例，但其实际 Vite 配置已经使用 Cloudflare preset；合并时保留两者原文，部署应按现有 Cloudflare 配置生成的 Worker 产物执行。
 
-本次可访问的 Cloudflare 账号只查到 `knowhere-landing`，没有查到另外三个 Worker；源仓库也未登记其线上 URL。因此，三个应用的原部署链接和平台仓库绑定尚未核验或修改。
+### 2026-09-08 部署记录
+
+三个应用已从本仓库提交 `2f0f09d340065876ff5b1032e4d689ef19d0f443` 构建，并通过 Wrangler 发布到 landing 所在的 Cloudflare 账号 `de2cfcddb1691bd2a7fab82b25ba78f9`。该账号部署前只有 landing，本次按各应用原配置名称创建了三个 Worker。
+
+| 应用 | 访问地址 | Cloudflare Version ID |
+| --- | --- | --- |
+| Blog | https://knowhere-blog.knowhere-landing.workers.dev | `cb0d3fd6-2be2-4ff1-a840-c093558121ab` |
+| Login | https://knowhere-login.knowhere-landing.workers.dev | `76daf510-95c0-4b42-b234-55862b902497` |
+| Pricing | https://knowhere-pricing.knowhere-landing.workers.dev | `40da0d0d-99ff-49b0-9b17-c1cea14507e8` |
+
+Cloudflare 已确认三个版本均承接 100% 流量，且启用了 `workers.dev` 地址。三个应用均构建通过；使用系统现有代理访问时，三个首页均返回 HTTP 200。当前网络直接访问 `workers.dev` 会超时。
+
+本次为手动部署，尚未设置 Git 推送自动部署。`knowhereto.ai`、`blog.knowhereto.ai` 等原域名、原页面外链和其他账号的部署均未改动。Login 保留原来的演示表单，尚未接入真实认证服务。
 
 ## 来源与内容核对
 
-导入版本记录在 [apps/sources.json](./apps/sources.json)。每个应用目录的 Git tree 与对应源提交的根 tree 完全相同，包含文件内容、路径及可执行权限。源仓库保留。
+导入版本记录在 [apps/sources.json](./apps/sources.json)。初次导入时，每个应用目录的 Git tree 与对应源提交的根 tree 完全相同，包含文件内容、路径及可执行权限。源仓库保留。
 
 可用 `git rev-parse HEAD:apps/blog`（以及 `apps/login`、`apps/pricing`）与记录的 `tree` 核对本次导入快照；后续正常开发会改变 tree。
 
-Blog 的源版本目前只有显示 `Zolplay.` 的初始页面，尚未包含文章列表或详情页。本次合并保留这一状态。
+Blog 初次导入的源版本只有 `Zolplay.` 占位页；提交 `2f0f09d` 已在本仓库加入 Blog 首页、12 条文章摘要、分类与搜索。文章正文和下一页仍链接到原博客，未接入 CMS。
