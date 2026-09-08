@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! pnpm --version >/dev/null 2>&1; then
+  echo "[setup] installing pnpm"
+  corepack disable
+  npm install --global pnpm@12.0.0
+fi
+
+echo "[setup] installing dependencies"
+time pnpm install --frozen-lockfile
+
+echo "[setup] ensuring Orb services"
+time amp orb services ensure
