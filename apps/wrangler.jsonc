@@ -1,0 +1,3 @@
+// Stop Nitro's upward config lookup before it reaches landing's wrangler.jsonc.
+// Each app keeps its deployment settings in its own vite.config.ts.
+{}

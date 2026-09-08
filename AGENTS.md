@@ -1,5 +1,7 @@
 # KNOWHERE 项目指引
 
+仓库包含根目录 landing，以及 `apps/blog`、`apps/login`、`apps/pricing` 三个独立应用。以下 `DESIGN.md` 规则适用于 landing；修改其他应用时遵守该应用原有的说明、依赖、样式、路由与部署配置，不用 landing 的实现覆盖它们。目录、运行方式和部署边界见 [REPOSITORY.md](./REPOSITORY.md)。
+
 涉及页面设计、UI 实现、样式、字体、主题、响应式或交互时，先读取 [DESIGN.md](./DESIGN.md) 的相关规则，再根据“页面配置与实现入口”定位源文件。
 
 - `DESIGN.md` 是本项目唯一的设计规范正文；不另建重复的设计规范文件。

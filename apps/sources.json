@@ -1,0 +1,29 @@
+{
+  "importedAt": "2026-09-08",
+  "applications": [
+    {
+      "name": "blog",
+      "path": "apps/blog",
+      "repository": "https://github.com/zolplay-labs/knowhere-blog",
+      "branch": "main",
+      "commit": "848c1eef2d2ba7d121f40826e369d016a0fe2ec8",
+      "tree": "a2a969e4460bac853918f9c6361ab9f21630e3a5"
+    },
+    {
+      "name": "login",
+      "path": "apps/login",
+      "repository": "https://github.com/zolplay-labs/knowhere-login",
+      "branch": "main",
+      "commit": "092e5e0bdbd5df86a62881762440fcc8afae281a",
+      "tree": "12bb3c5e8169625be011480e7502aa80c4089c36"
+    },
+    {
+      "name": "pricing",
+      "path": "apps/pricing",
+      "repository": "https://github.com/zolplay-labs/knowhere-pricing",
+      "branch": "main",
+      "commit": "adb437b996e44e8e495c40ff7e128bbb5296af15",
+      "tree": "9bcb9a47769eb0dc12b544981b2d4031ece2c2e9"
+    }
+  ]
+}
