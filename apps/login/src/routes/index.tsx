@@ -158,7 +158,7 @@ function LoginForm({ chinese }: { chinese: boolean }) {
               : t('Sign in with Email', '使用邮箱登录')}
           <IconArrowRight size={17} />
         </Button>
-        <div role="status" aria-live="polite" aria-atomic="true">
+        <div className="email-delivery-slot" role="status" aria-live="polite" aria-atomic="true">
           {delivery === 'sent' && (
             <div className="email-delivery">
               <IconCircleCheck className="email-delivery-icon" size={20} aria-hidden="true" />

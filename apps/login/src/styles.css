@@ -308,15 +308,22 @@ label {
   line-height: var(--type-caption-line-height);
 }
 .email-delivery {
+  position: absolute;
+  top: 16px;
+  left: 0;
+  width: 100%;
   display: grid;
   grid-template-columns: auto minmax(0, max-content);
   justify-content: center;
   align-items: start;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 8px;
   color: var(--control-ink);
   font-size: var(--type-meta-size);
   line-height: var(--type-meta-line-height);
+}
+.email-delivery-slot {
+  position: relative;
+  height: 0;
 }
 .email-delivery-icon {
   color: var(--mineral-green-500);
