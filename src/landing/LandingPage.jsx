@@ -35,7 +35,7 @@ function GlobalIcon() {
 
 function GitHubIcon() {
   return (
-    <img src="/assets/github-invertocat-black-clearspace.svg" width="20" height="20" alt="" aria-hidden="true" />
+    <img src="/assets/github-invertocat-black-clearspace.svg" width="22" height="22" alt="" aria-hidden="true" />
   )
 }
 

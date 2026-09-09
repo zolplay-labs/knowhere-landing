@@ -93,8 +93,8 @@ function LoginForm({ chinese }: { chinese: boolean }) {
         <Button variant="white">
           <img
             src="/assets/github-invertocat-black-clearspace.svg"
-            width="19"
-            height="19"
+            width="21"
+            height="21"
             alt=""
             aria-hidden="true"
           />
