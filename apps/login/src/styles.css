@@ -23,6 +23,7 @@
   --login-error-color: var(--coral-signal-600);
   --black-2: rgba(0, 0, 0, 0.02);
   --black-3: rgba(0, 0, 0, 0.03);
+  --black-6: rgba(0, 0, 0, 0.06);
   --black-10: rgba(0, 0, 0, 0.1);
   --black-40: rgba(0, 0, 0, 0.4);
   --login-background-color: var(--black-3);
@@ -228,14 +229,13 @@ a:hover {
   text-align: left;
 }
 .login-language-dropdown button:hover {
-  border-color: var(--mist-white-200);
-  background: var(--mist-white-200);
+  background: var(--black-3);
 }
 .login-language-dropdown button:focus-visible {
-  background: var(--mist-white-200);
+  background: var(--black-3);
 }
 .login-language-dropdown button[aria-checked='true'] {
-  background: var(--mist-white-300);
+  background: var(--black-6);
   font-weight: var(--font-weight-medium);
 }
 .form-area {
