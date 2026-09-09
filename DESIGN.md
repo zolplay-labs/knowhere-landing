@@ -275,6 +275,66 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 | FAQ 问题行 | 上下 padding 20；单行高 68 | 上下 padding 20；单行高 68 | 圆角 0；长问题自然换行 |
 | 键盘焦点 | `:focus-visible` | 同桌面 | 基础链接和按钮使用 2px 外轮廓；组件可定义自己的焦点样式 |
 
+### 4.1 Login 表单组件
+
+本节沉淀 Login 的输入框、白底按钮和黑底按钮，适用于 `apps/login` 及后续明确采用这套组件的页面。Landing 的 Hero 按钮等组件继续使用上表的具体设置；本节不批量覆盖其他应用。
+
+实现入口：[form-controls.tsx](./apps/login/src/components/form-controls.tsx)、[form-controls.css](./apps/login/src/components/form-controls.css)。组件分别为 `Input`、`Button variant="white"` 和 `Button variant="black"`。可在 Login 应用的 `/components` 页面查看全部状态和实际交互；正式登录页不增加状态控制器。
+
+#### 基础尺寸与 token
+
+| 属性 | 输入框 | 白底按钮 | 黑底按钮 |
+| --- | --- | --- | --- |
+| 高度 / 圆角 / 描边 | 46 / 2 / 1，绑定 `--control-height`、`--control-radius`、`--control-border-width` | 同输入框 | 同输入框 |
+| 水平内边距 | 13，绑定 `--control-padding-inline` | 同输入框 | 同输入框 |
+| 文字 | 桌面 18 / 27，手机 16 / 24，400；`--type-body-*` | 15 / 24，500；`--type-control-*`、`--font-weight-medium` | 同白底按钮 |
+| 图标与文字间距 | 不强制内置图标 | 11 | 13 |
+| 默认底色 | `--control-surface · #FFFFFF` | 同输入框 | `--control-black-surface · #1B1C1A` |
+| 默认文字 | `--control-ink · #2E2E2C` | 同输入框 | `--control-surface · #FFFFFF` |
+| 默认描边 | `--control-border · #DEDFD9` | 同输入框 | 与黑底同色 |
+| 占位文字 | `--control-placeholder · #A2A49C`，字号与输入文字相同 | — | — |
+| 阴影 | 无 | 无 | 无 |
+
+字体继承 `--font-sans`：英文和数字为 Geist，中文为 Frex。颜色使用组件语义 token；上表中的局部色值保留 Login 已确认的外观，不反向改写全局色板。背景、文字与边框过渡使用 `--control-motion-duration · 150ms`。
+
+已有基础色优先引用：白底及输入框只读底 → `mist-white/50`，正文 → `mist-white/900`，黑底 → `mist-white/950`，输入框禁用及白按钮按下底 → `mist-white/300`，输入框禁用文字 → `mist-white/700`。按钮禁用底色 → `black/10`、文字 → `black/40`、描边 → `black/3`；图标保留原色并使用 `--control-disabled-icon-opacity: 0.5`。输入框与白按钮已确认的局部边框、占位和悬停色保留为组件 token。
+
+#### 输入框状态
+
+| 状态 | 视觉与行为 |
+| --- | --- |
+| 默认 / 空值 | 显示占位文字；标签始终可见 |
+| 已填写 / 自动填充 | 使用正文色，保持 `--control-surface · #FFFFFF` 白底，不新增填充色；用白色内嵌覆盖层消除浏览器自动填充底色，不产生额外描边 |
+| 悬停 | 可编辑且无错误时，描边为 `--control-border-hover · #B1B7A9` |
+| 聚焦 | 仅将原有 1px 描边改成 `--control-focus → --mineral-green-500 · #19A88B`；`outline: none`、`box-shadow: none`，鼠标和键盘聚焦都不得叠加第二层描边 |
+| 错误 | 失焦时描边使用 `--control-error → --login-error-color → --coral-signal-700`；输入框下方 8px 显示同色辅助文本，字号 / 行高绑定 `--type-meta-* · 14 / 20` |
+| 错误时聚焦 | 描边仍为主色绿，红色辅助文本保留；修正为有效值后清除错误 |
+| 只读 | 原生 `readOnly`；底色 `--control-readonly-surface → --control-surface · #FFFFFF`，保留正常文字；可聚焦、选择和复制，不能编辑 |
+| 禁用 | 原生 `disabled`；底色 `--control-disabled-surface · #F6F7EF`、文字 `--control-disabled-ink · #888A82`、默认描边；不可编辑或进入 Tab 顺序，无悬停反馈 |
+
+状态优先级为禁用 → 聚焦 → 错误 → 悬停 → 默认。校验失败时使用 `aria-invalid`，辅助文本用 `aria-describedby` 关联、`role="alert"` 宣告；提交空邮箱或错误格式后聚焦该输入框。错误通过当前表单内的红色辅助文本展示，不使用浏览器气泡、Toast 或第二步页面。
+
+#### 按钮状态
+
+| 状态 | 白底按钮 | 黑底按钮 |
+| --- | --- | --- |
+| 默认 | 白底、深色文字、1px 浅色描边 | 黑底、白字、同色描边 |
+| 悬停 | `--control-surface-hover · #F7F8F4` 底，`--control-border-hover` 描边 | `--control-black-hover · #33483D` 底和描边 |
+| 按下 | `--control-surface-pressed · #F6F7EF` 底，悬停描边，下移 1px | `--control-black-pressed → --deep-teal-900 · #011110` 底，悬停描边，下移 1px |
+| 键盘聚焦 | 保留当前底色，使用主色绿 2px 外轮廓、间隔 4px | 同白底按钮；输入框的单层描边例外不覆盖按钮的键盘焦点规范 |
+| 禁用 | 原生 `disabled`；底色 `--control-button-disabled-surface → black/10`、文字 `--control-button-disabled-ink → black/40`、描边 `--control-button-disabled-border → black/3`；图标原色透明度为 50%，禁止悬停 / 按下反馈 | 同白底按钮 |
+| 加载 | `loading` 同时设置 `disabled` 与 `aria-busy`；保留默认配色，以 16px 转圈图标替代原图标；调用方传入“发送中…”等进行中文案 | 同白底按钮 |
+
+按钮宽高在状态变化时保持不变。加载与禁用不能触发点击回调或重复提交；恢复后重新允许操作。加载指示器以 800ms 一圈旋转，系统开启减少动态效果时停止旋转，保留图标、进行中文案及忙碌语义。操作结果由表单展示，失败在输入框下方提示，不把按钮改成长期红色或绿色。
+
+正式接入后，只在真实异步请求期间启用加载态。`/components` 中的加载开关仅用于组件验收；Login 当前用 1.4 秒模拟异步请求演示发送流程，不实际发送邮件。
+
+Google、GitHub 按钮尚未接入 OAuth；点击时不显示 preview 或未接入认证的提示，也不改变邮箱表单状态。
+
+邮箱按钮默认文案为 `Sign in with Email` / `使用邮箱登录`。有效邮箱提交后显示 `Sending…` / `发送中…` 和转圈图标，设置 `disabled`、`aria-busy`，禁止重复点击或回车提交。发送期间邮箱只读，其他登录按钮禁用，防止提交中的邮箱或登录方式发生变化。请求完成后恢复操作，按钮显示 `Resend email` / `重新发送邮件`；再次发送沿用相同的发送状态。正式接入后，必须在服务确认发送成功后展示成功结果，失败仍使用输入框下方的红色提示。
+
+成功反馈常驻在邮箱按钮下方，间距 16px，仅保留左侧绿色成功图标和 `Magic link sent, please check your email` / `登录链接已发送，请查收邮件` 一句话，无卡片底色、描边、邮箱地址或额外辅助文字。使用 `role="status"` 礼貌宣告；不自动消失、不提供关闭按钮，也不新增第二步页面或临时 Toast。修改邮箱后清除之前的发送结果，按钮恢复初始文案。14 / 20 字号、文字颜色及绿色成功图标绑定现有组件与颜色 token。
+
 ## 5. 交互与动效
 
 | 模块 | 规则 |

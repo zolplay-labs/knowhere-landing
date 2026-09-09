@@ -68,6 +68,17 @@ Cloudflare 已确认三个版本均承接 100% 流量，且启用了 `workers.de
 
 本次为手动部署，尚未设置 Git 推送自动部署。`knowhereto.ai`、`blog.knowhereto.ai` 等原域名、原页面外链和其他账号的部署均未改动。Login 保留原来的演示表单，尚未接入真实认证服务。
 
+### 2026-09-08 Login 图形与试用入口更新
+
+从 `eb83516` 的独立发布目录构建，仅加入 Login 的 `catenoid-field` 图形替换及素材、Landing 两处「Start free trial」链接更新。按钮现在指向 `https://knowhere-login.knowhere-landing.workers.dev`。工作区其他尚未提交的页面改动未包含在此次部署中。
+
+| 应用 | Cloudflare Version ID |
+| --- | --- |
+| Login | `de52b84c-2d3a-4223-8bed-05fd4a80f1dc` |
+| Landing | `4aaa3016-2c42-4988-99a1-32aed81ce776` |
+
+两个应用构建通过，Wrangler 确认部署成功。通过系统代理核验了线上登录页 HTML、SVG 内容与 Landing 发布脚本中的两个按钮目标。浏览器自动化加载超时，尚未完成线上实际点击验证。
+
 ## 来源与内容核对
 
 导入版本记录在 [apps/sources.json](./apps/sources.json)。初次导入时，每个应用目录的 Git tree 与对应源提交的根 tree 完全相同，包含文件内容、路径及可执行权限。源仓库保留。
