@@ -24,7 +24,7 @@ function App() {
       <header className="login-header">
         <a
           className="brand"
-          href="https://knowhereto.ai/"
+          href="https://knowhere-landing.knowhere-landing.workers.dev/"
           aria-label="Knowhere home"
         >
           <img
