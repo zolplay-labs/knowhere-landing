@@ -79,6 +79,17 @@ Cloudflare 已确认三个版本均承接 100% 流量，且启用了 `workers.de
 
 两个应用构建通过，Wrangler 确认部署成功。通过系统代理核验了线上登录页 HTML、SVG 内容与 Landing 发布脚本中的两个按钮目标。浏览器自动化加载超时，尚未完成线上实际点击验证。
 
+### 2026-09-09 Login 布局与表单状态更新
+
+Login 从 main 提交 `4d4d52dadcc97b19d1ff8587da3c832c9453b612` 的独立工作树安装锁定依赖、构建并部署，包含居中布局、动态背景、静态底部数据纹理、语言菜单和表单组件状态。本次仅发布 Login，工作区其他应用的改动未包含在部署中。
+
+- 访问地址：https://knowhere-login.knowhere-landing.workers.dev
+- Cloudflare Version ID：`a3f69a76-5442-4815-926d-37461cf275bb`
+- Deployment ID：`5fa95288-ad0e-4c80-8b7c-2504faa02457`，承接 100% 流量。
+- 使用现有账号和 Worker，通过 `--keep-vars` 保留环境变量。
+
+锁定依赖安装、生产构建和 TypeScript 检查均通过。线上首页返回 HTTP 200，核心 CSS 与路由脚本已与独立构建产物逐字节核对一致。浏览器自动化读取超时，尚未完成本次线上交互复核。邮箱发送仍为演示状态，未接入真实邮件服务或 OAuth。
+
 ## 来源与内容核对
 
 导入版本记录在 [apps/sources.json](./apps/sources.json)。初次导入时，每个应用目录的 Git tree 与对应源提交的根 tree 完全相同，包含文件内容、路径及可执行权限。源仓库保留。
