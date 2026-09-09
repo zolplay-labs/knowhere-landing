@@ -10288,7 +10288,8 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
     }
 
     #playground .trace-source-card[data-motion-active="true"] > .trace-card-content,
-    #playground .trace-summary-card[data-motion-active="true"] > .trace-card-content {
+    #playground .trace-summary-card[data-motion-active="true"] > .trace-card-content,
+    #playground .ai-output-report[data-motion-active="true"] > .product-output-content {
       clip-path: var(--trace-content-clip, none);
     }
 
@@ -15107,6 +15108,27 @@ html[data-theme="dark"] #playground .product-terminal {
 
 #playground .section-page.is-original-page .product-pdf-image {
   height: auto;
+}
+
+#playground .section-context-source {
+  display: block;
+  margin: 10px 0 8px;
+  color: var(--demo-text-muted);
+  font: 400 8px/12px var(--mono);
+}
+
+@media (min-width: 768px) {
+  #playground .section-node[data-has-context] .section-body p {
+    margin-bottom: 8px;
+    font-size: 10px;
+    line-height: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  #playground .section-context {
+    display: none;
+  }
 }
 
 #playground .source-sections .trace-source-frame,

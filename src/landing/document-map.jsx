@@ -542,12 +542,15 @@ function APIOutputReport({
         transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
       }}
     >
-      <div className="product-terminal-head">
-        <span className="product-window-dots" aria-hidden="true"><i /><i /><i /></span>
+      <div className="product-output-content">
+        <div className="product-terminal-head">
+          <span className="product-window-dots" aria-hidden="true"><i /><i /><i /></span>
+        </div>
+        <pre className="product-terminal-code" aria-label="Example API response">
+          <CodeLines lines={JSON.stringify(fields, null, 2).split('\n')} />
+        </pre>
       </div>
-      <pre className="product-terminal-code" aria-label="Example API response">
-        <CodeLines lines={JSON.stringify(fields, null, 2).split('\n')} />
-      </pre>
+      <TracePixelReveal active={motionActive} delay={400} />
     </section>
   )
 }
@@ -700,6 +703,7 @@ function DocumentMap({
                         <a
                           className="section-node"
                           data-region={firstPageSource.type}
+                          data-has-context={firstPageSource.context ? 'true' : undefined}
                           key={section.name}
                           href={firstPageSource.pageImage}
                           target="_blank"
@@ -722,6 +726,12 @@ function DocumentMap({
                             {supportingCopy.map((paragraph, index) => (
                               <p key={`${section.name}-copy-${index}`}>{paragraph}</p>
                             ))}
+                            {firstPageSource.context && (
+                              <div className="section-context">
+                                <span className="section-context-source">Related text · PDF pages {firstPageSource.context.pages.join(', ')}</span>
+                                {firstPageSource.context.paragraphs.map(paragraph => <p key={paragraph}>{paragraph}</p>)}
+                              </div>
+                            )}
                             {remainingPages.map(page => (
                               <SectionPageContent
                                 page={page}

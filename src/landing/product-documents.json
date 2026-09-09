@@ -107,79 +107,6 @@
                     ]
                   }
                 ]
-              },
-              {
-                "title": "Non-GAAP",
-                "units": "$ in millions, except earnings per share",
-                "columns": [
-                  "Q1 FY27",
-                  "Q4 FY26",
-                  "Q1 FY26",
-                  "Q/Q",
-                  "Y/Y"
-                ],
-                "rows": [
-                  {
-                    "label": "Revenue",
-                    "values": [
-                      "$81,615",
-                      "$68,127",
-                      "$44,062",
-                      "20 %",
-                      "85 %"
-                    ]
-                  },
-                  {
-                    "label": "Gross margin",
-                    "values": [
-                      "75.0 %",
-                      "75.1 %",
-                      "60.8 %",
-                      "(0.1) pts",
-                      "14.2 pts"
-                    ]
-                  },
-                  {
-                    "label": "Operating expenses",
-                    "values": [
-                      "$7,449",
-                      "$6,666",
-                      "$4,993",
-                      "12 %",
-                      "49 %"
-                    ]
-                  },
-                  {
-                    "label": "Operating income",
-                    "values": [
-                      "$53,783",
-                      "$44,474",
-                      "$21,801",
-                      "21 %",
-                      "147 %"
-                    ]
-                  },
-                  {
-                    "label": "Net income",
-                    "values": [
-                      "$45,548",
-                      "$38,969",
-                      "$19,094",
-                      "17 %",
-                      "139 %"
-                    ]
-                  },
-                  {
-                    "label": "Diluted earnings per share",
-                    "values": [
-                      "$1.87",
-                      "$1.59",
-                      "$0.78",
-                      "18 %",
-                      "140 %"
-                    ]
-                  }
-                ]
               }
             ]
           },
@@ -371,41 +298,63 @@
               "For each word, compute attention weights:",
               "The result is a new representation that captures the context of the word."
             ],
-            "summary": "Scaled dot-product attention turns query-key scores into softmax weights, then applies them to values to form context-aware representations."
+            "summary": "Scaled dot-product attention turns query-key scores into softmax weights, then applies them to values to form context-aware representations.",
+            "context": {
+              "pages": [
+                4
+              ],
+              "paragraphs": [
+                "Allows the model to focus on relevant parts of the input when processing each word.",
+                "Computes how much attention it should pay to every other word in the sentence.",
+                "Creates a weighted sum of all word representations."
+              ]
+            }
           },
           {
-            "id": "transformer-architecture",
-            "page": 9,
+            "id": "transformer-multihead",
+            "page": 16,
             "type": "diagram",
-            "title": "The Transformer - model architecture.",
-            "excerpt": "Transformer is a novel architecture that utilize Attention to process Sequence2Sequence tasks.",
+            "title": "Scaled Dot-Product and Multi-Head Attention",
+            "excerpt": "",
             "crop": [
-              0.587,
-              0.164,
-              0.891,
-              0.865
+              0.2028473598943647,
+              0.23126553545869105,
+              0.7959554013246266,
+              0.8349077805542575
             ],
             "pageSize": [
               453.543,
               255.118
             ],
-            "pageImage": "/assets/product-documents/transformer-architecture-page.webp",
-            "regionImage": "/assets/product-documents/transformer-architecture-region.webp",
+            "pageImage": "/assets/product-documents/transformer-multihead-page.webp",
+            "regionImage": "/assets/product-documents/transformer-multihead-region.webp",
             "imageSize": [
               2200,
               1238
             ],
             "regionSize": [
-              669,
-              868
+              1306,
+              748
             ],
-            "printedPage": "7",
+            "printedPage": 14,
             "pageText": [
-              "Transformer is a novel architecture that utilize Attention to process Sequence2Sequence tasks.",
-              "It consist on Encoder and Decoder but they are not based on the recurrent connections.",
-              "Encoder and Decoder are composed of modules that can be stacked on top of each other multiple times (Nx)."
+              "Multi-Head Attention consists of several attention layers running in parallel."
             ],
-            "summary": "The architecture places attention inside stacked encoder and decoder modules, with masked attention in the decoder and positional encoding at the inputs."
+            "summary": "The multi-head attention diagram shows several attention layers running in parallel, followed by concatenation and a linear projection.",
+            "context": {
+              "pages": [
+                15,
+                17,
+                18
+              ],
+              "paragraphs": [
+                "Instead of computing attention once, we do it in parallel multiple times (heads).",
+                "Each head learns different projections of Q, K, V with its own parameters.",
+                "Different heads can focus on different types of relationships (e.g. syntax, semantics).",
+                "The outputs of all heads are concatenated and linearly projected.",
+                "Encoder: attends to all positions in the input. Decoder: attends to previous positions (masked). Encoder-decoder: decoder attends to encoder output."
+              ]
+            }
           },
           {
             "id": "positional-encoding",
@@ -434,7 +383,20 @@
               1846,
               780
             ],
-            "summary": "The heatmaps contrast the regular structure of sinusoidal positional encoding with the irregular pattern of simulated learned encoding, linking the model's positional inputs to their visual representations."
+            "summary": "The heatmaps contrast the regular structure of sinusoidal positional encoding with the irregular pattern of simulated learned encoding, linking the model's positional inputs to their visual representations.",
+            "context": {
+              "pages": [
+                10,
+                13
+              ],
+              "paragraphs": [
+                "Transformers do not have recurrence or convolution. Therefore, they have no built-in sense of word order.",
+                "Positional encoding injects information about the position of each token in the sequence. These encodings are added to the input embeddings.",
+                "Sinusoidal functions are used to provide unique yet smoothly varying encoding for each position.",
+                "Ability to interpolate or generalize to longer sequences. Simple mathematical patterns that can capture relative distances.",
+                "Alternative: learned positional encodings. Positional vectors are trainable. More flexible, but limited to sequence lengths seen during training."
+              ]
+            }
           }
         ],
         "sha256": "63dd5f1f34933fe8438934d7b45911e047b9d40b98b7cc0c0aedc33546b0667b",
