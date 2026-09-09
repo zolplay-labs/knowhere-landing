@@ -310,7 +310,7 @@ export function LandingPage() {
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
         </AnimatedThemeToggler>
-        <a className="button button-small" href="https://knowhereto.ai/login">Get API Key</a>
+        <a className="button button-small" href="https://knowhere-login.knowhere-landing.workers.dev">Get API Key</a>
         <button className="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span className="sr-only">Open menu</span><span className="menu-toggle-icon" aria-hidden="true"><i /><i /></span></button>
       </div>
     </nav>
@@ -324,7 +324,7 @@ export function LandingPage() {
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
         </AnimatedThemeToggler>
-        <a className="button mobile-menu-cta" href="https://knowhereto.ai/login">Get API Key</a>
+        <a className="button mobile-menu-cta" href="https://knowhere-login.knowhere-landing.workers.dev">Get API Key</a>
       </div>
     </div>
   </header>
