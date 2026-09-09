@@ -1,12 +1,15 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMotionValueEvent, useScroll } from 'motion/react'
-import { TextReveal } from '@/registry/magicui/text-reveal'
+import { HyperText } from '@/registry/magicui/hyper-text'
+import productDocuments from './product-documents.json'
 
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
 const DESKTOP_PRODUCT_QUERY = '(min-width: 1440px) and (min-height: 1100px)'
 const PRODUCT_STICKY_TOP = 68
 const PRODUCT_STAGE_COUNT = 5
 const PRODUCT_STAGE_SCROLL_VH = 60
+const DOCUMENT_ENTRY_END_PROGRESS = 0.05
+const DOCUMENT_ENTRY_CAMERA_SHIFT = 200
 const DOCUMENT_OUTLINE_END_PROGRESS = 0.14
 const DOCUMENT_EXTRACTION_START_PROGRESS = 0.08
 const DOCUMENT_EXTRACTION_END_PROGRESS = 0.20
@@ -19,371 +22,51 @@ const HIERARCHY_REVEAL_CAMERA_SHIFT = 860 + DESKTOP_SOURCE_CONNECTION_EXTENSION 
 // Hold Source-backed context 64px below the top of the illustration stage.
 const SUMMARY_REVEAL_CAMERA_SHIFT = HIERARCHY_REVEAL_CAMERA_SHIFT + 146
 const DOCUMENT_HIERARCHY_END_PROGRESS = 0.72
+const SECTION_WIDTH = 380.62
+const SECTION_GAP = 33
+const DOCUMENT_GAP = 101
 
-const themes = [
-  {
-    id: 'growth',
-    label: 'Q4 performance summary',
-    documents: [
-      {
-        name: 'Q4 Market Update.pdf',
-        sections: [
-          {
-            name: 'Revenue by region',
-            copy: [
-              'Q4 revenue reached $4.8B, up 19.1% year over year. North America contributed $2.302B, while APAC recorded the fastest growth at 21.6%.',
-              'Subscription and support revenue represented 77% of the total, up from 74% a year earlier, extending the mix shift toward recurring revenue.',
-              'Europe contributed $1.276B after 19.4% growth. APAC added $963M, making it the fastest-growing region even as North America remained the largest contributor.',
-              'Cloud platform contracts remained the largest source of expansion, followed by security and data services. New bookings were balanced between existing-account expansion and first-time enterprise customers.',
-              'North America added $358M year over year, Europe added $207M, and APAC added $171M. Together, the three regions accounted for nearly all of the quarter’s absolute revenue increase.',
-              'Foreign-exchange movement reduced reported international growth by roughly 0.6 percentage points. On a constant-currency basis, both Europe and APAC finished modestly above the operating plan.',
-              'Management expects the recurring mix and regional diversification to support durable growth, while monitoring procurement timing among larger public-sector and regulated-industry accounts.',
-            ],
-            pages: [{ label: 'PAGE 06', sourceId: 'src-growth-1' }],
-          },
-          {
-            name: 'Operating margin',
-            copy: [
-              'Operating income increased to $1.094B from $899M, lifting operating margin to 22.9% from 21.3% in the prior year.',
-              'Revenue growth continued to outpace operating expenses. Sales and customer-success costs grew more slowly as coverage and support workflows became more efficient.',
-              'The 1.6-point margin improvement gives the business more room to fund product development while maintaining disciplined operating leverage.',
-              'Gross margin remained stable despite higher inference and storage usage, as infrastructure commitments and workload scheduling offset most of the increase in variable processing demand.',
-              'Research and development spending increased 14% year over year, primarily in document intelligence, reliability, and enterprise administration. The investment rate remained below revenue growth.',
-              'General and administrative expense declined as a share of revenue after finance and compliance teams consolidated several reporting and approval workflows.',
-              'The company enters the next quarter with capacity to increase product investment without moving outside its full-year operating-margin range.',
-              'Cash conversion remained strong, leaving the margin plan supported by both operating discipline and the quality of recurring revenue rather than by deferred investment.',
-            ],
-            pages: [{ label: 'PAGE 10', sourceId: 'src-growth-2' }],
-          },
-        ],
-      },
-      {
-        name: 'Financial Summary.pdf',
-        sections: [
-          {
-            name: 'Capacity and adoption',
-            copy: [
-              'Active-seat utilization averaged 78% over the six-month period, showing that renewed contracts were converting into deployed product usage.',
-              'Utilization rose through the first five readings before easing slightly in June, while still ending materially above the January baseline.',
-              'The pattern indicates that customer provisioning and adoption kept pace with contracted capacity rather than leaving renewal growth unused.',
-              'Customers with guided onboarding reached steady-state usage approximately three weeks faster than self-directed accounts, with the strongest gains among multi-team deployments.',
-              'Security review completion and identity-provider setup remained the most common prerequisites for moving contracted seats into active use.',
-              'Expansion cohorts retained higher utilization after month three, suggesting that usage breadth—not only initial activation—was supporting renewal confidence.',
-              'The operations team will continue tracking seat depth, weekly active teams, and workflow frequency to distinguish durable adoption from short-term launch activity.',
-              'Together, these measures indicate that the installed base is expanding in both breadth and frequency, creating a healthier foundation for future renewals.',
-            ],
-            pages: [{ label: 'PAGE 14', sourceId: 'src-growth-3' }],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'regional',
-    label: 'Regional performance',
-    documents: [
-      {
-        name: 'Regional review.pdf',
-        sections: [
-          {
-            name: 'North America contribution',
-            copy: [
-              'North America generated $2.302B in Q4 revenue, remaining the largest market and contributing 48% of the global total.',
-              'Revenue increased 18.4% year over year, supported by continued enterprise demand across cloud, security, and data-platform products.',
-              'The region remains the company’s scale base, but its contribution is becoming more balanced as Europe and APAC grow at faster rates.',
-              'Large enterprise accounts produced 62% of regional revenue, while mid-market customers delivered the highest net expansion rate during the quarter.',
-              'Financial services and healthcare led new annual contract value. Public-sector bookings were stable but remained sensitive to procurement calendars.',
-              'Retention stayed above the company average, supported by broader adoption across compliance, operations, and customer-support teams within existing accounts.',
-              'The next-quarter plan emphasizes deeper product adoption in strategic accounts while protecting the region’s support response and implementation capacity.',
-              'Regional performance therefore remains dependable: North America supplies the largest absolute contribution while leaving room for international mix to expand.',
-            ],
-            pages: [{ label: 'PAGE 04', sourceId: 'src-reg-1' }],
-          },
-        ],
-      },
-      {
-        name: 'EMEA forecast.xlsx',
-        sections: [
-          {
-            name: 'Europe renewal pipeline',
-            copy: [
-              'Europe grew 19.4% year over year. Enterprise renewal pipeline coverage reached 1.24×, with public-sector accounts tracking ahead of plan.',
-              'Mid-market coverage remains the main watch area at 1.11×, while public-sector coverage of 1.32× provides additional support for the regional forecast.',
-              'The pipeline mix points to steady renewal performance, with the strongest coverage concentrated in larger and public-sector accounts.',
-              'Sixty-eight percent of forecast value is already in legal review or later stages. The remaining exposure is concentrated in mid-market renewals scheduled near quarter end.',
-              'Enterprise coverage is supported by multi-year extensions in Germany, France, and the Netherlands, where product adoption expanded beyond the initial workflow.',
-              'Public-sector timing remains favorable, although individual contracts can shift between quarters as security and purchasing approvals are completed.',
-              'Regional leaders are prioritizing executive sponsorship and implementation readiness for the small set of renewals that account for most downside risk.',
-              'With late-stage coverage above plan, the forecast remains balanced between a visible enterprise base and clearly identified mid-market execution risk.',
-            ],
-            pages: [{ label: 'SHEET 02', sourceId: 'src-reg-2' }],
-          },
-        ],
-      },
-      {
-        name: 'APAC briefing.pptx',
-        sections: [
-          {
-            name: 'APAC quarterly momentum',
-            copy: [
-              'APAC revenue reached $963M, up 21.6% year over year. Quarterly gains were sustained across cloud, security, and data-platform accounts.',
-              'Revenue advanced in each reported quarter, with the curve steepening in the second half as enterprise deployments expanded across the region.',
-              'APAC is still smaller than North America and Europe, but its faster growth makes it the largest contributor to incremental regional momentum.',
-              'Japan and Australia remained the largest markets, while Singapore and South Korea generated the fastest percentage growth from a smaller base.',
-              'Partner-led implementations represented 37% of new regional deployments and helped reduce onboarding time for customers with local data requirements.',
-              'Currency effects were broadly neutral for the quarter. Growth was driven primarily by volume, higher seat adoption, and expansion into adjacent document workflows.',
-              'The outlook assumes continued enterprise demand with measured hiring in solutions engineering and customer success to maintain delivery quality.',
-              'The region’s growth profile is increasingly broad-based, combining mature-market scale with faster adoption in the newer Southeast Asian markets.',
-            ],
-            pages: [{ label: 'SLIDE 11', sourceId: 'src-reg-3' }],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: 'efficiency',
-    label: 'Operating efficiency',
-    documents: [
-      {
-        name: 'Operating model.pdf',
-        sections: [
-          {
-            name: 'Margin and infrastructure cost',
-            copy: [
-              'Operating margin improved to 22.9% as revenue grew faster than operating expenses. Infrastructure cost per active seat declined 11.2%.',
-              'Higher seat utilization spread platform and support costs across a broader active base, improving unit economics without reducing service coverage.',
-              'The combined margin and unit-cost movement shows that the operating model is absorbing growth with less incremental infrastructure spend.',
-              'Reserved compute coverage increased to 71% of predictable workloads, reducing exposure to on-demand pricing while preserving headroom for peak processing periods.',
-              'Storage tiering and document-lifecycle policies lowered average retained-data cost, with no change to customer recovery objectives or audit availability.',
-              'Model-routing updates shifted routine extraction work to lower-cost capacity and reserved higher-cost inference for visually complex pages and exception handling.',
-              'Efficiency gains are being reinvested in reliability, observability, and enterprise controls rather than treated solely as short-term expense reductions.',
-              'This approach preserves the operating leverage already achieved while maintaining the technical capacity required for larger and more complex document workloads.',
-            ],
-            pages: [{ label: 'PAGE 08', sourceId: 'src-eff-1' }],
-          },
-          {
-            name: 'Support productivity by region',
-            copy: [
-              'Support cost per seat fell in every region. APAC recorded the lowest case volume and the largest improvement in first-response time.',
-              'North America handled 42 cases per 1,000 seats, while Europe and APAC operated at 39 and 35 respectively as self-service coverage expanded.',
-              'Faster first responses and lower cost per seat indicate that regional support teams are resolving more demand without proportional staffing growth.',
-              'Knowledge-assisted resolution covered 46% of inbound questions, up from 31% a year earlier, with billing and access requests showing the highest deflection.',
-              'Europe recorded a 17% faster first response after consolidating queues and extending follow-the-sun coverage with the APAC support organization.',
-              'Escalation rates were stable even as case volume grew, indicating that faster handling did not shift unresolved work into engineering or customer-success teams.',
-              'The next phase focuses on improving resolution quality for complex configuration issues while maintaining regional language and compliance coverage.',
-              'Quality audits will continue to compare first-contact resolution, customer satisfaction, and transfer rates so productivity gains remain service-led.',
-            ],
-            pages: [{ label: 'PAGE 15', sourceId: 'src-eff-2' }],
-          },
-        ],
-      },
-      {
-        name: 'Automation Review.xlsx',
-        sections: [
-          {
-            name: 'Case routing automation',
-            copy: [
-              'Automated case routing reached 34% in June, reducing manual triage and shortening the median first-response time by 17%.',
-              'Routing coverage increased in every month shown as classification rules expanded from common billing cases into provisioning and access requests.',
-              'The higher automation rate directs more cases to the correct team on first assignment, reducing transfers and preserving specialist capacity.',
-              'Confidence thresholds were calibrated by request type so ambiguous security and data-residency questions continue to receive human review before assignment.',
-              'Billing classification achieved 93% precision, access requests reached 89%, and provisioning cases reached 86% after the June rule update.',
-              'Cases below threshold enter the shared triage queue with suggested labels, preserving operator control while still reducing repetitive classification work.',
-              'The July plan expands automation to renewal and integration questions after quality checks confirm that the current routing gains remain stable.',
-              'Operators will retain final control over low-confidence cases, while reporting separates automated assignment from suggestions that still require review.',
-            ],
-            pages: [{ label: 'SHEET 04', sourceId: 'src-eff-3' }],
-          },
-        ],
-      },
-    ],
-  },
-]
+// PDF page numbers are one-based file positions, not printed folio numbers.
+const themeSourcesMap = Object.fromEntries(productDocuments.map(project => [
+  project.id,
+  project.documents.flatMap((document, documentIndex) => document.sources.map(source => ({
+    ...source,
+    filename: document.name,
+    documentTitle: document.title,
+    format: 'PDF',
+    location: `PAGE ${String(source.page).padStart(2, '0')}`,
+    caption: source.title,
+    citation: `DOCUMENT ${documentIndex + 1} · PDF page ${source.page}`,
+  }))),
+]))
 
-const themeSourcesMap = {
-  growth: [
-    {
-      id: 'src-growth-1',
-      format: 'PDF',
-      location: 'PAGE 06',
-      type: 'table',
-      eyebrow: 'CONSOLIDATED RESULTS · USD MILLIONS',
-      title: 'Revenue by region',
-      badge: '+19.1% TOTAL',
-      caption: 'Regional revenue totals and year-over-year growth.',
-      widths: [31, 23, 23, 23],
-      columns: ['Region', 'Q4 2025', 'Q4 2024', 'YoY'],
-      rows: [
-        ['North America', '$2,302M', '$1,944M', '+18.4%'],
-        ['Europe', '$1,276M', '$1,069M', '+19.4%'],
-        ['APAC', '$963M', '$792M', '+21.6%'],
-        ['Total', '$4,800M', '$4,030M', '+19.1%'],
-      ],
-    },
-    {
-      id: 'src-growth-2',
-      format: 'PDF',
-      location: 'PAGE 10',
-      type: 'document',
-      kicker: 'Q4 Market Update · PAGE 10',
-      title: 'Operating margin expansion',
-      copy: 'Operating income increased to $1.094B from $899M.',
-      note: 'Operating margin reached 22.9%, compared with 21.3% a year earlier.',
-      facts: [
-        { label: 'Revenue', value: '$4.8B' },
-        { label: 'Op. income', value: '$1.094B' },
-        { label: 'Margin', value: '22.9%' },
-      ],
-      caption: 'Operating income and margin comparison.',
-    },
-    {
-      id: 'src-growth-3',
-      format: 'PDF',
-      location: 'PAGE 14',
-      type: 'metrics',
-      kicker: 'ADOPTION COHORT REVIEW · SIX MONTHS',
-      title: 'Six-month active-seat utilization',
-      caption: 'Monthly utilization across contracted enterprise seats.',
-      metrics: [
-        { label: 'JAN', value: '72%', note: 'Baseline' },
-        { label: 'APR', value: '76%', note: '+4 pts' },
-        { label: 'JUN', value: '78%', note: '+6 pts' },
-      ],
-      signal: { label: 'Six-month average', value: '78%', note: 'Renewed seats converting into active use' },
-    },
-  ],
-  regional: [
-    {
-      id: 'src-reg-1',
-      format: 'PDF',
-      location: 'PAGE 04',
-      type: 'bars',
-      kicker: 'REGIONAL MIX · Q4 2025',
-      title: 'North America remains the base',
-      total: '$4.8B GLOBAL REVENUE',
-      bars: [
-        { label: 'North America', value: '48%', width: 100 },
-        { label: 'Europe', value: '27%', width: 56 },
-        { label: 'APAC', value: '20%', width: 42 },
-        { label: 'Other', value: '5%', width: 14 },
-      ],
-      note: 'North America grew 18.4% year over year while international markets gained share.',
-      caption: 'North America revenue contribution.',
-    },
-    {
-      id: 'src-reg-2',
-      format: 'XLSX',
-      location: 'SHEET 02',
-      type: 'table',
-      eyebrow: 'RENEWAL PIPELINE · FORECAST MODEL',
-      title: 'Europe renewal forecast',
-      badge: '1.22× BLENDED',
-      caption: 'Pipeline coverage by customer segment.',
-      widths: [32, 26, 22, 20],
-      columns: ['Segment', 'Pipeline', 'Coverage', 'Signal'],
-      rows: [
-        ['Enterprise', '$1.18B', '1.24×', 'On plan'],
-        ['Mid-market', '$420M', '1.11×', 'Watch'],
-        ['Public sector', '$260M', '1.32×', 'Ahead'],
-        ['All segments', '$1.86B', '1.22×', 'On plan'],
-      ],
-    },
-    {
-      id: 'src-reg-3',
-      format: 'PPTX',
-      location: 'SLIDE 11',
-      type: 'presentation',
-      kicker: 'APAC BUSINESS REVIEW · Q4 2025',
-      title: 'APAC quarterly revenue',
-      caption: 'APAC revenue increased through Q4 2025.',
-      value: '$963M',
-      valueLabel: 'Q4 REVENUE · +21.6% YOY',
-      copy: 'Quarterly gains accelerated as enterprise deployments expanded across Japan, Australia, Singapore, and South Korea.',
-      bullets: ['37% partner-led deployments', 'Fastest-growing global region'],
-    },
-  ],
-  efficiency: [
-    {
-      id: 'src-eff-1',
-      format: 'PDF',
-      location: 'PAGE 08',
-      type: 'metrics',
-      kicker: 'UNIT ECONOMICS · OPERATING MODEL',
-      title: 'Margin and unit-cost bridge',
-      metrics: [
-        { label: 'Q4 2024', value: '21.3%', note: 'Margin' },
-        { label: 'Q4 2025', value: '22.9%', note: '+1.6 pts' },
-        { label: 'UNIT COST', value: '−11.2%', note: 'YoY' },
-      ],
-      signal: { label: 'Primary driver', value: '71%', note: 'Predictable workloads on reserved compute' },
-      caption: 'Margin expansion and infrastructure unit cost.',
-    },
-    {
-      id: 'src-eff-2',
-      format: 'PDF',
-      location: 'PAGE 15',
-      type: 'scorecard',
-      kicker: 'SUPPORT OPERATIONS · REGIONAL BENCHMARK',
-      title: 'Regional support productivity',
-      caption: 'Support demand and response-time movement by region.',
-      items: [
-        { label: 'NORTH AMERICA', value: '42 / 1K', delta: 'FRT −14% · COST −6.1%' },
-        { label: 'EUROPE', value: '39 / 1K', delta: 'FRT −17% · COST −7.4%' },
-        { label: 'APAC', value: '35 / 1K', delta: 'FRT −21% · COST −9.3%' },
-      ],
-      note: 'Every region improved response time and cost per active seat.',
-    },
-    {
-      id: 'src-eff-3',
-      format: 'XLSX',
-      location: 'SHEET 04',
-      type: 'timeline',
-      kicker: 'ROUTING COVERAGE · RULE RELEASES',
-      title: 'Automated case routing',
-      caption: 'Share of support cases routed without manual triage.',
-      steps: [
-        { label: 'JAN', title: 'Billing', detail: '18% routed' },
-        { label: 'MAR', title: 'Access', detail: '24% routed' },
-        { label: 'MAY', title: 'Provisioning', detail: '31% routed' },
-        { label: 'JUN', title: 'Quality gate', detail: '34% routed' },
-      ],
-      note: 'Median first response improved 17% with confidence-gated automation.',
-    },
-  ],
-}
+const themes = productDocuments.map(project => ({
+  id: project.id,
+  label: project.label,
+  documents: project.documents.map(document => ({
+    name: document.name,
+    title: document.title,
+    sections: document.sources.map(source => ({
+      name: source.title,
+      copy: source.pageText ?? (source.excerpt ? [source.excerpt] : []),
+      pages: [{ label: `PAGE ${String(source.page).padStart(2, '0')}`, sourceId: source.id }],
+    })),
+  })),
+}))
 
-const themeSummaries = {
-  growth: {
-    topic: 'Q4 performance brief',
-    text: 'Q4 revenue reached $4.8B, up 19.1% year over year. North America remained the largest market, while APAC grew fastest at 21.6%. Operating income increased to $1.094B and operating margin improved to 22.9%. Active-seat utilization averaged 78% over six months, supporting a positive outlook.',
-    highlights: [
-      { startWord: 4, endWord: 7 },
-      { startWord: 18, endWord: 22 },
-      { startWord: 29, endWord: 35 },
-      { startWord: 38, endWord: 41 },
-    ],
-  },
-  regional: {
-    topic: 'Regional performance brief',
-    text: 'North America remained the largest region at $2.302B, while APAC grew fastest at 21.6% and Europe grew 19.4%. Europe enterprise renewal pipeline coverage reached 1.24×, and APAC quarterly revenue climbed to $963M. The strongest momentum came from APAC, with Europe also tracking ahead of plan.',
-    highlights: [
-      { startWord: 1, endWord: 8 },
-      { startWord: 11, endWord: 15 },
-      { startWord: 21, endWord: 27 },
-      { startWord: 33, endWord: 36 },
-    ],
-  },
-  efficiency: {
-    topic: 'Operating efficiency brief',
-    text: 'Operating margin improved to 22.9% from 21.3%, while infrastructure cost per active seat fell 11.2%. Support productivity improved across every region: APAC recorded 35 cases per 1,000 seats and a 21% faster first response. Automated case routing reached 34%, reducing manual triage and supporting further efficiency gains.',
-    highlights: [
-      { startWord: 1, endWord: 7 },
-      { startWord: 9, endWord: 16 },
-      { startWord: 23, endWord: 34 },
-      { startWord: 37, endWord: 41 },
-    ],
-  },
+function getSourceLayout(documents) {
+  let width = 0
+  const sources = documents.flatMap((document, documentIndex) => (
+    document.sections.map((section, sectionIndex) => {
+      const gap = sectionIndex < document.sections.length - 1
+        ? SECTION_GAP
+        : documentIndex < documents.length - 1 ? DOCUMENT_GAP : 0
+      const center = width + SECTION_WIDTH / 2
+      width += SECTION_WIDTH + gap
+      return { id: section.pages[0].sourceId, center, gap }
+    })
+  ))
+  return { sources, width }
 }
 
 function clamp(val, min = 0, max = 1) {
@@ -519,9 +202,9 @@ function SectionPageContent({ page, source }) {
   }
 
   return (
-    <figure className="section-page" data-source-id={source.id}>
+    <figure className="section-page is-original-page" data-source-id={source.id}>
       <div className="trace-source-preview section-page-preview">
-        <SourcePreviewContent source={source} />
+        <SourcePreviewContent source={source} fullPage />
       </div>
       <figcaption><span>{page.label}</span>{source.caption}</figcaption>
     </figure>
@@ -589,11 +272,10 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
     return <div className="document-branch-line" aria-hidden="true">{stem}</div>
   }
 
-  const card = 380.62
-  const gap = 33
-  const width = card * 2 + gap
-  const left = card / 2
-  const right = card + gap + card / 2
+  const width = SECTION_WIDTH * sectionCount + SECTION_GAP * (sectionCount - 1)
+  const centers = Array.from({ length: sectionCount }, (_, index) => (
+    SECTION_WIDTH / 2 + index * (SECTION_WIDTH + SECTION_GAP)
+  ))
   const mid = width / 2
   const forkY = 16
 
@@ -602,8 +284,8 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
       <MapFlowSvg
         className="document-branch-line-svg is-fork-path"
         viewBox={`0 0 ${width} ${height}`}
-        path={`M${mid} 0 V${forkY} M${left} ${forkY} H${right} M${left} ${forkY} V${height} M${right} ${forkY} V${height}`}
-        dots={[[left, height], [right, height]]}
+        path={`M${mid} 0 V${forkY} M${centers[0]} ${forkY} H${centers.at(-1)} ${centers.map(x => `M${x} ${forkY} V${height}`).join(' ')}`}
+        dots={centers.map(x => [x, height])}
         clipProgress={clipProgress}
       />
       {stem}
@@ -614,334 +296,88 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
 function SectionToSourceLines({
   clipProgress = 1,
   opacity = 1,
-  sourceCount = 3,
-  documentCount = 2,
+  layout,
   className = '',
   heightExtension = 0,
 }) {
   const height = 32 + CONNECTION_LINE_EXTENSION + heightExtension
   const rootClassName = `stage-flow-row is-section-to-source${className ? ` ${className}` : ''}`
 
-  if (sourceCount === 2) {
-    return (
-      <div
-        className={rootClassName}
-        aria-hidden="true"
-        style={{ opacity }}
-      >
-        <div className="flow-line-slot" style={{ width: 381 }}>
-          <MapFlowSvg
-            className="stage-flow-line-svg"
-            viewBox={`0 0 10 ${height}`}
-            path={`M5 0 V${height}`}
-            dots={[[5, 0], [5, height]]}
-            clipProgress={clipProgress}
-          />
-        </div>
-        <div className="flow-line-gap" style={{ width: 33 }} />
-        <div className="flow-line-slot" style={{ width: 381 }}>
-          <MapFlowSvg
-            className="stage-flow-line-svg"
-            viewBox={`0 0 10 ${height}`}
-            path={`M5 0 V${height}`}
-            dots={[[5, 0], [5, height]]}
-            clipProgress={clipProgress}
-          />
-        </div>
-      </div>
-    )
-  }
-
-  const gapBetweenDocs = documentCount === 3 ? 33 : 101
-
   return (
-    <div
-      className={rootClassName}
-      aria-hidden="true"
-      style={{ opacity }}
-    >
-      <div className="flow-line-slot" style={{ width: 381 }}>
-        <MapFlowSvg
-          className="stage-flow-line-svg"
-          viewBox={`0 0 10 ${height}`}
-          path={`M5 0 V${height}`}
-          dots={[[5, 0], [5, height]]}
-          clipProgress={clipProgress}
-        />
-      </div>
-      <div className="flow-line-gap" style={{ width: 33 }} />
-      <div className="flow-line-slot" style={{ width: 381 }}>
-        <MapFlowSvg
-          className="stage-flow-line-svg"
-          viewBox={`0 0 10 ${height}`}
-          path={`M5 0 V${height}`}
-          dots={[[5, 0], [5, height]]}
-          clipProgress={clipProgress}
-        />
-      </div>
-      <div className="flow-line-gap" style={{ width: gapBetweenDocs }} />
-      <div className="flow-line-slot" style={{ width: 381 }}>
-        <MapFlowSvg
-          className="stage-flow-line-svg"
-          viewBox={`0 0 10 ${height}`}
-          path={`M5 0 V${height}`}
-          dots={[[5, 0], [5, height]]}
-          clipProgress={clipProgress}
-        />
-      </div>
+    <div className={rootClassName} aria-hidden="true" style={{ opacity }}>
+      {layout.sources.map(source => (
+        <div className="flow-line-slot" key={source.id} style={{ width: SECTION_WIDTH, '--source-gap': `${source.gap}px` }}>
+          <MapFlowSvg
+            className="stage-flow-line-svg"
+            viewBox={`0 0 10 ${height}`}
+            path={`M5 0 V${height}`}
+            dots={[[5, 0], [5, height]]}
+            clipProgress={clipProgress}
+          />
+        </div>
+      ))}
     </div>
   )
 }
 
-function ConvergenceLine({
-  clipProgress = 1,
-  sourceCount = 3,
-  documentCount = 2,
-  heightExtension = 0,
-}) {
+function ConvergenceLine({ clipProgress = 1, layout, heightExtension = 0 }) {
   const height = 40 + CONNECTION_LINE_EXTENSION + heightExtension
-  const width = sourceCount === 2 ? 795 : (documentCount === 3 ? 1209 : 1277)
   const midY = 18
-  const cx1 = 190.5
-  const cx2 = 604.5
-  const cx3 = documentCount === 3 ? 1018.5 : 1086.5
-  const centerTarget = width / 2
-
-  const path = sourceCount === 2
-    ? `M${cx1} 0 V${midY} H${cx2} M${cx2} 0 V${midY} M${(cx1 + cx2) / 2} ${midY} V${height}`
-    : `M${cx1} 0 V${midY} H${cx3} M${cx2} 0 V${midY} M${cx3} 0 V${midY} M${centerTarget} ${midY} V${height}`
-
-  const dots = sourceCount === 2
-    ? [[cx1, 0], [cx2, 0], [(cx1 + cx2) / 2, height]]
-    : [[cx1, 0], [cx2, 0], [cx3, 0], [centerTarget, height]]
+  const centers = layout.sources.map(source => source.center)
+  const path = `${centers.map(x => `M${x} 0 V${midY}`).join(' ')} M${centers[0]} ${midY} H${centers.at(-1)} M${layout.width / 2} ${midY} V${height}`
 
   return (
-    <div className="stage-convergence-row" aria-hidden="true">
+    <div className="stage-convergence-row" aria-hidden="true" style={{ '--flow-width': `${layout.width}px` }}>
       <MapFlowSvg
         className="stage-convergence-line-svg"
-        viewBox={`0 0 ${width} ${height}`}
+        viewBox={`0 0 ${layout.width} ${height}`}
         path={path}
-        dots={dots}
+        dots={[...centers.map(x => [x, 0]), [layout.width / 2, height]]}
         clipProgress={clipProgress}
       />
     </div>
   )
 }
 
-function SourcePreviewContent({ source }) {
-  if (source.type === 'table') {
+function SourcePreviewContent({ source, fullPage = false }) {
+  if (!fullPage && source.tables) {
     return (
-      <article className="trace-source-layout trace-source-layout--table">
-        <header className="trace-source-layout-head">
-          <span>{source.eyebrow}</span>
-          <p className="trace-source-table-title">{source.title}</p>
-          <em>{source.badge}</em>
-        </header>
-        <table className="trace-source-mini-table">
-          <colgroup>
-            {source.widths.map((w, idx) => (
-              <col key={idx} style={{ width: `${w}%` }} />
-            ))}
-          </colgroup>
-          <thead>
-            <tr>
-              {source.columns.map((col, idx) => (
-                <th key={idx}>{col}</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {source.rows.map((row, rIdx) => (
-              <tr key={rIdx}>
-                {row.map((val, cIdx) => (
-                  <td key={cIdx}>{val}</td>
-                ))}
+      <div className="product-evidence-tables">
+        {source.tables.map(table => (
+          <table className="product-evidence-table" key={table.title}>
+            <caption><strong>{table.title}</strong><span>{table.units}</span></caption>
+            <thead><tr><th scope="col" aria-label="Metric" />{table.columns.map(column => <th scope="col" key={column}>{column}</th>)}</tr></thead>
+            <tbody>{table.rows.map(row => (
+              <tr key={row.label}>
+                <th scope="row" className={row.indent ? 'is-subrow' : undefined}>{row.label}</th>
+                {row.values.map((value, index) => <td key={index}>{value}</td>)}
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </article>
+            ))}</tbody>
+          </table>
+        ))}
+      </div>
     )
   }
 
-  if (source.type === 'metrics') {
+  if (!fullPage && source.id === 'attention-formula') {
     return (
-      <article className="trace-source-layout trace-source-layout--metrics">
-        <header className="trace-source-layout-head">
-          <span>{source.kicker}</span>
-          <p className="trace-source-chart-title">{source.title}</p>
-        </header>
-        <div className="trace-source-metric-grid">
-          {source.metrics.map(metric => (
-            <div key={metric.label}>
-              <span>{metric.label}</span>
-              <strong>{metric.value}</strong>
-              <small>{metric.note}</small>
-            </div>
-          ))}
-        </div>
-        <div className="trace-source-signal">
-          <span>{source.signal.label}</span>
-          <strong>{source.signal.value}</strong>
-          <small>{source.signal.note}</small>
-        </div>
-      </article>
+      <div className="product-evidence-formula">
+        <span className="product-equation-glyphs" role="img" aria-label="Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V" />
+      </div>
     )
   }
 
-  if (source.type === 'bars') {
-    return (
-      <article className="trace-source-layout trace-source-layout--bars">
-        <header className="trace-source-layout-head">
-          <span>{source.kicker}</span>
-          <p className="trace-source-chart-title">{source.title}</p>
-          <em>{source.total}</em>
-        </header>
-        <div className="trace-source-bars">
-          {source.bars.map(bar => (
-            <div className="trace-source-bar" key={bar.label}>
-              <span>{bar.label}</span>
-              <i><b style={{ width: `${bar.width}%` }} /></i>
-              <strong>{bar.value}</strong>
-            </div>
-          ))}
-        </div>
-        <p className="trace-source-layout-note">{source.note}</p>
-      </article>
-    )
-  }
-
-  if (source.type === 'presentation') {
-    return (
-      <article className="trace-source-layout trace-source-layout--presentation">
-        <span className="trace-source-presentation-kicker">{source.kicker}</span>
-        <div className="trace-source-presentation-grid">
-          <div>
-            <p className="trace-source-chart-title">{source.title}</p>
-            <strong className="trace-source-presentation-value">{source.value}</strong>
-            <span className="trace-source-presentation-label">{source.valueLabel}</span>
-          </div>
-          <div>
-            <p>{source.copy}</p>
-            <ul>
-              {source.bullets.map(item => <li key={item}>{item}</li>)}
-            </ul>
-          </div>
-        </div>
-      </article>
-    )
-  }
-
-  if (source.type === 'scorecard') {
-    return (
-      <article className="trace-source-layout trace-source-layout--scorecard">
-        <header className="trace-source-layout-head">
-          <span>{source.kicker}</span>
-          <p className="trace-source-chart-title">{source.title}</p>
-        </header>
-        <div className="trace-source-scorecards">
-          {source.items.map(item => (
-            <div key={item.label}>
-              <span>{item.label}</span>
-              <strong>{item.value}</strong>
-              <small>{item.delta}</small>
-            </div>
-          ))}
-        </div>
-        <p className="trace-source-layout-note">{source.note}</p>
-      </article>
-    )
-  }
-
-  if (source.type === 'timeline') {
-    return (
-      <article className="trace-source-layout trace-source-layout--timeline">
-        <header className="trace-source-layout-head">
-          <span>{source.kicker}</span>
-          <p className="trace-source-chart-title">{source.title}</p>
-        </header>
-        <ol className="trace-source-timeline">
-          {source.steps.map(step => (
-            <li key={step.label}>
-              <span>{step.label}</span>
-              <strong>{step.title}</strong>
-              <small>{step.detail}</small>
-            </li>
-          ))}
-        </ol>
-        <p className="trace-source-layout-note">{source.note}</p>
-      </article>
-    )
-  }
-
-  if (source.type === 'line') {
-    const { chart } = source
-    const points = chart.points.map(([x, y]) => `${x},${y}`).join(' ')
-    const [firstPoint] = chart.points
-    const lastPoint = chart.points.at(-1)
-    const areaPath = chart.points
-      .map(([x, y], index) => `${index === 0 ? 'M' : 'L'}${x} ${y}`)
-      .join(' ')
-
-    return (
-      <>
-        <p className="trace-source-chart-title">{source.title}</p>
-        <div className="trace-source-chart">
-          <svg viewBox="0 0 300 105" role="img" aria-label={chart.ariaLabel}>
-            <g className="trace-source-chart-grid">
-              <line x1="36" y1="14" x2="294" y2="14" />
-              <line x1="36" y1="50" x2="294" y2="50" />
-              <line x1="36" y1="86" x2="294" y2="86" />
-            </g>
-            <g className="trace-source-chart-axis">
-              {chart.yLabels.map((label, index) => (
-                <text x="0" y={[18, 54, 90][index]} key={label}>{label}</text>
-              ))}
-              {chart.xLabels.map((label, index) => (
-                <text
-                  x={[36, 165, 294][index]}
-                  y="103"
-                  textAnchor={['start', 'middle', 'end'][index]}
-                  key={label}
-                >
-                  {label}
-                </text>
-              ))}
-            </g>
-            <path className="trace-source-chart-area" d={`${areaPath} L${lastPoint[0]} 86 L${firstPoint[0]} 86 Z`} />
-            <polyline className="trace-source-chart-line" points={points} />
-            <g>
-              {chart.points.map(([x, y]) => (
-                <circle className="trace-source-chart-point" cx={x} cy={y} r="3" key={`${x}-${y}`} />
-              ))}
-            </g>
-            <text
-              className="trace-source-chart-end"
-              x={Math.max(36, lastPoint[0] - 40)}
-              y={Math.max(13, lastPoint[1] - 7)}
-            >
-              {chart.endLabel}
-            </text>
-          </svg>
-        </div>
-      </>
-    )
-  }
-
+  const [width, height] = fullPage ? source.imageSize : source.regionSize
   return (
-    <article className={`trace-source-document${source.facts ? ' has-facts' : ''}`}>
-      <p className="trace-source-document-kicker">{source.kicker}</p>
-      <strong className="trace-source-document-title">{source.title}</strong>
-      <p className="trace-source-passage">{source.copy}</p>
-      {source.facts && (
-        <dl className="trace-source-document-facts">
-          {source.facts.map(fact => (
-            <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>
-          ))}
-        </dl>
-      )}
-      <p className="trace-source-document-note">{source.note}</p>
-    </article>
+    <img
+      className="product-pdf-image"
+      src={fullPage ? source.pageImage : source.regionImage}
+      width={width}
+      height={height}
+      alt={`${source.filename} · PDF page ${source.page} · ${source.title}`}
+      loading="lazy"
+      decoding="async"
+    />
   )
 }
 
@@ -957,7 +393,6 @@ function getThemeHierarchy(theme) {
     })
   )).map((item, index) => ({
     ...item,
-    type: ['doc', 'table', 'chart'][index] ?? 'doc',
     isActive: index === 0,
   }))
 }
@@ -985,28 +420,18 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
       >
         <div className="trace-card-content">
           <div className="trace-hierarchy" data-trace-summary>
-            <ul className="trace-hierarchy-list">
+            <ul className="trace-hierarchy-list" translate="no">
               {hierarchy.map((item, index) => (
                 <li
                   className={`trace-hierarchy-node${item.isActive ? ' is-active' : ''}`}
                   data-trace-hierarchy-index={index}
                   key={index}
                 >
-                  {item.type === 'table' ? (
-                    <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M2.85858 2.87732L15.4293 1.0815C15.7027 1.04245 15.9559 1.2324 15.995 1.50577C15.9983 1.52919 16 1.55282 16 1.57648V22.4235C16 22.6996 15.7761 22.9235 15.5 22.9235C15.4763 22.9235 15.4527 22.9218 15.4293 22.9184L2.85858 21.1226C2.36593 21.0522 2 20.6303 2 20.1327V3.86727C2 3.36962 2.36593 2.9477 2.85858 2.87732ZM4 4.73457V19.2654L14 20.694V3.30599L4 4.73457ZM17 19H20V4.99997H17V2.99997H21C21.5523 2.99997 22 3.44769 22 3.99997V20C22 20.5523 21.5523 21 21 21H17V19ZM10.2 12L13 16H10.6L9 13.7143L7.39999 16H5L7.8 12L5 7.99997H7.39999L9 10.2857L10.6 7.99997H13L10.2 12Z" />
-                    </svg>
-                  ) : item.type === 'chart' ? (
-                    <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M13 21V23H11V21H3C2.44772 21 2 20.5523 2 20V6H22V20C22 20.5523 21.5523 21 21 21H13ZM4 19H20V8H4V19ZM13 10H18V12H13V10ZM13 14H18V16H13V14ZM9 10V13H12C12 14.6569 10.6569 16 9 16C7.34315 16 6 14.6569 6 13C6 11.3431 7.34315 10 9 10ZM2 3H22V5H2V3Z" />
-                    </svg>
-                  ) : (
-                    <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z" />
-                    </svg>
-                  )}
+                  <svg className="trace-hierarchy-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M21 8V20.9932C21 21.5501 20.5552 22 20.0066 22H3.9934C3.44495 22 3 21.556 3 21.0082V2.9918C3 2.45531 3.4487 2 4.00221 2H14.9968L21 8ZM19 9H14V4H5V20H19V9ZM8 7H11V9H8V7ZM8 11H16V13H8V11ZM8 15H16V17H8V15Z" />
+                  </svg>
                   <span className="trace-hierarchy-content">
-                    <span data-trace-hierarchy-label>{item.source}</span>
+                    <span data-trace-hierarchy-label title={item.source}>{item.source}</span>
                     <span className="trace-hierarchy-detail" data-trace-hierarchy-detail>{item.location}</span>
                   </span>
                 </li>
@@ -1020,23 +445,94 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
   )
 }
 
-function AIOutputReport({
+function CodeLines({ lines }) {
+  return <code>{lines.map((line, index) => {
+    const parts = line.split(/("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|#.*$|\b(?:from|import|for|in|Knowhere|Path|parse|glob)\b|\b\d+\b)/g)
+    return (
+      <span className="product-code-line" data-line={index + 1} key={index}>
+        <span className="product-code-line-content">{parts.map((part, partIndex) => {
+          const type = part.startsWith('#') ? 'comment'
+            : /^["']/.test(part) ? (/^\s*:/.test(parts[partIndex + 1] ?? '') ? 'key' : 'string')
+              : /^(from|import|for|in)$/.test(part) ? 'keyword'
+                : /^(Knowhere|Path|parse|glob)$/.test(part) ? 'function'
+                  : /^\d+$/.test(part) ? 'number' : 'plain'
+          return <span className={`product-code-${type}`} key={partIndex}>{part}</span>
+        })}{'\n'}</span>
+      </span>
+    )
+  })}</code>
+}
+
+function APIRequestCode({ activeThemeId, animate = false }) {
+  const theme = themes.find(item => item.id === activeThemeId) ?? themes[0]
+  const folder = theme.label.toLowerCase().replaceAll(' ', '-')
+  const lines = [
+    '# pip install knowhere-python-sdk',
+    'from pathlib import Path',
+    'from knowhere import Knowhere',
+    '',
+    'client = Knowhere(api_key="sk-YOUR_API_KEY")',
+    `documents = Path("${folder}").glob("*.pdf")`,
+    'results = [client.parse(file=pdf) for pdf in documents]',
+  ]
+
+  return (
+    <section className="product-request product-terminal" aria-label="Example Python request" translate="no">
+      <pre className="product-request-code product-terminal-code" aria-live="polite">
+        <HyperText active={animate} renderText={text => <CodeLines lines={text.split('\n')} />}>
+          {lines.join('\n')}
+        </HyperText>
+      </pre>
+    </section>
+  )
+}
+
+function RequestToDocumentLines({ theme, layout }) {
+  let offset = 0
+  const centers = theme.documents.map(document => {
+    const width = document.sections.length * SECTION_WIDTH + (document.sections.length - 1) * SECTION_GAP
+    const center = offset + width / 2
+    offset += width + DOCUMENT_GAP
+    return center
+  })
+  const path = `M${layout.width / 2} 0 V24 M${centers[0]} 24 H${centers.at(-1)} ${centers.map(x => `M${x} 24 V64`).join(' ')}`
+  return (
+    <div className="request-document-connection" data-parallel={theme.documents.length === 2 && theme.documents.every(document => document.sections.length === 1) ? 'true' : undefined} style={{ '--request-flow-width': `${layout.width}px` }}>
+      <MapFlowSvg className="request-document-line" viewBox={`0 0 ${layout.width} 64`} path={path} dots={centers.map(x => [x, 64])} />
+      <MapFlowSvg className="request-document-stem" viewBox="0 0 10 64" path="M5 0 V64" dots={[[5, 64]]} />
+      <svg className="request-document-parallel" aria-hidden="true">
+        <line className="map-flow-stroke" x1="50%" x2="50%" y1="0" y2="24" />
+        <line className="map-flow-stroke" x1="0" x2="100%" y1="24" y2="24" />
+        <line className="map-flow-stroke" x1="0" x2="0" y1="24" y2="64" />
+        <line className="map-flow-stroke" x1="100%" x2="100%" y1="24" y2="64" />
+        <circle className="map-flow-dot" cx="0" cy="64" r="2" />
+        <circle className="map-flow-dot" cx="100%" cy="64" r="2" />
+      </svg>
+    </div>
+  )
+}
+
+function APIOutputReport({
   documentCount = 0,
+  project,
   opacity = 1,
   translateY = 0,
   motionActive = false,
-  inkProgress = 1,
-  sourceCount = 0,
-  summary = themeSummaries.growth,
+  sources,
 }) {
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const documentLabel = `${documentCount} document${documentCount === 1 ? '' : 's'}`
-  const sourceLabel = `${sourceCount} source region${sourceCount === 1 ? '' : 's'}`
+  const fields = {
+    project,
+    summary: sources.map(source => source.summary).join(' '),
+    citations: sources.map(source => source.citation),
+    documents: documentCount,
+    source_regions: sources.length,
+  }
 
   return (
     <section
-      className="ai-output-report"
+      className="ai-output-report product-terminal"
       translate="no"
       data-ai-summary-document
       data-motion-active={motionActive ? 'true' : undefined}
@@ -1046,57 +542,60 @@ function AIOutputReport({
         transition: reducedMotion ? 'none' : 'opacity 0.15s ease-out, transform 0.15s ease-out',
       }}
     >
-      <TextReveal
-        className="ai-output-text-reveal"
-        highlights={summary.highlights}
-        progress={inkProgress}
-      >
-        {summary.text}
-      </TextReveal>
-      <div className="ai-output-attribution">
-        <p className="ai-output-attribution-title">AI-generated brief</p>
-        <p>Synthesized from {sourceLabel} across {documentLabel}</p>
+      <div className="product-terminal-head">
+        <span className="product-window-dots" aria-hidden="true"><i /><i /><i /></span>
+        <span className="product-terminal-format">[ .JSON ]</span>
       </div>
+      <pre className="product-terminal-code" aria-label="Example API response">
+        <CodeLines lines={JSON.stringify(fields, null, 2).split('\n')} />
+      </pre>
     </section>
   )
 }
 
 function DocumentMap({
   activeThemeId,
-  onOpenTrace,
+  animateRequest = false,
   inactive = false,
   scrollProgress = 1,
 }) {
   const isMobile = useMobileProductLayout()
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
-  const interactive = typeof onOpenTrace === 'function'
   const [selectedName, setSelectedName] = useState(null)
-  const openTimer = useRef(0)
+  const contentRef = useRef(null)
+  const [summaryCameraShift, setSummaryCameraShift] = useState(SUMMARY_REVEAL_CAMERA_SHIFT)
   const activeTheme = themes.find(theme => theme.id === activeThemeId) ?? themes[0]
-  const currentSources = themeSourcesMap[activeTheme.id] ?? themeSourcesMap.growth
+  const currentSources = themeSourcesMap[activeTheme.id] ?? themeSourcesMap[themes[0].id]
+  const sourceLayout = getSourceLayout(activeTheme.documents)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const showCrossDocumentLink = activeTheme.documents.length === 2
     && activeTheme.documents[0].sections.length >= 2
   const sourceConnectionHeightExtension = isDesktop ? DESKTOP_SOURCE_CONNECTION_EXTENSION : 0
 
-  useEffect(() => () => window.clearTimeout(openTimer.current), [])
-
   useEffect(() => {
-    window.clearTimeout(openTimer.current)
     setSelectedName(null)
   }, [activeThemeId])
 
-  const openTrace = document => {
-    if (!interactive) return
-    const delay = reducedMotion ? 0 : 280
-    setSelectedName(document.name)
-    window.clearTimeout(openTimer.current)
-    openTimer.current = window.setTimeout(() => onOpenTrace?.(document), delay)
-  }
+  useLayoutEffect(() => {
+    if (!isDesktop) return undefined
+    const content = contentRef.current
+    const stage = content.closest('.product-stage')
+    const fitOutput = () => setSummaryCameraShift(Math.max(
+      SUMMARY_REVEAL_CAMERA_SHIFT,
+      content.offsetHeight - stage.clientHeight + 24,
+    ))
+    fitOutput()
+    const observer = new ResizeObserver(fitOutput)
+    observer.observe(content)
+    observer.observe(stage)
+    return () => observer.disconnect()
+  }, [activeThemeId, isDesktop])
 
   // The camera sequence needs desktop geometry; tablet and mobile use static evidence layouts.
-  const p = reducedMotion || !isDesktop ? 1 : scrollProgress
+  const p = reducedMotion || !isDesktop ? 1 : clamp(
+    (scrollProgress - DOCUMENT_ENTRY_END_PROGRESS) / (1 - DOCUMENT_ENTRY_END_PROGRESS),
+  )
   const progressBetween = (start, end) => clamp((p - start) / (end - start))
   const smoothProgressBetween = (start, end) => {
     const progress = progressBetween(start, end)
@@ -1116,9 +615,10 @@ function DocumentMap({
   const pSummaryCamera = smoothProgressBetween(0.56, 0.74)
   const cameraScale = isDesktop ? 1 : 903 / SUMMARY_REVEAL_CAMERA_SHIFT
   const scrollLinkedCameraShift = (
-    SOURCE_REVEAL_CAMERA_SHIFT * pSourceCamera
+    DOCUMENT_ENTRY_CAMERA_SHIFT * clamp(scrollProgress / DOCUMENT_ENTRY_END_PROGRESS)
+    + (SOURCE_REVEAL_CAMERA_SHIFT - DOCUMENT_ENTRY_CAMERA_SHIFT) * pSourceCamera
     + (HIERARCHY_REVEAL_CAMERA_SHIFT - SOURCE_REVEAL_CAMERA_SHIFT) * pHierarchyCamera
-    + (SUMMARY_REVEAL_CAMERA_SHIFT - HIERARCHY_REVEAL_CAMERA_SHIFT) * pSummaryCamera
+    + (summaryCameraShift - HIERARCHY_REVEAL_CAMERA_SHIFT) * pSummaryCamera
   ) * cameraScale
   const cameraShiftY = (reducedMotion || !isDesktop)
     ? 0
@@ -1128,12 +628,11 @@ function DocumentMap({
   const pHierarchyCard = progressBetween(0.42, 0.58)
   const pSummaryConnection = progressBetween(0.56, 0.66)
   const pSummaryDocument = progressBetween(0.62, DOCUMENT_HIERARCHY_END_PROGRESS)
-  const pSummaryInk = progressBetween(DOCUMENT_HIERARCHY_END_PROGRESS, 1)
   const activeStageIndex = Math.min(PRODUCT_STAGE_COUNT, Math.floor(p * PRODUCT_STAGE_COUNT))
 
   return (
     <section
-      className="document-map reveal"
+      className="document-map"
       data-product-stage-index={activeStageIndex}
       style={{ '--document-outline-clip': `${(1 - pDocumentOutline) * 100}%` }}
       aria-labelledby="document-map-title"
@@ -1144,6 +643,7 @@ function DocumentMap({
         <div className="document-map-hierarchy-canvas" data-document-count={activeTheme.documents.length} style={{ '--document-count': activeTheme.documents.length }}>
           <div
             className="document-map-content"
+            ref={contentRef}
             key={activeTheme.id}
             aria-live="polite"
             style={{
@@ -1152,6 +652,8 @@ function DocumentMap({
             }}
           >
             <div className="mobile-narrative-stage">
+              <APIRequestCode activeThemeId={activeThemeId} animate={animateRequest} />
+              <RequestToDocumentLines theme={activeTheme} layout={sourceLayout} />
               {/* STAGE 1: Full-height source documents */}
               <div
                 className="document-map-documents"
@@ -1159,9 +661,7 @@ function DocumentMap({
                 data-cross-link={showCrossDocumentLink ? 's2-s1' : undefined}
               >
               {activeTheme.documents.map((document, documentIndex) => {
-                const documentSections = isMobile
-                  ? document.sections.slice(0, 1)
-                  : document.sections
+                const documentSections = document.sections
 
                 return (
                 <article
@@ -1170,7 +670,7 @@ function DocumentMap({
                 >
                   <header className="document-node">
                     <span>DOCUMENT {documentIndex + 1}</span>
-                    <strong>{document.name}</strong>
+                    <strong title={document.title} translate="no">{document.name}</strong>
                   </header>
                   <DocumentBranchLine
                     sectionCount={documentSections.length}
@@ -1190,19 +690,18 @@ function DocumentMap({
                       const [introCopy, ...supportingCopy] = Array.isArray(section.copy)
                         ? section.copy
                         : [section.copy]
-                      const SectionTag = interactive ? 'button' : 'section'
 
                       return (
-                        <SectionTag
+                        <a
                           className="section-node"
+                          data-region={firstPageSource.type}
                           key={section.name}
-                          {...(interactive
-                            ? {
-                                type: 'button',
-                                onClick: () => openTrace(document),
-                                'aria-label': `Open ${document.name}`,
-                              }
-                            : {})}
+                          href={firstPageSource.pageImage}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Open ${document.name}, PDF page ${firstPageSource.page}`}
+                          onClick={() => setSelectedName(document.name)}
+                          translate="no"
                         >
                           <div className="section-node-head">
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1213,10 +712,7 @@ function DocumentMap({
                             <strong>{section.name}</strong>
                           </div>
                           <div className="section-body">
-                            <p>
-                              {introCopy}
-                              {!firstPageSource && <span className="section-page-reference">{firstPage.label}</span>}
-                            </p>
+                            {introCopy && <p>{introCopy}</p>}
                             {firstPageSource && <SectionPageContent page={firstPage} source={firstPageSource} />}
                             {supportingCopy.map((paragraph, index) => (
                               <p key={`${section.name}-copy-${index}`}>{paragraph}</p>
@@ -1229,7 +725,7 @@ function DocumentMap({
                               />
                             ))}
                           </div>
-                        </SectionTag>
+                        </a>
                       )
                     })}
                   </div>
@@ -1259,8 +755,7 @@ function DocumentMap({
               <SectionToSourceLines
                 clipProgress={pSecToSourceLine}
                 opacity={1}
-                sourceCount={currentSources.length}
-                documentCount={activeTheme.documents.length}
+                layout={sourceLayout}
                 className={isMobile ? 'mobile-source-connection' : ''}
                 heightExtension={sourceConnectionHeightExtension}
               />
@@ -1283,20 +778,25 @@ function DocumentMap({
                 return (
                   <figure
                     className="trace-source-card"
+                    translate="no"
                     key={source.id}
                     data-source-slot={slot}
                     data-region={source.type}
+                    data-orientation={source.regionSize[1] > source.regionSize[0] ? 'portrait' : 'landscape'}
                     data-motion-active={isDesktop && pSourceCards > 0.05 ? 'true' : undefined}
-                    style={{ '--trace-motion-delay': `${index * 70}ms` }}
+                    style={{
+                      '--trace-motion-delay': `${index * 70}ms`,
+                      '--source-gap': `${sourceLayout.sources[index].gap}px`,
+                    }}
                   >
                     <div className="trace-card-content">
                       <figcaption>
                         <span className="trace-folder-tab">
-                          Original file<span className="mobile-source-index"> {String(index + 1).padStart(2, '0')}</span>
+                          {source.type.toUpperCase()}<span className="mobile-source-index"> {String(index + 1).padStart(2, '0')}</span>
                         </span>
                         <span data-trace-coordinate>{source.format} · {source.location}</span>
                       </figcaption>
-                      <div className="trace-source-thumb">
+                      <a className="trace-source-thumb" href={source.pageImage} target="_blank" rel="noopener noreferrer" aria-label={`Open ${source.filename}, PDF page ${source.page}`}>
                         <div className="trace-source-frame">
                           <div className="trace-source-media">
                             <div className="trace-source-preview">
@@ -1304,8 +804,9 @@ function DocumentMap({
                             </div>
                           </div>
                         </div>
-                      </div>
+                      </a>
                     </div>
+                    {isDesktop && <span className="source-evidence-tail" aria-hidden="true" style={{ opacity: pConvergenceLine }} />}
                     <TracePixelReveal
                       active={isDesktop && pSourceCards > 0.05}
                       delay={index * 70}
@@ -1315,11 +816,10 @@ function DocumentMap({
               })}
               </div>
 
-              {/* STAGE 3: 3-to-1 convergence and cross-document hierarchy */}
+              {/* STAGE 3: Source convergence and document hierarchy */}
               <ConvergenceLine
                 clipProgress={pConvergenceLine}
-                sourceCount={currentSources.length}
-                documentCount={activeTheme.documents.length}
+                layout={sourceLayout}
                 heightExtension={sourceConnectionHeightExtension}
               />
 
@@ -1343,14 +843,13 @@ function DocumentMap({
               />
             </div>
 
-            <AIOutputReport
+            <APIOutputReport
               documentCount={activeTheme.documents.length}
+              project={activeTheme.label}
               opacity={pSummaryDocument}
               translateY={(1 - pSummaryDocument) * 18}
               motionActive={isDesktop && pSummaryDocument > 0.05}
-              inkProgress={pSummaryInk}
-              sourceCount={currentSources.length}
-              summary={themeSummaries[activeTheme.id] ?? themeSummaries.growth}
+              sources={currentSources}
             />
 
           </div>
@@ -1387,97 +886,12 @@ function DocumentMapSwitcher({ activeThemeId, onChange }) {
   )
 }
 
-const SCAN_DEMO_CROP_CSS = `
-html, body {
-  margin: 0 !important;
-  height: auto !important;
-  min-height: 0 !important;
-  overflow: hidden !important;
-  background: var(--white-100, #fff) !important;
-}
-.skip-link,
-.site-header,
-.mobile-menu,
-footer,
-.toast,
-.layout-grid-overlay,
-.trace-debug,
-.trace-debug-panel,
-.trace-debug-toggle {
-  display: none !important;
-}
-#main {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-#main > *:not(#top) {
-  display: none !important;
-}
-#top.hero,
-.hero {
-  display: block !important;
-  width: 100% !important;
-  max-width: none !important;
-  min-height: 0 !important;
-  height: auto !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  gap: 0 !important;
-  grid-template: none !important;
-}
-.hero-copy,
-.hero-support,
-.hero-center-divider,
-.hero-primary {
-  display: none !important;
-}
-.hero-visual {
-  display: block !important;
-  width: 100% !important;
-  min-width: 0 !important;
-  height: var(--trace-stage-height, 600px) !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-}
-[data-trace-demo] {
-  width: 100% !important;
-  height: var(--trace-stage-height, 600px) !important;
-  min-height: 0 !important;
-  max-height: none !important;
-}
-`
-
-function syncScanFrameHeight(frame) {
-  const demo = frame?.contentDocument?.querySelector('[data-trace-demo]')
-  if (!demo) return
-  const height = Math.ceil(demo.getBoundingClientRect().height)
-  if (height < 1) return
-  frame.style.height = `${height}px`
-  frame.parentElement?.style.setProperty('--scan-demo-height', `${height}px`)
-}
-
-function cropScanDemo(frame) {
-  const doc = frame?.contentDocument
-  if (!doc?.head) return
-  if (!doc.getElementById('knowhere-scan-crop')) {
-    const style = doc.createElement('style')
-    style.id = 'knowhere-scan-crop'
-    style.textContent = SCAN_DEMO_CROP_CSS
-    doc.head.appendChild(style)
-  }
-  syncScanFrameHeight(frame)
-}
-
 export function ProductStage({ heading }) {
   const isMobile = useMobileProductLayout()
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
   const [scrollProgress, setScrollProgress] = useState(0)
   const trackRef = useRef(null)
-  const iframeRef = useRef(null)
-  const scanFrameRef = useRef(null)
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const { scrollYProgress } = useScroll({
@@ -1492,40 +906,6 @@ export function ProductStage({ heading }) {
   useEffect(() => {
     setScrollProgress(reducedMotion || !isDesktop ? 1 : clamp(scrollYProgress.get()))
   }, [isDesktop, reducedMotion, scrollYProgress])
-
-  useEffect(() => {
-    const frame = iframeRef.current
-    if (!frame) return undefined
-    let resizeObserver
-    const crop = () => {
-      cropScanDemo(frame)
-      const demo = frame.contentDocument?.querySelector('[data-trace-demo]')
-      if (demo && typeof ResizeObserver !== 'undefined') {
-        resizeObserver?.disconnect()
-        resizeObserver = new ResizeObserver(() => syncScanFrameHeight(frame))
-        resizeObserver.observe(demo)
-      }
-    }
-    crop()
-    frame.addEventListener('load', crop)
-    return () => {
-      frame.removeEventListener('load', crop)
-      resizeObserver?.disconnect()
-    }
-  }, [])
-
-  const revealTrace = () => {
-    const frame = iframeRef.current
-    try {
-      frame?.contentWindow?.postMessage({ type: 'knowhere-play-trace' }, window.location.origin)
-    } catch {
-      // Same-origin preview only; a missing iframe must not block the stage change.
-    }
-    scanFrameRef.current?.scrollIntoView({
-      behavior: reducedMotion ? 'auto' : 'smooth',
-      block: 'start',
-    })
-  }
 
   return (
     <div
@@ -1542,17 +922,9 @@ export function ProductStage({ heading }) {
           <div className="product-stage-track">
             <DocumentMap
               activeThemeId={activeThemeId}
-              onOpenTrace={revealTrace}
+              animateRequest
               scrollProgress={scrollProgress}
             />
-            <div className="section-scan-frame" ref={scanFrameRef} hidden>
-              <iframe
-                ref={iframeRef}
-                src="document-scan-section.html"
-                title="Document scan and source traceability demonstration"
-                loading="eager"
-              />
-            </div>
           </div>
         </div>
       </div>

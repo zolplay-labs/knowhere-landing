@@ -55,7 +55,7 @@ if (!(root instanceof Element)) return () => {};
     , 'Document structure': '文档结构', 'Review hierarchy, tables, and reading order.': '评估文档层级、表格与阅读顺序。', 'Retrieval quality': '检索质量', 'Review whether agents can use the output with less cleanup.': '评估智能体能否减少清理工作并直接使用输出。', 'Source traceability': '来源可追溯性', 'Review whether answers return to the original page and region.': '评估答案能否返回原始页面与对应区域。',
     'documents': '份文档',
     'Adjust the control to explore demo units. This prototype does not represent prices, billing, or commercial terms.': '只为实际处理的页面付费。无复杂套餐、无最低消费、无长期承诺。', 'Pay as you go · Prototype · no commercial terms': '按使用量演示 · 原型 · 不代表商业条款',
-    'Page credits': '页面额度', 'Pages to process': '处理页数', 'Demo input': '投入金额', 'pages': '页', 'Estimated cost': '预估费用', 'Illustrative demo output': '预计可处理数量', 'Budget': '预算', 'Prototype · no commercial terms': '每 100 页 $1.50',
+    'Page credits': '页面额度', 'Pages to process': '处理页数', 'Number of pages': '待处理页数', 'Demo input': '投入金额', 'pages': '页', 'Estimated cost': '预估费用', 'Estimated cost ($0.015 per page)': '预估费用（每页 $0.015）', 'Illustrative demo output': '预计可处理数量', 'Budget': '预算', 'Prototype · no commercial terms': '每 100 页 $1.50',
     'Prepared example A': '100 页 PDF', 'Prepared example B': '500 页文档', 'document': '份文档', 'Commercial status': '付费承诺', 'Terms pending': '无最低消费',
     'Image placeholder': '图片占位', 'Brain powered by KNOWHERE.': '由 KNOWHERE 驱动的 Brain',
     'Process document context once, then make it available to each agent that needs it.': '文档上下文处理一次，即可供每个需要它的智能体使用。', 'Shared retrieval': '共享检索', 'Give different agents the right document context for the task at hand.': '为不同智能体提供与当前任务匹配的文档上下文。', 'Keep every retrieved result connected to the original document source.': '让每个检索结果持续关联原始文档来源。'
@@ -944,6 +944,7 @@ if (!(root instanceof Element)) return () => {};
   }
 
 const pricingPages = $('#pricing-pages');
+const pricingPageCount = $('#pricing-page-count');
 const pricingRangeHandle = $('[data-pricing-range-handle]');
 const pricingRangeBudget = $('[data-pricing-range-budget]');
 const pricingRangeControl = pricingRangeHandle.parentElement;
@@ -980,12 +981,8 @@ function syncPricingCalculator() {
   const largeDocumentCount = Math.floor(pages / 500);
   const integerFormat = { maximumFractionDigits: 0 };
   const priceFormat = { minimumFractionDigits: 2, maximumFractionDigits: 2 };
-  syncPricingNumber($('[data-pricing-pages]'), {
-    locales: locale,
-    format: integerFormat,
-    suffix: ` ${localizeText('pages')}`,
-    value: pages,
-  });
+  pricingPageCount.value = String(pages);
+  pricingPageCount.style.setProperty('--pricing-page-digits', String(Math.max(4, String(pages).length)));
   $$('[data-pricing-price]').forEach(element => {
     syncPricingNumber(element, {
       locales: locale,
@@ -1014,6 +1011,20 @@ function syncPricingCalculator() {
   pricingPages.setAttribute('aria-valuetext', pageLabel);
 }
 pricingPages.addEventListener('input', syncPricingCalculator);
+pricingPageCount.addEventListener('input', () => {
+  if (!pricingPageCount.value || !pricingPageCount.validity.valid) return;
+  pricingPages.value = pricingPageCount.value;
+  syncPricingCalculator();
+});
+pricingPageCount.addEventListener('blur', () => {
+  const step = Number(pricingPages.step);
+  const pages = Math.round(Number(pricingPageCount.value) / step) * step;
+  pricingPages.value = String(Math.min(Number(pricingPages.max), Math.max(Number(pricingPages.min), pages)));
+  syncPricingCalculator();
+});
+pricingPageCount.addEventListener('keydown', event => {
+  if (event.key === 'Enter') pricingPageCount.blur();
+});
 const pricingControlCard = pricingRangeHandle.closest('.pricing-control-card');
 let pricingDragPointer = null;
 let pricingDragOffset = 0;

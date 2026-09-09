@@ -29,6 +29,8 @@
 
 Geist Sans 在 Google Fonts 中的字体名称为 **Geist**；CSS 使用 `"Geist"`。中文字体使用单一可变字体文件，字重通过 `font-weight` 设置。
 
+Geist Mono Regular（400）另提供 Google Fonts 官方 Latin 子集的本地兜底文件 [GeistMono-Regular.woff2](./public/fonts/GeistMono-Regular.woff2)，授权见 [GeistMono-OFL.txt](./public/fonts/GeistMono-OFL.txt)；原有 Google Fonts 100–900 可变字重接入保留。
+
 ```html
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -1,0 +1,523 @@
+[
+  {
+    "id": "nvidia",
+    "label": "NVIDIA reports",
+    "documents": [
+      {
+        "name": "CFO Commentary on First Quarter Fiscal 2027 Results.pdf",
+        "title": "CFO Commentary on First Quarter Fiscal 2027 Results",
+        "sources": [
+          {
+            "id": "nvidia-financials",
+            "page": 1,
+            "type": "table",
+            "title": "Q1 Fiscal 2027 Summary",
+            "excerpt": "",
+            "crop": [
+              0.065,
+              0.215,
+              0.935,
+              0.66
+            ],
+            "pageSize": [
+              612,
+              792
+            ],
+            "pageImage": "/assets/product-documents/nvidia-financials-page.webp",
+            "regionImage": "/assets/product-documents/nvidia-financials-region.webp",
+            "imageSize": [
+              1700,
+              2200
+            ],
+            "regionSize": [
+              1480,
+              979
+            ],
+            "summary": "NVIDIA's Q1 FY2027 revenue reached $81.615B, up 85% year over year, with a GAAP gross margin of 74.9%.",
+            "tables": [
+              {
+                "title": "GAAP",
+                "units": "$ in millions, except earnings per share",
+                "columns": [
+                  "Q1 FY27",
+                  "Q4 FY26",
+                  "Q1 FY26",
+                  "Q/Q",
+                  "Y/Y"
+                ],
+                "rows": [
+                  {
+                    "label": "Revenue",
+                    "values": [
+                      "$81,615",
+                      "$68,127",
+                      "$44,062",
+                      "20 %",
+                      "85 %"
+                    ]
+                  },
+                  {
+                    "label": "Gross margin",
+                    "values": [
+                      "74.9 %",
+                      "75.0 %",
+                      "60.5 %",
+                      "(0.1) pts",
+                      "14.4 pts"
+                    ]
+                  },
+                  {
+                    "label": "Operating expenses",
+                    "values": [
+                      "$7,621",
+                      "$6,794",
+                      "$5,030",
+                      "12 %",
+                      "52 %"
+                    ]
+                  },
+                  {
+                    "label": "Operating income",
+                    "values": [
+                      "$53,536",
+                      "$44,299",
+                      "$21,638",
+                      "21 %",
+                      "147 %"
+                    ]
+                  },
+                  {
+                    "label": "Net income",
+                    "values": [
+                      "$58,321",
+                      "$42,960",
+                      "$18,775",
+                      "36 %",
+                      "211 %"
+                    ]
+                  },
+                  {
+                    "label": "Diluted earnings per share",
+                    "values": [
+                      "$2.39",
+                      "$1.76",
+                      "$0.76",
+                      "36 %",
+                      "214 %"
+                    ]
+                  }
+                ]
+              },
+              {
+                "title": "Non-GAAP",
+                "units": "$ in millions, except earnings per share",
+                "columns": [
+                  "Q1 FY27",
+                  "Q4 FY26",
+                  "Q1 FY26",
+                  "Q/Q",
+                  "Y/Y"
+                ],
+                "rows": [
+                  {
+                    "label": "Revenue",
+                    "values": [
+                      "$81,615",
+                      "$68,127",
+                      "$44,062",
+                      "20 %",
+                      "85 %"
+                    ]
+                  },
+                  {
+                    "label": "Gross margin",
+                    "values": [
+                      "75.0 %",
+                      "75.1 %",
+                      "60.8 %",
+                      "(0.1) pts",
+                      "14.2 pts"
+                    ]
+                  },
+                  {
+                    "label": "Operating expenses",
+                    "values": [
+                      "$7,449",
+                      "$6,666",
+                      "$4,993",
+                      "12 %",
+                      "49 %"
+                    ]
+                  },
+                  {
+                    "label": "Operating income",
+                    "values": [
+                      "$53,783",
+                      "$44,474",
+                      "$21,801",
+                      "21 %",
+                      "147 %"
+                    ]
+                  },
+                  {
+                    "label": "Net income",
+                    "values": [
+                      "$45,548",
+                      "$38,969",
+                      "$19,094",
+                      "17 %",
+                      "139 %"
+                    ]
+                  },
+                  {
+                    "label": "Diluted earnings per share",
+                    "values": [
+                      "$1.87",
+                      "$1.59",
+                      "$0.78",
+                      "18 %",
+                      "140 %"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "nvidia-revenue",
+            "page": 2,
+            "type": "table",
+            "title": "Revenue by Market Platform",
+            "excerpt": "",
+            "crop": [
+              0.065,
+              0.055,
+              0.935,
+              0.24
+            ],
+            "pageSize": [
+              612,
+              792
+            ],
+            "pageImage": "/assets/product-documents/nvidia-revenue-page.webp",
+            "regionImage": "/assets/product-documents/nvidia-revenue-region.webp",
+            "imageSize": [
+              1700,
+              2200
+            ],
+            "regionSize": [
+              1480,
+              407
+            ],
+            "summary": "Data Center contributed $75.246B of revenue, led by hyperscale at $37.869B and AI clouds, industrial and enterprise at $37.377B; Edge Computing added $6.369B.",
+            "tables": [
+              {
+                "title": "Revenue by Market Platform",
+                "units": "$ in millions",
+                "columns": [
+                  "Q1 FY27",
+                  "Q4 FY26",
+                  "Q1 FY26",
+                  "Q/Q",
+                  "Y/Y"
+                ],
+                "rows": [
+                  {
+                    "label": "Data Center",
+                    "values": [
+                      "$75,246",
+                      "$62,314",
+                      "$39,112",
+                      "21 %",
+                      "92 %"
+                    ]
+                  },
+                  {
+                    "label": "Hyperscale",
+                    "values": [
+                      "37,869",
+                      "33,814",
+                      "17,599",
+                      "12 %",
+                      "115 %"
+                    ],
+                    "indent": true
+                  },
+                  {
+                    "label": "AI Clouds, Industrial, & Enterprise",
+                    "values": [
+                      "37,377",
+                      "28,500",
+                      "21,513",
+                      "31 %",
+                      "74 %"
+                    ],
+                    "indent": true
+                  },
+                  {
+                    "label": "Edge Computing",
+                    "values": [
+                      "6,369",
+                      "5,813",
+                      "4,950",
+                      "10 %",
+                      "29 %"
+                    ]
+                  },
+                  {
+                    "label": "Total",
+                    "values": [
+                      "$81,615",
+                      "$68,127",
+                      "$44,062",
+                      "20 %",
+                      "85 %"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "sha256": "3289ba8ba2049a9203bec461d44de0b0d7ea2b08e0a0b1a1edd31c9b6011e87e",
+        "sourceFile": "英伟达 2.pdf"
+      },
+      {
+        "name": "2026 NVIDIA Corporation Annual Review.pdf",
+        "title": "2026 NVIDIA Corporation Annual Review",
+        "sources": [
+          {
+            "id": "nvidia-graphics",
+            "page": 10,
+            "type": "image",
+            "title": "AI Reinvents Computer Graphics",
+            "excerpt": "With neural rendering and DLSS, AI predicts pixels instead of computing them directly.",
+            "crop": [
+              0,
+              0,
+              1,
+              1
+            ],
+            "pageSize": [
+              1188.0,
+              774.0
+            ],
+            "pageImage": "/assets/product-documents/nvidia-graphics-page.webp",
+            "regionImage": "/assets/product-documents/nvidia-graphics-region.webp",
+            "imageSize": [
+              2200,
+              1434
+            ],
+            "regionSize": [
+              2200,
+              1434
+            ],
+            "pageText": [
+              "GeForce brought AI to the world. Now AI has come home to GeForce.",
+              "Computer graphics is no longer limited by traditional rendering.",
+              "With neural rendering and DLSS, AI predicts pixels instead of computing them directly.",
+              "For every pixel we render, AI generates the rest in real time.",
+              "Neural networks now run alongside shaders and ray tracing cores. AI does not replace graphics. It enhances it.",
+              "In the era of neural rendering, graphics is learned."
+            ],
+            "summary": "The Annual Review's graphics example illustrates a separate application of AI: neural rendering and DLSS predict pixels alongside traditional rendering."
+          }
+        ],
+        "sha256": "0e725ba048221539dca3eb1a4e70febfcbb785e9afb96cd3ff0b035d7d734e5c",
+        "sourceFile": "英伟达 4.pdf"
+      }
+    ]
+  },
+  {
+    "id": "transformer",
+    "label": "Transformer research",
+    "documents": [
+      {
+        "name": "Deep Learning - Transformer network.pdf",
+        "title": "Deep Learning - Transformer network",
+        "sources": [
+          {
+            "id": "attention-formula",
+            "page": 5,
+            "type": "formula",
+            "title": "Query, Key, and Value",
+            "excerpt": "Each input word is projected into three vectors:",
+            "crop": [
+              0.31,
+              0.56,
+              0.737,
+              0.703
+            ],
+            "pageSize": [
+              453.543,
+              255.118
+            ],
+            "pageImage": "/assets/product-documents/attention-formula-page.webp",
+            "regionImage": "/assets/product-documents/attention-formula-region.webp",
+            "imageSize": [
+              2200,
+              1238
+            ],
+            "regionSize": [
+              939,
+              177
+            ],
+            "printedPage": "3",
+            "pageText": [
+              "Each input word is projected into three vectors:",
+              "Query (Q) – What we are looking for.",
+              "Key (K) – What each word offers.",
+              "Value (V) – The content/information of each word.",
+              "For each word, compute attention weights:",
+              "The result is a new representation that captures the context of the word."
+            ],
+            "summary": "Scaled dot-product attention turns query-key scores into softmax weights, then applies them to values to form context-aware representations."
+          },
+          {
+            "id": "transformer-architecture",
+            "page": 9,
+            "type": "diagram",
+            "title": "The Transformer - model architecture.",
+            "excerpt": "Transformer is a novel architecture that utilize Attention to process Sequence2Sequence tasks.",
+            "crop": [
+              0.587,
+              0.164,
+              0.891,
+              0.865
+            ],
+            "pageSize": [
+              453.543,
+              255.118
+            ],
+            "pageImage": "/assets/product-documents/transformer-architecture-page.webp",
+            "regionImage": "/assets/product-documents/transformer-architecture-region.webp",
+            "imageSize": [
+              2200,
+              1238
+            ],
+            "regionSize": [
+              669,
+              868
+            ],
+            "printedPage": "7",
+            "pageText": [
+              "Transformer is a novel architecture that utilize Attention to process Sequence2Sequence tasks.",
+              "It consist on Encoder and Decoder but they are not based on the recurrent connections.",
+              "Encoder and Decoder are composed of modules that can be stacked on top of each other multiple times (Nx)."
+            ],
+            "summary": "The architecture places attention inside stacked encoder and decoder modules, with masked attention in the decoder and positional encoding at the inputs."
+          },
+          {
+            "id": "positional-encoding",
+            "page": 14,
+            "printedPage": "12",
+            "type": "heatmap",
+            "title": "Positional encoding",
+            "excerpt": "",
+            "crop": [
+              0.082,
+              0.19,
+              0.921,
+              0.82
+            ],
+            "pageSize": [
+              453.543,
+              255.118
+            ],
+            "pageImage": "/assets/product-documents/positional-encoding-page.webp",
+            "regionImage": "/assets/product-documents/positional-encoding-region.webp",
+            "imageSize": [
+              2200,
+              1238
+            ],
+            "regionSize": [
+              1846,
+              780
+            ],
+            "summary": "The heatmaps contrast the regular structure of sinusoidal positional encoding with the irregular pattern of simulated learned encoding, linking the model's positional inputs to their visual representations."
+          }
+        ],
+        "sha256": "63dd5f1f34933fe8438934d7b45911e047b9d40b98b7cc0c0aedc33546b0667b",
+        "sourceFile": "dl_10.pdf"
+      }
+    ]
+  },
+  {
+    "id": "rag",
+    "label": "RAG research",
+    "documents": [
+      {
+        "name": "Retrieval-Augmented Generation for Large Language Models: A Survey.pdf",
+        "title": "Retrieval-Augmented Generation for Large Language Models: A Survey",
+        "sources": [
+          {
+            "id": "rag-paradigms",
+            "page": 4,
+            "type": "diagram",
+            "title": "Comparison between the three paradigms of RAG.",
+            "excerpt": "Naive RAG mainly consists of three parts: indexing, retrieval and generation.",
+            "crop": [
+              0.108,
+              0.07,
+              0.892,
+              0.44
+            ],
+            "pageSize": [
+              612.0,
+              792.0
+            ],
+            "pageImage": "/assets/product-documents/rag-paradigms-page.webp",
+            "regionImage": "/assets/product-documents/rag-paradigms-region.webp",
+            "imageSize": [
+              1700,
+              2200
+            ],
+            "regionSize": [
+              1332,
+              814
+            ],
+            "summary": "RAG extends an indexing-retrieval-generation pipeline through pre- and post-retrieval optimization in Advanced RAG and flexible module composition in Modular RAG."
+          }
+        ],
+        "sha256": "396a0fadeb4cd40f5c8ccc36b73a0815f6cb4d7f6bfa53b6c48c1f9aba7c7e02",
+        "sourceFile": "复杂图表 2.pdf"
+      },
+      {
+        "name": "Retrieval-augmented Generation Realized: Strategic & Technical Insights for Industrial Applications.pdf",
+        "title": "Retrieval-augmented Generation Realized: Strategic & Technical Insights for Industrial Applications",
+        "sources": [
+          {
+            "id": "rag-techniques",
+            "page": 10,
+            "type": "chart",
+            "title": "Advanced RAG Techniques and Modules",
+            "excerpt": "We identified 12 advanced or modular RAG techniques that can enhance different RAG components and estimated their overall complexity in terms of resource consumption, cost, latency, duration of development cycle, and maintenance, along with their projected contribution to overall quality and trustworthiness.",
+            "crop": [
+              0.055,
+              0.243,
+              0.947,
+              0.64
+            ],
+            "pageSize": [
+              595.276,
+              841.89
+            ],
+            "pageImage": "/assets/product-documents/rag-techniques-page.webp",
+            "regionImage": "/assets/product-documents/rag-techniques-region.webp",
+            "imageSize": [
+              1556,
+              2200
+            ],
+            "regionSize": [
+              1388,
+              873
+            ],
+            "summary": "The industrial comparison maps 12 techniques against implementation complexity and projected quality and trustworthiness, placing retrieval-augmented reasoning (RAT and RAGAR) near the high-complexity, high-contribution end. Together, the diagrams frame RAG design as a choice of architecture and quality-cost tradeoffs."
+          }
+        ],
+        "sha256": "888cdd9e19c4530f58a77b4f520fe1beeb2583b6db1102b951816e2a5d6e3f39",
+        "sourceFile": "复杂图表 1.pdf"
+      }
+    ]
+  }
+]

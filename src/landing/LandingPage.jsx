@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { CatenoidFieldTuner } from './catenoid-field-embed'
 import { CTA_HELIX_FALLBACK, ConvergingHelixEmbed } from './converging-helix-embed'
 import { EnterpriseIllustration } from './enterprise-illustrations'
@@ -7,6 +7,7 @@ import { initializeLandingInteractions } from './landing-interactions'
 import { ProductStage } from './document-map'
 import ShinyText from './ShinyText'
 import { FlickeringGrid } from '@/registry/magicui/flickering-grid'
+import { AnimatedThemeToggler } from '@/registry/magicui/animated-theme-toggler'
 
 function SectionShinyText({ text }) {
   return (
@@ -255,7 +256,7 @@ export function LandingPage() {
     }
   }, [])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = document.documentElement
     const scanFrame = rootRef.current?.querySelector('.section-scan-frame iframe')
     const applyTheme = (targetDocument) => {
@@ -305,10 +306,10 @@ export function LandingPage() {
             <button type="button" role="menuitemradio" aria-checked="false" tabIndex={-1} data-language-option="zh">中文</button>
           </div>
         </div>
-        <button className="theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+        <AnimatedThemeToggler className="theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
-        </button>
+        </AnimatedThemeToggler>
         <a className="button button-small" href="https://knowhereto.ai/login">Get API Key</a>
         <button className="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span className="sr-only">Open menu</span><span className="menu-toggle-icon" aria-hidden="true"><i /><i /></span></button>
       </div>
@@ -319,10 +320,10 @@ export function LandingPage() {
       </nav>
       <div className="mobile-menu-utilities">
         <a className="github-link mobile-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
-        <button className="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
+        <AnimatedThemeToggler className="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
           <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
           <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
-        </button>
+        </AnimatedThemeToggler>
         <a className="button mobile-menu-cta" href="https://knowhereto.ai/login">Get API Key</a>
       </div>
     </div>
@@ -333,7 +334,7 @@ export function LandingPage() {
       <div className="hero-copy">
         <h1 id="hero-title" data-heading-primary="agents can use">Turn complex documents into context your agents can use.</h1>
         <p className="lede">Knowhere preserves structure, visual context, and source links, giving agents information they can navigate, retrieve, and verify.</p>
-        <div className="button-row"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
+        <div className="button-row"><a className="button" href="https://knowhere-login.knowhere-landing.workers.dev">Start free trial</a><a className="button button-secondary" href="https://docs.knowhereto.ai/">Read the docs</a></div>
       </div>
       <div className="hero-visual" aria-label="Interactive four-stage document processing pipeline from original document to RAG structure">
         <article className="hero-b-chart">
@@ -519,9 +520,26 @@ export function LandingPage() {
       <div className="pricing-card">
         <div className="pricing-heading"><p className="section-no"><SectionShinyText text="[ PRICING ]" /></p><h2 id="pricing-title"><SectionShinyText text="Simple, transparent pricing." /></h2><p>Pay only for what you use. No hidden fees, no complex tiers.</p></div>
         <div className="pricing-calculator">
-          <div className="pricing-result-card"><div className="pricing-result-value"><strong data-pricing-pages>500 pages</strong><small>$1.50 per 100 pages</small></div></div>
+          <div className="pricing-result-card">
+            <div className="pricing-result-value">
+              <div className="pricing-result-estimate">
+                <span>Estimated cost ($0.015 per page)</span>
+                <output data-pricing-price aria-live="polite">$7.50</output>
+              </div>
+              <div className="pricing-result-config">
+                <label htmlFor="pricing-page-count">Number of pages</label>
+                <div className="pricing-result-pages"><input id="pricing-page-count" type="number" min={100} max={10000} step={100} defaultValue={500} /></div>
+              </div>
+            </div>
+          </div>
           <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
-          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control" style={{'--pricing-progress': '4.0404%'}}><span className="pricing-range-selection" aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 6 3 12 9 18V6ZM15 18 21 12 15 6V18Z" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div></div>
+          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control" style={{'--pricing-progress': '4.0404%'}}>
+            <div className="pricing-range-ticks" aria-hidden="true">
+              {Array.from({ length: 81 }, (_, index) => <span key={index} className={`pricing-range-tick${index % 20 === 0 ? ' is-major' : index % 4 === 0 ? ' is-medium' : ''}`} style={{ left: `${index * 1.25}%` }} />)}
+            </div>
+            <span className="pricing-range-selection" aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12H21M7 8L3 12L7 16M17 8L21 12L17 16" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div>
+            <div className="pricing-range-labels"><span>100 pages</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span></div>
+          </div>
         </div>
         <section className="pricing-file-limits" aria-labelledby="pricing-file-limits-title">
           <div className="pricing-file-limits-head"><h3 id="pricing-file-limits-title">File Size Limits</h3><p>Need higher limits? Contact <a href="mailto:team@knowhereto.ai">team@knowhereto.ai</a><br />for enterprise pricing with custom limits.</p></div>
@@ -561,7 +579,7 @@ export function LandingPage() {
       </div>
       <div className="final-cta-detail">
         <p className="lede">Connect your agent workflow and see how Knowhere handles documents that plain text pipelines miss.</p>
-        <div id="final-cta-actions"><a className="button" href="https://knowhereto.ai/login">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
+        <div id="final-cta-actions"><a className="button" href="https://knowhere-login.knowhere-landing.workers.dev">Start free trial</a><a className="button button-secondary" href="mailto:team@knowhereto.ai">Book a demo</a></div>
         <ul className="final-cta-benefits" aria-label="Trial benefits">
           <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.75 9 8.25 10.5 11.25 7.5M15.75 9c0 .886-.175 1.764-.514 2.583a6.75 6.75 0 0 1-3.653 3.653A6.75 6.75 0 0 1 9 15.75a6.75 6.75 0 0 1-2.583-.514 6.75 6.75 0 0 1-3.653-3.653A6.75 6.75 0 0 1 2.25 9a6.75 6.75 0 0 1 13.5 0Z" /></svg>Free 14-day trial</li>
           <li><svg viewBox="0 0 18 18" fill="none" aria-hidden="true"><path d="M6.75 9 8.25 10.5 11.25 7.5M15.75 9c0 .886-.175 1.764-.514 2.583a6.75 6.75 0 0 1-3.653 3.653A6.75 6.75 0 0 1 9 15.75a6.75 6.75 0 0 1-2.583-.514 6.75 6.75 0 0 1-3.653-3.653A6.75 6.75 0 0 1 2.25 9a6.75 6.75 0 0 1 13.5 0Z" /></svg>No credit card required</li>
