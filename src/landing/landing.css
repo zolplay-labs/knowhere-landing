@@ -14794,6 +14794,17 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
   text-align: left;
 }
 
+#playground .ai-output-report.product-terminal {
+  border: 0;
+  background: transparent;
+}
+
+#playground .product-output-content {
+  border: 1px solid var(--demo-line-soft);
+  border-radius: inherit;
+  background: var(--demo-surface);
+}
+
 #playground .product-terminal-head {
   display: flex;
   align-items: center;
