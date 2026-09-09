@@ -6,7 +6,6 @@ import { LanguageMenu } from '../components/language-menu'
 import { Button, Input } from '../components/form-controls'
 import {
   IconArrowRight,
-  IconBrandGithub,
   IconCircleCheck,
 } from '@tabler/icons-react'
 
@@ -92,7 +91,13 @@ function LoginForm({ chinese }: { chinese: boolean }) {
           {t('Continue with Google', '使用 Google 继续')}
         </Button>
         <Button variant="white">
-          <IconBrandGithub size={19} />
+          <img
+            src="/assets/github-invertocat-black-clearspace.svg"
+            width="19"
+            height="19"
+            alt=""
+            aria-hidden="true"
+          />
           {t('Continue with GitHub', '使用 GitHub 继续')}
         </Button>
       </div>

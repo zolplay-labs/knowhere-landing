@@ -556,9 +556,9 @@
     .site-header .desktop-nav a:hover { text-decoration: none; }
     .site-header .desktop-nav a, .site-header .nav-actions .button { font-size: 14px; }
     .language-toggle, .github-link { display: inline-grid; flex: 0 0 32px; width: 32px; height: 32px; padding: 0; place-items: center; border: 0; border-radius: 4px; background: transparent; color: var(--ink); line-height: 0; text-decoration: none; cursor: pointer; }
-    .language-toggle svg, .github-link svg { display: block; }
+    .language-toggle svg, .github-link img { display: block; }
     .language-toggle svg { width: 18px; height: 18px; }
-    .github-link svg { width: 20px; height: 20px; }
+    .github-link img { width: 20px; height: 20px; }
     .language-toggle:hover, .github-link:hover { background: var(--black-2); }
     .language-toggle:focus-visible, .github-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
     .language-menu { position: relative; display: grid; flex: 0 0 auto; place-items: center; }
@@ -8547,6 +8547,10 @@ html[data-theme="dark"] .site-header .github-link,
 html[data-theme="dark"] .site-header .theme-toggle,
 html[data-theme="dark"] .site-header .menu-toggle {
   color: var(--md-sys-color-on-surface);
+}
+
+html[data-theme="dark"] .site-header .github-link img {
+  filter: invert(1);
 }
 
 html[data-theme="dark"] .landing-page .site-header .nav-actions .button,
