@@ -255,7 +255,7 @@ function MapFlowSvg({ className, viewBox, path, dots = [], clipProgress = 1, dir
   )
 }
 
-function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
+function DocumentBranchLine({ sectionCount, clipProgress = 1, nodeOffset = 0 }) {
   const forked = sectionCount >= 2
   const height = 37 + CONNECTION_LINE_EXTENSION
   const stem = (
@@ -276,7 +276,7 @@ function DocumentBranchLine({ sectionCount, clipProgress = 1 }) {
   const centers = Array.from({ length: sectionCount }, (_, index) => (
     SECTION_WIDTH / 2 + index * (SECTION_WIDTH + SECTION_GAP)
   ))
-  const mid = width / 2
+  const mid = width / 2 + nodeOffset
   const forkY = 16
 
   return (
@@ -320,7 +320,7 @@ function SectionToSourceLines({
   )
 }
 
-function ConvergenceLine({ clipProgress = 1, layout, heightExtension = 0 }) {
+function ConvergenceLine({ clipProgress = 1, layout, heightExtension = 0, showStartDots = true }) {
   const height = 40 + CONNECTION_LINE_EXTENSION + heightExtension
   const midY = 18
   const centers = layout.sources.map(source => source.center)
@@ -332,7 +332,7 @@ function ConvergenceLine({ clipProgress = 1, layout, heightExtension = 0 }) {
         className="stage-convergence-line-svg"
         viewBox={`0 0 ${layout.width} ${height}`}
         path={path}
-        dots={[...centers.map(x => [x, 0]), [layout.width / 2, height]]}
+        dots={[...(showStartDots ? centers.map(x => [x, 0]) : []), [layout.width / 2, height]]}
         clipProgress={clipProgress}
       />
     </div>
@@ -487,11 +487,11 @@ function APIRequestCode({ activeThemeId, animate = false }) {
   )
 }
 
-function RequestToDocumentLines({ theme, layout }) {
+function RequestToDocumentLines({ theme, layout, firstDocumentOffset = 0 }) {
   let offset = 0
-  const centers = theme.documents.map(document => {
+  const centers = theme.documents.map((document, documentIndex) => {
     const width = document.sections.length * SECTION_WIDTH + (document.sections.length - 1) * SECTION_GAP
-    const center = offset + width / 2
+    const center = offset + width / 2 + (documentIndex === 0 ? firstDocumentOffset : 0)
     offset += width + DOCUMENT_GAP
     return center
   })
@@ -544,7 +544,6 @@ function APIOutputReport({
     >
       <div className="product-terminal-head">
         <span className="product-window-dots" aria-hidden="true"><i /><i /><i /></span>
-        <span className="product-terminal-format">[ .JSON ]</span>
       </div>
       <pre className="product-terminal-code" aria-label="Example API response">
         <CodeLines lines={JSON.stringify(fields, null, 2).split('\n')} />
@@ -571,6 +570,10 @@ function DocumentMap({
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
   const showCrossDocumentLink = activeTheme.documents.length === 2
     && activeTheme.documents[0].sections.length >= 2
+  const firstDocumentOffset = isDesktop && activeTheme.documents.length === 2
+    ? (activeTheme.documents[1].sections.length - activeTheme.documents[0].sections.length)
+      * (SECTION_WIDTH + SECTION_GAP) / 2
+    : 0
   const sourceConnectionHeightExtension = isDesktop ? DESKTOP_SOURCE_CONNECTION_EXTENSION : 0
 
   useEffect(() => {
@@ -653,7 +656,7 @@ function DocumentMap({
           >
             <div className="mobile-narrative-stage">
               <APIRequestCode activeThemeId={activeThemeId} animate={animateRequest} />
-              <RequestToDocumentLines theme={activeTheme} layout={sourceLayout} />
+              <RequestToDocumentLines theme={activeTheme} layout={sourceLayout} firstDocumentOffset={firstDocumentOffset} />
               {/* STAGE 1: Full-height source documents */}
               <div
                 className="document-map-documents"
@@ -662,19 +665,21 @@ function DocumentMap({
               >
               {activeTheme.documents.map((document, documentIndex) => {
                 const documentSections = document.sections
+                const nodeOffset = documentIndex === 0 ? firstDocumentOffset : 0
 
                 return (
                 <article
                   className={`document-branch${selectedName === document.name ? ' is-selected' : ''}`}
                   key={document.name}
                 >
-                  <header className="document-node">
+                  <header className="document-node" style={nodeOffset ? { transform: `translateX(${nodeOffset}px)` } : undefined}>
                     <span>DOCUMENT {documentIndex + 1}</span>
                     <strong title={document.title} translate="no">{document.name}</strong>
                   </header>
                   <DocumentBranchLine
                     sectionCount={documentSections.length}
                     clipProgress={1}
+                    nodeOffset={nodeOffset}
                   />
                   <div
                     className="document-sections"
@@ -821,6 +826,7 @@ function DocumentMap({
                 clipProgress={pConvergenceLine}
                 layout={sourceLayout}
                 heightExtension={sourceConnectionHeightExtension}
+                showStartDots={!isDesktop}
               />
 
               <div

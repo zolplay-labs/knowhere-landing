@@ -676,11 +676,13 @@ function initializeHeroCanvas(root, cleanups) {
           const phase = ((flowTime * .48 - route) % 1 + 1) % 1;
           if (phase < .18) flow = Math.sin(phase / .18 * Math.PI);
         }
+        const orangeFlow = targetIsShape && state.progress > .8 && flow > .18
+          && hash(index + 2111, state.to + 2129) < .28;
         drawPixel(
           from.x + (to.x - from.x) * state.progress,
           from.y + (to.y - from.y) * state.progress,
           (from.alpha + (to.alpha - from.alpha) * state.progress) * opacity * (.72 + flow * .46),
-          flow > 0 ? mixHexColor(color, heroShadowColor, flow * .11) : color
+          orangeFlow ? RED_FLOW_COLOR : flow > 0 ? mixHexColor(color, heroShadowColor, flow * .11) : color
         );
       }
     }

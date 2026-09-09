@@ -565,9 +565,9 @@
     .language-dropdown { position: absolute; z-index: 4; top: calc(100% + 8px); right: 0; width: 152px; padding: 6px; border: 1px solid var(--black-10); border-radius: 8px; background: var(--white-100); color: var(--ink); box-shadow: 0 12px 28px var(--black-10); }
     .language-dropdown[hidden] { display: none; }
     .language-dropdown button { width: 100%; min-height: 44px; padding: 8px 10px; display: flex; align-items: center; justify-content: flex-start; border: 1px solid transparent; border-radius: 4px; background: transparent; color: inherit; font-size: 14px; font-weight: 400; line-height: 20px; text-align: left; cursor: pointer; }
-    .language-dropdown button:hover { border-color: var(--mist-white-200); background: var(--mist-white-200); }
-    .language-dropdown button:focus-visible { background: var(--mist-white-200); }
-    .language-dropdown button.is-active { background: var(--mist-white-300); }
+    .language-dropdown button:hover { background: rgb(0 0 0 / 3%); }
+    .language-dropdown button:focus-visible { background: rgb(0 0 0 / 3%); }
+    .language-dropdown button.is-active { background: rgb(0 0 0 / 6%); }
     .language-dropdown button[aria-checked="true"] { font-weight: 500; }
     .mobile-github { display: none; }
     .mobile-menu { pointer-events: auto; }
@@ -2156,12 +2156,12 @@
     #faq summary span,
     #faq details[open] summary span {
       position: relative;
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       flex-shrink: 0;
-      margin: -4px 0;
+      margin: 0;
       border: 0;
-      background: var(--black-10);
+      background: var(--black-3);
       color: transparent;
       font-size: 0;
       transform: none;
@@ -2173,8 +2173,8 @@
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 14px;
-      height: 1.5px;
+      width: 10.5px;
+      height: 1.125px;
       background: var(--black-40);
       content: "";
       transform: translate(-50%, -50%);
@@ -8609,23 +8609,8 @@ html[data-theme="dark"] #final-cta .section-no {
   color: var(--final-on-accent) !important;
 }
 
-html[data-theme="dark"] .landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary) {
-  border-color: var(--final-action) !important;
-  background: var(--final-action) !important;
-  color: var(--final-on-action) !important;
-}
 
-html[data-theme="dark"] .landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary):hover {
-  border-color: var(--final-action-hover) !important;
-  background: var(--final-action-hover) !important;
-  color: var(--final-on-action) !important;
-}
 
-html[data-theme="dark"] .landing-page #main #final-cta #final-cta-actions .button-secondary {
-  border-color: var(--final-on-surface) !important;
-  background: transparent !important;
-  color: var(--final-on-surface) !important;
-}
 
 html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
   background-color: var(--final-surface);
@@ -12932,17 +12917,7 @@ html[data-theme="dark"] .landing-page #main #final-cta .converging-helix-pair {
   line-height: 24px;
 }
 
-.landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary) {
-  border-color: var(--final-action) !important;
-  background: var(--final-action) !important;
-  color: var(--final-on-action) !important;
-}
 
-.landing-page #main #final-cta #final-cta-actions .button:not(.button-secondary):hover {
-  border-color: var(--final-action-hover) !important;
-  background: var(--final-action-hover) !important;
-  color: var(--final-on-action) !important;
-}
 
 .landing-page #main #final-cta #final-cta-actions .button:hover {
   border-color: var(--mist-white-800);
@@ -12950,17 +12925,7 @@ html[data-theme="dark"] .landing-page #main #final-cta .converging-helix-pair {
   color: var(--white);
 }
 
-.landing-page #main #final-cta #final-cta-actions .button-secondary {
-  border-color: var(--final-on-surface);
-  background: transparent;
-  color: var(--final-on-surface);
-}
 
-.landing-page #main #final-cta #final-cta-actions .button-secondary:hover {
-  border-color: var(--final-on-surface);
-  background: transparent;
-  color: var(--final-on-surface);
-}
 
 .landing-page #main #final-cta .final-cta-benefits {
   position: relative;
@@ -14855,7 +14820,7 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
 #playground .product-terminal-code,
 #playground .product-terminal-code code {
   margin: 0;
-  font: 400 14px/22px var(--sans);
+  font: 400 14px/22px var(--mono);
   letter-spacing: 0;
   tab-size: 2;
 }
@@ -14941,8 +14906,8 @@ html[data-theme="dark"] #playground .product-terminal {
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-#playground .product-request-code,
-#playground .product-request-code * {
+#playground .product-terminal-code,
+#playground .product-terminal-code * {
   font-family: var(--mono) !important;
 }
 
@@ -15167,11 +15132,24 @@ html[data-theme="dark"] #playground .product-terminal {
 }
 
 #playground .source-evidence-tail {
+  position: relative;
   display: block;
   flex: 1;
   width: 0;
   margin-inline: auto;
   border-left: 1px dashed var(--map-line);
+}
+
+#playground .source-evidence-tail::before {
+  position: absolute;
+  top: 0;
+  left: -0.5px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--map-line);
+  transform: translate(-50%, -50%);
+  content: "";
 }
 
 #playground .product-evidence-tables {
@@ -15264,6 +15242,28 @@ html[data-theme="dark"] #playground [data-region="image"] .product-pdf-image {
   filter: brightness(.88);
 }
 
+@media (max-width: 767px) {
+  #playground .document-sections .section-node {
+    width: min(100%, 240px);
+    margin-inline: auto;
+    padding: 12px 10px;
+  }
+
+  #playground .document-branch-line,
+  #playground .document-branch-line.is-fork {
+    height: 24px;
+  }
+
+  #playground .request-document-connection,
+  #playground .request-document-stem,
+  #playground .stage-flow-row.is-section-to-source.mobile-source-connection,
+  #playground .mobile-source-connection .stage-flow-line-svg,
+  #playground .stage-convergence-row,
+  #playground .hierarchy-summary-connection {
+    height: 32px;
+  }
+}
+
 /* Pricing reference styling within the existing result, facts, and ruler layout. */
 #pricing .pricing-calculator {
   height: auto;
@@ -15289,7 +15289,7 @@ html[data-theme="dark"] #playground [data-region="image"] .product-pdf-image {
   width: 100%;
   height: auto;
   margin: 0;
-  padding: 8px 12px;
+  padding: 8px 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: stretch;
@@ -15487,6 +15487,16 @@ html[data-theme="dark"] #playground [data-region="image"] .product-pdf-image {
   height: 58px;
 }
 
+@media (max-width: 767px) {
+  #pricing .pricing-range-tick:not(:nth-child(4n + 1)) {
+    display: none;
+  }
+
+  #pricing .pricing-range-tick.is-medium {
+    height: 20px;
+  }
+}
+
 #pricing .pricing-range-control::before,
 #pricing .pricing-range-control::after {
   content: none;
@@ -15551,4 +15561,148 @@ html[data-theme="dark"] #pricing .pricing-calculator {
 html[data-theme="dark"] #pricing .pricing-result-value {
   border-color: transparent !important;
   background-color: var(--mineral-green-500) !important;
+}
+
+/* DESIGN.md §4.1: shared CTA states, with Hero and final-section variants. */
+.landing-page {
+  --control-surface: var(--mist-white-50);
+  --control-ink: var(--mist-white-900);
+  --control-border: #dedfd9;
+  --control-border-hover: #b1b7a9;
+  --control-surface-hover: #f7f8f4;
+  --control-surface-pressed: color-mix(in srgb, var(--control-surface-hover) 97%, #000);
+  --control-black-surface: var(--mist-white-950);
+  --control-black-hover: #33483d;
+  --control-black-pressed: var(--deep-teal-900);
+  --control-focus: var(--mineral-green-500);
+  --control-motion-duration: 150ms;
+}
+
+.landing-page .button {
+  --button-height: 46px;
+  --button-radius: 2px;
+  --button-padding-inline: 13px;
+  --button-surface: var(--control-black-surface);
+  --button-border: var(--button-surface);
+  --button-ink: var(--control-surface);
+  --button-hover-surface: var(--control-black-hover);
+  --button-hover-border: var(--control-black-hover);
+  --button-pressed-surface: var(--control-black-pressed);
+}
+
+.landing-page .button-secondary,
+.landing-page #final-cta .button:not(.button-secondary) {
+  --button-surface: var(--control-surface);
+  --button-border: var(--control-border);
+  --button-ink: var(--control-ink);
+  --button-hover-surface: var(--control-surface-hover);
+  --button-hover-border: var(--control-border-hover);
+  --button-pressed-surface: var(--control-surface-pressed);
+}
+
+.landing-page .hero-copy .button {
+  --button-height: 44px;
+  --button-radius: 1px;
+  --button-padding-inline: 16px;
+}
+
+.landing-page .hero-copy .button-secondary,
+.landing-page #final-cta .button-secondary {
+  --button-surface: transparent;
+  --button-border: var(--button-ink);
+  --button-ink: var(--ink);
+  --button-hover-surface: var(--black-3);
+  --button-hover-border: var(--button-ink);
+  --button-pressed-surface: var(--black-6);
+}
+
+.landing-page #final-cta .button-secondary {
+  --button-ink: var(--final-on-surface);
+  --button-hover-surface: var(--white-10);
+  --button-pressed-surface: var(--white-20);
+}
+
+html[data-theme="dark"] .landing-page {
+  --control-surface: var(--md-sys-color-surface-container);
+  --control-ink: var(--md-sys-color-on-surface);
+  --control-border: var(--md-sys-color-outline-variant);
+  --control-border-hover: var(--md-sys-color-outline);
+  --control-surface-hover: var(--md-sys-color-surface-container-high);
+  --control-surface-pressed: var(--md-sys-color-surface-container-highest);
+  --control-black-surface: var(--md-sys-color-primary);
+  --control-black-hover: color-mix(in srgb, var(--md-sys-color-primary) 92%, var(--md-sys-color-on-primary));
+  --control-black-pressed: color-mix(in srgb, var(--md-sys-color-primary) 88%, var(--md-sys-color-on-primary));
+}
+
+html[data-theme="dark"] .landing-page .button:not(.button-secondary) {
+  --button-ink: var(--md-sys-color-on-primary);
+}
+
+html[data-theme="dark"] .landing-page .hero-copy .button-secondary {
+  --button-hover-surface: var(--white-6);
+  --button-pressed-surface: var(--white-10);
+}
+
+html[data-theme="dark"] .landing-page #final-cta .button:not(.button-secondary) {
+  --button-surface: var(--final-action);
+  --button-ink: var(--final-on-action);
+  --button-hover-surface: var(--final-action-hover);
+  --button-pressed-surface: color-mix(in srgb, var(--final-action) 85%, transparent);
+}
+
+.landing-page .button,
+.landing-page .site-header .nav-actions .button,
+#top.hero-b-layout .hero-copy .button-row .button,
+.landing-page #main #final-cta #final-cta-actions .button {
+  height: var(--button-height) !important;
+  min-height: var(--button-height) !important;
+  padding: 0 var(--button-padding-inline) !important;
+  border: 1px solid var(--button-border) !important;
+  border-radius: var(--button-radius) !important;
+  background: var(--button-surface) !important;
+  color: var(--button-ink) !important;
+  font: 500 15px/24px var(--sans) !important;
+  letter-spacing: normal;
+  box-shadow: none;
+  transform: none;
+  transition: background-color var(--control-motion-duration), border-color var(--control-motion-duration), color var(--control-motion-duration), transform var(--control-motion-duration);
+
+  &:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):hover {
+    background: var(--button-hover-surface) !important;
+    border-color: var(--button-hover-border) !important;
+    color: var(--button-ink) !important;
+  }
+
+  &:not(:disabled):not([aria-disabled="true"]):not([aria-busy="true"]):active {
+    background: var(--button-pressed-surface) !important;
+    border-color: var(--button-hover-border) !important;
+    transform: translateY(1px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--control-focus);
+    outline-offset: 4px;
+  }
+
+  &:is(:disabled, [aria-disabled="true"]):not([aria-busy="true"]) {
+    background: var(--black-10) !important;
+    border-color: var(--black-3) !important;
+    color: var(--black-40) !important;
+    opacity: 1;
+    transform: none;
+    cursor: not-allowed;
+  }
+}
+
+.landing-page .site-header .nav-actions > .button {
+  font-family: var(--mono) !important;
+}
+
+@media (min-width: 768px) {
+  .landing-page .site-header .nav-actions > .button {
+    --button-height: 36px;
+    --button-padding-inline: 12px;
+    font-size: 13px !important;
+    line-height: 20px !important;
+  }
 }

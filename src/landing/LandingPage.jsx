@@ -524,20 +524,20 @@ export function LandingPage() {
             <div className="pricing-result-value">
               <div className="pricing-result-estimate">
                 <span>Estimated cost ($0.015 per page)</span>
-                <output data-pricing-price aria-live="polite">$7.50</output>
+                <output data-pricing-price aria-live="polite">$9.00</output>
               </div>
               <div className="pricing-result-config">
                 <label htmlFor="pricing-page-count">Number of pages</label>
-                <div className="pricing-result-pages"><input id="pricing-page-count" type="number" min={100} max={10000} step={100} defaultValue={500} /></div>
+                <div className="pricing-result-pages"><input id="pricing-page-count" type="number" min={100} max={10000} step={100} defaultValue={600} /></div>
               </div>
             </div>
           </div>
-          <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$7.50</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>5 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
-          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control" style={{'--pricing-progress': '4.0404%'}}>
+          <dl className="pricing-facts"><div><dt>Estimated budget</dt><dd data-pricing-price>$9.00</dd></div><div><dt>100-page PDFs</dt><dd data-pricing-pdf>6 documents</dd></div><div><dt>500-page documents</dt><dd data-pricing-large>1 document</dd></div><div><dt>Commitment</dt><dd>No minimum</dd></div></dl>
+          <div className="pricing-control-card"><label className="sr-only" htmlFor="pricing-pages">Pages to process</label><div className="pricing-range-control" style={{'--pricing-progress': '5.0505%'}}>
             <div className="pricing-range-ticks" aria-hidden="true">
               {Array.from({ length: 81 }, (_, index) => <span key={index} className={`pricing-range-tick${index % 20 === 0 ? ' is-major' : index % 4 === 0 ? ' is-medium' : ''}`} style={{ left: `${index * 1.25}%` }} />)}
             </div>
-            <span className="pricing-range-selection" aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '4.0404%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12H21M7 8L3 12L7 16M17 8L21 12L17 16" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '4.0404%'}}><strong data-pricing-price>$7.50</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={500} aria-label="Pages to process" /></div>
+            <span className="pricing-range-selection" aria-hidden="true" /><span className="pricing-range-handle" data-pricing-range-handle style={{'--pricing-progress': '5.0505%'}} aria-hidden="true"><span className="pricing-range-handle-visual"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12H21M7 8L3 12L7 16M17 8L21 12L17 16" /></svg></span></span><span className="pricing-range-budget" data-pricing-range-budget style={{'--pricing-progress': '5.0505%'}}><strong data-pricing-price>$9.00</strong></span><input className="pricing-range" id="pricing-pages" type="range" min={100} max={10000} step={100} defaultValue={600} aria-label="Pages to process" /></div>
             <div className="pricing-range-labels"><span>100 pages</span><span>2,500</span><span>5,000</span><span>7,500</span><span>10,000</span></div>
           </div>
         </div>
