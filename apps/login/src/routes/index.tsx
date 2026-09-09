@@ -20,7 +20,7 @@ function App() {
       <div className="login-background" aria-hidden="true">
         <FluidCover />
       </div>
-      <DataStream />
+      <DataStream chinese={chinese} />
       <header className="login-header">
         <a
           className="brand"
@@ -42,7 +42,7 @@ function App() {
             <div className="eyebrow">
               {t('YOUR NEXT BUILD STARTS HERE', '从这里，开始下一次创造')}
             </div>
-            <h1>{t('Welcome to Knowhere', '欢迎来到 Knowhere')}</h1>
+            <h1>{t('Sign in to Knowhere', '登录 Knowhere')}</h1>
           </div>
           <LoginForm chinese={chinese} />
         </div>

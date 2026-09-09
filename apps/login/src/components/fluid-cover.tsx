@@ -19,7 +19,7 @@ export function FluidCover() {
     canvas.style.setProperty('--fluid-opacity', channels[3] ?? '1')
 
     // Load the generator only in the browser.
-    import('../lib/fluid-gradient/mesh-gradient-renderer').then(({ createMeshGradientSurface, advanceGradientPhase }) => {
+    import('../lib/fluid-gradient/mesh-gradient-renderer').then(({ createMeshGradientSurface }) => {
       if (cancelled) return
       const surface = createMeshGradientSurface(canvas)
       const values = {
@@ -30,26 +30,29 @@ export function FluidCover() {
       let frame = 0
       let phase = 0.23
       let previousTime = 0
-      let visible = false
+      let sizeKey = ''
 
       const draw = () => {
         surface.render(values, phase)
-        canvas.dataset.ready = 'true'
+        if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true'
       }
       const animate = (time: number) => {
-        if (time - previousTime >= 1000 / 30) {
-          phase = advanceGradientPhase(phase, Math.min((time - previousTime) / 1000, 0.1), 0.03)
-          previousTime = time
-          draw()
-        }
+        // Liquid marble is not periodic at phase 1: wrapping causes a visible jump.
+        phase += Math.min((time - previousTime) / 1000, 0.05) * 0.03
+        previousTime = time
+        draw()
         frame = requestAnimationFrame(animate)
       }
       const sync = () => {
         cancelAnimationFrame(frame)
         const { width, height } = canvas.getBoundingClientRect()
-        visible = width > 0 && height > 0 && !document.hidden
-        if (!visible) return
-        surface.resize(width, height, Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(3_000_000 / (width * height))))
+        if (width <= 0 || height <= 0 || document.hidden) return
+        const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(3_000_000 / (width * height)))
+        const nextSizeKey = `${width}:${height}:${ratio}`
+        if (sizeKey !== nextSizeKey) {
+          surface.resize(width, height, ratio)
+          sizeKey = nextSizeKey
+        }
         draw()
         previousTime = performance.now()
         if (!reducedMotion.matches) frame = requestAnimationFrame(animate)

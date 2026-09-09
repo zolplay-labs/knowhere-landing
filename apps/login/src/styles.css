@@ -245,6 +245,7 @@ a:hover {
   padding: 24px 0;
 }
 .form-heading .eyebrow {
+  justify-content: center;
   color: #8a8e83;
   font-size: var(--type-meta-size);
   letter-spacing: 1.5px;
@@ -258,6 +259,7 @@ a:hover {
   line-height: var(--type-heading-line-height);
 }
 .form-heading {
+  text-align: center;
   margin-bottom: 31px;
 }
 .social-buttons {
