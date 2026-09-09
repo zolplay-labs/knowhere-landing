@@ -70,7 +70,7 @@ function LoginForm({ chinese }: { chinese: boolean }) {
   return (
     <>
       <div className="social-buttons">
-        <Button variant="white" disabled={sending}>
+        <Button variant="white">
           <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="#4285F4"
@@ -91,7 +91,7 @@ function LoginForm({ chinese }: { chinese: boolean }) {
           </svg>
           {t('Continue with Google', '使用 Google 继续')}
         </Button>
-        <Button variant="white" disabled={sending}>
+        <Button variant="white">
           <IconBrandGithub size={19} />
           {t('Continue with GitHub', '使用 GitHub 继续')}
         </Button>

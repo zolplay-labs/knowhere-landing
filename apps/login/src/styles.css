@@ -19,8 +19,8 @@
   --mist-white-700: #888a82;
   --mist-white-900: #2e2e2c;
   --mist-white-950: #1b1c1a;
-  --coral-signal-700: #a42900;
-  --login-error-color: var(--coral-signal-700);
+  --coral-signal-600: #dd3b00;
+  --login-error-color: var(--coral-signal-600);
   --black-2: rgba(0, 0, 0, 0.02);
   --black-3: rgba(0, 0, 0, 0.03);
   --black-10: rgba(0, 0, 0, 0.1);
@@ -309,7 +309,8 @@ label {
 }
 .email-delivery {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, max-content);
+  justify-content: center;
   align-items: start;
   gap: 12px;
   margin-top: 16px;
@@ -322,6 +323,7 @@ label {
 }
 .email-delivery-title {
   margin: 0;
+  text-align: center;
   font-weight: var(--font-weight-medium);
 }
 @media (max-height: 800px) {

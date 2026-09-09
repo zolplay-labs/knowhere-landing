@@ -307,7 +307,7 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 | 已填写 / 自动填充 | 使用正文色，保持 `--control-surface · #FFFFFF` 白底，不新增填充色；用白色内嵌覆盖层消除浏览器自动填充底色，不产生额外描边 |
 | 悬停 | 可编辑且无错误时，描边为 `--control-border-hover · #B1B7A9` |
 | 聚焦 | 仅将原有 1px 描边改成 `--control-focus → --mineral-green-500 · #19A88B`；`outline: none`、`box-shadow: none`，鼠标和键盘聚焦都不得叠加第二层描边 |
-| 错误 | 失焦时描边使用 `--control-error → --login-error-color → --coral-signal-700`；输入框下方 8px 显示同色辅助文本，字号 / 行高绑定 `--type-meta-* · 14 / 20` |
+| 错误 | 失焦时描边使用 `--control-error → --login-error-color → --coral-signal-600 · #DD3B00`；输入框下方 8px 显示同色辅助文本，字号 / 行高绑定 `--type-meta-* · 14 / 20` |
 | 错误时聚焦 | 描边仍为主色绿，红色辅助文本保留；修正为有效值后清除错误 |
 | 只读 | 原生 `readOnly`；底色 `--control-readonly-surface → --control-surface · #FFFFFF`，保留正常文字；可聚焦、选择和复制，不能编辑 |
 | 禁用 | 原生 `disabled`；底色 `--control-disabled-surface · #F6F7EF`、文字 `--control-disabled-ink · #888A82`、默认描边；不可编辑或进入 Tab 顺序，无悬停反馈 |
@@ -331,9 +331,9 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 
 Google、GitHub 按钮尚未接入 OAuth；点击时不显示 preview 或未接入认证的提示，也不改变邮箱表单状态。
 
-邮箱按钮默认文案为 `Sign in with Email` / `使用邮箱登录`。有效邮箱提交后显示 `Sending…` / `发送中…` 和转圈图标，设置 `disabled`、`aria-busy`，禁止重复点击或回车提交。发送期间邮箱只读，其他登录按钮禁用，防止提交中的邮箱或登录方式发生变化。请求完成后恢复操作，按钮显示 `Resend email` / `重新发送邮件`；再次发送沿用相同的发送状态。正式接入后，必须在服务确认发送成功后展示成功结果，失败仍使用输入框下方的红色提示。
+邮箱按钮默认文案为 `Sign in with Email` / `使用邮箱登录`。有效邮箱提交后显示 `Sending…` / `发送中…` 和转圈图标，设置 `disabled`、`aria-busy`，禁止重复点击或回车提交。发送期间邮箱只读，Google、GitHub 按钮保持可用；邮箱发送按钮独立禁用以防止重复提交。请求完成后恢复操作，按钮显示 `Resend email` / `重新发送邮件`；再次发送沿用相同的发送状态。正式接入后，必须在服务确认发送成功后展示成功结果，失败仍使用输入框下方的红色提示。
 
-成功反馈常驻在邮箱按钮下方，间距 16px，仅保留左侧绿色成功图标和 `Magic link sent, please check your email` / `登录链接已发送，请查收邮件` 一句话，无卡片底色、描边、邮箱地址或额外辅助文字。使用 `role="status"` 礼貌宣告；不自动消失、不提供关闭按钮，也不新增第二步页面或临时 Toast。修改邮箱后清除之前的发送结果，按钮恢复初始文案。14 / 20 字号、文字颜色及绿色成功图标绑定现有组件与颜色 token。
+成功反馈常驻在邮箱按钮下方，间距 16px，图标与文字作为整体相对页面水平居中，仅保留左侧绿色成功图标和 `Magic link sent, please check your email` / `登录链接已发送，请查收邮件` 一句话，无卡片底色、描边、邮箱地址或额外辅助文字。使用 `role="status"` 礼貌宣告；不自动消失、不提供关闭按钮，也不新增第二步页面或临时 Toast。修改邮箱后清除之前的发送结果，按钮恢复初始文案。14 / 20 字号、文字颜色及绿色成功图标绑定现有组件与颜色 token。
 
 ## 5. 交互与动效
 
