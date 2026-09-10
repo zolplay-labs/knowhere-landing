@@ -45,7 +45,7 @@ export default function ArticleDetail() {
       <section className="kb-detail-related kb-classic kb-hybrid kb-shell" aria-labelledby="related-title">
         <div className="kb-section-heading"><h2 id="related-title">Recommended articles</h2></div>
         <div className="kb-featured-grid">
-          {[articles[1], articles[3], articles[2]].map(item => <ArticleCard key={item.slug} article={item} classic hybrid />)}
+          {[articles[1], articles[3], articles[2]].map(item => <ArticleCard key={item.slug} article={item} />)}
         </div>
       </section>
     </main>
