@@ -1,0 +1,120 @@
+{
+  "appId": "toolcraft",
+  "canvas": {
+    "aspectRatio": {
+      "height": 9,
+      "mode": "preset",
+      "value": "16:9",
+      "width": 16
+    },
+    "mode": "finite",
+    "size": {
+      "height": 1080,
+      "unit": "px",
+      "width": 1920
+    }
+  },
+  "exportedAt": "2026-09-10T08:41:02.837Z",
+  "source": "toolcraft-settings",
+  "timeline": {
+    "currentTimeSeconds": 0,
+    "durationSeconds": 8,
+    "expanded": false,
+    "isLooping": true,
+    "isPlaying": false
+  },
+  "values": {
+    "export.includeBackground": true,
+    "appearance.background": "#F0F2E6",
+    "gradient.colors": [
+      {
+        "hex": "#19A88B"
+      },
+      {
+        "hex": "#19A88B"
+      },
+      {
+        "hex": "#19A88B"
+      }
+    ],
+    "gradient.colorStyle": "brand-color",
+    "gradient.randomize": null,
+    "gradient.mode": "fluid",
+    "fluid.distortion": 3.2,
+    "fluid.flow": 0.21,
+    "fluid.detail": 2,
+    "fluid.softness": 0.66,
+    "liquidMarble.swirl": 100,
+    "liquidMarble.scale": 100,
+    "liquidMarble.detail": 1,
+    "particle.density": 85,
+    "particle.dotSize": 3,
+    "particle.flow": 100,
+    "particle.scatterDensity": 0,
+    "imageProcessing.source": "image-processing-default-cards",
+    "imageProcessing.x": 0,
+    "imageProcessing.y": 0,
+    "imageProcessing.scale": 100,
+    "imageProcessing.highlights": 0,
+    "imageProcessing.shadows": 0,
+    "stripes.count": 4,
+    "stripes.angle": 339,
+    "stripes.fade": 100,
+    "stripes.offset": 52,
+    "stripes.wave.enabled": false,
+    "stripes.wave.amplitude": 61,
+    "stripes.wave.frequency": 3,
+    "stripes.wave.direction": "horizontal",
+    "stripes.wave.rotation": 0,
+    "pixel.enabled": true,
+    "pixel.size": 4,
+    "pixel.density": 50,
+    "pixel.pattern": "blue-noise",
+    "pixel.edgeJitter": 0.06,
+    "pixel.spread": 1,
+    "logo.enabled": true,
+    "content.logo": null,
+    "logo.colors": {
+      "colors": {
+        "#0F1217": "#083B3A"
+      },
+      "defaultColor": "#083B3A",
+      "resourceRef": "media:image:sha256:d574f782697e989911736709a616433692f31acb9b9e497203c4f0b07642dd42"
+    },
+    "logo.width": 25,
+    "logo.x": 50,
+    "logo.y": 50,
+    "logo.opacity": 100,
+    "text.enabled": false,
+    "text.content": "Beyond OCR:  \nHow KNOWHERE Understands Documents Visually",
+    "text.alignment": "left",
+    "text.verticalAlignment": "bottom",
+    "text.color": "#083B3A",
+    "text.size": 106,
+    "text.weight": 500,
+    "text.x": 49.5,
+    "text.y": 95,
+    "content.gradient": {
+      "angle": 180,
+      "stops": [
+        {
+          "color": "#FFFFFF",
+          "opacity": 0,
+          "position": "0%"
+        },
+        {
+          "color": "#FFFFFF",
+          "opacity": 100,
+          "position": "100%"
+        }
+      ],
+      "gradientType": "linear"
+    },
+    "motion.speed": 0.03,
+    "motion.time": 1,
+    "export.image.format": "png",
+    "export.image.resolution": "4k",
+    "export.animatedWebp": null
+  },
+  "version": 2
+}

@@ -10,8 +10,12 @@ import {
 } from '@tabler/icons-react';
 import { Footer } from './Footer';
 import { HeroDataStream } from '../../../pricing/src/components/hero-data-stream';
-import { articles, articleDate, articleUrl, type Article } from './articles';
-import coverSettings from '../../../login/src/lib/fluid-gradient/cover-settings.json';
+import { articles, articleDate, type Article } from './articles';
+import coverSettings from './local-fluid-cover/render-settings.json';
+import studioSettings from './local-fluid-cover/studio-settings.json';
+import leadLogo from './local-fluid-cover/logo.svg';
+import productSettings from './local-fluid-cover/product-render-settings.json';
+import productSource from './local-fluid-cover/product-source.jpg';
 import type { MeshGradientRenderValues } from '../../../login/src/lib/fluid-gradient/mesh-gradient-renderer';
 
 const navigation = [
@@ -27,7 +31,7 @@ function Cover({ article, featured = false }: { article: Article; featured?: boo
     fetchPriority={featured ? 'high' : undefined} decoding="async" />;
 }
 
-function DynamicLeadCover() {
+export function DynamicLeadCover({ label }: { label?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -35,26 +39,31 @@ function DynamicLeadCover() {
     let cancelled = false;
     let dispose = () => {};
 
-    import('../../../login/src/lib/fluid-gradient/mesh-gradient-renderer').then(({ createMeshGradientSurface }) => {
+    import('../../../login/src/lib/fluid-gradient/mesh-gradient-renderer').then(async ({ createMeshGradientSurface }) => {
       if (cancelled) return;
+      const image = label ? new Image() : null;
+      if (image) {
+        image.src = productSource;
+        await image.decode();
+        if (cancelled) return;
+      }
+      const imageSource = image ? { image, rotationDeg: 0, flipHorizontal: false, flipVertical: false } : null;
       const surface = createMeshGradientSurface(canvas);
-      const values = {
-        ...coverSettings,
-        colors: ['#19A88B'],
-        gradientMode: 'fluid',
-      } as MeshGradientRenderValues;
+      const values = (label ? productSettings : coverSettings) as MeshGradientRenderValues;
+      let renderValues = values;
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
       let frame = 0;
-      let phase = 0.23;
+      let phase = studioSettings.values['motion.time'] / 100;
       let previousTime = 0;
-      let sizeKey = '';
+      let inView = false;
+      surface.resize(studioSettings.canvas.size.width, studioSettings.canvas.size.height, 1);
 
       const draw = () => {
-        surface.render(values, phase);
+        surface.render(renderValues, phase, imageSource);
         if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true';
       };
       const animate = (time: number) => {
-        phase += Math.min((time - previousTime) / 1000, 0.05) * 0.125;
+        phase = (phase + Math.min((time - previousTime) / 1000, 0.1) * studioSettings.values['motion.speed']) % 1;
         previousTime = time;
         draw();
         frame = requestAnimationFrame(animate);
@@ -62,24 +71,26 @@ function DynamicLeadCover() {
       const sync = () => {
         cancelAnimationFrame(frame);
         const { width, height } = canvas.getBoundingClientRect();
-        if (width <= 0 || height <= 0 || document.hidden) return;
-        const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(3_000_000 / (width * height)));
-        const nextSizeKey = `${width}:${height}:${ratio}`;
-        if (sizeKey !== nextSizeKey) {
-          surface.resize(width, height, ratio);
-          sizeKey = nextSizeKey;
-        }
+        if (width <= 0 || height <= 0 || document.hidden || !inView) return;
+        // Match the grain visible in the studio at 50% zoom, independently of cover size.
+        renderValues = { ...values, pixelSize: values.pixelSize * (studioSettings.canvas.size.height * 0.5) / height };
         draw();
         previousTime = performance.now();
-        if (!reducedMotion.matches) frame = requestAnimationFrame(animate);
+        if (!reducedMotion.matches && values.gradientMode !== 'image-processing') frame = requestAnimationFrame(animate);
       };
       const observer = new ResizeObserver(sync);
       observer.observe(canvas);
+      const visibilityObserver = new IntersectionObserver(([entry]) => {
+        inView = entry.isIntersecting;
+        sync();
+      });
+      visibilityObserver.observe(canvas);
       document.addEventListener('visibilitychange', sync);
       reducedMotion.addEventListener('change', sync);
       dispose = () => {
         cancelAnimationFrame(frame);
         observer.disconnect();
+        visibilityObserver.disconnect();
         document.removeEventListener('visibilitychange', sync);
         reducedMotion.removeEventListener('change', sync);
         surface.dispose();
@@ -93,20 +104,23 @@ function DynamicLeadCover() {
       cancelled = true;
       dispose();
     };
-  }, []);
+  }, [label]);
 
-  return <div className="kb-lead-logo-art" aria-hidden="true">
+  return <div className={`kb-lead-logo-art${label ? ' kb-product-cover' : ''}`} aria-hidden={label ? undefined : true}>
     <canvas ref={canvasRef} />
-    <img src="/brand/knowhere-back-to-top.svg" alt="" />
+    <div className="kb-lead-content-gradient" />
+    {label ? <span className="kb-cover-type">{label}</span> : <img src={leadLogo} alt="" />}
   </div>;
 }
 
-function ArticleCard({ article, classic = false, hybrid = false }: { article: Article; classic?: boolean; hybrid?: boolean }) {
+export function ArticleCard({ article, classic = false, hybrid = false }: { article: Article; classic?: boolean; hybrid?: boolean }) {
   return <article className={`kb-card${hybrid ? ' kb-card-hybrid' : ''}`}>
-    <a href={articleUrl(article)}>
+    <a href="/article-preview">
       {hybrid ? <div className="kb-card-image">
-        <div className="kb-cover kb-cover-placeholder" aria-hidden="true" />
-        <span className="kb-category"><span />{article.category}</span>
+        {article.category === 'Product' ? <DynamicLeadCover label={article.category} /> : <>
+          <div className="kb-cover kb-cover-placeholder" aria-hidden="true" />
+          <span className="kb-category"><span />{article.category}</span>
+        </>}
       </div> : <Cover article={article} />}
       {classic && !hybrid ? <>
         <div className="kb-meta">
@@ -134,7 +148,7 @@ function ArticleCard({ article, classic = false, hybrid = false }: { article: Ar
 
 function FeaturedArticle({ article, titleId = 'featured-title' }: { article: Article; titleId?: string }) {
   return <article className="kb-featured" aria-labelledby={titleId}>
-    <a href={articleUrl(article)}>
+    <a href="/article-preview">
       <div className="kb-featured-details">
         <time dateTime={article.date}>{articleDate(article.date)}</time>
         <div className="kb-featured-copy">
@@ -155,7 +169,7 @@ function FeaturedArticle({ article, titleId = 'featured-title' }: { article: Art
 
 function LeadArticle({ article }: { article: Article }) {
   return <article className="kb-photon-lead" aria-labelledby="lead-title">
-    <a href={articleUrl(article)}>
+    <a href="/article-preview">
       <div className="kb-lead-image">
         <div className="kb-lead-cover-copy">
           <div className="kb-lead-story">
@@ -268,7 +282,7 @@ function ClassicLayout({ withLead = false }: { withLead?: boolean }) {
   </main>;
 }
 
-function Header({ standard = false }: { standard?: boolean }) {
+export function Header({ standard = false }: { standard?: boolean }) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   return <header className="kb-header" onKeyDown={event => {

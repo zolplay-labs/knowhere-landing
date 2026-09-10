@@ -258,7 +258,7 @@
 .kb-standard .kb-hybrid .kb-filters button:hover { color: var(--kb-secondary); border-color: rgb(0 0 0 / 6%); background: rgb(0 0 0 / 3%); }
 .kb-standard .kb-hybrid .kb-filters button[aria-pressed='true'] { color: white; background: var(--kb-mineral); border-color: var(--kb-mineral); }
 .kb-standard .kb-hybrid .kb-filters button:active { background: rgb(0 0 0 / 3%); }
-.kb-standard .kb-hybrid .kb-pagination { position: relative; isolation: isolate; margin-top: 60px; padding-block: 12px; border-top: 0; }
+.kb-standard .kb-hybrid .kb-pagination { position: relative; isolation: isolate; margin-top: 60px; padding-block: 32px; border-top: 0; }
 .kb-standard .kb-hybrid .kb-pagination-side a { min-height: 24px; }
 .kb-standard .kb-hybrid .kb-pagination-pages { gap: 12px; }
 .kb-standard .kb-hybrid .kb-pagination-pages > :is(a, span) {
@@ -302,9 +302,13 @@
 .kb .kb-lead-story p { font-size: 18px; line-height: 27px; letter-spacing: normal; color: var(--kb-secondary); }
 .kb-lead-story time { margin-top: auto; color: var(--kb-secondary); font: 400 12px/20px 'Geist Mono', 'Frex Sans GB VF', monospace; text-transform: uppercase; }
 .kb-lead-cover-art { min-width: 0; }
-.kb-lead-logo-art { position: relative; display: grid; width: 100%; aspect-ratio: 16 / 9; place-items: center; overflow: hidden; background: #f0f2e6 url('/covers/how-to-choose-a-pdf-parser-api-for-ai-agents.webp') center / cover; }
+.kb-lead-logo-art { position: relative; display: grid; width: 100%; aspect-ratio: 16 / 9; place-items: center; overflow: hidden; background: #f0f2e6; }
 .kb-lead-logo-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-.kb-lead-logo-art img { position: relative; z-index: 1; width: 42%; height: auto; }
+.kb-lead-content-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(255 255 255 / 0%) 0%, #fff 100%); }
+@font-face { font-family: 'Product Cover Poppins'; src: url('./local-fluid-cover/Poppins-Variable.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }
+.kb-product-cover { container-type: inline-size; }
+.kb-cover-type { position: absolute; z-index: 1; left: 52%; top: 55%; width: 92%; transform: translate(-50%, -100%); text-align: center; color: #083B3A; font-family: 'Product Cover Poppins', sans-serif; font-size: 4.4791667cqw; line-height: 1.05; font-weight: 554; }
+.kb-lead-logo-art img { position: relative; z-index: 1; width: 25%; height: auto; }
 .kb-hybrid .kb-lead-image .kb-cover { width: 100%; height: auto; aspect-ratio: 16 / 9; object-position: center; }
 .kb-photon-lead a:is(:hover, :focus-visible) h2 { color: var(--kb-ink); }
 
