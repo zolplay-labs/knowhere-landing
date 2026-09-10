@@ -18,7 +18,7 @@ export const Route = createRootRoute({
       {
         name: "description",
         content:
-          "Simple, transparent document processing. $1.50 per 100 pages. Estimate your costs and start a free Knowhere trial.",
+          "Parse complex documents for $1.50 per 100 billable pages. Estimate your monthly processing cost and start parsing for free.",
       },
       { name: "theme-color", content: "#FFFFFF" },
     ],
@@ -31,7 +31,7 @@ export const Route = createRootRoute({
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap",
       },
       {
         rel: "stylesheet",

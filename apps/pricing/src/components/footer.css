@@ -1,7 +1,7 @@
 .site-footer {
   --footer-link: #1b1c1a;
   --footer-link-hover: var(--green);
-  --footer-divider: rgb(0 0 0 / 20%);
+  --footer-divider: var(--black-20);
   position: sticky;
   z-index: 0;
   bottom: 0;
@@ -107,10 +107,8 @@
 html[data-theme="dark"] .site-footer {
   --footer-link: var(--ink);
   --footer-link-hover: #1dbe9d;
-  --footer-divider: color-mix(in srgb, var(--ink) 20%, transparent);
 }
 html[data-theme="dark"] .footer-brand img { filter: none; }
-html[data-theme="dark"] .footer-wordmark { background: color-mix(in srgb, var(--ink) 3%, transparent); }
 @media (min-width: 768px) and (max-width: 1199px) {
   .site-footer { padding-inline: 48px; }
 }

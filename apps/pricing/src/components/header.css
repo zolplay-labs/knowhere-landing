@@ -4,7 +4,7 @@
   inset: 0 0 auto;
   z-index: 100;
   background: var(--paper);
-  border-bottom: 1px solid rgb(0 0 0 / 6%);
+  border-bottom: 1px solid var(--black-6);
   color: var(--ink);
 }
 html[data-theme-transition="active"]::view-transition-old(root),

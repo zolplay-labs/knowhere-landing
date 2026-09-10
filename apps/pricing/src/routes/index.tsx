@@ -25,10 +25,6 @@ function Calculator() {
   const [pages, setPages] = useState(500);
   const [input, setInput] = useState("500");
   const progress = ((pages - 100) / 9900) * 100;
-  const documents = (pageSize: number) => {
-    const count = Math.floor(pages / pageSize);
-    return `${number(count)} ${count === 1 ? "document" : "documents"}`;
-  };
   function updatePages(value: number) {
     setPages(value);
     setInput(String(value));
@@ -43,23 +39,25 @@ function Calculator() {
         <div className="section-heading">
           <div>
             <p className="section-no">[ COST CALCULATOR ]</p>
-            <h2 id="calculator-title">Your documents. Your budget.</h2>
+            <h2 id="calculator-title">Estimate your monthly processing cost</h2>
           </div>
           <p>
-            From your first experiment to your next workflow. See exactly what
-            your pages could cost.
+            Your estimate is based on billable pages.{" "}
+            <a className="text-link" href="#billing-rules">
+              See how each file type is counted.
+            </a>
           </p>
         </div>
         <div className="calculator">
           <div className="calculator-top">
             <div className="estimated">
-              <span>Estimated cost ($0.015 per page)</span>
+              <span>Estimated cost ($0.015 per billable page)</span>
               <output aria-live="polite" className="total">
                 {money(pages)}
               </output>
             </div>
             <div className="calculator-config">
-              <label htmlFor="page-count">Number of pages</label>
+              <label htmlFor="page-count">Number of billable pages</label>
               <div className="page-input">
                 <input
                   id="page-count"
@@ -106,8 +104,8 @@ function Calculator() {
                 <IconArrowsHorizontal size={18} />
               </span>
               <input
-                aria-label="Pages to process"
-                aria-valuetext={`${number(pages)} pages, estimated cost ${money(pages)}`}
+                aria-label="Billable pages to process"
+                aria-valuetext={`${number(pages)} billable pages, estimated cost ${money(pages)}`}
                 type="range"
                 min="100"
                 max="10000"
@@ -117,18 +115,18 @@ function Calculator() {
               />
             </div>
             <div className="ruler-labels">
-              <span>100 pages</span>
+              <span>100 billable pages</span>
               <span>2,500</span>
               <span>5,000</span>
               <span>7,500</span>
-              <span>10,000 pages</span>
+              <span>10,000 billable pages</span>
             </div>
           </div>
           <dl className="calculator-facts" aria-live="polite">
-            <div><dt>Estimated budget</dt><dd>{money(pages)}</dd></div>
-            <div><dt>100-page PDFs</dt><dd>{documents(100)}</dd></div>
-            <div><dt>500-page documents</dt><dd>{documents(500)}</dd></div>
-            <div><dt>Commitment</dt><dd>No minimum</dd></div>
+            <div><dt>Estimated monthly cost</dt><dd>{money(pages)}</dd></div>
+            <div><dt>A 100-page report</dt><dd>$1.50</dd></div>
+            <div><dt>Ten 50-page contracts</dt><dd>$7.50</dd></div>
+            <div><dt>10,000 pages per month</dt><dd>$150.00</dd></div>
           </dl>
         </div>
       </div>
@@ -138,8 +136,24 @@ function Calculator() {
 
 const questions = [
   [
-    "Do unused page credits roll over?",
-    "Page credits expire 3 months after purchase. Plan your purchase around the documents you expect to process during that period.",
+    "How are billable pages calculated?",
+    "Billing depends on the file type. PDFs are counted by physical page. Presentations are counted by slide. Images are counted one image at a time. Word, text, and Markdown files are converted by content length. Spreadsheets are converted by total row count.",
+    "billing-rules",
+  ],
+  [
+    "When are credits deducted?",
+    "Processing credits are deducted when a job completes successfully.",
+    "credit-timing",
+  ],
+  [
+    "What happens if parsing fails?",
+    "Failed jobs don’t consume processing credits.",
+    "failed-jobs",
+  ],
+  [
+    "Do credits expire?",
+    "Processing credits expire 3 months after purchase. Plan your purchase around the documents you expect to process during that period.",
+    "credit-expiry",
   ],
   [
     "What payment methods do you accept?",
@@ -175,26 +189,26 @@ function App() {
           <HeroDataStream />
           <div className="hero-copy">
             <h1 id="hero-title">
-              Better document context.
+              Parse complex documents for
               <br />
-              <span>Not a bigger bill.</span>
+              <span>$1.50 per 100 pages.</span>
             </h1>
             <p className="lede">
-              Simple, transparent pricing for your document workflows. Pay only
-              for what you use. No hidden fees, no complex tiers.
+              Turn PDFs, spreadsheets, presentations, and images into structured
+              data for AI workflows. No subscriptions, no minimum spend.
             </p>
           </div>
           <div className="rate-card">
-            <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev/">Start free trial</a>
+            <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev/">Start parsing for free</a>
             <div className="rate-rules">
             <div className="rate-stat rate-rule">
-              <p><CheckCircleFill size={20} /> No subscription fee</p>
+              <p><CheckCircleFill size={20} /> No credit card required</p>
             </div>
             <div className="rate-stat rate-rule">
-              <p><CheckCircleFill size={20} /> No minimum commitment</p>
+              <p><CheckCircleFill size={20} /> No subscription</p>
             </div>
             <div className="rate-promises rate-rule">
-              <p><CheckCircleFill size={20} /> Only successful jobs are charged</p>
+              <p><CheckCircleFill size={20} /> No minimum spend</p>
             </div>
             </div>
           </div>
@@ -218,9 +232,11 @@ function App() {
             <article className="billing-card" aria-labelledby="billing-plan-title">
               <div className="billing-card-top">
                 <header className="billing-card-heading">
-                  <h3 id="billing-plan-title">Pay as you go</h3>
+                  <h3 id="billing-plan-title">Buy processing credits whenever you need them.</h3>
+                  <p className="billing-plan-copy">No subscription and no minimum spend.</p>
                   <div className="billing-plan-price">
-                    <p>$1.50 <span>/ 100 pages</span></p>
+                    <p className="billing-plan-primary">$1.50 <span>/ 100 billable pages</span></p>
+                    <p className="billing-plan-equivalent">That’s $0.015 per billable page.</p>
                   </div>
                 </header>
                 <aside className="billing-custom" aria-labelledby="billing-custom-title">
@@ -237,20 +253,20 @@ function App() {
                 <p className="sr-only" id="billing-rules-title">Billing rules</p>
                 <section className="billing-row" aria-labelledby="billing-rule-title">
                   <div className="billing-row-copy">
-                    <h4 id="billing-rule-title">Start with your pages</h4>
+                    <h4 id="billing-rule-title">Start with billable pages</h4>
                     <p>
-                      Pricing is based on processed pages, not the number of files
-                      you upload.
+                      Your total is based on billable pages, not the number of
+                      files you upload.
                     </p>
                   </div>
                   <div className="billing-row-charge">
-                    <p className="billing-row-price">$0.015 <span className="billing-row-unit">/ page</span></p>
+                    <p className="billing-row-price">$0.015 <span className="billing-row-unit">/ billable page</span></p>
                   </div>
                 </section>
                 <section className="billing-row" aria-labelledby="billing-completed-title">
                   <div className="billing-row-copy">
                     <h4 id="billing-completed-title">Pay for completed work</h4>
-                    <p>Page credits are deducted when a job completes successfully.</p>
+                    <p>Processing credits are deducted when a job completes successfully.</p>
                   </div>
                   <div className="billing-row-charge">
                     <p className="billing-row-result billing-row-success">Charged</p>
@@ -259,7 +275,7 @@ function App() {
                 <section className="billing-row" aria-labelledby="billing-failed-title">
                   <div className="billing-row-copy">
                     <h4 id="billing-failed-title">Failed job? No charge.</h4>
-                    <p>Failed jobs don’t consume credits.</p>
+                    <p>Failed jobs don’t consume processing credits.</p>
                   </div>
                   <div className="billing-row-charge">
                     <p className="billing-row-price">$0</p>
@@ -277,9 +293,7 @@ function App() {
           <div className="section-heading">
             <div>
               <p className="section-no">[ LIMITS & ENTERPRISE ]</p>
-              <h2 id="limits-title">
-                Room to build. A path to scale.
-              </h2>
+              <h2 id="limits-title">Scale beyond standard limits.</h2>
             </div>
             <p>
               Start with standard file limits. Talk to us when your workload needs more.
@@ -304,8 +318,8 @@ function App() {
             </div>
             <PixelCard variant="pink" className="enterprise-card">
               <div className="enterprise-card-top">
-                <h3>Enterprise custom pricing</h3>
-                <p>Built for your team.</p>
+                <h3>Need private deployment or higher-volume processing?</h3>
+                <p>Talk to our team about private deployment, dedicated infrastructure, and custom support.</p>
               </div>
               <div className="enterprise-card-features">
                 <ul>
@@ -328,7 +342,7 @@ function App() {
                 </ul>
               </div>
               <div className="enterprise-card-action">
-                <a href={contactUrl} className="button">Contact Sales</a>
+                <a href={contactUrl} className="button">Talk to our team</a>
               </div>
             </PixelCard>
           </div>
@@ -346,8 +360,8 @@ function App() {
               </h2>
             </div>
             <div className="faq-list">
-              {questions.map(([question, answer], index) => (
-                <details key={question} open={index === 0}>
+              {questions.map(([question, answer, id], index) => (
+                <details key={question} id={id} open={index === 0}>
                   <summary>
                     {question}
                     <span className="faq-plus" aria-hidden="true" />
@@ -366,8 +380,8 @@ function App() {
               Better context for your agents. A clear price for you.
             </p>
             <div className="final-cta-actions">
-              <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev">Start free trial</a>
-              <a className="button button-secondary" href={contactUrl}>Book a demo</a>
+              <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev">Start parsing for free</a>
+              <a className="button button-secondary" href="https://docs.knowhereto.ai/">Read the API documentation</a>
             </div>
             </div>
             <div className="final-cta-detail">

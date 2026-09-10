@@ -11,6 +11,7 @@
 }
 :root {
   --sans: "Geist", "Frex Sans GB VF", sans-serif;
+  --mono: "Geist Mono", "Frex Sans GB VF", monospace;
   --content-max: 1280px;
   --layout-grid-columns: 12;
   --layout-grid-gap: 20px;
@@ -22,11 +23,16 @@
   --ink: #2e2e2c;
   --body: #595a55;
   --muted: #888a82;
-  --line: #0000001a;
   --black-1: rgb(0 0 0 / 1%);
-  --black-6: rgb(0 0 0 / 6%);
-  --black-40: rgb(0 0 0 / 40%);
   --black-3: rgb(0 0 0 / 3%);
+  --black-6: rgb(0 0 0 / 6%);
+  --black-10: rgb(0 0 0 / 10%);
+  --black-20: rgb(0 0 0 / 20%);
+  --black-40: rgb(0 0 0 / 40%);
+  --black-80: rgb(0 0 0 / 80%);
+  --line: var(--black-10);
+  --white-80: rgb(255 255 255 / 80%);
+  --rate-highlight: var(--white-80);
   --surface: var(--black-3);
   --green: #19a88b;
   --brand-solid: #12846c;
@@ -216,7 +222,7 @@ p {
   font-size: 14px;
 }
 .section-no {
-  font-family: var(--sans);
+  font-family: var(--mono);
   font-size: 15px;
   font-weight: 400;
   line-height: 24px;
@@ -224,8 +230,8 @@ p {
   color: var(--green-dark);
 }
 h1 {
-  font-size: 48px;
-  line-height: 52px;
+  font-size: 44px;
+  line-height: 48px;
   letter-spacing: -0.75px;
 }
 h2 {
@@ -310,8 +316,6 @@ h1 span {
 .rate-rules {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-inline: 1px solid var(--line);
-  background: var(--paper);
 }
 .rate-stat,
 .rate-promises {
@@ -323,9 +327,11 @@ h1 span {
   align-items: center;
   justify-content: center;
   text-align: center;
+  background: var(--paper);
   border-right: 1px solid var(--line);
 }
 .rate-promises { border-right: 0; }
+.rate-rule:nth-child(2) { background: var(--rate-highlight); }
 .rate-rule > p {
   display: flex;
   align-items: center;
@@ -370,7 +376,7 @@ h1 span {
   color: var(--body);
 }
 .calculator-section {
-  border-block: 1px solid #0000000f;
+  border-block: 1px solid var(--black-6);
 }
 .calculator-section .section-heading > div,
 .calculator-section .section-heading > p {
@@ -406,7 +412,7 @@ h1 span {
   letter-spacing: -1.5px;
   line-height: 1.2;
   border: 0;
-  border-bottom: 1px dashed #00000033;
+  border-bottom: 1px dashed var(--black-20);
   color: var(--ink);
   background: transparent;
   font-variant-numeric: tabular-nums;
@@ -450,7 +456,7 @@ h1 span {
 .ruler {
   height: 100px;
   position: relative;
-  border-bottom: 1px solid #00000033;
+  border-bottom: 1px solid var(--black-20);
 }
 .ruler-fill {
   position: absolute;
@@ -459,11 +465,13 @@ h1 span {
   background: rgb(25 168 139 / 6%);
 }
 .ruler-ticks {
+  --ruler-minor-step: 1.25%;
+  --ruler-major-step: 5%;
   position: absolute;
   inset: 0;
   background-image:
-    repeating-linear-gradient(90deg, #0000001a 0 1px, transparent 1px 1.25%),
-    repeating-linear-gradient(90deg, #00000033 0 1px, transparent 1px 5%);
+    repeating-linear-gradient(90deg, var(--black-10) 0 1px, transparent 1px var(--ruler-minor-step)),
+    repeating-linear-gradient(90deg, var(--black-20) 0 1px, transparent 1px var(--ruler-major-step));
   background-size:
     100% 20px,
     100% 34px;
@@ -618,16 +626,24 @@ h1 span {
   display: flex;
   flex-direction: column;
 }
+.billing-plan-copy,
+.billing-plan-equivalent {
+  font-size: 14px;
+  line-height: 21px;
+  color: var(--on-brand-secondary);
+}
+.billing-plan-copy { margin-top: 6px; }
 .billing-plan-price {
   margin-top: auto;
   padding-top: 16px;
 }
-.billing-plan-price > p {
+.billing-plan-price > .billing-plan-primary {
   font-size: 48px;
   line-height: 52px;
   letter-spacing: -0.75px;
   white-space: nowrap;
 }
+.billing-plan-equivalent { margin-top: 4px; }
 .billing-plan-price p span {
   margin-left: 8px;
   font-size: 14px;
@@ -960,9 +976,9 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   max-width: 768px;
 }
 .final-cta h2 {
-  font-size: 40px;
-  line-height: 44px;
-  letter-spacing: -0.7px;
+  font-size: 44px;
+  line-height: 48px;
+  letter-spacing: -0.75px;
 }
 .final-cta-detail {
   align-self: center;
@@ -1075,7 +1091,7 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   font-weight: 500;
   white-space: nowrap;
 }
-.final-cta-email a:hover { background: rgb(0 0 0 / 85%); }
+.final-cta-email a:hover { background: var(--black-80); }
 .final-cta-email:focus-within { border-color: var(--ink); }
 @media (min-width: 768px) and (max-width: 1199px) {
   :root {
@@ -1136,14 +1152,16 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   .enterprise-card { grid-row: 1; }
   .limits-table { grid-row: 2; }
   .rate-card { grid-template-columns: 1fr; justify-items: start; }
-  .rate-rules { width: 100%; grid-template-columns: 1fr; }
-    .rate-stat,
+  .rate-rules { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rate-stat,
   .rate-promises {
     min-height: 0;
+    padding-inline: 12px;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }
-  .rate-promises { border-bottom: 0; }
+  .rate-stat:first-child { border-right: 1px solid var(--line); }
+  .rate-promises { grid-column: 1 / -1; border-bottom: 0; }
   .section-heading > p {
     font-size: 15px;
     line-height: 22px;
@@ -1163,6 +1181,10 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   .ruler input { left: -16px; width: calc(100% + 32px); }
   .ruler input::-webkit-slider-thumb { width: 32px; }
   .ruler input::-moz-range-thumb { width: 32px; }
+  .ruler-ticks {
+    --ruler-minor-step: 5%;
+    --ruler-major-step: 25%;
+  }
   .ruler-labels {
     font-size: 11px;
     padding-block: 28px 24px;
@@ -1172,8 +1194,9 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
     display: none;
   }
   .billing-card-top { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .billing-card-top::before { background-position: -56px top; background-size: auto 180px; }
   .billing-custom { padding: 16px 0 0; border-left: 0; border-top: 1px solid var(--brand-panel-line); }
-  .billing-plan-price > p { font-size: 40px; line-height: 44px; }
+  .billing-plan-price > .billing-plan-primary { font-size: 40px; line-height: 44px; }
   .billing-rows { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .billing-row + .billing-row { border-left: 0; border-top: 1px solid var(--line); }
   .limits-table { padding: 20px; }
@@ -1195,7 +1218,7 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
     padding: 48px 20px;
   }
   .final-cta h2 {
-    font-size: 32px;
+    font-size: 31px;
     line-height: 36px;
   }
   .rate-card > .button,
@@ -1261,15 +1284,19 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
 
 html[data-theme="dark"] {
   color-scheme: dark;
+  --black-1: rgb(255 255 255 / 1%);
+  --black-3: rgb(255 255 255 / 3%);
+  --black-6: rgb(255 255 255 / 6%);
+  --black-10: rgb(255 255 255 / 10%);
+  --black-20: rgb(255 255 255 / 20%);
+  --black-40: rgb(255 255 255 / 40%);
+  --black-80: rgb(255 255 255 / 80%);
   --paper: #010909;
   --ink: #f9faf5;
   --body: #bbbcb3;
   --muted: #bbbcb3;
-  --line: #083b3a;
-  --surface: #021d1d;
-  --black-6: rgb(249 250 245 / 6%);
-  --black-40: rgb(249 250 245 / 40%);
-  --faq-control-fill: rgb(249 250 245 / 3%);
+  --line: var(--black-10);
+  --surface: var(--black-3);
   --green: #23d6b1;
   --green-dark: #23d6b1;
   --teal: #7efedd;
@@ -1278,24 +1305,18 @@ html[data-theme="dark"] {
   --brand-line: #156462;
   --brand-ink: #7efedd;
   --brand-panel: #073231;
+  --rate-highlight: rgb(1 9 9 / 80%);
 }
 html[data-theme="dark"] .button { background: #23d6b1; color: #011711; }
-html[data-theme="dark"] .overview { --hero-grid-color: rgb(249 250 245 / 3%); }
 html[data-theme="dark"] .button:hover { background: #7efedd; }
 html[data-theme="dark"] .button-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
 html[data-theme="dark"] .button-secondary:hover { background: #042626; }
-html[data-theme="dark"] .calculator-section { border-color: var(--line); }
-html[data-theme="dark"] .page-input input { border-bottom-color: #083b3a; }
-html[data-theme="dark"] .ruler { border-color: #083b3a; }
-html[data-theme="dark"] .ruler-ticks {
-  background-image: repeating-linear-gradient(90deg, #ffffff1a 0 1px, transparent 1px 1.25%), repeating-linear-gradient(90deg, #ffffff33 0 1px, transparent 1px 5%);
-}
 html[data-theme="dark"] .ruler-budget { color: #011711; }
 html[data-theme="dark"] .final-cta {
   --cta-on-surface: #fff;
   --cta-muted: #fff;
-  background: rgb(255 255 255 / 3%);
+  background: var(--black-3);
 }
 html[data-theme="dark"] .ruler-handle { background: #021d1d; }
 html[data-theme="dark"] .final-cta-email a { background: #fff; color: #000; }
-html[data-theme="dark"] .final-cta-email a:hover { background: rgb(255 255 255 / 85%); }
+html[data-theme="dark"] .final-cta-email a:hover { background: var(--black-80); }
