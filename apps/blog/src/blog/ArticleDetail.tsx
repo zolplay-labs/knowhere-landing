@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { IconChevronLeft, IconBrandLinkedin, IconBrandMastodon, IconBrandBluesky, IconBrandX, IconBrandFacebook } from '@tabler/icons-react';
 import { ArticleCard, DynamicLeadCover, Header } from './BlogHome';
 import { articles, articleDate, articleUrl } from './articles';
@@ -27,19 +28,19 @@ export default function ArticleDetail() {
   const article = articles[0];
   return <div className="kb kb-standard kb-detail" lang="en" id="top">
     <a className="kb-skip" href="#article-main">Skip to content</a>
-    <Header standard />
+    <Header />
     <main id="article-main">
       <article aria-labelledby="article-title">
         <header className="kb-detail-heading">
-          <a className="kb-detail-back" href="/"><IconChevronLeft size={20} aria-hidden="true" /> Back</a>
+          <Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back</Link>
           <h1 id="article-title">{article.title}</h1>
           <div className="kb-detail-meta"><span>OntosAI</span><span aria-hidden="true">•</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span aria-hidden="true">•</span><span>11–17 min read</span></div>
         </header>
-        <figure className="kb-detail-cover"><DynamicLeadCover /></figure>
+        <figure className="kb-detail-cover"><DynamicLeadCover title={article.title} /></figure>
         <div className="kb-detail-body">
           <ShareLinks />
           <div className="kb-detail-content" dangerouslySetInnerHTML={{ __html: articleContent }} />
-          <div className="kb-detail-end"><ShareLinks /><a className="kb-detail-back" href="/"><IconChevronLeft size={20} aria-hidden="true" /> Back</a></div>
+          <div className="kb-detail-end"><ShareLinks /><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back</Link></div>
         </div>
       </article>
       <section className="kb-detail-related kb-classic kb-hybrid kb-shell" aria-labelledby="related-title">

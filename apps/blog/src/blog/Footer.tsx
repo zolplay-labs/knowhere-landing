@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 // The landing footer's 4px flickering grid, initialized on the client for SSR.
 function FooterGrid() {
@@ -11,7 +11,7 @@ function FooterGrid() {
     let columns = 0;
     let rows = 0;
     let squares = new Float32Array(0);
-    const maxOpacity = 0.05;
+    let maxOpacity = 0.05;
     let frame = 0;
     let lastTime = 0;
     let visible = false;
@@ -30,6 +30,7 @@ function FooterGrid() {
       }
     }
     function resize() {
+      maxOpacity = document.documentElement.dataset.theme === "dark" ? 0.16 : 0.05;
       const { width, height } = canvas.getBoundingClientRect();
       const dpr = devicePixelRatio || 1;
       canvas.width = width * dpr;
@@ -56,12 +57,15 @@ function FooterGrid() {
       visible = entry.isIntersecting;
       updateMotion();
     });
+    const themeObserver = new MutationObserver(resize);
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
     resize();
     resizeObserver.observe(canvas);
     intersectionObserver.observe(canvas);
     reducedMotion.addEventListener("change", updateMotion);
     return () => {
       cancelAnimationFrame(frame);
+      themeObserver.disconnect();
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       reducedMotion.removeEventListener("change", updateMotion);
@@ -71,6 +75,14 @@ function FooterGrid() {
 }
 
 export function Footer() {
+  const [language, setLanguage] = useState('en');
+  useEffect(() => {
+    setLanguage(localStorage.getItem('knowhere-language') || 'en');
+    const update = (event: Event) => setLanguage((event as CustomEvent).detail.language);
+    window.addEventListener('knowhere-language-change', update);
+    return () => window.removeEventListener('knowhere-language-change', update);
+  }, []);
+  const zh = language === 'zh';
   return (
     <footer className="kb-site-footer">
       <FooterGrid />
@@ -81,10 +93,10 @@ export function Footer() {
           </a>
           <div className="kb-standard-footer-navigation-content">
             <nav className="kb-standard-footer-links" aria-label="Footer links">
-              <a href="https://knowhereto.ai/#comparison">Comparison</a>
-              <a href="https://knowhereto.ai/#pricing">Pricing</a>
-              <a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a>
-              <a href="/">Blog</a>
+              <a href="https://knowhereto.ai/#comparison">{zh ? '对比' : 'Comparison'}</a>
+              <a href="https://knowhereto.ai/#pricing">{zh ? '定价' : 'Pricing'}</a>
+              <a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">{zh ? '文档' : 'Docs'}</a>
+              <a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">{zh ? "博客" : "Blog"}</a>
             </nav>
             <p className="kb-standard-footer-copyright">© {new Date().getFullYear()} Knowhere API. All rights reserved.</p>
           </div>

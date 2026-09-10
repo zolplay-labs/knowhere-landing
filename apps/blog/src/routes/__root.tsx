@@ -21,6 +21,9 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      ...['product', 'research', 'news'].map(category => ({
+        rel: 'preload', as: 'image', href: `/covers/categories/${category}.png`,
+      })),
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       {
         rel: 'preconnect', href: 'https://fonts.gstatic.com',

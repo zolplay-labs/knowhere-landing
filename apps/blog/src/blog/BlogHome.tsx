@@ -1,15 +1,15 @@
+import { Link } from '@tanstack/react-router';
 import { useEffect, useRef, useState } from 'react';
 import {
-  IconArrowUpRight as FiArrowUpRight,
   IconArrowRight as FiArrowRight,
   IconArrowLeft as FiArrowLeft,
-  IconX as FiX,
-  IconMenu2 as FiMenu,
-  IconBrandGithub as FaGithub,
 } from '@tabler/icons-react';
+import { Header } from './Header';
+export { Header } from './Header';
 import { Footer } from './Footer';
 import { HeroDataStream } from '../../../pricing/src/components/hero-data-stream';
 import { articles, articleDate, type Article } from './articles';
+import { ProcessedArticleCover } from './ProcessedArticleCover';
 import coverSettings from './local-fluid-cover/render-settings.json';
 import studioSettings from './local-fluid-cover/studio-settings.json';
 import leadLogo from './local-fluid-cover/logo.svg';
@@ -17,14 +17,7 @@ import productSettings from './local-fluid-cover/product-render-settings.json';
 import productSource from './local-fluid-cover/product-source.jpg';
 import type { MeshGradientRenderValues } from '../../../login/src/lib/fluid-gradient/mesh-gradient-renderer';
 
-const navigation = [
-  ['Comparison', 'https://knowhereto.ai/#comparison'],
-  ['Pricing', 'https://knowhereto.ai/#pricing'],
-  ['Docs', 'https://docs.knowhereto.ai/'],
-  ['Blog', '/'],
-] as const;
-
-export function DynamicLeadCover({ label }: { label?: string }) {
+export function DynamicLeadCover({ label, title }: { label?: string; title?: string }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -99,21 +92,23 @@ export function DynamicLeadCover({ label }: { label?: string }) {
     };
   }, [label]);
 
-  return <div className={`kb-lead-logo-art${label ? ' kb-product-cover' : ''}`} aria-hidden={label ? undefined : true}>
+  return <div className={`kb-lead-logo-art${label ? ' kb-product-cover' : ' kb-lead-marble-cover'}`} aria-hidden={label ? undefined : true}>
     <canvas ref={canvasRef} />
     <div className="kb-lead-content-gradient" />
-    {label ? <span className="kb-cover-type">{label}</span> : <img src={leadLogo} alt="" />}
+    {label ? <span className="kb-cover-type">{label}</span> : <>
+      <img src={leadLogo} alt="" />
+      <span className="kb-lead-art-title">{title}</span>
+    </>}
   </div>;
 }
 
-export function ArticleCard({ article }: { article: Article }) {
+export function ArticleCard({ article, originalCover = false }: { article: Article; originalCover?: boolean }) {
   return <article className="kb-card kb-card-hybrid">
-    <a href="/article-preview">
+    <Link to="/article-preview" preload="intent">
       <div className="kb-card-image">
-        {article.category === 'Product' ? <DynamicLeadCover label={article.category} /> : <>
-          <div className="kb-cover kb-cover-placeholder" aria-hidden="true" />
-          <span className="kb-category"><span />{article.category}</span>
-        </>}
+        {(originalCover || ('originalCover' in article && article.originalCover)) ? <img className="kb-cover" src={`/covers/categories/${article.category.toLowerCase()}.png`}
+          width="4096" height="2304" alt={article.category} />
+          : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
       </div>
       <div className="kb-card-copy">
         <h3>{article.title}</h3>
@@ -123,13 +118,13 @@ export function ArticleCard({ article }: { article: Article }) {
         <time dateTime={article.date}>{articleDate(article.date, 'long')}</time>
         <span className="kb-card-read" aria-hidden="true">Read <FiArrowRight /></span>
       </div>
-    </a>
+    </Link>
   </article>;
 }
 
 function LeadArticle({ article }: { article: Article }) {
   return <article className="kb-photon-lead" aria-labelledby="lead-title">
-    <a href="/article-preview">
+    <Link to="/article-preview" preload="intent">
       <div className="kb-lead-image">
         <div className="kb-lead-cover-copy">
           <div className="kb-lead-story">
@@ -140,33 +135,33 @@ function LeadArticle({ article }: { article: Article }) {
           </div>
         </div>
         <div className="kb-lead-cover-art" aria-hidden="true">
-          <DynamicLeadCover />
+          <DynamicLeadCover title={article.title} />
         </div>
       </div>
-    </a>
+    </Link>
   </article>;
 }
 
-function Pagination({ currentPage = 1, pageCount = 2 }: { currentPage?: number; pageCount?: number }) {
-  const pageUrl = (page: number) => page === 1
-    ? 'https://blog.knowhereto.ai/'
-    : `https://blog.knowhereto.ai/?query-22-page=${page}`;
-
+function Pagination({ currentPage, pageCount, onPageChange }: {
+  currentPage: number;
+  pageCount: number;
+  onPageChange: (page: number) => void;
+}) {
   return <nav className="kb-pagination" aria-label="Article pages">
     <div className="kb-pagination-side kb-pagination-previous">
-      {currentPage > 1 && <a href={pageUrl(currentPage - 1)}>
-        <FiArrowLeft aria-hidden="true" /> Previous page
+      {currentPage > 1 && <a href="#articles" onClick={() => onPageChange(currentPage - 1)}>
+        <FiArrowLeft aria-hidden="true" /> preview
       </a>}
     </div>
     <div className="kb-pagination-pages">
       {Array.from({ length: pageCount }, (_, index) => index + 1).map(page =>
         page === currentPage
           ? <span key={page} aria-current="page">{page}</span>
-          : <a key={page} href={pageUrl(page)} aria-label={`Page ${page}`}>{page}</a>)}
+          : <a key={page} href="#articles" onClick={() => onPageChange(page)} aria-label={`Page ${page}`}>{page}</a>)}
     </div>
     <div className="kb-pagination-side kb-pagination-next">
-      {currentPage < pageCount && <a href={pageUrl(currentPage + 1)}>
-        Next page <FiArrowRight aria-hidden="true" />
+      {currentPage < pageCount && <a href="#articles" onClick={() => onPageChange(currentPage + 1)}>
+        next <FiArrowRight aria-hidden="true" />
       </a>}
     </div>
   </nav>;
@@ -174,7 +169,8 @@ function Pagination({ currentPage = 1, pageCount = 2 }: { currentPage?: number; 
 
 function ArticleBrowser() {
   const [category, setCategory] = useState('All');
-  const matching = articles.slice(4)
+  const [currentPage, setCurrentPage] = useState(1);
+  const matching = articles
     .filter(article => category === 'All' || article.category === category);
 
   return <section className="kb-latest kb-shell" id="articles" aria-labelledby="latest-title">
@@ -185,13 +181,13 @@ function ArticleBrowser() {
     <div className="kb-filterbar">
       <div className="kb-filters" aria-label="Filter articles">
         {['All', 'Product', 'Research', 'News', 'Use Case'].map(item =>
-          <button key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>
+          <button key={item} aria-pressed={category === item} onClick={() => { setCategory(item); setCurrentPage(1); }}>
             {item}
           </button>)}
       </div>
     </div>
     <div className="kb-article-grid">
-      {matching.map(article => <ArticleCard key={article.slug} article={article} />)}
+      {matching.slice((currentPage - 1) * 9, currentPage * 9).map(article => <ArticleCard key={article.slug} article={article} />)}
     </div>
     {matching.length === 0 && <div className="kb-empty">
       <h3>No articles here just yet.</h3>
@@ -200,7 +196,7 @@ function ArticleBrowser() {
         View all articles <FiArrowRight aria-hidden="true" />
       </button>
     </div>}
-    {category === 'All' && <Pagination />}
+    {matching.length > 9 && <Pagination currentPage={currentPage} pageCount={Math.ceil(matching.length / 9)} onPageChange={setCurrentPage} />}
   </section>;
 }
 
@@ -209,7 +205,7 @@ function BlogLayout() {
     <section className="kb-intro kb-shell" aria-labelledby="blog-title">
       <HeroDataStream />
       <h1 id="blog-title">Blog</h1>
-      <p>Knowledge infra for your coding agents.</p>
+      <p>Product updates, research, and ideas for building better agents.</p>
     </section>
     <div className="kb-shell">
       <LeadArticle article={articles[0]} />
@@ -221,55 +217,17 @@ function BlogLayout() {
       </div>
       <div className="kb-featured-grid">
         {articles.slice(1, 4).map(article =>
-          <ArticleCard key={article.slug} article={article} />)}
+          <ArticleCard key={article.slug} article={article} originalCover />)}
       </div>
     </section>
     <ArticleBrowser />
   </main>;
 }
 
-export function Header({ standard = false }: { standard?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const menuButton = useRef<HTMLButtonElement>(null);
-  return <header className="kb-header" onKeyDown={event => {
-    if (event.key === 'Escape' && open) {
-      setOpen(false);
-      menuButton.current?.focus();
-    }
-  }}>
-    <div className="kb-shell kb-nav">
-      <a href="https://knowhereto.ai/" aria-label="Knowhere home">
-        <img src="/brand/knowhere-back-to-top.svg" width="132" height="52" alt="Knowhere" />
-      </a>
-      <nav className="kb-desktop-nav" aria-label="Main navigation">
-        {navigation.map(([label, href]) => <a key={label} href={href}
-          aria-current={label === 'Blog' ? 'page' : undefined}>{label}</a>)}
-      </nav>
-      <div className="kb-nav-actions">
-        <a className="kb-github" href="https://knowhereto.ai/github" aria-label="GitHub">
-          <FaGithub />
-        </a>
-        <a className="kb-api-button" href="https://knowhereto.ai/login">
-          Get API Key {!standard && <FiArrowUpRight aria-hidden="true" />}
-        </a>
-        <button ref={menuButton} className="kb-menu-toggle" aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open} aria-controls="blog-menu" onClick={() => setOpen(!open)}>
-          {open ? <FiX /> : <FiMenu />}
-        </button>
-      </div>
-    </div>
-    {open && <nav id="blog-menu" className="kb-mobile-nav" aria-label="Mobile navigation">
-      {navigation.map(([label, href]) => <a key={label} href={href}
-        onClick={() => setOpen(false)}>{label}<FiArrowUpRight aria-hidden="true" /></a>)}
-      {standard && <a className="kb-mobile-api" href="https://knowhereto.ai/login">Get API Key <FiArrowUpRight aria-hidden="true" /></a>}
-    </nav>}
-  </header>;
-}
-
 export default function BlogHome() {
   return <div className="kb kb-standard" lang="en" id="top">
     <a className="kb-skip" href="#blog-main">Skip to content</a>
-    <Header standard />
+    <Header />
     <BlogLayout />
     <Footer />
   </div>;
