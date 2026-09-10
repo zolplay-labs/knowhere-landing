@@ -9,13 +9,13 @@
 | 内容 | 唯一指定字体 | 使用范围 |
 | --- | --- | --- |
 | 英文与数字的默认字体 | **Geist Sans** | 所有未被使用者明确指定为 Mono 的英文和数字 |
-| 使用者明确指定的 Mono 文字 | **Geist Mono** | 仅限使用者明确指定的文字、区域或组件，不扩展到其他位置 |
+| 使用者明确指定的 Mono 文字 | **Geist Mono** | 章节标签，以及其他由使用者明确指定的文字、区域或组件；不扩展到其他位置 |
 | 中文文字 | **Frex Sans GB VF** | 所有中文标题、正文、导航和组件文字 |
 
-混排时，英文与数字默认使用 Geist Sans，中文使用 Frex。**只有使用者明确指定某段文字、区域或组件使用 Mono 时，才使用 Geist Mono。** 代码、章节标签、技术标识、价格和对齐需求均不构成自动启用 Mono 的理由；不得仅凭内容类型、HTML 标签或 AI 判断套用 Mono。未明确指定时保持默认字体。
+混排时，英文与数字默认使用 Geist Sans，中文使用 Frex。**只有使用者明确指定某段文字、区域或组件使用 Mono 时，才使用 Geist Mono。** 章节标签现已明确指定使用 Geist Mono；代码、技术标识、价格和对齐需求仍不构成自动启用 Mono 的理由，不得仅凭内容类型、HTML 标签或 AI 判断套用 Mono。未明确指定时保持默认字体。
 
 - 常用字重：`400 Regular`、`500 Medium`、`600 SemiBold`。具体角色见下表，不把所有标题统一加粗。
-- 章节标签保留现有方括号与英文大写；普通标题保留页面原有大小写。
+- 章节标签统一使用 Geist Mono，保留现有方括号与英文大写；中文回退到 Frex。普通标题保留页面原有大小写。
 - `sans-serif` / `monospace` 只是加载失败时的通用兜底，不是新增设计字体。
 - 已有 Logo、第三方标志与原始文档图片中的文字保持素材本身的形态，不据此扩展网页字体体系。
 
@@ -72,8 +72,8 @@ Geist Mono Regular（400）另提供 Google Fonts 官方 Latin 子集的本地�
 | 功能卡片标题 · `.format-feature h3` | 18 / 24 | 18 / 24 | 400 | normal |
 | FAQ 问题 · `#faq summary` | 18 / 24 | 16 / 24 | 500 | normal |
 | Hero 按钮 · `.hero-copy .button` | 15 / 24 | 15 / 24 | 500 | normal |
-| 章节标签 · `.section-no` | 15 / 24 | 15 / 24 | 400 | normal |
-| 结尾 CTA 标签 · `#final-cta .section-no` | 14 / 20 | 14 / 20 | 400 | normal |
+| 章节标签 · `.section-no` · Geist Mono | 15 / 24 | 15 / 24 | 400 | normal |
+| 结尾 CTA 标签 · `#final-cta .section-no` · Geist Mono | 14 / 20 | 14 / 20 | 400 | normal |
 | 桌面导航链接 · `.desktop-nav a` | 14 / 21.7 | 切换为菜单布局 | 400 | normal |
 | SDK 代码示例 | 12 / 16 | 8.775 / 11.7585 | 400 | normal |
 | 页脚版权 · `.footer-copyright` | 12 / normal | 12 / normal | 400 | 0.96 |
@@ -136,6 +136,10 @@ SDK 在 ≤479px 使用 `font-size: clamp(7px, 2.25vw, 10px)`、`line-height: 1.
 | White | 1、2、3、6、10、20、30、40、50、60、70、80、90、100 | `--white-{opacity}` |
 
 用于边框、分隔线、覆盖层、阴影及深浅表面上的文字。Black 与 White 使用相同的透明度色阶，均包含 1% 和 2%。组件已使用透明度线条时，不要直接改成不透明的 `--line`。
+
+主题切换时，透明中性色保持相同透明度：浅色模式使用的 `black/N`，在暗色模式必须映射为 `white/N`，例如 `black/3 → white/3`、`black/6 → white/6`、`black/10 → white/10`。不得在切换色相的同时擅自提高或降低透明度。实现中继续使用 `--black-{opacity}` 语义变量，并在 `html[data-theme="dark"]` 下将其重绑定到 `on-surface` 的同档透明度；不要在组件选择器中散落 `rgba(0, 0, 0, …)` 与单独的暗色补丁。
+
+该字体与透明中性色规则同时适用于明确要求与 Landing 对齐的同站应用；当前 Blog 已采用，其他 Blog 布局、尺寸和组件设置仍遵守自身实现，不由本条批量覆盖。
 
 ### 2.4 深色语义映射
 

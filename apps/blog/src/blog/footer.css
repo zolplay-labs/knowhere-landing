@@ -83,7 +83,7 @@
   left: calc(var(--footer-link-gap) / -2);
   width: 1px;
   height: 16px;
-  background: color-mix(in srgb, var(--kb-ink) 20%, transparent);
+  background: var(--black-20);
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -95,7 +95,7 @@
   height: 183px;
   aspect-ratio: 1280 / 183;
   display: block;
-  background: rgb(0 0 0 / 3%);
+  background: var(--black-3);
   pointer-events: none;
   mask: url('/brand/knowhere-footer-wordmark.svg') center top / contain no-repeat;
 }

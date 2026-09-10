@@ -102,11 +102,16 @@ export function DynamicLeadCover({ label, title }: { label?: string; title?: str
   </div>;
 }
 
-export function ArticleCard({ article, originalCover = false }: { article: Article; originalCover?: boolean }) {
+export function ArticleCard({ article, originalCover = false, coverOverride }: {
+  article: Article;
+  originalCover?: boolean;
+  coverOverride?: string;
+}) {
   return <article className="kb-card kb-card-hybrid">
     <Link to="/article-preview" preload="intent">
       <div className="kb-card-image">
-        {(originalCover || ('originalCover' in article && article.originalCover)) ? <img className="kb-cover" src={`/covers/categories/${article.category.toLowerCase()}.png`}
+        {coverOverride ? <img className="kb-cover" src={coverOverride} width="4096" height="2304" alt={article.category} />
+          : (originalCover || ('originalCover' in article && article.originalCover)) ? <img className="kb-cover" src={`/covers/categories/${article.category.toLowerCase()}.png`}
           width="4096" height="2304" alt={article.category} />
           : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
       </div>
@@ -216,8 +221,9 @@ function BlogLayout() {
         <h2 id="featured-title">Featured articles</h2>
       </div>
       <div className="kb-featured-grid">
-        {articles.slice(1, 4).map(article =>
-          <ArticleCard key={article.slug} article={article} originalCover />)}
+        {articles.slice(1, 4).map((article, index) =>
+          <ArticleCard key={article.slug} article={article} originalCover
+            coverOverride={index === 2 ? '/covers/featured/does-90-percent-rag-project.png' : undefined} />)}
       </div>
     </section>
     <ArticleBrowser />

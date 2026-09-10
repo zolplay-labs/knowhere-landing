@@ -1,16 +1,17 @@
 import { Link } from '@tanstack/react-router';
-import { IconChevronLeft, IconBrandLinkedin, IconBrandMastodon, IconBrandBluesky, IconBrandX, IconBrandFacebook } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
+import { RiBlueskyFill, RiFacebookFill, RiLinkedinFill, RiMastodonFill, RiTwitterXFill } from '@remixicon/react';
 import { ArticleCard, DynamicLeadCover, Header } from './BlogHome';
 import { articles, articleDate, articleUrl } from './articles';
 import articleContent from './content/pdf-parser.html?raw';
 import './article-detail.css';
 
 const socialLinks = [
-  { name: 'LinkedIn', service: 'linkedin', Icon: IconBrandLinkedin },
-  { name: 'Mastodon', service: 'mastodon', Icon: IconBrandMastodon },
-  { name: 'Bluesky', service: 'bluesky', Icon: IconBrandBluesky },
-  { name: 'X', service: 'twitter', Icon: IconBrandX },
-  { name: 'Facebook', service: 'facebook', Icon: IconBrandFacebook },
+  { name: 'LinkedIn', service: 'linkedin', Icon: RiLinkedinFill },
+  { name: 'Mastodon', service: 'mastodon', Icon: RiMastodonFill },
+  { name: 'Bluesky', service: 'bluesky', Icon: RiBlueskyFill },
+  { name: 'X', service: 'twitter', Icon: RiTwitterXFill },
+  { name: 'Facebook', service: 'facebook', Icon: RiFacebookFill },
 ];
 
 function ShareLinks() {
@@ -19,7 +20,7 @@ function ShareLinks() {
     {socialLinks.map(({ name, service, Icon }) => <a key={service}
       href={`${articleUrl(articles[0])}?share=${service}&nb=1`}
       target="_blank" rel="noopener noreferrer" aria-label={`Share on ${name}`} title={`Share on ${name}`}>
-      <Icon size={18} aria-hidden="true" />
+      <Icon size={20} aria-hidden="true" />
     </a>)}
   </nav>;
 }
