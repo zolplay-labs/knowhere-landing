@@ -1,13 +1,17 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   IconArrowUpRight as FiArrowUpRight,
   IconArrowRight as FiArrowRight,
-  IconSearch as FiSearch,
+  IconArrowLeft as FiArrowLeft,
   IconX as FiX,
   IconMenu2 as FiMenu,
+  IconLayoutColumns,
   IconBrandGithub as FaGithub,
 } from '@tabler/icons-react';
+import { Footer } from './Footer';
 import { articles, articleDate, articleUrl, type Article } from './articles';
+import coverSettings from '../../../login/src/lib/fluid-gradient/cover-settings.json';
+import type { MeshGradientRenderValues } from '../../../login/src/lib/fluid-gradient/mesh-gradient-renderer';
 
 const navigation = [
   ['Comparison', 'https://knowhereto.ai/#comparison'],
@@ -16,99 +20,253 @@ const navigation = [
   ['Blog', '/'],
 ] as const;
 
-function Cover({ kind }: { kind: Article['artwork'] }) {
-  return <div className={`kb-cover kb-cover-${kind}`} aria-hidden="true">
-    <div className="kb-cover-grid" />
-    <div className="kb-art"><i /><i /><i /><i /></div>
-    <span className="kb-cover-brand">KNOWHERE®</span>
-    <span className="kb-cover-label">IMAGE PLACEHOLDER ↗</span>
+function Cover({ article, featured = false }: { article: Article; featured?: boolean }) {
+  return <img className="kb-cover" src={`/covers/${article.slug}.webp`}
+    width="1200" height="900" alt="" loading={featured ? 'eager' : 'lazy'}
+    fetchPriority={featured ? 'high' : undefined} decoding="async" />;
+}
+
+function DynamicLeadCover() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    let cancelled = false;
+    let dispose = () => {};
+
+    import('../../../login/src/lib/fluid-gradient/mesh-gradient-renderer').then(({ createMeshGradientSurface }) => {
+      if (cancelled) return;
+      const surface = createMeshGradientSurface(canvas);
+      const values = {
+        ...coverSettings,
+        colors: ['#19A88B'],
+        gradientMode: 'fluid',
+      } as MeshGradientRenderValues;
+      const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+      let frame = 0;
+      let phase = 0.23;
+      let previousTime = 0;
+      let sizeKey = '';
+
+      const draw = () => {
+        surface.render(values, phase);
+        if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true';
+      };
+      const animate = (time: number) => {
+        phase += Math.min((time - previousTime) / 1000, 0.05) * 0.125;
+        previousTime = time;
+        draw();
+        frame = requestAnimationFrame(animate);
+      };
+      const sync = () => {
+        cancelAnimationFrame(frame);
+        const { width, height } = canvas.getBoundingClientRect();
+        if (width <= 0 || height <= 0 || document.hidden) return;
+        const ratio = Math.min(devicePixelRatio || 1, 1.5, Math.sqrt(3_000_000 / (width * height)));
+        const nextSizeKey = `${width}:${height}:${ratio}`;
+        if (sizeKey !== nextSizeKey) {
+          surface.resize(width, height, ratio);
+          sizeKey = nextSizeKey;
+        }
+        draw();
+        previousTime = performance.now();
+        if (!reducedMotion.matches) frame = requestAnimationFrame(animate);
+      };
+      const observer = new ResizeObserver(sync);
+      observer.observe(canvas);
+      document.addEventListener('visibilitychange', sync);
+      reducedMotion.addEventListener('change', sync);
+      dispose = () => {
+        cancelAnimationFrame(frame);
+        observer.disconnect();
+        document.removeEventListener('visibilitychange', sync);
+        reducedMotion.removeEventListener('change', sync);
+        surface.dispose();
+      };
+      sync();
+    }).catch(() => {
+      canvas.dataset.ready = 'false';
+    });
+
+    return () => {
+      cancelled = true;
+      dispose();
+    };
+  }, []);
+
+  return <div className="kb-lead-logo-art" aria-hidden="true">
+    <canvas ref={canvasRef} />
+    <img src="/brand/knowhere-back-to-top.svg" alt="" />
   </div>;
 }
 
-function ArticleMeta({ article }: { article: Article }) {
-  return <div className="kb-meta">
-    <span className={`kb-category kb-category-${article.category.toLowerCase()}`}>
-      <span />{article.category}
-    </span>
-    <time dateTime={article.date}>{articleDate(article.date)}</time>
-  </div>;
-}
-
-function ArticleCard({ article }: { article: Article }) {
-  return <article className="kb-card">
+function ArticleCard({ article, classic = false, hybrid = false }: { article: Article; classic?: boolean; hybrid?: boolean }) {
+  return <article className={`kb-card${hybrid ? ' kb-card-hybrid' : ''}`}>
     <a href={articleUrl(article)}>
-      <Cover kind={article.artwork} />
-      <ArticleMeta article={article} />
-      <h3>{article.title}<FiArrowUpRight aria-hidden="true" /></h3>
-      <p>{article.description}</p>
-      <span className="kb-read">Read more
-        <FiArrowRight aria-hidden="true" />
-      </span>
+      {hybrid ? <div className="kb-card-image">
+        <div className="kb-cover kb-cover-placeholder" aria-hidden="true" />
+        <span className="kb-category"><span />{article.category}</span>
+      </div> : <Cover article={article} />}
+      {classic && !hybrid ? <>
+        <div className="kb-meta">
+          <span className="kb-category"><span />{article.category}</span>
+          <time dateTime={article.date}>{articleDate(article.date)}</time>
+        </div>
+        <h3>{article.title}</h3>
+        <p>{article.description}</p>
+        <span className="kb-read">Read more <FiArrowRight aria-hidden="true" /></span>
+      </> : <>
+        <div className="kb-card-copy">
+          <h3>{article.title}</h3>
+          <p>{article.description}</p>
+        </div>
+        <div className="kb-card-footer">
+          <time dateTime={article.date}>{articleDate(article.date, hybrid ? 'long' : 'short')}</time>
+          {hybrid
+            ? <span className="kb-card-read" aria-hidden="true">Read <FiArrowRight /></span>
+            : <span className="kb-read">Read</span>}
+        </div>
+      </>}
+    </a>
+  </article>;
+}
+
+function FeaturedArticle({ article, titleId = 'featured-title' }: { article: Article; titleId?: string }) {
+  return <article className="kb-featured" aria-labelledby={titleId}>
+    <a href={articleUrl(article)}>
+      <div className="kb-featured-details">
+        <time dateTime={article.date}>{articleDate(article.date)}</time>
+        <div className="kb-featured-copy">
+          <div>
+            <h2 id={titleId}>{article.title}</h2>
+            <p>{article.description}</p>
+          </div>
+          <div className="kb-card-footer">
+            <span className="kb-category">{article.category}</span>
+            <span className="kb-read">Read</span>
+          </div>
+        </div>
+      </div>
+      <div className="kb-featured-image"><Cover article={article} featured /></div>
+    </a>
+  </article>;
+}
+
+function LeadArticle({ article }: { article: Article }) {
+  return <article className="kb-photon-lead" aria-labelledby="lead-title">
+    <a href={articleUrl(article)}>
+      <div className="kb-lead-image">
+        <div className="kb-lead-cover-copy">
+          <div className="kb-lead-story">
+            <span className="kb-lead-cover-tag"><span aria-hidden="true" />{article.category}</span>
+            <h2 className="kb-lead-cover-title" id="lead-title">{article.title}</h2>
+            <p>{article.description}</p>
+            <time dateTime={article.date}>{articleDate(article.date, 'long')}</time>
+          </div>
+        </div>
+        <div className="kb-lead-cover-art" aria-hidden="true">
+          <DynamicLeadCover />
+        </div>
+      </div>
     </a>
   </article>;
 }
 
 function ArticleBrowser() {
-  const [category, setCategory] = useState('All');
-  const [query, setQuery] = useState('');
-  // The original homepage lists its three featured stories separately.
-  const matching = articles.slice(3)
-    .filter(article => (category === 'All' || article.category === category)
-      && `${article.title} ${article.description}`.toLowerCase()
-        .includes(query.trim().toLowerCase()));
+  return <section className="kb-latest" id="articles" aria-label="More articles">
+    <div className="kb-article-grid">
+      {articles.slice(1).map(article =>
+        <ArticleCard key={article.slug} article={article} />)}
+    </div>
+    <Pagination />
+  </section>;
+}
 
-  return <section className="kb-latest kb-shell" id="articles"
-    aria-labelledby="latest-title">
+function Pagination({ currentPage = 1, pageCount = 2 }: { currentPage?: number; pageCount?: number }) {
+  const pageUrl = (page: number) => page === 1
+    ? 'https://blog.knowhereto.ai/'
+    : `https://blog.knowhereto.ai/?query-22-page=${page}`;
+
+  return <nav className="kb-pagination" aria-label="Article pages">
+    <div className="kb-pagination-side kb-pagination-previous">
+      {currentPage > 1 && <a href={pageUrl(currentPage - 1)}>
+        <FiArrowLeft aria-hidden="true" /> Previous page
+      </a>}
+    </div>
+    <div className="kb-pagination-pages">
+      {Array.from({ length: pageCount }, (_, index) => index + 1).map(page =>
+        page === currentPage
+          ? <span key={page} aria-current="page">{page}</span>
+          : <a key={page} href={pageUrl(page)} aria-label={`Page ${page}`}>{page}</a>)}
+    </div>
+    <div className="kb-pagination-side kb-pagination-next">
+      {currentPage < pageCount && <a href={pageUrl(currentPage + 1)}>
+        Next page <FiArrowRight aria-hidden="true" />
+      </a>}
+    </div>
+  </nav>;
+}
+
+function ClassicArticleBrowser({ start = 3, hybrid = false }: { start?: number; hybrid?: boolean }) {
+  const [category, setCategory] = useState('All');
+  const matching = articles.slice(start)
+    .filter(article => category === 'All' || article.category === category);
+
+  return <section className="kb-latest kb-shell" id="articles" aria-labelledby="latest-title">
     <div className="kb-section-heading">
-      <span className="kb-eyebrow">▸ Browse</span>
+      <span className="kb-eyebrow">{hybrid ? '[ BROWSE ]' : '▸ Browse'}</span>
       <h2 id="latest-title">All articles</h2>
     </div>
     <div className="kb-filterbar">
       <div className="kb-filters" aria-label="Filter articles">
         {['All', 'Product', 'Research', 'News', 'Use Case'].map(item =>
-          <button key={item} aria-pressed={category === item}
-            onClick={() => setCategory(item)}>
+          <button key={item} aria-pressed={category === item} onClick={() => setCategory(item)}>
             {item}
           </button>)}
       </div>
-      <div className="kb-search">
-        <FiSearch aria-hidden="true" />
-        <input type="search" aria-label="Search articles"
-          placeholder="Search articles" value={query}
-          onChange={event => setQuery(event.target.value)} />
-        {query && <button aria-label="Clear search" onClick={() => setQuery('')}>
-          <FiX aria-hidden="true" />
-        </button>}
-      </div>
     </div>
-    <p className="kb-results" role="status">
-      {matching.length} {matching.length === 1 ? 'article' : 'articles'}
-      {category !== 'All' ? ` in ${category}` : ''}
-    </p>
     <div className="kb-article-grid">
-      {matching.map(article =>
-        <ArticleCard key={article.slug} article={article} />)}
+      {matching.map(article => <ArticleCard key={article.slug} article={article} classic hybrid={hybrid} />)}
     </div>
     {matching.length === 0 && <div className="kb-empty">
       <h3>No articles here just yet.</h3>
-      <p>Try another topic or a different search.</p>
-      <button onClick={() => { setCategory('All'); setQuery(''); }}>
+      <p>Try another topic.</p>
+      <button onClick={() => setCategory('All')}>
         View all articles <FiArrowRight aria-hidden="true" />
       </button>
     </div>}
-    {category === 'All' && !query.trim() &&
-      <nav className="kb-pagination" aria-label="Article pages">
-        <span aria-current="page">1</span>
-        <a href="https://blog.knowhereto.ai/?query-22-page=2"
-          aria-label="Page 2">2</a>
-        <a href="https://blog.knowhereto.ai/?query-22-page=2">
-          Next page <FiArrowRight aria-hidden="true" />
-        </a>
-      </nav>}
+    {category === 'All' && <Pagination />}
   </section>;
 }
 
-function Header() {
+function ClassicLayout({ withLead = false }: { withLead?: boolean }) {
+  const featuredStart = withLead ? 1 : 0;
+  return <main id="blog-main" className={`kb-classic${withLead ? ' kb-hybrid' : ''}`}>
+    <section className="kb-intro kb-shell" aria-labelledby="blog-title">
+      <h1 id="blog-title">Blog</h1>
+      <p>Knowledge infra for your coding agents.</p>
+    </section>
+    {withLead ? <div className="kb-shell">
+      <LeadArticle article={articles[0]} />
+    </div> : <div className="kb-mood">
+      <img src="/brand/blog-glass-cells.webp" alt="" width="1920" height="720" fetchPriority="high" />
+      <p>Traditional RAG is doomed. Period.</p>
+    </div>}
+    <section className="kb-classic-featured kb-shell" aria-labelledby="featured-title">
+      <div className="kb-section-heading">
+        <span className="kb-eyebrow">{withLead ? '[ FEATURED ]' : '▸ Featured'}</span>
+        <h2 id="featured-title">Featured articles</h2>
+      </div>
+      <div className="kb-featured-grid">
+        {articles.slice(featuredStart, featuredStart + 3).map(article =>
+          <ArticleCard key={article.slug} article={article} classic hybrid={withLead} />)}
+      </div>
+    </section>
+    <ClassicArticleBrowser start={featuredStart + 3} hybrid={withLead} />
+  </main>;
+}
+
+function Header({ standard = false }: { standard?: boolean }) {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   return <header className="kb-header" onKeyDown={event => {
@@ -130,7 +288,7 @@ function Header() {
           <FaGithub />
         </a>
         <a className="kb-api-button" href="https://knowhereto.ai/login">
-          Get API Key <FiArrowUpRight aria-hidden="true" />
+          Get API Key {!standard && <FiArrowUpRight aria-hidden="true" />}
         </a>
         <button ref={menuButton} className="kb-menu-toggle" aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open} aria-controls="blog-menu" onClick={() => setOpen(!open)}>
@@ -141,43 +299,66 @@ function Header() {
     {open && <nav id="blog-menu" className="kb-mobile-nav" aria-label="Mobile navigation">
       {navigation.map(([label, href]) => <a key={label} href={href}
         onClick={() => setOpen(false)}>{label}<FiArrowUpRight aria-hidden="true" /></a>)}
+      {standard && <a className="kb-mobile-api" href="https://knowhereto.ai/login">Get API Key <FiArrowUpRight aria-hidden="true" /></a>}
     </nav>}
   </header>;
 }
 
+function GridController() {
+  const [visible, setVisible] = useState(false);
+
+  return <>
+    <div id="blog-grid-overlay" className="kb-grid-overlay kb-shell" hidden={!visible} aria-hidden="true">
+      {Array.from({ length: 12 }, (_, index) => <span key={index} />)}
+    </div>
+    <button type="button" className="kb-grid-controller" aria-controls="blog-grid-overlay"
+      aria-pressed={visible} onClick={() => setVisible(!visible)}>
+      <IconLayoutColumns size={18} aria-hidden="true" />
+      <span>Layout grid</span>
+      <span className="kb-grid-switch" aria-hidden="true" />
+    </button>
+  </>;
+}
+
 export default function BlogHome() {
-  return <div className="kb" lang="en" id="top">
+  const [layout, setLayout] = useState<'classic' | 'news' | 'hybrid'>('classic');
+  useEffect(() => {
+    const saved = localStorage.getItem('knowhere-blog-layout');
+    if (saved === 'news' || saved === 'hybrid') setLayout(saved);
+  }, []);
+
+  return <div className={`kb${layout === 'hybrid' ? ' kb-standard' : ''}`} lang="en" id="top">
     <a className="kb-skip" href="#blog-main">Skip to content</a>
-    <Header />
-    <main id="blog-main">
-      <section className="kb-intro kb-shell">
-        <h1>Blog</h1>
-        <p>Knowledge infra for your coding agents.</p>
-      </section>
-      <div className="kb-mood">
-        <img src="/brand/blog-glass-cells.webp" alt=""
-          width="1920" height="720" fetchPriority="high" />
-        <p>Traditional RAG is doomed. Period.</p>
-      </div>
-      <section className="kb-featured kb-shell" aria-labelledby="featured-title">
-        <div className="kb-section-heading">
-          <span className="kb-eyebrow">▸ Featured</span>
-          <h2 id="featured-title">Featured articles</h2>
-        </div>
-        <div className="kb-featured-grid">
-          {articles.slice(0, 3).map(article =>
-            <ArticleCard key={article.slug} article={article} />)}
+    <Header standard={layout === 'hybrid'} />
+    {layout !== 'news' ? <ClassicLayout key={layout} withLead={layout === 'hybrid'} /> : <main id="blog-main" className="kb-news kb-shell">
+      <section className="kb-intro" aria-labelledby="blog-title">
+        <span className="kb-eyebrow">[ What's new ]</span>
+        <div className="kb-intro-heading">
+          <h1 id="blog-title">Blog</h1>
+          <p>Knowledge infra for your coding agents.</p>
         </div>
       </section>
+      <FeaturedArticle article={articles[0]} />
       <ArticleBrowser />
-    </main>
-    <footer className="kb-footer">
+    </main>}
+    {layout === 'hybrid' ? <Footer /> : <footer className="kb-footer">
       <a href="#top" aria-label="Back to top"><img src="/brand/knowhere-footer-mark.svg" width="37" height="42" alt="" /></a>
       <nav aria-label="Footer navigation">
         {navigation.map(([label, href]) => <a key={label} href={href}>{label}</a>)}
       </nav>
       <p>© {new Date().getFullYear()} KNOWHERE. KNOWLEDGE BEYOND BOUNDARIES.</p>
       <div className="kb-footer-wordmark kb-shell" aria-hidden="true" />
-    </footer>
+    </footer>}
+    <GridController />
+    <div className="kb-layout-controller" role="group" aria-label="排版版本" lang="zh-CN">
+      <span>排版版本</span>
+      {([['classic', 'V1 原版'], ['news', 'V2 新闻列表'], ['hybrid', 'V3 组合版']] as const).map(([value, label]) =>
+        <button key={value} type="button" aria-pressed={layout === value} aria-controls="blog-main"
+          onClick={() => {
+            setLayout(value);
+            localStorage.setItem('knowhere-blog-layout', value);
+            window.scrollTo({ top: 0, behavior: 'instant' });
+          }}>{label}</button>)}
+    </div>
   </div>;
 }

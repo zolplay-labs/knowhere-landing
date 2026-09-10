@@ -1,2 +1,4 @@
 @import "tailwindcss";
 @import "./blog/blog.css";
+
+@import "./blog/footer.css";
