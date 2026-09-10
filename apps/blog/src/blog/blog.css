@@ -189,6 +189,7 @@
 /* V3 uses the landing design system; V1 and V2 remain layout references. */
 .kb-standard { --kb-paper: #fff; --kb-ink: #2e2e2c; --kb-muted: #888a82; --kb-green: #19a88b; font-size: 18px; line-height: 1.55; isolation: isolate; }
 .kb-standard main { position: relative; z-index: 1; background: var(--kb-paper); }
+.kb-standard { container-type: inline-size; --kb-header-height: 68px; }
 .kb-standard :is(#articles, #featured-title, #lead-title, #blog-main) { scroll-margin-top: 88px; }
 .kb-standard #featured-title { scroll-margin-top: 128px; }
 .kb-standard .kb-header { position: sticky; top: 0; }
@@ -208,6 +209,7 @@
   isolation: isolate;
   display: grid;
   width: 100%;
+  margin-top: calc(-1 * var(--kb-header-height));
   min-height: calc(234px + (min(1280px, 100cqw - 64px) * 2 - 20px) / 3 * 256 / 300 - 400px);
   grid-template-columns: repeat(var(--layout-grid-columns), minmax(0, 1fr));
   column-gap: var(--layout-grid-gap);
@@ -231,6 +233,15 @@
   mask-image: linear-gradient(to bottom, #000, transparent);
 }
 .kb-standard .kb-hybrid .kb-intro > * { grid-column: 1 / span 8; }
+.kb-standard .kb-hybrid .kb-intro > .hero-data-stream {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: -1;
+  width: 100%;
+  color: var(--kb-green);
+  pointer-events: none;
+  grid-column: auto;
+}
 .kb-standard .kb-hybrid .kb-intro h1 { text-transform: none; }
 .kb-standard .kb-intro p { color: var(--kb-secondary); }
 .kb-standard .kb-hybrid .kb-featured { padding-block: 60px; }
@@ -243,13 +254,44 @@
 .kb-standard .kb-hybrid .kb-card h3 { letter-spacing: normal; }
 .kb-standard .kb-hybrid .kb-card p { font-size: 15px; line-height: 24px; }
 .kb-standard .kb-hybrid .kb-filters { display: inline-grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 22px; }
-.kb-standard .kb-hybrid .kb-filters button { width: auto; height: 36px; min-height: 36px; padding: 4px 12px; justify-content: center; white-space: nowrap; color: var(--kb-mineral); border-color: var(--kb-mineral); font-size: 14px; line-height: 20px; }
-.kb-standard .kb-hybrid .kb-filters button:hover { color: #0a6351; border-color: #0a6351; background: transparent; }
+.kb-standard .kb-hybrid .kb-filters button { width: auto; height: 36px; min-height: 36px; padding: 4px 12px; justify-content: center; white-space: nowrap; color: var(--kb-secondary); border-color: rgb(0 0 0 / 6%); font-size: 14px; line-height: 20px; }
+.kb-standard .kb-hybrid .kb-filters button:hover { color: var(--kb-secondary); border-color: rgb(0 0 0 / 6%); background: rgb(0 0 0 / 3%); }
 .kb-standard .kb-hybrid .kb-filters button[aria-pressed='true'] { color: white; background: var(--kb-mineral); border-color: var(--kb-mineral); }
 .kb-standard .kb-hybrid .kb-filters button:active { background: rgb(0 0 0 / 3%); }
-.kb-standard .kb-hybrid .kb-pagination { margin-top: 60px; }
+.kb-standard .kb-hybrid .kb-pagination { position: relative; isolation: isolate; margin-top: 60px; padding-block: 12px; border-top: 0; }
+.kb-standard .kb-hybrid .kb-pagination-side a { min-height: 24px; }
+.kb-standard .kb-hybrid .kb-pagination-pages { gap: 12px; }
+.kb-standard .kb-hybrid .kb-pagination-pages > :is(a, span) {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 1px solid rgb(0 0 0 / 6%);
+  border-radius: 2px;
+  color: var(--kb-secondary);
+  background: transparent;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+}
+.kb-standard .kb-hybrid .kb-pagination-pages > a:hover { background: rgb(0 0 0 / 3%); }
+.kb-standard .kb-hybrid .kb-pagination-pages > a:focus-visible { outline: 2px solid var(--kb-mineral); outline-offset: 2px; }
+.kb-standard .kb-hybrid .kb-pagination-pages > [aria-current] { color: white; background: var(--kb-mineral); border-color: var(--kb-mineral); }
+.kb-standard .kb-hybrid .kb-pagination::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 100cqw;
+  transform: translateX(-50%);
+  z-index: -1;
+  background: rgb(0 0 0 / 1%);
+  pointer-events: none;
+}
 
 /* One lead story, with the same typography and cover language as the article grid. */
+.kb-standard .kb-hybrid .kb-intro + .kb-shell { padding-top: 64px; }
 .kb-photon-lead > a { display: block; }
 .kb-lead-image { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--layout-grid-gap); }
 .kb-lead-cover-copy { min-width: 0; display: flex; flex-direction: column; }
@@ -277,10 +319,11 @@
 }
 
 @media (min-width: 768px) and (max-width: 1199px) {
+  .kb-standard { --kb-header-height: 73px; }
   .kb-standard .kb-nav { width: calc(100% - 48px); height: 72px; }
 }
 @media (max-width: 767px) {
-  .kb-standard { font-size: 17px; }
+  .kb-standard { font-size: 17px; --kb-header-height: 64px; }
   .kb-standard .kb-nav { width: calc(100% - 32px); height: 63px; }
   .kb-standard .kb-nav img { width: 108px; }
   .kb-standard .kb-nav-actions { gap: 0; }
@@ -288,6 +331,7 @@
   .kb-standard .kb-menu-toggle { width: 44px; height: 44px; padding: 0; justify-content: center; }
   .kb-standard .kb-hybrid .kb-intro { min-height: calc(100cqw + 32px); padding-block: 104px 32px; }
   .kb-standard .kb-hybrid .kb-intro > * { grid-column: 1 / -1; }
+  .kb-standard .kb-hybrid .kb-intro + .kb-shell { padding-top: 32px; }
   .kb-standard .kb-hybrid .kb-featured, .kb-standard .kb-hybrid .kb-classic-featured, .kb-standard .kb-hybrid .kb-latest { padding-block: 32px; }
   .kb-standard .kb-hybrid .kb-featured p { font-size: 16px; line-height: 24px; }
   .kb-standard .kb-hybrid .kb-card p { line-height: 22px; }
@@ -295,6 +339,7 @@
   .kb-standard .kb-hybrid .kb-filters { display: flex; gap: 6px; }
   .kb-standard .kb-hybrid .kb-filters button { min-width: 0; flex: 1; padding-inline: 6px; font-size: 12px; line-height: 16px; }
   .kb-standard .kb-hybrid .kb-pagination { margin-top: 32px; }
+  .kb-standard .kb-hybrid .kb-pagination-side a { font-size: 14px; gap: 6px; white-space: nowrap; }
 }
 
 @media (max-width: 1199px) {

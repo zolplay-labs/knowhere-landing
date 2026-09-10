@@ -9,6 +9,7 @@ import {
   IconBrandGithub as FaGithub,
 } from '@tabler/icons-react';
 import { Footer } from './Footer';
+import { HeroDataStream } from '../../../pricing/src/components/hero-data-stream';
 import { articles, articleDate, articleUrl, type Article } from './articles';
 import coverSettings from '../../../login/src/lib/fluid-gradient/cover-settings.json';
 import type { MeshGradientRenderValues } from '../../../login/src/lib/fluid-gradient/mesh-gradient-renderer';
@@ -243,6 +244,7 @@ function ClassicLayout({ withLead = false }: { withLead?: boolean }) {
   const featuredStart = withLead ? 1 : 0;
   return <main id="blog-main" className={`kb-classic${withLead ? ' kb-hybrid' : ''}`}>
     <section className="kb-intro kb-shell" aria-labelledby="blog-title">
+      {withLead && <HeroDataStream />}
       <h1 id="blog-title">Blog</h1>
       <p>Knowledge infra for your coding agents.</p>
     </section>
