@@ -38,7 +38,7 @@ html[data-theme-transition="active"]::view-transition-new(root) {
 }
 .header-icon svg { width: 20px; height: 20px; }
 .header-language > .header-icon svg { width: 18px; height: 18px; }
-.pricing-header .theme-toggle { width: 44px; height: 44px; border-radius: 6px; }
+.pricing-header .theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
 .theme-icon {
   grid-area: 1 / 1;
   width: 20px;
@@ -55,7 +55,7 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
 .header-language { position: relative; }
 .header-language-options {
   position: absolute; top: calc(100% + 10px); right: 0; width: 148px; padding: 4px;
-  background: var(--paper); border: 1px solid var(--line); border-radius: 6px;
+  background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
 }
 .header-language-options[hidden], .header-mobile-menu[hidden] { display: none; }
 .header-language-options button {
@@ -76,7 +76,7 @@ html[data-theme="dark"] .theme-icon-sun { display: block; }
   .pricing-header { --header-height: 72px; border-color: var(--line); }
   .header-wordmark img { width: 120px; }
   .header-links { display: none; }
-  .header-icon { width: 44px; height: 44px; border-radius: 6px; }
+  .header-icon { width: 44px; height: 44px; border-radius: 10px; }
   .pricing-header .header-api { margin-left: 12px; }
   .header-menu-toggle {
     width: 44px; height: 44px; display: grid; place-items: center;

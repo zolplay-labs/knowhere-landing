@@ -1,3 +1,5 @@
+import PixelCard from '../components/PixelCard';
+import { HeroDataStream } from '../components/hero-data-stream'
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Header } from "../components/Header";
@@ -6,9 +8,6 @@ import { Footer } from "../components/Footer";
 import { CheckCircleFill } from "../components/CheckCircleFill";
 import type { CSSProperties } from "react";
 import {
-  IconArrowUpRight,
-  IconCheck,
-  IconCircleCheck,
   IconArrowsHorizontal,
 } from "@tabler/icons-react";
 
@@ -173,6 +172,7 @@ function App() {
           className="overview"
           aria-labelledby="hero-title"
         >
+          <HeroDataStream />
           <div className="hero-copy">
             <h1 id="hero-title">
               Better document context.
@@ -185,7 +185,8 @@ function App() {
             </p>
           </div>
           <div className="rate-card">
-            <div className="rate-graphic" aria-hidden="true" />
+            <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev/">Start free trial</a>
+            <div className="rate-rules">
             <div className="rate-stat rate-rule">
               <p><CheckCircleFill size={20} /> No subscription fee</p>
             </div>
@@ -194,6 +195,7 @@ function App() {
             </div>
             <div className="rate-promises rate-rule">
               <p><CheckCircleFill size={20} /> Only successful jobs are charged</p>
+            </div>
             </div>
           </div>
         </section>
@@ -220,10 +222,6 @@ function App() {
                   <div className="billing-plan-price">
                     <p>$1.50 <span>/ 100 pages</span></p>
                   </div>
-                  <div className="billing-plan-meta">
-                    <p className="billing-plan-unit">$0.015 per page</p>
-                    <span className="billing-plan-badge">Free 14-day trial</span>
-                  </div>
                 </header>
                 <aside className="billing-custom" aria-labelledby="billing-custom-title">
                   <div className="billing-custom-heading">
@@ -231,7 +229,7 @@ function App() {
                   </div>
                   <div className="billing-custom-copy">
                     <p>Custom limits, deployment, support, and SLAs.</p>
-                    <a href={contactUrl}>Talk to our team <IconArrowUpRight size={15} /></a>
+                    <a href={contactUrl}>Talk to our team</a>
                   </div>
                 </aside>
               </div>
@@ -246,8 +244,7 @@ function App() {
                     </p>
                   </div>
                   <div className="billing-row-charge">
-                    <p className="billing-row-price">$0.015</p>
-                    <p className="billing-row-unit">per page</p>
+                    <p className="billing-row-price">$0.015 <span className="billing-row-unit">/ page</span></p>
                   </div>
                 </section>
                 <section className="billing-row" aria-labelledby="billing-completed-title">
@@ -257,7 +254,6 @@ function App() {
                   </div>
                   <div className="billing-row-charge">
                     <p className="billing-row-result billing-row-success">Charged</p>
-                    <p className="billing-row-unit">Job completed</p>
                   </div>
                 </section>
                 <section className="billing-row" aria-labelledby="billing-failed-title">
@@ -267,7 +263,6 @@ function App() {
                   </div>
                   <div className="billing-row-charge">
                     <p className="billing-row-price">$0</p>
-                    <p className="billing-row-unit">Job failed</p>
                   </div>
                 </section>
               </div>
@@ -299,7 +294,7 @@ function App() {
                   {[
                     ["PDF document", ".pdf", "100M"],
                     ["Word document", ".docx", "50M"],
-                    ["Excel spreadsheet", ".xlsx", "100M"],
+                    ["Excel spreadsheet", ".xlsx", "50M"],
                     ["PowerPoint presentation", ".pptx", "100M"],
                   ].map(([label, extension, limit]) => (
                     <tr key={extension}><th scope="row">{label}<small>{extension}</small></th><td>{limit}</td></tr>
@@ -307,36 +302,35 @@ function App() {
                 </tbody>
               </table>
             </div>
-            <article className="enterprise-card">
+            <PixelCard variant="pink" className="enterprise-card">
               <div className="enterprise-card-top">
                 <h3>Enterprise custom pricing</h3>
-                <p>Custom limits, deployment, and support for your team.</p>
+                <p>Built for your team.</p>
               </div>
               <div className="enterprise-card-features">
-                <h4>Everything in pay as you go, plus</h4>
                 <ul>
                 <li>
-                    <IconCheck size={16} />
-                    <div><strong>Volume & custom limits</strong><p>Scale throughput around your production traffic.</p></div>
+                    <CheckCircleFill size={20} />
+                    <div><strong>Volume & custom limits</strong><p>Scale with your traffic.</p></div>
                 </li>
                 <li>
-                    <IconCheck size={16} />
-                    <div><strong>Dedicated deployment</strong><p>Choose managed, dedicated, or self-hosted options.</p></div>
+                    <CheckCircleFill size={20} />
+                    <div><strong>Dedicated deployment</strong><p>Deploy your way.</p></div>
                 </li>
                 <li>
-                    <IconCheck size={16} />
-                    <div><strong>Priority processing & support</strong><p>Plan faster handling and direct support for critical work.</p></div>
+                    <CheckCircleFill size={20} />
+                    <div><strong>Priority processing & support</strong><p>Faster jobs. Direct support.</p></div>
                 </li>
                 <li>
-                    <IconCheck size={16} />
-                    <div><strong>Custom SLAs & terms</strong><p>Align service levels and commercial terms with your needs.</p></div>
+                    <CheckCircleFill size={20} />
+                    <div><strong>Custom SLAs & terms</strong><p>Terms tailored to your needs.</p></div>
                 </li>
                 </ul>
               </div>
               <div className="enterprise-card-action">
                 <a href={contactUrl} className="button">Contact Sales</a>
               </div>
-            </article>
+            </PixelCard>
           </div>
         </section>
         <section
@@ -378,8 +372,8 @@ function App() {
             </div>
             <div className="final-cta-detail">
               <ul className="final-cta-benefits">
-                {["Free 14-day trial", "No credit card required", "Custom limits and deployment", "Direct support from our team"].map(item => (
-                  <li key={item}><IconCircleCheck size={20} stroke={1.5} /> <span>{item}</span></li>
+                {["Free 14-day trial", "Custom limits and deployment", "No credit card required", "Direct support from our team"].map(item => (
+                  <li key={item}><CheckCircleFill size={20} /> <span>{item}</span></li>
                 ))}
               </ul>
             </div>
