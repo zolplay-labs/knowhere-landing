@@ -4,7 +4,7 @@ import { HyperText } from '@/registry/magicui/hyper-text'
 import productDocuments from './product-documents.json'
 
 const MOBILE_PRODUCT_QUERY = '(max-width: 767px)'
-const DESKTOP_PRODUCT_QUERY = '(min-width: 1440px) and (min-height: 1100px)'
+const DESKTOP_PRODUCT_QUERY = '(min-width: 1200px)'
 const PRODUCT_STICKY_TOP = 68
 const PRODUCT_STAGE_COUNT = 5
 const PRODUCT_STAGE_SCROLL_VH = 60
@@ -1049,26 +1049,28 @@ export function ProductStage({ heading }) {
   }
 
   return (
-    <div
-      className="playground-scroll-track"
-      ref={trackRef}
-      style={{ '--product-stage-scroll-distance': `${PRODUCT_STAGE_COUNT * PRODUCT_STAGE_SCROLL_VH}svh` }}
-    >
-      <div className="playground-sticky">
-        {heading}
-        <div className="product-stage-switcher-row">
-          <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={changeTheme} />
-        </div>
-        <div className={`product-stage${isMobile ? ' is-stacked' : ''}`}>
-          <div className="product-stage-track">
-            <DocumentMap
-              activeThemeId={activeThemeId}
-              animateEntrance={animateEntrance}
-              scrollProgress={scrollProgress}
-            />
+    <>
+      {heading}
+      <div
+        className="playground-scroll-track"
+        ref={trackRef}
+        style={{ '--product-stage-scroll-distance': `${PRODUCT_STAGE_COUNT * PRODUCT_STAGE_SCROLL_VH}svh` }}
+      >
+        <div className="playground-sticky">
+          <div className="product-stage-switcher-row">
+            <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={changeTheme} />
+          </div>
+          <div className={`product-stage${isMobile ? ' is-stacked' : ''}`}>
+            <div className="product-stage-track">
+              <DocumentMap
+                activeThemeId={activeThemeId}
+                animateEntrance={animateEntrance}
+                scrollProgress={scrollProgress}
+              />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
