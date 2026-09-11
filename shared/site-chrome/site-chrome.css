@@ -63,8 +63,8 @@ html[data-theme="dark"] .kh-site-header .kh-theme-icon-sun { display: block; }
   width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 4px;
   background: transparent; text-align: left; color: var(--chrome-ink); font-size: 14px; line-height: 20px;
 }
-.kh-site-header .kh-header-language-options button[aria-checked="true"] { background: #f6f7ef; font-weight: 500; }
-.kh-site-header .kh-header-language-options button:hover, .kh-site-header .kh-header-language-options button:focus-visible { background: #f9faf5; }
+.kh-site-header .kh-header-language-options button[aria-checked="true"] { background: rgba(0, 0, 0, 0.06); font-weight: 500; }
+.kh-site-header .kh-header-language-options button:hover, .kh-site-header .kh-header-language-options button:focus-visible { background: rgba(0, 0, 0, 0.03); }
 .kh-site-header .kh-header-api {
   min-height: 36px; height: 36px; padding: 6px 12px;
   font-family: var(--sans); font-size: 13px; line-height: 20px;
@@ -108,9 +108,6 @@ html[data-theme="dark"] .kh-site-header .kh-theme-icon-sun { display: block; }
   .kh-site-header .kh-header-mobile-menu nav a { min-height: 58px; padding: 16px 8px; }
 }
 html[data-theme="dark"] .kh-site-header .kh-header-wordmark img { filter: invert(1); }
-html[data-theme="dark"] .kh-site-header .kh-header-language-options button[aria-checked="true"] { background: #042626; }
-html[data-theme="dark"] .kh-site-header .kh-header-language-options button:hover,
-html[data-theme="dark"] .kh-site-header .kh-header-language-options button:focus-visible { background: #021d1d; }
 @media (prefers-reduced-motion: reduce) {
   .kh-site-header .kh-header-menu-toggle i { transition: none; }
 }
