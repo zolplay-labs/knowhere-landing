@@ -15107,6 +15107,24 @@ html:not([data-theme="dark"]) #playground .product-workbook-tabs {
   color: var(--demo-accent-text);
 }
 
+html[data-theme="dark"] #playground .product-workbook-grid col:first-child,
+html[data-theme="dark"] #playground .product-workbook-grid thead th:first-child,
+html[data-theme="dark"] #playground .product-workbook-grid th[scope="row"] {
+  display: none;
+}
+
+html[data-theme="dark"] #playground .product-workbook-grid {
+  min-width: 680px;
+}
+
+html[data-theme="dark"] #playground .product-workbook-view,
+html[data-theme="dark"] #playground .product-workbook-grid th,
+html[data-theme="dark"] #playground .product-workbook-grid td,
+html[data-theme="dark"] #playground .product-workbook-tabs,
+html[data-theme="dark"] #playground .product-workbook-tabs button[aria-pressed="true"] {
+  background: transparent;
+}
+
 #playground .product-workbook-scroll:focus-visible,
 #playground .product-workbook-tabs button:focus-visible {
   outline: 2px solid var(--page-primary);
