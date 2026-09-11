@@ -193,9 +193,6 @@ function App() {
               Turn PDFs, spreadsheets, presentations, and images into structured
               data for AI workflows. No subscriptions, no minimum spend.
             </p>
-          </div>
-          <div className="rate-card">
-            <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev/">Start parsing for free</a>
             <div className="rate-rules">
             <div className="rate-stat rate-rule">
               <p><CheckCircleFill size={20} /> No credit card required</p>
@@ -207,6 +204,9 @@ function App() {
               <p><CheckCircleFill size={20} /> No minimum spend</p>
             </div>
             </div>
+          </div>
+          <div className="rate-card">
+            <a className="button" href="https://knowhere-login.knowhere-landing.workers.dev/">Start parsing for free</a>
           </div>
         </section>
         <Calculator />

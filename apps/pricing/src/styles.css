@@ -312,24 +312,11 @@ h1 span {
   margin-top: 48px;
 }
 .rate-rules {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-.rate-stat,
-.rate-promises {
-  min-width: 0;
-  min-height: 0;
-  padding: 16px 24px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  background: var(--paper);
-  border-right: 1px solid var(--line);
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
 }
-.rate-promises { border-right: 0; }
-.rate-rule:nth-child(2) { background: var(--rate-highlight); }
 .rate-rule > p {
   display: flex;
   align-items: center;
@@ -1111,7 +1098,6 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
     --layout-grid-edge: 24px;
   }
   .rate-card { gap: 16px; }
-  .rate-rule { padding-inline: 8px; }
   .rate-rule > p { white-space: nowrap; font-size: clamp(12px, 1.36vw, 14px); }
   .rate-rules { width: 100%; }
   .limits-table,
@@ -1176,16 +1162,7 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   .enterprise-card { grid-row: 1; }
   .limits-table { grid-row: 2; }
   .rate-card { grid-template-columns: 1fr; justify-items: start; }
-  .rate-rules { width: 100%; grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .rate-stat,
-  .rate-promises {
-    min-height: 0;
-    padding-inline: 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .rate-stat:first-child { border-right: 1px solid var(--line); }
-  .rate-promises { grid-column: 1 / -1; border-bottom: 0; }
+
   .section-heading > p {
     font-size: 15px;
     line-height: 22px;
