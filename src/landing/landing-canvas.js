@@ -826,13 +826,15 @@ function initializeHeroCanvas(root, cleanups) {
     }
 
     function drawPixel(x, y, alpha = 1, color = heroInkColor) {
+      const size = (cell - 2) * (width < 768 ? .8 : 1);
+      const inset = (cell - size) / 2;
       ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
       ctx.fillStyle = color;
       ctx.fillRect(
-        Math.round(x / cell) * cell + 1,
-        Math.round(y / cell) * cell + 1,
-        cell - 2,
-        cell - 2
+        Math.round(x / cell) * cell + inset,
+        Math.round(y / cell) * cell + inset,
+        size,
+        size
       );
     }
 
@@ -969,6 +971,7 @@ function initializeHeroCanvas(root, cleanups) {
         ? scanRevealTargets.filter(element => element !== header)
         : scanRevealTargets;
       if (scan >= 1) {
+        hero.classList.add('is-scan-complete');
         activeRevealTargets.forEach(element => {
           element.style.opacity = '1';
           element.style.clipPath = 'none';
@@ -1604,6 +1607,7 @@ function initializeHeroCanvas(root, cleanups) {
       if (visible) startAnimation();
       else {
         revealHeaderImmediately();
+        hero.classList.add('is-scan-complete');
         stopAnimation();
         tooltip.classList.remove('is-visible');
       }
@@ -1626,7 +1630,7 @@ function initializeHeroCanvas(root, cleanups) {
       cancelAnimationFrame(resizeFrameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
-      hero.classList.remove('is-data-layer-hovered');
+      hero.classList.remove('is-data-layer-hovered', 'is-scan-complete');
       tooltip.classList.remove('is-visible');
       hero.style.removeProperty('--hero-scan-edge');
       scanRevealTargets.forEach(element => {

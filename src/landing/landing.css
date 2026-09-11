@@ -965,6 +965,9 @@
     html.js .site-header,
     html.js #top.hero-b-layout .hero-copy > *,
     html.js #top.hero-b-layout .hero-visual { opacity: 0; clip-path: inset(0 0 100% 0); will-change: clip-path, opacity; }
+    @media (prefers-reduced-motion: no-preference) {
+      html.js #top.hero-b-layout:not(.is-scan-complete) ~ #playground .section-heading { visibility: hidden; }
+    }
     #top.hero-b-layout .hero-copy { justify-content: center; }
     #top.hero-b-layout .hero-copy h1 { font-weight: 300; letter-spacing: .5px; }
     #top.hero-b-layout .hero-copy .lede { font-weight: 300; }
