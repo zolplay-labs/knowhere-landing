@@ -1,7 +1,7 @@
 export const siteLinks = {
   landing: "https://knowhere-landing.knowhere-landing.workers.dev/",
   pricing: "https://knowhere-pricing.knowhere-landing.workers.dev/",
-  blog: "https://knowhere-blog.knowhere-landing.workers.dev/#featured-title",
+  blog: "https://knowhere-blog.knowhere-landing.workers.dev/",
   docs: "https://docs.knowhereto.ai/",
   login: "https://knowhere-login.knowhere-landing.workers.dev/",
 };
