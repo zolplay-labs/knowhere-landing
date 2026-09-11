@@ -9,6 +9,7 @@ import { Footer } from './Footer';
 import { HeroDataStream } from '../../../pricing/src/components/hero-data-stream';
 import { articles, articleDate, type Article } from './articles';
 import { ProcessedArticleCover } from './ProcessedArticleCover';
+import { CoverImage } from './CoverImage';
 import coverSettings from './local-fluid-cover/render-settings.json';
 import studioSettings from './local-fluid-cover/studio-settings.json';
 import leadLogo from './local-fluid-cover/logo.svg';
@@ -110,10 +111,10 @@ export function ArticleCard({ article, originalCover = false, coverOverride }: {
   return <article className="kb-card kb-card-hybrid">
     <Link to={article.category === 'Use Case' ? `/articles/${article.slug}` : '/article-preview'} preload="intent">
       <div className="kb-card-image">
-        {article.category === 'Use Case' ? <img className="kb-cover" src={article.coverSource} width="4096" height="2304" alt={article.category} />
-          : coverOverride ? <img className="kb-cover" src={coverOverride} width="4096" height="2304" alt={article.category} />
-          : (originalCover || ('originalCover' in article && article.originalCover)) ? <img className="kb-cover" src={`/covers/categories/${article.category.toLowerCase()}.png`}
-          width="4096" height="2304" alt={article.category} />
+        {article.category === 'Use Case' ? <CoverImage src={article.coverSource} alt={article.category} />
+          : coverOverride ? <CoverImage src={coverOverride} alt={article.category} />
+          : (originalCover || ('originalCover' in article && article.originalCover)) ? <CoverImage src={`/covers/categories/${article.category.toLowerCase()}.png`}
+          alt={article.category} />
           : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
       </div>
       <div className="kb-card-copy">

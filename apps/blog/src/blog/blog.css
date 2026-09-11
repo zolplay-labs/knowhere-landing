@@ -297,6 +297,12 @@
 .kb-lead-story time { margin-top: auto; color: var(--kb-secondary); font: 400 12px/20px var(--mono); text-transform: uppercase; }
 .kb-lead-cover-art { min-width: 0; }
 .kb-lead-logo-art { position: relative; display: grid; width: 100%; aspect-ratio: 16 / 9; place-items: center; overflow: hidden; background: #f0f2e6; }
+.kb-card-image { background: rgba(0, 0, 0, 0.03); }
+.kb-lead-logo-art:not(:has(canvas[data-ready="true"])) { background: rgba(0, 0, 0, 0.03); }
+.kb-processed-cover:has(img[data-ready="true"]) { background: #f0f2e6; }
+.kb-loading-cover:not([data-ready="true"]),
+.kb-lead-logo-art:not(:has(canvas[data-ready="true"])) > *,
+.kb-processed-cover:not(:has(img[data-ready="true"])) > * { opacity: 0; }
 .kb-lead-logo-art canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .kb-lead-content-gradient { position: absolute; inset: 0; background: linear-gradient(180deg, rgb(255 255 255 / 0%) 0%, #fff 100%); }
 @font-face { font-family: 'Product Cover Poppins'; src: url('./local-fluid-cover/Poppins-Variable.woff2') format('woff2'); font-weight: 100 900; font-display: swap; }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { CoverImage } from './CoverImage';
 import settings from './local-fluid-cover/product-render-settings.json';
 import type { MeshGradientRenderValues } from '../../../login/src/lib/fluid-gradient/mesh-gradient-renderer';
 
@@ -34,8 +35,8 @@ export function ProcessedArticleCover({ source, label }: { source: string; label
     return () => { cancelled = true; };
   }, [source]);
 
-  return <div className="kb-product-cover" style={{ position: 'relative', aspectRatio: '16 / 9', background: '#f0f2e6' }}>
-    {processed && <img className="kb-cover" src={processed} width="1920" height="1080" alt={label} />}
+  return <div className="kb-product-cover kb-processed-cover" style={{ position: 'relative', aspectRatio: '16 / 9' }}>
+    {processed && <CoverImage src={processed} width={1920} height={1080} alt={label} />}
     <div className="kb-lead-content-gradient" />
     <span className="kb-cover-type">{label}</span>
   </div>;
