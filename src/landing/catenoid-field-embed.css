@@ -119,17 +119,19 @@
   opacity: 0;
 }
 
-.integration-code-frame__tabs {
+#integration .integration-code-frame__tabs {
   display: flex;
   align-self: stretch;
   align-items: center;
   gap: 10px;
 }
 
-.integration-code-frame__tabs button {
+#integration .integration-code-frame__tabs button {
   display: flex;
   width: 65px;
-  min-height: 24px;
+  flex: 0 0 65px;
+  height: 44px;
+  min-height: 44px;
   padding: 4px 6px;
   align-items: center;
   justify-content: center;
@@ -137,6 +139,7 @@
   background: transparent;
   color: var(--mineral-green-500);
   font: inherit;
+  font-size: 12px;
   line-height: 16px;
   cursor: pointer;
   transition: border-color 140ms ease, color 140ms ease;
@@ -190,10 +193,13 @@
   overflow: auto;
   color: var(--mist-white-700);
   font: inherit;
-  scrollbar-color: color-mix(in srgb, var(--mineral-green-500) 56%, transparent) transparent;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   white-space: pre;
   overscroll-behavior: contain;
+}
+
+.integration-code-frame pre::-webkit-scrollbar {
+  display: none;
 }
 
 .integration-code-frame code {
@@ -497,16 +503,6 @@
     padding: 7px;
   }
 
-  .integration-code-frame__tabs {
-    gap: 6px;
-  }
-
-  .integration-code-frame__tabs button {
-    width: 55px;
-    min-height: 22px;
-    padding: 3px 4px;
-  }
-
   #integration .catenoid-field-controls {
     top: 8px;
     right: 8px;
@@ -540,13 +536,6 @@
 @media (max-width: 767px) {
   .integration-code-frame__card {
     background: var(--white-100);
-  }
-
-  .integration-code-frame__tabs button {
-    width: 65px;
-    height: 26px;
-    min-height: 26px;
-    padding: 4px 6px;
   }
 
   #integration .integration-code-frame__copy {
