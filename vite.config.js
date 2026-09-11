@@ -17,8 +17,6 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(root, 'index.html'),
-        landingSource: resolve(root, 'landing-source.html'),
-        documentScanSection: resolve(root, 'document-scan-section.html'),
       },
     },
   },

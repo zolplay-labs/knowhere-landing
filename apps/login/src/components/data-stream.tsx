@@ -1,5 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
-import { DataStreamControls } from './data-stream-controls'
+import { useEffect, useRef } from 'react'
 import { DEFAULT_STREAM_SETTINGS, type StreamSettings } from './data-stream-settings'
 const random = (seed: number) => {
   const value = Math.sin(seed * 127.1 + 17) * 43758.5453
@@ -22,17 +21,9 @@ const noise = (x: number, y: number) => {
   return top * (1 - v) + bottom * v
 }
 
-export function DataStream({ chinese }: { chinese: boolean }) {
+export function DataStream() {
   const ref = useRef<HTMLCanvasElement>(null)
-  const [settings, setSettings] = useState({ ...DEFAULT_STREAM_SETTINGS })
-  const settingsRef = useRef(settings)
-  const refreshRef = useRef<((previous: StreamSettings) => void) | null>(null)
-
-  useEffect(() => {
-    const previous = settingsRef.current
-    settingsRef.current = settings
-    refreshRef.current?.(previous)
-  }, [settings])
+  const settingsRef = useRef<StreamSettings>({ ...DEFAULT_STREAM_SETTINGS })
 
   useEffect(() => {
     const canvas = ref.current!
@@ -115,11 +106,6 @@ export function DataStream({ chinese }: { chinese: boolean }) {
       syncAnimation()
     }
 
-    refreshRef.current = previous => {
-      if (previous.phase !== settingsRef.current.phase) phase = settingsRef.current.phase * 0.22
-      if (previous.cellSize !== settingsRef.current.cellSize) resize()
-      else syncAnimation()
-    }
     const observer = new ResizeObserver(resize)
     observer.observe(canvas)
     document.addEventListener('visibilitychange', syncAnimation)
@@ -127,7 +113,6 @@ export function DataStream({ chinese }: { chinese: boolean }) {
     resize()
     return () => {
       cancelAnimationFrame(frame)
-      refreshRef.current = null
       observer.disconnect()
       document.removeEventListener('visibilitychange', syncAnimation)
       reducedMotion.removeEventListener('change', syncAnimation)
@@ -135,14 +120,11 @@ export function DataStream({ chinese }: { chinese: boolean }) {
   }, [])
 
   return (
-    <>
-      <canvas
-        ref={ref}
-        className="login-data-stream"
-        aria-hidden="true"
-        style={{ height: `clamp(${96 * settings.height}px, ${18 * settings.height}svh, ${216 * settings.height}px)` }}
-      />
-      <DataStreamControls settings={settings} onChange={setSettings} chinese={chinese} />
-    </>
+    <canvas
+      ref={ref}
+      className="login-data-stream"
+      aria-hidden="true"
+      style={{ height: `clamp(${96 * DEFAULT_STREAM_SETTINGS.height}px, ${18 * DEFAULT_STREAM_SETTINGS.height}svh, ${216 * DEFAULT_STREAM_SETTINGS.height}px)` }}
+    />
   )
 }

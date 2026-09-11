@@ -404,7 +404,7 @@ Landing 已实现通用按钮颜色、按下与禁用样式；加载图标属于
 | 共享导航与页脚 | [SiteHeader.tsx](./shared/site-chrome/SiteHeader.tsx)、[SiteFooter.tsx](./shared/site-chrome/SiteFooter.tsx)、[site-chrome.css](./shared/site-chrome/site-chrome.css) |
 | 主题过渡 | [AnimatedThemeToggler.tsx](./shared/site-chrome/AnimatedThemeToggler.tsx) |
 | 页面交互与 Canvas | [landing-interactions.js](./src/landing/landing-interactions.js)、[landing-canvas.js](./src/landing/landing-canvas.js) |
-| 文档演示 | [document-map.jsx](./src/landing/document-map.jsx)、[document-scan-section.html](./document-scan-section.html) |
+| 文档演示 | [document-map.jsx](./src/landing/document-map.jsx) |
 | SDK 与插图 | [catenoid-field-embed.jsx](./src/landing/catenoid-field-embed.jsx)、[catenoid-field-embed.css](./src/landing/catenoid-field-embed.css) |
 | 结尾插图 | [converging-helix-embed.jsx](./src/landing/converging-helix-embed.jsx)、[converging-helix.js](./src/landing/converging-helix.js) |
 | 表单视觉参考 | [form-controls.css](./apps/login/src/components/form-controls.css)、[form-controls.tsx](./apps/login/src/components/form-controls.tsx) |

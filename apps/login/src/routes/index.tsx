@@ -40,7 +40,7 @@ function App() {
       <div className="login-background" aria-hidden="true">
         <FluidCover />
       </div>
-      <DataStream chinese={chinese} />
+      <DataStream />
       <header className="login-header">
         <a
           className="brand"

@@ -220,34 +220,6 @@ export function CatenoidFieldEmbed({
   )
 }
 
-export function RangeControl({ disabled = false, label, max, min, onChange, step = 1, suffix = '', value }) {
-  return (
-    <label className="catenoid-field-control">
-      <span>{label}</span>
-      <output>{value}{suffix}</output>
-      <input
-        type="range"
-        aria-label={label}
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        disabled={disabled}
-        onChange={event => onChange(Number(event.target.value))}
-      />
-    </label>
-  )
-}
-
-export function ColorControl({ label, onChange, value }) {
-  return (
-    <label className="catenoid-field-color-control">
-      <span>{label}</span>
-      <span className="catenoid-field-color-value"><input type="color" aria-label={`${label} color`} value={value} onChange={event => onChange(event.target.value)} /><output>{value.toUpperCase()}</output></span>
-    </label>
-  )
-}
-
 function IntegrationCodeFrame() {
   const [activeLanguage, setActiveLanguage] = useState('python')
   const [copied, setCopied] = useState(false)
@@ -363,134 +335,25 @@ function IntegrationCodeFrame() {
   )
 }
 
-/** Adds a local, collapsible tuning surface around the standalone artwork. */
+/** Renders the Integration artwork with the same defaults and saved settings as before. */
 export function CatenoidFieldTuner() {
   const initialSettings = useMemo(loadSavedSettings, [])
-  const [viewRotation, setViewRotation] = useState(initialSettings.viewRotation)
-  const [cycleSpeed, setCycleSpeed] = useState(initialSettings.cycleSpeed)
-  const [rotationSpeed, setRotationSpeed] = useState(initialSettings.rotationSpeed)
-  const [colors, setColors] = useState(initialSettings.colors)
-  const [fieldLayout, setFieldLayout] = useState(initialSettings.fieldLayout)
-  const [settingsSaved, setSettingsSaved] = useState(false)
-  const [panelPosition, setPanelPosition] = useState(null)
-  const workbenchRef = useRef(null)
-  const controlsRef = useRef(null)
-  const dragRef = useRef(null)
-  const automaticView = viewRotation === null
-
-  const setAxis = (axis, value) => {
-    setViewRotation(rotation => rotation?.map((current, index) => index === axis ? value : current) ?? DEFAULT_VIEW_ROTATION)
-  }
-  const resetDefaults = () => {
-    setViewRotation(DEFAULT_VIEW_ROTATION)
-    setCycleSpeed(DEFAULT_CYCLE_SPEED)
-    setRotationSpeed(DEFAULT_ROTATION_SPEED)
-    setColors(DEFAULT_COLORS)
-    setFieldLayout(DEFAULT_FIELD_LAYOUT)
-  }
-  const saveSettings = () => {
-    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({
-      viewRotation,
-      cycleSpeed,
-      rotationSpeed,
-      colors,
-      fieldLayout,
-    }))
-    setSettingsSaved(true)
-  }
-  const setColor = (name, value) => setColors(current => ({ ...current, [name]: value }))
-  const setLayoutValue = (setter, name, value) => setter(current => ({ ...current, [name]: value }))
-  const startPanelDrag = event => {
-    if (event.button !== 0) return
-    const workbench = workbenchRef.current
-    const panel = controlsRef.current
-    if (!workbench || !panel) return
-    const bounds = workbench.getBoundingClientRect()
-    const panelBounds = panel.getBoundingClientRect()
-    dragRef.current = {
-      pointerId: event.pointerId,
-      startX: event.clientX,
-      startY: event.clientY,
-      panelX: panelBounds.left - bounds.left,
-      panelY: panelBounds.top - bounds.top,
-    }
-    event.currentTarget.setPointerCapture(event.pointerId)
-    event.preventDefault()
-    event.stopPropagation()
-  }
-  const movePanel = event => {
-    const drag = dragRef.current
-    const workbench = workbenchRef.current
-    const panel = controlsRef.current
-    if (!drag || drag.pointerId !== event.pointerId || !workbench || !panel) return
-    const bounds = workbench.getBoundingClientRect()
-    const desiredX = drag.panelX + event.clientX - drag.startX
-    const desiredY = drag.panelY + event.clientY - drag.startY
-    setPanelPosition({
-      x: clamp(bounds.left + desiredX, 8, Math.max(8, innerWidth - panel.offsetWidth - 8)) - bounds.left,
-      y: clamp(bounds.top + desiredY, 8, Math.max(8, innerHeight - panel.offsetHeight - 8)) - bounds.top,
-    })
-  }
-  const stopPanelDrag = event => {
-    if (dragRef.current?.pointerId !== event.pointerId) return
-    dragRef.current = null
-    event.currentTarget.releasePointerCapture(event.pointerId)
-    event.preventDefault()
-    event.stopPropagation()
-  }
-
-  useEffect(() => {
-    setSettingsSaved(false)
-  }, [viewRotation, cycleSpeed, rotationSpeed, colors, fieldLayout])
+  const { colors, fieldLayout } = initialSettings
 
   return (
-    <div className="catenoid-field-workbench" ref={workbenchRef}>
+    <div className="catenoid-field-workbench">
       <CatenoidFieldEmbed
-        viewRotation={viewRotation}
+        viewRotation={initialSettings.viewRotation}
         accentColor="var(--mineral-green-500)"
         secondaryColor="var(--coral-signal-500)"
         backgroundColor={colors.backgroundColor === DEFAULT_COLORS.backgroundColor ? 'var(--white-100)' : colors.backgroundColor}
-        cycleSpeed={cycleSpeed}
+        cycleSpeed={initialSettings.cycleSpeed}
         fieldOffsetX={fieldLayout.x}
         fieldOffsetY={fieldLayout.y}
         fieldScale={fieldLayout.scale}
-        rotationSpeed={rotationSpeed}
+        rotationSpeed={initialSettings.rotationSpeed}
       />
       <IntegrationCodeFrame />
-      <details
-        ref={controlsRef}
-        className="catenoid-field-controls"
-        style={panelPosition ? { left: panelPosition.x, top: panelPosition.y, right: 'auto' } : undefined}
-      >
-        <summary><button className="catenoid-field-drag-handle" type="button" aria-label="Drag controls" title="Drag controls · double-click to reset position" onPointerDown={startPanelDrag} onPointerMove={movePanel} onPointerUp={stopPanelDrag} onPointerCancel={stopPanelDrag} onDoubleClick={event => { event.preventDefault(); event.stopPropagation(); setPanelPosition(null) }} onClick={event => { event.preventDefault(); event.stopPropagation() }}>⠿</button><span>Adjust Catenoid Field</span><small>{automaticView ? 'Auto view' : `${viewRotation.join('° / ')}°`}</small></summary>
-        <div className="catenoid-field-controls__body">
-          <p className="catenoid-field-mode" role="status">{automaticView ? 'Auto view · axis controls disabled' : 'Fixed view · cycle animation remains active'}</p>
-          <div className="catenoid-field-control-grid">
-            <RangeControl disabled={automaticView} label="X / Pitch" min={-90} max={90} value={viewRotation?.[0] ?? DEFAULT_VIEW_ROTATION[0]} suffix="°" onChange={value => setAxis(0, value)} />
-            <RangeControl disabled={automaticView} label="Y / Yaw" min={-180} max={180} value={viewRotation?.[1] ?? DEFAULT_VIEW_ROTATION[1]} suffix="°" onChange={value => setAxis(1, value)} />
-            <RangeControl disabled={automaticView} label="Z / Roll" min={-180} max={180} value={viewRotation?.[2] ?? DEFAULT_VIEW_ROTATION[2]} suffix="°" onChange={value => setAxis(2, value)} />
-            <RangeControl label="Cycle speed" min={0} max={2} step={0.05} value={cycleSpeed} suffix="×" onChange={setCycleSpeed} />
-            <RangeControl label="Rotation speed" min={0} max={2} step={0.05} value={rotationSpeed} suffix="×" onChange={setRotationSpeed} />
-          </div>
-          <h3 className="catenoid-field-control-heading">Field layout</h3>
-          <div className="catenoid-field-control-grid">
-            <RangeControl label="Field X" min={-30} max={30} value={fieldLayout.x} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'x', value)} />
-            <RangeControl label="Field Y" min={-30} max={30} value={fieldLayout.y} suffix="%" onChange={value => setLayoutValue(setFieldLayout, 'y', value)} />
-            <RangeControl label="Field scale" min={0.5} max={2} step={0.05} value={fieldLayout.scale} suffix="×" onChange={value => setLayoutValue(setFieldLayout, 'scale', value)} />
-          </div>
-          <div className="catenoid-field-color-grid">
-            <ColorControl label="Accent" value={colors.accentColor} onChange={value => setColor('accentColor', value)} />
-            <ColorControl label="Secondary" value={colors.secondaryColor} onChange={value => setColor('secondaryColor', value)} />
-            <ColorControl label="Background" value={colors.backgroundColor} onChange={value => setColor('backgroundColor', value)} />
-          </div>
-          <div className="catenoid-field-actions">
-            <button type="button" onClick={saveSettings}>{settingsSaved ? 'Saved' : 'Save settings'}</button>
-            <button type="button" onClick={() => setViewRotation([0, 0, 0])}>Front view</button>
-            <button type="button" aria-pressed={automaticView} onClick={() => setViewRotation(null)}>Auto view</button>
-            <button type="button" onClick={resetDefaults}>Reset defaults</button>
-          </div>
-        </div>
-      </details>
     </div>
   )
 }

@@ -483,15 +483,6 @@ if (!(root instanceof Element)) return () => {};
       });
     });
   }
-  const scanFrame = $('.section-scan-frame iframe');
-  function syncScanFrameLanguage() {
-    try {
-      scanFrame?.contentWindow?.setKnowhereLanguage?.(activeLanguage);
-    } catch {
-      // The embedded demo can become cross-origin without blocking the main language switch.
-    }
-  }
-  scanFrame?.addEventListener('load', syncScanFrameLanguage);
   function setLanguage(language) {
     const isChinese = language === 'zh';
     activeLanguage = language;
@@ -505,7 +496,6 @@ if (!(root instanceof Element)) return () => {};
       : 'Knowhere turns complex documents into structured, navigable, and source-linked context for agents.';
 
     translatePage();
-    syncScanFrameLanguage();
     if (storyReady) renderStoryCanvas();
     if (headingEmphasisReady) refreshHeadingEmphasis();
     if (pricingReady) syncPricingCalculator();
@@ -520,7 +510,9 @@ if (!(root instanceof Element)) return () => {};
     if (event.key === 'Escape' && !toast.hidden) toast.hidden = true;
   });
   function setupTabs(tablist, onChange) {
+    if (!tablist) return;
     const tabs = $$('[role="tab"]', tablist);
+    if (!tabs.length) return;
     tabs.forEach((tab, index) => {
       tab.addEventListener('click', () => activate(index));
       tab.addEventListener('keydown', event => {
@@ -549,88 +541,8 @@ if (!(root instanceof Element)) return () => {};
     activate(Math.max(0, tabs.findIndex(tab => tab.getAttribute('aria-selected') === 'true')));
   }
   const tablists = $$('.tabs[role="tablist"]');
-  setupTabs(tablists[0]);
-  setupTabs(tablists[1]);
+  tablists.forEach(tablist => setupTabs(tablist));
 
-  const samples = {
-    research: { title: 'Tesla Q4 2025 Update.pdf', type: 'pdf', summary: 'Quarterly update · 24 pages', text: 'A prepared example illustrating sections, tables, and source-region references.', outline: [['Market overview', 'Page 02'], ['Operating highlights', 'Page 07'], ['Financial tables', 'Page 12']], assets: ['image-1 · earnings chart', 'image-2 · delivery map', 'table-3 · regional summary'] },
-    sales: { title: 'Product strategy deck.pptx', type: 'presentation', summary: 'Strategy deck · 38 slides', text: 'A prepared example illustrating narrative sections, notes, charts, and slide references.', outline: [['Positioning', 'Slide 03'], ['GTM plan', 'Slide 12'], ['Launch metrics', 'Slide 28']], assets: ['image-1 · market map', 'image-2 · product architecture', 'chart-3 · launch funnel'] },
-    finance: { title: 'Financial model.xlsx', type: 'spreadsheet', summary: 'Forecast model · 18 sheets', text: 'A prepared example illustrating sheets, cell ranges, and formula relationships.', outline: [['Assumptions', 'Sheet 01'], ['Revenue model', 'Sheet 04'], ['Scenario analysis', 'Sheet 12']], assets: ['table-1 · revenue forecast', 'table-2 · sensitivity analysis', 'chart-1 · cash runway'] },
-    atlas: { title: 'Architectural atlas.pdf', type: 'pdf', summary: 'Design atlas · 42 pages', text: 'A prepared example illustrating drawings, labels, spatial relationships, and region references.', outline: [['Site context', 'Page 04'], ['Building section', 'Page 21'], ['Material schedule', 'Page 34']], assets: ['image-1 · site plan', 'image-2 · building section', 'image-3 · material board'] }
-  };
-  const sampleButtons = $$('.sample-list button');
-  const workbench = $('[data-workbench-drop]');
-  const workbenchOverlay = $('[data-workbench-overlay]');
-  const workbenchCode = $('[data-workbench-code]');
-  const workbenchFile = $('[data-workbench-file]');
-  const workbenchState = $('[data-workbench-state]');
-  const workbenchText = $('[data-workbench-text]');
-  const workbenchOutline = $('[data-workbench-outline]');
-  const workbenchTree = $('[data-workbench-tree]');
-  const workbenchAssets = $('[data-workbench-assets]');
-  let activeSampleKey = null;
-  function renderSample(key) {
-    const sample = samples[key];
-    if (!sample) return;
-    activeSampleKey = key;
-    sampleButtons.forEach(button => {
-      const selected = button.dataset.sample === key;
-      button.setAttribute('aria-selected', String(selected));
-      button.classList.remove('is-dragging');
-    });
-    workbench.classList.remove('is-drag-over');
-    workbench.classList.add('is-filled');
-    workbenchOverlay.hidden = true;
-    workbenchFile.textContent = localizeText(sample.title);
-    workbenchState.textContent = localizeText(sample.summary);
-    workbenchCode.textContent = JSON.stringify({
-      document: sample.title,
-      type: sample.type,
-      status: 'structured',
-      files: sample.assets.map((name, index) => ({ name, type: name.startsWith('table') ? 'table' : 'image', source: sample.outline[Math.min(index, sample.outline.length - 1)][1] }))
-    }, null, 2);
-    workbenchText.textContent = localizeText(sample.text);
-    workbenchOutline.innerHTML = sample.outline.map(([label, location]) => `<li><strong>${localizeText(label)}</strong><span>${localizeText(location)}</span></li>`).join('');
-    workbenchTree.innerHTML = [`root / ${localizeText(sample.title)}`, `├─ sections / ${sample.outline.length}`, '├─ tables / illustrative ranges', '└─ source regions / prepared preview'].map(item => `<span>${localizeText(item)}</span>`).join('');
-    workbenchAssets.innerHTML = sample.outline.map(([label, location]) => `<span><b>${localizeText(location)} · ${localizeText(label)}</b><small>${localizeText('Original source · visual region preserved')}</small></span>`).join('');
-  }
-  function moveSample(button) { renderSample(button.dataset.sample); }
-  sampleButtons.forEach((button, index) => {
-    button.addEventListener('click', () => moveSample(button));
-    button.addEventListener('dragstart', event => {
-      button.classList.add('is-dragging');
-      event.dataTransfer?.setData('text/plain', button.dataset.sample);
-      if (event.dataTransfer) event.dataTransfer.effectAllowed = 'copy';
-    });
-    button.addEventListener('dragend', () => button.classList.remove('is-dragging'));
-    button.addEventListener('keydown', event => {
-      let next;
-      if (event.key === 'ArrowDown') next = (index + 1) % sampleButtons.length;
-      if (event.key === 'ArrowUp') next = (index - 1 + sampleButtons.length) % sampleButtons.length;
-      if (event.key === 'Home') next = 0;
-      if (event.key === 'End') next = sampleButtons.length - 1;
-      if (next !== undefined) { event.preventDefault(); sampleButtons[next].focus(); }
-      if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); moveSample(button); }
-    });
-  });
-  workbench.addEventListener('dragover', event => {
-    event.preventDefault();
-    workbench.classList.add('is-drag-over');
-    if (event.dataTransfer) event.dataTransfer.dropEffect = 'copy';
-  });
-  workbench.addEventListener('dragleave', event => { if (!workbench.contains(event.relatedTarget)) workbench.classList.remove('is-drag-over'); });
-  workbench.addEventListener('drop', event => {
-    event.preventDefault();
-    const key = event.dataTransfer?.getData('text/plain');
-    if (samples[key]) renderSample(key);
-  });
-  workbench.addEventListener('keydown', event => {
-    if ((event.key === 'Enter' || event.key === ' ') && activeSampleKey === null) { event.preventDefault(); moveSample(sampleButtons[0]); }
-  });
-  renderSample('research');
-  addEventListener('knowhere-language-change', () => {
-    if (activeSampleKey) renderSample(activeSampleKey);
-  });
   $$('[data-hero-source]').forEach(button => button.addEventListener('click', () => {
     $$('[data-hero-source]').forEach(item => item.classList.toggle('is-active', item === button));
     $('[data-hero-coordinate]').textContent = `${localizeText('Page 12')} · ${activeLanguage === 'zh' ? '区域' : 'Region'} ${button.dataset.heroSource}`;
@@ -642,7 +554,7 @@ if (!(root instanceof Element)) return () => {};
     });
   });
 
-  $('.copy-code').addEventListener('click', async event => {
+  $('.copy-code')?.addEventListener('click', async event => {
     const copyButton = event.currentTarget;
     const selected = $('.code-card [role="tab"][aria-selected="true"]');
     const code = $(`#${selected.getAttribute('aria-controls')} code`).textContent;
