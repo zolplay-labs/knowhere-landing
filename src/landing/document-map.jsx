@@ -33,23 +33,29 @@ const themeSourcesMap = Object.fromEntries(productDocuments.map(project => [
     ...source,
     filename: document.name,
     documentTitle: document.title,
-    format: 'PDF',
-    location: `PAGE ${String(source.page).padStart(2, '0')}`,
+    format: project.format,
+    location: source.location ?? `PAGE ${String(source.page).padStart(2, '0')}`,
     caption: source.title,
-    citation: `DOCUMENT ${documentIndex + 1} · PDF page ${source.page}`,
+    citation: source.location
+      ? `${document.name} · ${source.sheetName ? source.location : source.title}`
+      : `DOCUMENT ${documentIndex + 1} · PDF page ${source.page}`,
   }))),
 ]))
 
 const themes = productDocuments.map(project => ({
   id: project.id,
   label: project.label,
+  format: project.format,
+  extension: project.extension,
+  icon: project.icon,
   documents: project.documents.map(document => ({
     name: document.name,
     title: document.title,
     sections: document.sources.map(source => ({
       name: source.title,
       copy: source.pageText ?? (source.excerpt ? [source.excerpt] : []),
-      pages: [{ label: `PAGE ${String(source.page).padStart(2, '0')}`, sourceId: source.id }],
+      sheetName: source.sheetName,
+      pages: [{ label: source.location ?? `PAGE ${String(source.page).padStart(2, '0')}`, sourceId: source.id }],
     })),
   })),
 }))
@@ -201,6 +207,8 @@ function SectionPageContent({ page, source }) {
     return <p className="section-source-line"><span className="section-page-reference">{page.label}</span></p>
   }
 
+  if (source.content && !source.documentPageImage) return <SourcePreviewContent source={source} fullPage />
+
   return (
     <figure className="section-page is-original-page" data-source-id={source.id}>
       <div className="trace-source-preview section-page-preview">
@@ -299,9 +307,27 @@ function SectionToSourceLines({
   layout,
   className = '',
   heightExtension = 0,
+  fork = false,
 }) {
   const height = 32 + CONNECTION_LINE_EXTENSION + heightExtension
   const rootClassName = `stage-flow-row is-section-to-source${className ? ` ${className}` : ''}`
+
+  if (fork) {
+    const width = layout.sources.at(-1).center - layout.sources[0].center
+    const mid = width / 2
+    const forkY = height / 2
+    return (
+      <div className={`${rootClassName} is-workbook-fork`} aria-hidden="true" style={{ opacity, '--flow-width': `${layout.width}px` }}>
+        <MapFlowSvg
+          className="workbook-source-fork-svg"
+          viewBox={`0 0 ${width} ${height}`}
+          path={`M${mid} 0 V${forkY} M0 ${forkY} H${width} M0 ${forkY} V${height} M${mid} ${forkY} V${height} M${width} ${forkY} V${height}`}
+          dots={[[mid, 0], [0, height], [mid, height], [width, height]]}
+          clipProgress={clipProgress}
+        />
+      </div>
+    )
+  }
 
   return (
     <div className={rootClassName} aria-hidden="true" style={{ opacity }}>
@@ -340,13 +366,27 @@ function ConvergenceLine({ clipProgress = 1, layout, heightExtension = 0, showSt
 }
 
 function SourcePreviewContent({ source, fullPage = false }) {
+  if (fullPage && source.documentPageImage) {
+    return <img className="product-pdf-image" src={source.documentPageImage} width="1224" height="1584" alt={`Original Word page ${source.documentPageNumber} — ${source.title}`} loading="lazy" decoding="async" />
+  }
+
+  if (source.content) {
+    return (
+      <div className="product-text-excerpt">
+        {!fullPage && <strong>{source.extractedTitle ?? source.title}</strong>}
+        <p>{fullPage ? source.content : source.extractedContent ?? source.content}</p>
+        <span className="product-excerpt-source">{fullPage ? source.location : source.title}</span>
+      </div>
+    )
+  }
+
   if (!fullPage && source.tables) {
     return (
       <div className="product-evidence-tables">
         {source.tables.map(table => (
           <table className="product-evidence-table" key={table.title}>
             <caption><strong>{table.title}</strong><span>{table.units}</span></caption>
-            <thead><tr><th scope="col" aria-label="Metric" />{table.columns.map(column => <th scope="col" key={column}>{column}</th>)}</tr></thead>
+            <thead><tr><th scope="col">{source.format === 'Excel' ? 'Metric' : ''}</th>{table.columns.map(column => <th scope="col" key={column}>{column}</th>)}</tr></thead>
             <tbody>{table.rows.map(row => (
               <tr key={row.label}>
                 <th scope="row" className={row.indent ? 'is-subrow' : undefined}>{row.label}</th>
@@ -382,12 +422,20 @@ function SourcePreviewContent({ source, fullPage = false }) {
 }
 
 function getThemeHierarchy(theme) {
+  if (theme.format === 'Excel') {
+    const sources = themeSourcesMap[theme.id]
+    return [...new Set(sources.map(source => source.sheetName))].map((name, index) => ({
+      source: name,
+      locations: sources.filter(source => source.sheetName === name).map(source => `${source.title} · ${source.cellRange}`),
+      isActive: index === 0,
+    }))
+  }
   return theme.documents.flatMap(document => (
     document.sections.map(section => {
       const page = section.pages[0]
 
       return {
-        source: document.name,
+        source: section.sheetName ? `${document.name} / ${section.sheetName}` : document.name,
         location: `${section.name} · ${page.label}`,
       }
     })
@@ -420,6 +468,7 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
       >
         <div className="trace-card-content">
           <div className="trace-hierarchy" data-trace-summary>
+            {theme.format === 'Excel' && <p className="product-workbook-name" translate="no">{theme.documents[0].name}</p>}
             <ul className="trace-hierarchy-list" translate="no">
               {hierarchy.map((item, index) => (
                 <li
@@ -432,7 +481,9 @@ function CrossDocumentHierarchyCard({ activeThemeId, opacity = 1, translateY = 0
                   </svg>
                   <span className="trace-hierarchy-content">
                     <span data-trace-hierarchy-label title={item.source}>{item.source}</span>
-                    <span className="trace-hierarchy-detail" data-trace-hierarchy-detail>{item.location}</span>
+                    {(item.locations ?? [item.location]).map(location => (
+                      <span className="trace-hierarchy-detail" data-trace-hierarchy-detail key={location}>{location}</span>
+                    ))}
                   </span>
                 </li>
               ))}
@@ -463,7 +514,7 @@ function CodeLines({ lines }) {
   })}</code>
 }
 
-function APIRequestCode({ activeThemeId, animate = false }) {
+function APIRequestCode({ activeThemeId }) {
   const theme = themes.find(item => item.id === activeThemeId) ?? themes[0]
   const folder = theme.label.toLowerCase().replaceAll(' ', '-')
   const lines = [
@@ -472,14 +523,14 @@ function APIRequestCode({ activeThemeId, animate = false }) {
     'from knowhere import Knowhere',
     '',
     'client = Knowhere(api_key="sk-YOUR_API_KEY")',
-    `documents = Path("${folder}").glob("*.pdf")`,
-    'results = [client.parse(file=pdf) for pdf in documents]',
+    `documents = Path("${folder}").glob("*.${theme.extension}")`,
+    'results = [client.parse(file=file) for file in documents]',
   ]
 
   return (
     <section className="product-request product-terminal" aria-label="Example Python request" translate="no">
       <pre className="product-request-code product-terminal-code" aria-live="polite">
-        <HyperText active={animate} renderText={text => <CodeLines lines={text.split('\n')} />}>
+        <HyperText renderText={text => <CodeLines lines={text.split('\n')} />}>
           {lines.join('\n')}
         </HyperText>
       </pre>
@@ -515,6 +566,7 @@ function RequestToDocumentLines({ theme, layout, firstDocumentOffset = 0 }) {
 function APIOutputReport({
   documentCount = 0,
   project,
+  format,
   opacity = 1,
   translateY = 0,
   motionActive = false,
@@ -522,7 +574,19 @@ function APIOutputReport({
 }) {
   const reducedMotion = typeof window !== 'undefined'
     && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  const fields = {
+  const fields = format === 'Word' ? {
+    file: sources[0].filename,
+    texts: sources.map(source => ({ section: source.title, content: source.extractedContent ?? source.content })),
+  } : format === 'Excel' ? {
+    file: sources[0].filename,
+    sheet: sources[0].sheetName,
+    range: sources[0].cellRange,
+    units: sources[0].tables[0].units,
+    columns: ['Metric', ...sources[0].tables[0].columns],
+    rows: sources[0].tables[0].rows.map(row => [row.label, ...row.values.map(value =>
+      Number((Number(value.replace(/[$,%\s]/g, '')) / (value.includes('%') ? 100 : 1)).toFixed(6))
+    )]),
+  } : {
     project,
     summary: sources.map(source => source.summary).join(' '),
     citations: sources.map(source => source.citation),
@@ -546,8 +610,8 @@ function APIOutputReport({
         <div className="product-terminal-head">
           <span className="product-window-dots" aria-hidden="true"><i /><i /><i /></span>
         </div>
-        <pre className="product-terminal-code" aria-label="Example API response">
-          <CodeLines lines={JSON.stringify(fields, null, 2).split('\n')} />
+        <pre className="product-terminal-code" aria-label="Example API response" tabIndex={0}>
+          <CodeLines lines={JSON.stringify(fields, null, 2).replace(/\[\n\s+([^\[\]{}]+?)\n\s*\]/g, (_, values) => `[${values.trim().replace(/\n\s+/g, ' ')}]`).split('\n')} />
         </pre>
       </div>
       <TracePixelReveal active={motionActive} delay={400} />
@@ -555,9 +619,48 @@ function APIOutputReport({
   )
 }
 
+function WorkbookPreview({ sources }) {
+  const [activeSheet, setActiveSheet] = useState(sources[0].sheetName)
+  const source = sources.find(item => item.sheetName === activeSheet)
+  const table = source.tables[0]
+  const columns = ['A', 'B', 'C', 'D']
+  const startRow = Number(source.cellRange.match(/A(\d+)/)[1])
+
+  return (
+    <div className="product-workbook-view" translate="no">
+      <div className="product-workbook-formula" aria-label="Formula bar">
+        <span>A1</span><span aria-hidden="true">ƒx</span><span>NVIDIA quarterly results</span>
+      </div>
+      <div className="product-workbook-scroll" role="region" aria-label={`${activeSheet} worksheet`} tabIndex={0}>
+        <table className="product-workbook-grid">
+          <caption className="sr-only">{activeSheet} worksheet preview</caption>
+          <colgroup><col style={{ width: 40 }} /><col style={{ width: 260 }} /><col span="3" style={{ width: 140 }} /></colgroup>
+          <thead><tr><th aria-label="Row number" />{columns.map(column => <th key={column} scope="col">{column}</th>)}</tr></thead>
+          <tbody>{Array.from({ length: 11 }, (_, index) => {
+            const row = index + 1
+            const mergedText = row === 1 ? 'NVIDIA quarterly results'
+              : row === 2 ? 'Demo layout using published NVIDIA figures'
+                : row === startRow - 1 ? `${table.title} (${table.units})` : null
+            const record = table.rows[row - startRow - 1]
+            const cells = row === startRow ? ['Metric', ...table.columns] : record ? [record.label, ...record.values] : []
+            return <tr key={row} className={row === startRow ? 'is-table-heading' : undefined}>
+              <th scope="row">{row}</th>
+              {mergedText ? <td colSpan={4} className={row === 1 ? 'is-sheet-title' : 'is-sheet-note'}>{mergedText}</td>
+                : columns.map((column, cellIndex) => <td key={column} className={cellIndex > 0 && record ? 'is-numeric' : undefined}>{cells[cellIndex] ?? ''}</td>)}
+            </tr>
+          })}</tbody>
+        </table>
+      </div>
+      <div className="product-workbook-tabs" aria-label="Workbook sheets">
+        {sources.map(item => <button type="button" key={item.sheetName} aria-pressed={activeSheet === item.sheetName} onClick={() => setActiveSheet(item.sheetName)}>{item.sheetName}</button>)}
+      </div>
+    </div>
+  )
+}
+
 function DocumentMap({
   activeThemeId,
-  animateRequest = false,
+  animateEntrance = false,
   inactive = false,
   scrollProgress = 1,
 }) {
@@ -639,12 +742,15 @@ function DocumentMap({
   return (
     <section
       className="document-map"
+      id="product-format-panel"
+      role="tabpanel"
+      aria-labelledby={`product-format-${activeTheme.id}`}
+      data-format={activeTheme.format}
+      data-animate-entrance={animateEntrance}
       data-product-stage-index={activeStageIndex}
       style={{ '--document-outline-clip': `${(1 - pDocumentOutline) * 100}%` }}
-      aria-labelledby="document-map-title"
       inert={inactive ? '' : undefined}
     >
-      <span className="sr-only" id="document-map-title">Document map</span>
       <div className="document-map-hierarchy">
         <div className="document-map-hierarchy-canvas" data-document-count={activeTheme.documents.length} style={{ '--document-count': activeTheme.documents.length }}>
           <div
@@ -658,7 +764,7 @@ function DocumentMap({
             }}
           >
             <div className="mobile-narrative-stage">
-              <APIRequestCode activeThemeId={activeThemeId} animate={animateRequest} />
+              <APIRequestCode activeThemeId={activeThemeId} />
               <RequestToDocumentLines theme={activeTheme} layout={sourceLayout} firstDocumentOffset={firstDocumentOffset} />
               {/* STAGE 1: Full-height source documents */}
               <div
@@ -676,15 +782,15 @@ function DocumentMap({
                   key={document.name}
                 >
                   <header className="document-node" style={nodeOffset ? { transform: `translateX(${nodeOffset}px)` } : undefined}>
-                    <span>DOCUMENT {documentIndex + 1}</span>
+                    <span>{activeTheme.format === 'Excel' ? 'WORKBOOK' : 'DOCUMENT'} {documentIndex + 1}</span>
                     <strong title={document.title} translate="no">{document.name}</strong>
                   </header>
                   <DocumentBranchLine
-                    sectionCount={documentSections.length}
+                    sectionCount={activeTheme.format === 'Excel' ? 1 : documentSections.length}
                     clipProgress={1}
                     nodeOffset={nodeOffset}
                   />
-                  <div
+                  {activeTheme.format === 'Excel' ? <WorkbookPreview sources={currentSources} /> : <div
                     className="document-sections"
                     data-section-count={documentSections.length}
                     style={{
@@ -705,10 +811,10 @@ function DocumentMap({
                           data-region={firstPageSource.type}
                           data-has-context={firstPageSource.context ? 'true' : undefined}
                           key={section.name}
-                          href={firstPageSource.pageImage}
+                          href={firstPageSource.sourceUrl ?? firstPageSource.pageImage}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label={`Open ${document.name}, PDF page ${firstPageSource.page}`}
+                          aria-label={`Open ${document.name}, ${firstPageSource.location}`}
                           onClick={() => setSelectedName(document.name)}
                           translate="no"
                         >
@@ -717,7 +823,7 @@ function DocumentMap({
                               <path d="M6 2.75h8.5L19 7.25v14H6z" />
                               <path d="M14.5 2.75v4.5H19M9 11h7M9 14.5h7M9 18h4.5" />
                             </svg>
-                            <span>SECTION {sectionIndex + 1}</span>
+                            <span>{section.sheetName ? `SHEET · ${section.sheetName}` : `SECTION ${sectionIndex + 1}`}</span>
                             <strong>{section.name}</strong>
                           </div>
                           <div className="section-body">
@@ -743,7 +849,7 @@ function DocumentMap({
                         </a>
                       )
                     })}
-                  </div>
+                  </div>}
                 </article>
                 )
               })}
@@ -773,6 +879,7 @@ function DocumentMap({
                 layout={sourceLayout}
                 className={isMobile ? 'mobile-source-connection' : ''}
                 heightExtension={sourceConnectionHeightExtension}
+                fork={activeTheme.format === 'Excel' && !isMobile}
               />
 
               {/* STAGES 2–4: Extracted source-region cards and relationship */}
@@ -798,7 +905,7 @@ function DocumentMap({
                     data-source-slot={slot}
                     data-region={source.type}
                     data-orientation={source.regionSize[1] > source.regionSize[0] ? 'portrait' : 'landscape'}
-                    data-motion-active={isDesktop && pSourceCards > 0.05 ? 'true' : undefined}
+                    data-motion-active={animateEntrance && isDesktop && pSourceCards > 0.05 ? 'true' : undefined}
                     style={{
                       '--trace-motion-delay': `${index * 70}ms`,
                       '--source-gap': `${sourceLayout.sources[index].gap}px`,
@@ -807,11 +914,11 @@ function DocumentMap({
                     <div className="trace-card-content">
                       <figcaption>
                         <span className="trace-folder-tab">
-                          {source.type.toUpperCase()}<span className="mobile-source-index"> {String(index + 1).padStart(2, '0')}</span>
+                          {source.type.toUpperCase()}<span className="mobile-source-index">{source.type !== 'text' && ` ${String(index + 1).padStart(2, '0')}`}</span>
                         </span>
                         <span data-trace-coordinate>{source.format} · {source.location}</span>
                       </figcaption>
-                      <a className="trace-source-thumb" href={source.pageImage} target="_blank" rel="noopener noreferrer" aria-label={`Open ${source.filename}, PDF page ${source.page}`}>
+                      <a className="trace-source-thumb" href={source.sourceUrl ?? source.pageImage} target="_blank" rel="noopener noreferrer" aria-label={`Open ${source.filename}, ${source.location}`}>
                         <div className="trace-source-frame">
                           <div className="trace-source-media">
                             <div className="trace-source-preview">
@@ -823,7 +930,7 @@ function DocumentMap({
                     </div>
                     {isDesktop && <span className="source-evidence-tail" aria-hidden="true" style={{ opacity: pConvergenceLine }} />}
                     <TracePixelReveal
-                      active={isDesktop && pSourceCards > 0.05}
+                      active={animateEntrance && isDesktop && pSourceCards > 0.05}
                       delay={index * 70}
                     />
                   </figure>
@@ -846,7 +953,7 @@ function DocumentMap({
                   activeThemeId={activeTheme.id}
                   opacity={pHierarchyCard}
                   translateY={(1 - pHierarchyCard) * 18}
-                  motionActive={isDesktop && pHierarchyCard > 0.05}
+                  motionActive={animateEntrance && isDesktop && pHierarchyCard > 0.05}
                 />
               </div>
 
@@ -862,9 +969,10 @@ function DocumentMap({
             <APIOutputReport
               documentCount={activeTheme.documents.length}
               project={activeTheme.label}
+              format={activeTheme.format}
               opacity={pSummaryDocument}
               translateY={(1 - pSummaryDocument) * 18}
-              motionActive={isDesktop && pSummaryDocument > 0.05}
+              motionActive={animateEntrance && isDesktop && pSummaryDocument > 0.05}
               sources={currentSources}
             />
 
@@ -877,24 +985,32 @@ function DocumentMap({
 
 function DocumentMapSwitcher({ activeThemeId, onChange }) {
   return (
-    <div className="document-map-switcher" aria-label="Choose a document theme">
+    <div className="document-map-switcher" role="tablist" aria-label="Choose a file format">
       {themes.map(theme => {
-        const labelParts = theme.label.split(' ')
-        const finalLabelPart = labelParts.pop()
-
         return (
           <button
             type="button"
             key={theme.id}
+            id={`product-format-${theme.id}`}
+            role="tab"
+            aria-controls="product-format-panel"
+            aria-selected={theme.id === activeThemeId}
             aria-pressed={theme.id === activeThemeId}
+            tabIndex={theme.id === activeThemeId ? 0 : -1}
             onClick={() => onChange(theme.id)}
+            onKeyDown={event => {
+              const index = themes.indexOf(theme)
+              const next = event.key === 'ArrowRight' ? (index + 1) % themes.length
+                : event.key === 'ArrowLeft' ? (index + themes.length - 1) % themes.length
+                  : event.key === 'Home' ? 0 : event.key === 'End' ? themes.length - 1 : null
+              if (next === null) return
+              event.preventDefault()
+              onChange(themes[next].id)
+              event.currentTarget.parentElement.children[next].focus()
+            }}
           >
-            <span>
-              <span className="document-map-switcher-line">
-                {labelParts.join(' ')}
-              </span>
-              <span className="document-map-switcher-line is-tail">{finalLabelPart}</span>
-            </span>
+            <img src={theme.icon} alt="" width="20" height="20" />
+            <span translate="no">{theme.format}</span>
           </button>
         )
       })}
@@ -906,6 +1022,8 @@ export function ProductStage({ heading }) {
   const isMobile = useMobileProductLayout()
   const isDesktop = useProductLayoutQuery(DESKTOP_PRODUCT_QUERY)
   const [activeThemeId, setActiveThemeId] = useState(themes[0].id)
+  const [animateEntrance, setAnimateEntrance] = useState(true)
+  const visitedThemesRef = useRef(new Set([themes[0].id]))
   const [scrollProgress, setScrollProgress] = useState(0)
   const trackRef = useRef(null)
   const reducedMotion = typeof window !== 'undefined'
@@ -923,6 +1041,13 @@ export function ProductStage({ heading }) {
     setScrollProgress(reducedMotion || !isDesktop ? 1 : clamp(scrollYProgress.get()))
   }, [isDesktop, reducedMotion, scrollYProgress])
 
+  const changeTheme = themeId => {
+    if (themeId === activeThemeId) return
+    setAnimateEntrance(!visitedThemesRef.current.has(themeId))
+    visitedThemesRef.current.add(themeId)
+    setActiveThemeId(themeId)
+  }
+
   return (
     <div
       className="playground-scroll-track"
@@ -932,13 +1057,13 @@ export function ProductStage({ heading }) {
       <div className="playground-sticky">
         {heading}
         <div className="product-stage-switcher-row">
-          <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={setActiveThemeId} />
+          <DocumentMapSwitcher activeThemeId={activeThemeId} onChange={changeTheme} />
         </div>
         <div className={`product-stage${isMobile ? ' is-stacked' : ''}`}>
           <div className="product-stage-track">
             <DocumentMap
               activeThemeId={activeThemeId}
-              animateRequest
+              animateEntrance={animateEntrance}
               scrollProgress={scrollProgress}
             />
           </div>

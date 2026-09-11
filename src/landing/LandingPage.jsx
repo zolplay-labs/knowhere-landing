@@ -230,6 +230,9 @@ export function LandingPage() {
 
   useEffect(() => {
     // Cross-page fragments arrive before the client-rendered sections exist.
+    // Reloads and history traversal should retain the browser's saved position.
+    const navigation = performance.getEntriesByType('navigation')[0]
+    if (navigation?.type === 'reload' || navigation?.type === 'back_forward') return undefined
     const hash = window.location.hash
     if (!hash) return undefined
     let cancelled = false
@@ -305,7 +308,7 @@ export function LandingPage() {
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <ProductStage heading={(
-        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PRODUCT ]" /></p><h2 id="playground-title"><SectionShinyText text="See how Knowhere turns documents into structured, traceable context." /></h2><p>Explore how Knowhere preserves layouts, visual regions, and source links across PDFs, spreadsheets, presentations, and scans.</p></div>
+        <div className="section-heading"><p className="section-no"><SectionShinyText text="[ PRODUCT ]" /></p><h2 id="playground-title"><SectionShinyText text="See how Knowhere turns documents into structured, traceable context." /></h2><p>Explore page-level evidence, text content, and spreadsheet tables across PDF, Word, and Excel.<a className="product-formats-link" href="#formats">View all supported formats</a></p></div>
       )} />
       <aside className="sample-panel sample-panel--standalone" aria-label="Preset source documents" hidden>
         <ol className="sample-list" role="listbox" aria-label="Preset documents">

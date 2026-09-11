@@ -963,6 +963,7 @@
     #top.hero-b-layout .hero-copy,
     #top.hero-b-layout .hero-visual { z-index: 1; }
     html.js .site-header,
+    html.js #top.hero-b-layout #hero-title,
     html.js #top.hero-b-layout .hero-visual { opacity: 0; clip-path: inset(0 0 100% 0); will-change: clip-path, opacity; }
     #top.hero-b-layout .hero-copy { justify-content: center; }
     #top.hero-b-layout .hero-copy h1 { font-weight: 300; letter-spacing: .5px; }
@@ -997,6 +998,7 @@
       #top.hero-b-layout::before { display: none; animation: none; }
       html.js .site-header,
       html.js #top.hero-b-layout .hero-copy,
+      html.js #top.hero-b-layout #hero-title,
       html.js #top.hero-b-layout .hero-visual,
       html.js #playground .section-heading,
       html.js #playground .sample-panel--standalone { opacity: 1; clip-path: none; will-change: auto; }
@@ -8883,6 +8885,10 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       content: none;
     }
 
+    #playground .document-map[data-animate-entrance="false"] .document-map-content {
+      animation: none;
+    }
+
     #playground .document-map-documents {
       position: relative;
       display: flex;
@@ -10145,9 +10151,9 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
     #playground .trace-hierarchy {
       position: relative;
       padding: 16px 24px 14px;
-      border: 1px solid var(--black-10);
+      border: 1px solid var(--black-3);
       border-radius: 4px;
-      background: none;
+      background: var(--white-50);
       color: var(--demo-text-muted);
       font-family: var(--sans);
     }
@@ -10169,7 +10175,7 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       align-items: center;
       gap: 10px;
       overflow: hidden;
-      border: 1px solid var(--demo-line);
+      border: 1px solid var(--black-3);
       border-radius: 4px;
       background: var(--white);
       color: var(--demo-text-muted);
@@ -10180,7 +10186,7 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
     }
 
     #playground .trace-hierarchy-node.is-active {
-      border-color: var(--demo-line);
+      border-color: var(--black-3);
       background: var(--white);
       color: var(--demo-ink);
     }
@@ -10205,7 +10211,8 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       min-width: 0;
       overflow: hidden;
       color: inherit;
-      font-size: 11px;
+      font-size: 12px;
+      font-weight: 500;
       line-height: 18px;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -10216,7 +10223,7 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
       max-width: 100%;
       overflow: hidden;
       color: var(--demo-text-subtle);
-      font-size: 11px;
+      font-size: 12px;
       line-height: 18px;
       text-align: right;
       text-overflow: ellipsis;
@@ -10497,16 +10504,8 @@ html[data-theme="dark"] .landing-page #main #final-cta.section.shell {
         gap: 0;
       }
 
-      #playground [data-trace-hierarchy-label] {
-        overflow: visible;
-        text-overflow: clip;
-        white-space: normal;
-        overflow-wrap: anywhere;
-      }
-
       #playground .trace-hierarchy-detail {
         text-align: left;
-        white-space: normal;
       }
 
       #playground .ai-output-report {
@@ -11229,7 +11228,7 @@ html[data-theme="dark"] #playground .section-node,
   }
 
   #playground .trace-hierarchy-node.is-active {
-    border-color: var(--demo-line);
+    border-color: var(--black-3);
     background: var(--white);
   }
 
@@ -14589,15 +14588,16 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   }
 }
 
-/* Tablet keeps a three-column desktop canvas, scaled to the available width. */
-@media (min-width: 768px) and (max-width: 1199px) {
+/* Static Product layouts keep three columns, scaled down to the available width. */
+@media (min-width: 768px) and (max-width: 1439px), (min-width: 768px) and (max-height: 1099px) {
   #playground .document-map-hierarchy-canvas {
     container-type: inline-size;
   }
 
   #playground .document-map-content {
     width: 1280px;
-    zoom: calc(100cqi / 1280px);
+    margin-inline: auto;
+    zoom: min(1, calc(100cqi / 1280px));
   }
 
   #playground .document-map-documents[data-document-count] {
@@ -14723,7 +14723,29 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   }
 }
 
-/* Original project tabs above the API request and document analysis. */
+/* File format tabs above the API request and document analysis. */
+#playground .product-formats-link {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  gap: 8px;
+  margin-top: 16px;
+  color: var(--page-primary);
+  font: 400 18px/24.8px var(--sans);
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+#playground .product-formats-link:hover {
+  text-decoration: underline;
+}
+
+#playground .product-formats-link:focus-visible {
+  outline: 2px solid var(--page-primary);
+  outline-offset: 4px;
+}
+
 #playground .document-map-switcher {
   display: inline-flex;
   align-items: center;
@@ -14744,8 +14766,8 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   min-width: 0;
   height: 36px;
   min-height: 36px;
-  padding: 4px 10px;
-  gap: 2px;
+  padding: 4px 16px;
+  gap: 8px;
   border: 1px solid transparent;
   border-radius: 4px !important;
   background: transparent;
@@ -14764,12 +14786,21 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   font-family: inherit !important;
 }
 
-#playground .document-map-switcher-line {
-  display: inline;
+#playground .document-map-switcher button:hover {
+  background: var(--control-surface-hover);
 }
 
-#playground .document-map-switcher-line.is-tail::before {
-  content: " ";
+#playground .document-map-switcher button:active {
+  background: var(--control-surface-pressed, var(--control-surface-hover));
+}
+
+#playground .document-map-switcher button:focus-visible {
+  outline: 2px solid var(--page-primary);
+  outline-offset: 2px;
+}
+
+#playground .document-map-switcher button img {
+  flex: none;
 }
 
 #playground .document-map-switcher button[aria-pressed="true"] {
@@ -14795,15 +14826,20 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
 }
 
 @media (max-width: 767px) {
+  #playground .product-formats-link {
+    font-size: 15px;
+    line-height: 22px;
+  }
+
   #playground .document-map-switcher button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 44px;
-    min-height: 44px;
-    padding: 6px;
-    gap: 2px;
+    height: 36px;
+    min-height: 36px;
+    padding: 4px 6px;
+    gap: 6px;
     border: 1px solid transparent;
     border-radius: 4px;
     font-size: 12px;
@@ -14819,7 +14855,9 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
   #playground .document-map-switcher {
     display: grid;
     width: 100%;
-    grid-template-columns: minmax(0, 1.22fr) repeat(2, minmax(0, 1fr));
+    padding: 3px;
+    gap: 3px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   #playground .document-map-switcher button > span {
@@ -14834,17 +14872,266 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
     text-wrap: balance;
   }
 
-  #playground .document-map-switcher-line {
-    display: block;
+}
+
+#playground .product-workbook-name {
+  margin: 0 0 12px;
+  color: var(--demo-ink);
+  font: 400 13px/20px var(--sans);
+  text-align: center;
+}
+
+#playground .document-map[data-format="Excel"] .trace-hierarchy-node {
+  height: auto;
+}
+
+#playground .product-text-excerpt {
+  display: grid;
+  gap: 12px;
+  padding: 0;
+  color: var(--demo-ink);
+  text-align: left;
+  font: 400 16px/24px var(--sans);
+}
+
+#playground .product-excerpt-source {
+  color: var(--demo-text-muted);
+  font: 400 12px/18px var(--sans);
+}
+
+#playground .product-text-excerpt strong {
+  font-weight: 500;
+}
+
+#playground .product-text-excerpt p {
+  margin: 0;
+  font: inherit;
+  -webkit-line-clamp: unset;
+}
+
+#playground .document-map .document-sections .section-node {
+  height: auto;
+  min-height: 540px;
+  max-height: none;
+  padding: 24px;
+  gap: 20px;
+  aspect-ratio: auto;
+}
+
+#playground .document-map .section-node-head > span {
+  font: 400 12px/18px var(--mono) !important;
+  letter-spacing: .04em;
+}
+
+#playground .document-map .section-node-head {
+  margin-inline: 0;
+}
+
+#playground .document-map .trace-source-frame {
+  padding: 24px;
+}
+
+#playground .document-map .trace-card-content > figcaption {
+  padding-inline: 24px;
+}
+
+#playground .document-map .section-node-head > strong {
+  font: 400 16px/24px var(--sans);
+  margin-top: 6px;
+  padding: 0;
+}
+
+#playground .document-map .section-body,
+#playground .document-map .section-page {
+  margin: 0;
+  padding: 0;
+}
+
+#playground .document-map .section-body p {
+  font: 400 16px/24px var(--sans);
+  margin: 0 0 12px;
+}
+
+#playground .document-map .section-page figcaption {
+  margin: 12px 0 0;
+  padding: 0;
+  font: 400 12px/18px var(--sans);
+  text-align: left;
+}
+
+#playground .document-map .section-page figcaption span {
+  font: 400 12px/18px var(--mono);
+}
+
+#playground .document-map[data-format="Excel"] .product-evidence-table {
+  font: 400 14px/20px var(--sans);
+}
+
+#playground .document-map[data-format="Word"] .trace-source-preview,
+#playground .document-map[data-format="Excel"] .trace-source-preview {
+  text-align: left;
+}
+
+@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
+  #playground .document-map:is([data-format="Word"], [data-format="Excel"]) .ai-output-report .product-terminal-code {
+    max-height: 440px;
+    overflow: auto;
+  }
+}
+
+#playground .ai-output-report .product-terminal-code:focus-visible {
+  outline: 2px solid var(--page-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  #playground .document-map[data-format="Excel"] .product-evidence-table {
     font-size: 12px;
-    line-height: 16px;
-    white-space: nowrap;
+    line-height: 18px;
   }
 
-  #playground .document-map-switcher-line.is-tail::before {
-    content: none;
-  }
+}
 
+#playground .product-workbook-view {
+  width: 100%;
+  max-width: 724px;
+  min-width: 0;
+  margin-inline: auto;
+  overflow: hidden;
+  border: 1px solid var(--demo-line);
+  border-radius: 4px;
+  background: var(--demo-surface);
+  color: var(--demo-ink);
+  text-align: left;
+  font: 400 14px/20px var(--sans);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#playground .product-workbook-formula {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  border-bottom: 1px solid var(--demo-line-soft);
+}
+
+#playground .product-workbook-formula span {
+  padding: 8px 16px;
+}
+
+#playground .product-workbook-formula span:first-child {
+  width: 72px;
+  border-right: 1px solid var(--demo-line-soft);
+  font-family: var(--mono);
+}
+
+#playground .product-workbook-formula span:nth-child(2) {
+  color: var(--demo-text-muted);
+}
+
+#playground .product-workbook-scroll {
+  overflow-x: auto;
+}
+
+#playground .product-workbook-grid {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  table-layout: fixed;
+  font: 400 13px/20px var(--sans);
+}
+
+#playground .product-workbook-grid th,
+#playground .product-workbook-grid td {
+  height: 28px;
+  padding: 4px 10px;
+  border-right: 1px solid var(--demo-line-soft);
+  border-bottom: 1px solid var(--demo-line-soft);
+  white-space: nowrap;
+}
+
+#playground .product-workbook-grid th {
+  background: var(--control-surface-hover);
+  color: var(--demo-text-muted);
+  text-align: center;
+  font-weight: 400;
+}
+
+#playground .product-workbook-grid .is-sheet-title {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+#playground .product-workbook-grid .is-sheet-note {
+  color: var(--demo-text-muted);
+}
+
+#playground .product-workbook-grid .is-table-heading td {
+  background: color-mix(in srgb, var(--page-primary) 10%, var(--demo-surface));
+  font-weight: 500;
+}
+
+#playground .product-workbook-grid .is-numeric {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#playground .product-workbook-tabs {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 12px;
+  background: var(--control-surface-hover);
+}
+
+html:not([data-theme="dark"]) #playground .product-workbook-grid th,
+html:not([data-theme="dark"]) #playground .product-workbook-grid .is-table-heading td,
+html:not([data-theme="dark"]) #playground .product-workbook-tabs {
+  background: #F7F7F7;
+}
+
+#playground .product-workbook-tabs button {
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: var(--demo-text-muted);
+  font: inherit;
+  cursor: pointer;
+}
+
+#playground .product-workbook-tabs button[aria-pressed="true"] {
+  background: var(--demo-surface);
+  color: var(--demo-accent-text);
+}
+
+#playground .product-workbook-tabs button:hover {
+  color: var(--demo-accent-text);
+}
+
+#playground .product-workbook-scroll:focus-visible,
+#playground .product-workbook-tabs button:focus-visible {
+  outline: 2px solid var(--page-primary);
+  outline-offset: -2px;
+}
+
+#playground .stage-flow-row.is-section-to-source.is-workbook-fork {
+  display: flex;
+  width: var(--flow-width);
+  max-width: 100%;
+}
+
+#playground .workbook-source-fork-svg {
+  display: block;
+  width: calc((100% + 33px) * 2 / 3);
+  height: 100%;
+  overflow: visible;
+}
+
+@media (min-width: 768px) and (max-width: 1439px), (min-width: 768px) and (max-height: 1099px) {
+  #playground .stage-flow-row.is-section-to-source.is-workbook-fork {
+    width: 100%;
+  }
 }
 
 #playground .product-terminal {
@@ -15121,6 +15408,10 @@ html[data-theme="dark"] #playground .product-terminal {
     width: 100%;
   }
 
+  #playground .source-sections[data-document-count="1"][data-source-count="2"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   #playground .document-map-documents[data-document-count="2"]:not([data-cross-link]) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -15340,10 +15631,15 @@ html[data-theme="dark"] #playground [data-region="image"] .product-pdf-image {
 }
 
 @media (max-width: 767px) {
-  #playground .document-sections .section-node {
-    width: min(100%, 240px);
+  #playground .document-map .document-sections .section-node {
+    width: 100%;
+    min-height: 0;
     margin-inline: auto;
-    padding: 12px 10px;
+  }
+
+  #playground .section-page figcaption > span {
+    flex: none;
+    white-space: nowrap;
   }
 
   #playground .document-branch-line,
