@@ -1,7 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { RiBlueskyFill, RiFacebookFill, RiLinkedinFill, RiMastodonFill, RiTwitterXFill } from '@remixicon/react';
-import { ArticleCard, DynamicLeadCover, Header } from './BlogHome';
+import { ArticleCard, DynamicLeadCover } from './BlogHome';
+import { Header } from './Header';
 import { articles, articleDate, articleUrl } from './articles';
 import articleContent from './content/pdf-parser.html?raw';
 import './article-detail.css';

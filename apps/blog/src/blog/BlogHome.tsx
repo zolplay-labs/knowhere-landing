@@ -5,7 +5,6 @@ import {
   IconArrowLeft as FiArrowLeft,
 } from '@tabler/icons-react';
 import { Header } from './Header';
-export { Header } from './Header';
 import { Footer } from './Footer';
 import { HeroDataStream } from '../../../pricing/src/components/hero-data-stream';
 import { articles, articleDate, type Article } from './articles';
