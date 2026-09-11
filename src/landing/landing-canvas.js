@@ -937,7 +937,7 @@ function initializeHeroCanvas(root, cleanups) {
     const SCAN_TRAIL_ALPHA = .56;
     const SCAN_GRID_UNIT = 6;
 
-    const scanRevealTargets = [header, copy.querySelector('#hero-title'), visual].filter(Boolean);
+    const scanRevealTargets = [header, copy, visual].filter(Boolean);
     let headerRevealForced = window.scrollY > 24 || hero.getBoundingClientRect().bottom <= 0;
 
     function revealHeaderImmediately() {
@@ -964,6 +964,7 @@ function initializeHeroCanvas(root, cleanups) {
     function syncScanReveal() {
       if (reducedMotion) return;
       const { scan, headY } = scanState();
+      hero.style.setProperty('--hero-scan-edge', scan >= 1 ? '100%' : `${headY}px`);
       const activeRevealTargets = headerRevealForced
         ? scanRevealTargets.filter(element => element !== header)
         : scanRevealTargets;
@@ -1610,6 +1611,7 @@ function initializeHeroCanvas(root, cleanups) {
     intersectionObserver.observe(hero);
 
     applyCanvasSize();
+    syncScanReveal();
     startAnimation();
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) stopAnimation();
@@ -1626,6 +1628,7 @@ function initializeHeroCanvas(root, cleanups) {
       intersectionObserver.disconnect();
       hero.classList.remove('is-data-layer-hovered');
       tooltip.classList.remove('is-visible');
+      hero.style.removeProperty('--hero-scan-edge');
       scanRevealTargets.forEach(element => {
         element.style.removeProperty('opacity');
         element.style.removeProperty('clip-path');
