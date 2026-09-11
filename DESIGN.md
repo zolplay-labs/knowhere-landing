@@ -128,6 +128,35 @@ SDK 在 ≤479px 使用 `font-size: clamp(7px, 2.25vw, 10px)`、`line-height: 1.
 
 局部表面不等于全页背景：Document Map 浅色层级节点使用 `--trace-hierarchy-surface: #FAFAFA`；Process 插图的弱化表面使用 `mist-white/300`。这两个设置不替换全局 `--paper`。
 
+### 2.2.1 Landing 亮暗色映射：同站页面对齐基准
+
+共享 Nav bar 的暗色主按钮统一使用 primary `#23D6B1` / on-primary `#011711`，与 Hero 主按钮保持相同的默认、hover、pressed 映射；所有应用从 `shared/site-chrome/` 复用该设置。
+
+以下依据 `src/colors.js` 与 `src/landing/landing.css` 的实际主题及按钮覆盖。按用途映射，不按浅色色值全局替换；基础色板保持原始 Hex。
+
+| 用途 / 变量 | 亮色 | 暗色 |
+| --- | --- | --- |
+| 品牌装饰、图标 `--mineral-green-500` | `#19A88B` | `#1DBE9D`（400） |
+| 主操作、数据强调 `--page-primary` / `--accent` | `#19A88B` | `#23D6B1`（primary / 300） |
+| 主操作前景 | 白色；Hero 黑底按钮为白字 | `#011711`（on-primary） |
+| 主操作 hover / pressed | 按组件：Hero `#33483D` / `#011110` | primary 92% / 88% 与 on-primary 混合 |
+| 珊瑚信号 `--coral-signal-500` | `#FF634A` | `#FF897D`（400）；错误语义另用 error |
+| 普通控件底 / hover / pressed | `#FFFFFF` / `#F7F8F4` / hover 97% 与黑色混合 | `#021D1D` / `#042626` / `#073231` |
+| 普通控件边框 / hover 边框 | `#DEDFD9` / `#B1B7A9` | `#083B3A` / `#888A82` |
+| Hero 透明次按钮 hover / pressed | black 3% / 6% | on-surface 6% / 10%（组件明确状态） |
+| 中性透明色 black/N | 黑色 × N% | `#F9FAF5`（on-surface）× N%；不是纯白 |
+| 白色透明表面 white/N | 白色 × N% | `#010909`（surface）× N%；明确白字须局部保留 |
+| 基础 mist-white 50 / 100 / 200 | 对应基础色板 | `#000000` / `#011110` / `#021D1D` |
+| 基础 mist-white 300 / 400 / 500 | 对应基础色板 | `#042626` / `#042626` / `#073231` |
+| 基础 mist-white 600 / 700 / 800 | 对应基础色板 | `#083B3A` / `#888A82` / `#BBBCB3` |
+| 基础 mist-white 900 / 950 | 对应基础色板 | 均为 `#F9FAF5` |
+
+页面 `paper / ink / muted` 使用 2.2 的语义映射，优先于基础 mist-white 表面重绑定。Landing 结尾 CTA 是局部特例：绿色背景 `#12846C → #011711`，白色按钮保持白底深字；不套用到普通中性区块。
+
+Pricing 对齐：`--green` 用品牌装饰映射，`--green-dark` 用暗色 primary；主按钮分别绑定默认、hover、pressed 与前景，不能用全局 `.button:hover` 覆盖组件状态。珊瑚色与中性透明色跟随上表。Pricing 现有中性结尾 CTA 保留 black/3 表面；其绿色按钮遵循主操作映射。收费说明与企业绿色面板跟随品牌色；收费说明的文字与图标在亮暗模式均使用白色，其按钮保持白底深字及白色组件的 hover / pressed 状态。企业卡片的文字与图标在亮暗模式均使用白色，卡片按钮保持白底深字。Pricing 暗色导航主按钮的 `--chrome-primary` / `--chrome-on-primary` 绑定页面主操作变量，默认、hover、pressed 与页面主按钮一致；其他共享导航与 Footer 规则继续使用 `shared/site-chrome/`。
+
+Blog 对齐：正文容器随 `html[data-theme]` 切换，页面背景 `#FFFFFF → #010909`、标题 `#2E2E2C / #1B1C1A → #F9FAF5`、正文与辅助文字暗色为 `#BBBCB3`；透明线条保持原透明度并映射为 on-surface。品牌装饰使用 `#1DBE9D`，导航主按钮、筛选选中态与分页当前项使用 primary `#23D6B1` / on-primary `#011711`。首页与文章详情共用映射，封面图片与封面内排版保留各自配色。
+
 ### 2.3 黑白透明度
 
 | 色系 | 可用透明度（%） | CSS 命名 |
@@ -197,7 +226,7 @@ SDK 在 ≤479px 使用 `font-size: clamp(7px, 2.25vw, 10px)`、`line-height: 1.
 | `on-tertiary-fixed` | `deep-teal-950` |
 | `on-tertiary-fixed-variant` | `deep-teal-700` |
 
-显式主题选择存储于 `knowhere-color-theme`；没有显式选择时跟随 `prefers-color-scheme`。主题与语义变量同步至嵌入的文档演示。组件主题配色优先使用语义 token。
+显式主题选择统一存储于 `knowhere-color-theme` Cookie（当前 Workers 站点共享 `knowhere-landing.workers.dev` 域，正式同站域名共享 `knowhereto.ai`），各应用 localStorage 仅作兼容回退。共享 Cookie 优先于应用旧偏好；没有显式选择时跟随 `prefers-color-scheme`。首次渲染、页面返回、窗口重新聚焦时读取统一偏好，Blog 详情页使用同一初始化逻辑。主题与语义变量同步至嵌入的文档演示。组件主题配色优先使用语义 token。
 
 ## 3. 栅格、间距与响应式
 
@@ -268,6 +297,8 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 
 单位为 px。圆角按组件角色设置；主要按钮、功能卡片和 FAQ 使用底色与细边框分层，默认无投影。
 
+按钮、输入框与 Tab 的尺寸和状态可在 [组件规范 HTML](./public/component-spec.html) 中对照查看。本文为规范正文，HTML 为可视化参考；标为“扩展建议”的档位或交互尚未正式确定，不视为业务组件已经支持。
+
 | 组件 | 桌面设置 | 手机设置 | 外观与状态 |
 | --- | --- | --- | --- |
 | Hero 按钮 | 15 / 24，500；padding 8 × 16；高 44 | 高 44；两个按钮同行等宽，gap 12 | 圆角 1；主按钮实色，次按钮描边 |
@@ -279,13 +310,28 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 | FAQ 问题行 | 上下 padding 20；单行高 68 | 上下 padding 20；单行高 68 | 圆角 0；长问题自然换行 |
 | 键盘焦点 | `:focus-visible` | 同桌面 | 基础链接和按钮使用 2px 外轮廓；组件可定义自己的焦点样式 |
 
-### 4.1 Login 表单组件
+### 4.1 按钮与输入框
 
-本节沉淀 Login 的输入框、白底按钮和黑底按钮，适用于 `apps/login` 及后续明确采用这套组件的页面。Landing 的 Hero 按钮等组件继续使用上表的具体设置；本节不批量覆盖其他应用。
+本节以 Login 的输入框、白底按钮和黑底按钮为基础，作为 Login 与 Landing 后续统一通用按钮、输入框的规范。浅色黑底主按钮、白底次按钮采用本节的状态与 token；Hero 的高度、圆角、透明描边次按钮等明确局部设置仍按上表及 §2.2 保留。深色页面继续使用 §2.4 的语义色，不据此推导尚未定义的 Login 深色状态；其他独立应用不自动套用。
 
 实现入口：[form-controls.tsx](./apps/login/src/components/form-controls.tsx)、[form-controls.css](./apps/login/src/components/form-controls.css)。组件分别为 `Input`、`Button variant="white"` 和 `Button variant="black"`。可在 Login 应用的 `/components` 页面查看全部状态和实际交互；正式登录页不增加状态控制器。
 
-#### 基础尺寸与 token
+#### 大、中、小尺寸
+
+高度包含描边，单位为 px；文字格式为“字号 / 行高”。表单按钮字重 500，输入框字重 400；三档共用圆角 2、描边 1、默认无投影。
+
+| 组件 | 档位 | 高度 | 字号 / 行高 | 水平内边距 | 图标与间距 / 辅助文本 | 状态 |
+| --- | --- | ---: | --- | ---: | --- | --- |
+| 按钮 | L 大号 | 46 | 15 / 24 | 13 | 加载图标 16；图文间距白 11、黑 13 | 现有 Login 基础尺寸 |
+| 按钮 | M 中号 | 40 | 14 / 20 | 12 | 图标 16；图文间距 8 | 扩展建议：常规表单、工具栏 |
+| 按钮 | S 小号 | 32 | 13 / 20 | 10 | 图标 16；图文间距 6 | 扩展建议：桌面紧凑操作 |
+| 输入框 | L 大号 | 46 | 桌面 18 / 27；手机 16 / 24 | 13 | 辅助文本 14 / 20；距框 8 | 现有 Login 基础尺寸 |
+| 输入框 | M 中号 | 40 | 16 / 24 | 12 | 辅助文本 14 / 20；距框 8 | 扩展建议：常规数据录入 |
+| 输入框 | S 小号 | 32 | 14 / 20 | 10 | 辅助文本 14 / 20；距框 8 | 扩展建议：桌面紧凑筛选 |
+
+L / M / S 是本次整理的档位名称；现有 `Button`、`Input` 尚未提供通用 `size` 属性。HTML 中的 M / S 通过预览样式展示，不自动替换 Landing 已有组件的局部尺寸。
+
+#### L 档基础尺寸与 token
 
 | 属性 | 输入框 | 白底按钮 | 黑底按钮 |
 | --- | --- | --- | --- |
@@ -301,7 +347,15 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 
 字体继承 `--font-sans`：英文和数字为 Geist，中文为 Frex。颜色使用组件语义 token；上表中的局部色值保留 Login 已确认的外观，不反向改写全局色板。背景、文字与边框过渡使用 `--control-motion-duration · 150ms`。
 
-已有基础色优先引用：白底及输入框只读底 → `mist-white/50`，正文 → `mist-white/900`，黑底 → `mist-white/950`，输入框禁用及白按钮按下底 → `mist-white/300`，输入框禁用文字 → `mist-white/700`。按钮禁用底色 → `black/10`、文字 → `black/40`、描边 → `black/3`；图标保留原色并使用 `--control-disabled-icon-opacity: 0.5`。输入框与白按钮已确认的局部边框、占位和悬停色保留为组件 token。
+已有基础色优先引用：白底及输入框只读底 → `mist-white/50`，正文 → `mist-white/900`，黑底 → `mist-white/950`，输入框禁用底 → `black/6`，输入框禁用文字 → `mist-white/700`。白按钮按下填充色在悬停色上叠加 3% 黑色，保留悬停的色相与描边，不再使用 `mist-white/300`。按钮禁用底色 → `black/10`、文字 → `black/40`、描边 → `black/3`；图标保留原色并使用 `--control-disabled-icon-opacity: 0.5`。输入框与白按钮已确认的局部边框、占位和悬停色保留为组件 token。
+
+```css
+--control-surface-hover: #F7F8F4;
+--control-surface-pressed: color-mix(in srgb, var(--control-surface-hover) 97%, #000);
+--control-disabled-surface: var(--black-6); /* rgba(0, 0, 0, 0.06) */
+```
+
+白按钮按下填充色约为 `#F0F1ED`，以混色表达式为准；输入框禁用使用背景色的 6% 黑色透明度，不给整个组件设置 `opacity: 0.06`。以上两项及 §4.2 的 Tab 按下填充色已按 2026-09-09 的反馈在 HTML 中修订，Login 与 Landing 业务实现尚待同步；记录规范不等于业务页面已应用。
 
 #### 输入框状态
 
@@ -314,7 +368,7 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 | 错误 | 失焦时描边使用 `--control-error → --login-error-color → --coral-signal-600 · #DD3B00`；输入框下方 8px 显示同色辅助文本，字号 / 行高绑定 `--type-meta-* · 14 / 20` |
 | 错误时聚焦 | 描边仍为主色绿，红色辅助文本保留；修正为有效值后清除错误 |
 | 只读 | 原生 `readOnly`；底色 `--control-readonly-surface → --control-surface · #FFFFFF`，保留正常文字；可聚焦、选择和复制，不能编辑 |
-| 禁用 | 原生 `disabled`；底色 `--control-disabled-surface · #F6F7EF`、文字 `--control-disabled-ink · #888A82`、默认描边；不可编辑或进入 Tab 顺序，无悬停反馈 |
+| 禁用 | 原生 `disabled`；底色 `--control-disabled-surface → black/6 · rgba(0, 0, 0, 0.06)`、文字 `--control-disabled-ink · #888A82`、默认描边；不可编辑或进入 Tab 顺序，无悬停反馈 |
 
 状态优先级为禁用 → 聚焦 → 错误 → 悬停 → 默认。校验失败时使用 `aria-invalid`，辅助文本用 `aria-describedby` 关联、`role="alert"` 宣告；提交空邮箱或错误格式后聚焦该输入框。错误通过当前表单内的红色辅助文本展示，不使用浏览器气泡、Toast 或第二步页面。
 
@@ -324,12 +378,14 @@ Hero、Integration 与结尾 CTA 使用各自的边距；区块设置优先于�
 | --- | --- | --- |
 | 默认 | 白底、深色文字、1px 浅色描边 | 黑底、白字、同色描边 |
 | 悬停 | `--control-surface-hover · #F7F8F4` 底，`--control-border-hover` 描边 | `--control-black-hover · #33483D` 底和描边 |
-| 按下 | `--control-surface-pressed · #F6F7EF` 底，悬停描边，下移 1px | `--control-black-pressed → --deep-teal-900 · #011110` 底，悬停描边，下移 1px |
+| 按下 | `--control-surface-pressed`：悬停底色叠加 3% 黑色，约 `#F0F1ED`；保留悬停描边与文字，下移 1px | `--control-black-pressed → --deep-teal-900 · #011110` 底，悬停描边，下移 1px |
 | 键盘聚焦 | 保留当前底色，使用主色绿 2px 外轮廓、间隔 4px | 同白底按钮；输入框的单层描边例外不覆盖按钮的键盘焦点规范 |
 | 禁用 | 原生 `disabled`；底色 `--control-button-disabled-surface → black/10`、文字 `--control-button-disabled-ink → black/40`、描边 `--control-button-disabled-border → black/3`；图标原色透明度为 50%，禁止悬停 / 按下反馈 | 同白底按钮 |
 | 加载 | `loading` 同时设置 `disabled` 与 `aria-busy`；保留默认配色，以 16px 转圈图标替代原图标；调用方传入“发送中…”等进行中文案 | 同白底按钮 |
 
-按钮宽高在状态变化时保持不变。加载与禁用不能触发点击回调或重复提交；恢复后重新允许操作。加载指示器以 800ms 一圈旋转，系统开启减少动态效果时停止旋转，保留图标、进行中文案及忙碌语义。操作结果由表单展示，失败在输入框下方提示，不把按钮改成长期红色或绿色。
+状态优先级：加载 / 禁用阻止交互；可用时按下覆盖悬停；键盘焦点轮廓可与当前可用状态叠加。按钮宽高在状态变化时保持不变。加载与禁用不能触发点击回调或重复提交；恢复后重新允许操作。加载指示器以 800ms 一圈旋转，系统开启减少动态效果时停止旋转，保留图标、进行中文案及忙碌语义。操作结果由表单展示，失败在输入框下方提示，不把按钮改成长期红色或绿色。
+
+#### Login 表单流程
 
 正式接入后，只在真实异步请求期间启用加载态。`/components` 中的加载开关仅用于组件验收；Login 当前用 1.4 秒模拟异步请求演示发送流程，不实际发送邮件。
 
@@ -338,6 +394,46 @@ Google、GitHub 按钮尚未接入 OAuth；点击时不显示 preview 或未接�
 邮箱按钮默认文案为 `Sign in with Email` / `使用邮箱登录`。有效邮箱提交后显示 `Sending…` / `发送中…` 和转圈图标，设置 `disabled`、`aria-busy`，禁止重复点击或回车提交。发送期间邮箱只读，Google、GitHub 按钮保持可用；邮箱发送按钮独立禁用以防止重复提交。请求完成后恢复操作，按钮显示 `Resend email` / `重新发送邮件`；再次发送沿用相同的发送状态。正式接入后，必须在服务确认发送成功后展示成功结果，失败仍使用输入框下方的红色提示。
 
 成功反馈常驻在邮箱按钮下方，间距 16px，图标与文字作为整体相对页面水平居中，仅保留左侧绿色成功图标和 `Magic link sent, please check your email` / `登录链接已发送，请查收邮件` 一句话，无卡片底色、描边、邮箱地址或额外辅助文字。使用 `role="status"` 礼貌宣告；不自动消失、不提供关闭按钮，也不新增第二步页面或临时 Toast。修改邮箱后清除之前的发送结果，按钮恢复初始文案。14 / 20 字号、文字颜色及绿色成功图标绑定现有组件与颜色 token。
+
+### 4.2 SDK Tab
+
+沿用 SDK 示例的矩形 Tab，不采用胶囊圆角。实现入口：[catenoid-field-embed.css](./src/landing/catenoid-field-embed.css)、[catenoid-field-embed.jsx](./src/landing/catenoid-field-embed.jsx)；页面局部尺寸覆盖位于 [landing.css](./src/landing/landing.css)。字体遵循 §1，英文和数字默认 Geist Sans，中文 Frex，不因代码示例而自动使用 Mono。
+
+#### 大、中、小尺寸
+
+三档共用圆角 2、描边 1、字重 400，默认无投影。高度依据 §4，宽度、文字及间距依据 SDK 的局部样式；M 为补齐档位的扩展建议。
+
+| 档位 | 高度 / 宽度 | 字号 / 行高 | 上下 / 水平内边距 | 项间距 | 状态 |
+| --- | --- | --- | --- | ---: | --- |
+| L 大号 | 44 / 65 | 12 / 16 | 4 / 6 | 10 | 现有桌面规范 |
+| M 中号 | 36 / 65 | 12 / 16 | 4 / 6 | 10 | 扩展建议 |
+| S 小号 | 26 / 65 | 12 / 16 | 4 / 6 | 6 | 现有手机局部规范 |
+
+26px 是 SDK 局部视觉高度。若扩展到一般触摸界面，建议扩大点击区域，不直接将紧凑视觉高度作为触摸目标；页面断点的 `min-height` 覆盖需在接入时核对，不据此改写本表尺寸。
+
+#### 状态
+
+| 状态 | 外观与行为 | 依据 / 状态 |
+| --- | --- | --- |
+| 默认 / 未选中 | 透明底；文字与 1px 描边为 `mineral-green/500 · #19A88B` | 现有 SDK 样式 |
+| 悬停 | 未选中项的文字与描边加深为 `mineral-green/700 · #0A6351`，保持透明底 | 现有 SDK 样式 |
+| 选中 | `mineral-green/500 · #19A88B` 实底及同色描边，白字；显示对应面板 | 现有 SDK 样式 |
+| 按下 | 未选中且可用时，填充复用 `--control-surface-pressed`，即白按钮的悬停底色叠加 3% 黑色；保留悬停的深绿文字与描边，激活后进入选中态 | 本次反馈确认；HTML 已实现 |
+| 键盘聚焦 | 保留当前底色，使用主色绿 2px 外轮廓；轮廓间隔建议 2px | 2px 轮廓沿用项目规则；间隔为扩展建议 |
+| 禁用 | 建议复用按钮 token：底 `black/10`、字 `black/40`、边 `black/3`；原生 `disabled`，不进入切换顺序，无悬停 / 按下反馈 | 扩展建议；HTML 已演示 |
+
+禁用优先阻止交互；选中态保留实色底，未选中项的按下反馈覆盖悬停；键盘焦点轮廓可与可用状态叠加。颜色与描边过渡为 140ms；遵循减少动态效果设置。当前没有独立 Tab 加载态；异步数据的加载反馈建议放在对应内容面板中。
+
+#### 键盘与语义
+
+完整 Tab 交互作为扩展建议，在 HTML 中演示以下行为：
+
+- 容器、切换项与面板分别使用 `role="tablist"`、`role="tab"`、`role="tabpanel"`。
+- `aria-selected` 表示当前选中项，`aria-controls` 与面板 `id` 对应，面板用 `aria-labelledby` 关联 Tab；仅显示当前面板，其余设置 `hidden`。
+- 当前 Tab 的 `tabindex="0"`，其余为 `-1`；Tab 键进入当前选中项，左右方向键循环切换并移动焦点，Home / End 跳至首个 / 末个可用项，跳过禁用项。
+- 示例中的 Ruby 仅用于禁用态展示，不代表产品计划支持。
+
+SDK 当前业务实现使用普通按钮、`is-active` 与 `aria-pressed`，尚未实现以上完整 Tab 键盘语义。Landing 旧代码示例的方向键 / Home / End 逻辑可参考 [landing-interactions.js](./src/landing/landing-interactions.js) 中的 `setupTabs`；不可将 HTML 的演示能力记为 SDK 已上线能力。
 
 ## 5. 交互与动效
 

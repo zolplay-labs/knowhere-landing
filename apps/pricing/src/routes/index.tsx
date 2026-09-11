@@ -3,7 +3,6 @@ import { HeroDataStream } from '../components/hero-data-stream'
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Header } from "../components/Header";
-import { GridController } from "../components/GridController";
 import { Footer } from "../components/Footer";
 import { CheckCircleFill } from "../components/CheckCircleFill";
 import type { CSSProperties } from "react";
@@ -393,7 +392,6 @@ function App() {
             </div>
           </div>
         </div>
-        <GridController />
       </main>
       <Footer />
     </>

@@ -3,7 +3,7 @@ import { IconChevronLeft } from '@tabler/icons-react';
 import { RiBlueskyFill, RiFacebookFill, RiLinkedinFill, RiMastodonFill, RiTwitterXFill } from '@remixicon/react';
 import { ArticleCard, DynamicLeadCover } from './BlogHome';
 import { Header } from './Header';
-import { articles, articleDate, articleUrl } from './articles';
+import { articles, articleDate, articleUrl, type Article } from './articles';
 import articleContent from './content/pdf-parser.html?raw';
 import './article-detail.css';
 
@@ -15,19 +15,18 @@ const socialLinks = [
   { name: 'Facebook', service: 'facebook', Icon: RiFacebookFill },
 ];
 
-function ShareLinks() {
+function ShareLinks({ article }: { article: Article }) {
   return <nav className="kb-detail-share" aria-label="Share article">
     <span>Share</span>
     {socialLinks.map(({ name, service, Icon }) => <a key={service}
-      href={`${articleUrl(articles[0])}?share=${service}&nb=1`}
+      href={`${articleUrl(article)}?share=${service}&nb=1`}
       target="_blank" rel="noopener noreferrer" aria-label={`Share on ${name}`} title={`Share on ${name}`}>
       <Icon size={20} aria-hidden="true" />
     </a>)}
   </nav>;
 }
 
-export default function ArticleDetail() {
-  const article = articles[0];
+export default function ArticleDetail({ article = articles[0], content = articleContent, readingTime = '11–17 min read' }: { article?: Article; content?: string; readingTime?: string }) {
   return <div className="kb kb-standard kb-detail" lang="en" id="top">
     <a className="kb-skip" href="#article-main">Skip to content</a>
     <Header />
@@ -36,13 +35,13 @@ export default function ArticleDetail() {
         <header className="kb-detail-heading">
           <Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back</Link>
           <h1 id="article-title">{article.title}</h1>
-          <div className="kb-detail-meta"><span>OntosAI</span><span aria-hidden="true">•</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span aria-hidden="true">•</span><span>11–17 min read</span></div>
+          <div className="kb-detail-meta"><span>OntosAI</span><span aria-hidden="true">•</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span aria-hidden="true">•</span><span>{readingTime}</span></div>
         </header>
-        <figure className="kb-detail-cover"><DynamicLeadCover title={article.title} /></figure>
+        <figure className="kb-detail-cover">{article.category === 'Use Case' ? <img src={article.coverSource} width="4096" height="2304" alt="Use Case" /> : <DynamicLeadCover title={article.title} />}</figure>
         <div className="kb-detail-body">
-          <ShareLinks />
-          <div className="kb-detail-content" dangerouslySetInnerHTML={{ __html: articleContent }} />
-          <div className="kb-detail-end"><ShareLinks /><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back</Link></div>
+          <ShareLinks article={article} />
+          <div className="kb-detail-content" dangerouslySetInnerHTML={{ __html: content }} />
+          <div className="kb-detail-end"><ShareLinks article={article} /><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back to blog</Link></div>
         </div>
       </article>
       <section className="kb-detail-related kb-classic kb-hybrid kb-shell" aria-labelledby="related-title">

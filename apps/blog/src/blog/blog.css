@@ -23,6 +23,7 @@
   --black-20: rgb(0 0 0 / 20%);
   --black-30: rgb(0 0 0 / 30%);
   --black-50: rgb(0 0 0 / 50%);
+  --kb-body: #595a55;
   --kb-paper: #fff;
   --kb-ink: #2e2e2c;
   --kb-muted: #888a82;
@@ -82,7 +83,7 @@
 .kb-featured h2 { font-size: 20px; line-height: 26px; letter-spacing: -.015em; text-wrap: pretty; }
 .kb-featured p { margin-top: 16px; color: var(--kb-muted); font-size: 16px; line-height: 24px; text-wrap: pretty; }
 .kb-featured-image { flex: 1; max-width: 500px; min-width: 0; }
-.kb-cover { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: var(--kb-mist); }
+.kb-cover { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #f0f2e6; }
 .kb-card > a { display: flex; flex-direction: column; height: 100%; }
 .kb-card-copy { flex: 1; padding-block: 24px 48px; }
 .kb-card h3 { font-size: 18px; line-height: 26px; letter-spacing: -.01em; text-wrap: pretty; }
@@ -175,11 +176,9 @@
 .kb-classic .kb-article-grid { gap: 64px 32px; }
 .kb-hybrid .kb-featured-grid, .kb-classic.kb-hybrid .kb-article-grid { gap: 32px var(--layout-grid-gap); }
 .kb-classic .kb-pagination { margin-top: 56px; }
-.kb-empty { text-align: center; padding: 60px 20px; background: #f9faf5; }
+.kb-empty { text-align: center; padding: 60px 20px; }
 .kb-empty h3 { font-size: 24px; }
 .kb-empty p { margin-block: 10px 24px; color: var(--kb-muted); }
-.kb-empty button { min-height: 44px; border: 1px solid var(--kb-ink); padding: 10px 22px; gap: 30px; font-size: 14px; }
-.kb-empty button:hover { background: var(--kb-mist); }
 
 /* V3 uses the landing design system; V1 and V2 remain layout references. */
 .kb-standard { --kb-paper: #fff; --kb-ink: #2e2e2c; --kb-muted: #888a82; --kb-green: #19a88b; font-size: 18px; line-height: 1.55; isolation: isolate; }
@@ -441,4 +440,47 @@
   .kb-card-image .kb-cover,
   .kb-lead-cover-art .kb-cover,
   .kb-lead-cover-art canvas { transition: none; }
+}
+
+/* Landing semantic theme mapping; editorial cover artwork keeps its own palette. */
+html[data-theme="dark"] .kb {
+  color-scheme: dark;
+  --kb-paper: #010909;
+  --kb-ink: #f9faf5;
+  --kb-strong: #f9faf5;
+  --kb-body: #bbbcb3;
+  --kb-muted: #bbbcb3;
+  --kb-secondary: #bbbcb3;
+  --kb-green: #23d6b1;
+  --kb-mineral: #1dbe9d;
+  --kb-mist: #073231;
+  --kb-coral: #ff897d;
+  --kb-teal: #2fbab8;
+  --kb-on-primary: #011711;
+  --black-1: rgb(249 250 245 / 1%);
+  --black-3: rgb(249 250 245 / 3%);
+  --black-6: rgb(249 250 245 / 6%);
+  --black-10: rgb(249 250 245 / 10%);
+  --black-20: rgb(249 250 245 / 20%);
+  --black-30: rgb(249 250 245 / 30%);
+  --black-50: rgb(249 250 245 / 50%);
+}
+html[data-theme="dark"] .kb header.kh-site-header {
+  --chrome-primary: var(--kb-green);
+  --chrome-on-primary: var(--kb-on-primary);
+}
+html[data-theme="dark"] .kb-standard .kb-hybrid .kb-filters button[aria-pressed='true'],
+html[data-theme="dark"] .kb-standard .kb-hybrid .kb-pagination-pages > [aria-current] {
+  background: var(--kb-green);
+  border-color: var(--kb-green);
+  color: var(--kb-on-primary);
+}
+html[data-theme="dark"] .kb-standard .kb-hybrid .kb-filters button[aria-pressed='true']:hover {
+  background: color-mix(in srgb, var(--kb-green) 92%, var(--kb-on-primary));
+}
+html[data-theme="dark"] .kb-standard .kb-hybrid .kb-filters button:active {
+  background: var(--black-6);
+}
+html[data-theme="dark"] .kb-standard .kb-hybrid .kb-filters button[aria-pressed='true']:active {
+  background: color-mix(in srgb, var(--kb-green) 88%, var(--kb-on-primary));
 }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { GlobalIcon, GitHubIcon } from "./HeaderIcons";
 import { AnimatedThemeToggler } from "./AnimatedThemeToggler";
+import { syncSiteTheme } from "./theme";
 import { siteLinks, navigationLinks } from "./links";
 import headerLogo from "./assets/knowhere-back-to-top.svg";
 import "./site-chrome.css";
@@ -30,8 +31,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
   useEffect(() => {
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const updateTheme = () => {
-      const saved = localStorage.getItem("knowhere-color-theme");
-      setDark(saved ? saved === "dark" : media.matches);
+      setDark(syncSiteTheme() === "dark");
     };
     updateTheme();
     setLanguage(localStorage.getItem("knowhere-language") === "zh" ? "zh" : "en");
@@ -43,11 +43,17 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
     setReady(true);
     onScroll();
     media.addEventListener("change", updateTheme);
+    window.addEventListener("focus", updateTheme);
+    window.addEventListener("pageshow", updateTheme);
+    window.addEventListener("storage", updateTheme);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize);
     document.addEventListener("pointerdown", onPointer);
     return () => {
       media.removeEventListener("change", updateTheme);
+      window.removeEventListener("focus", updateTheme);
+      window.removeEventListener("pageshow", updateTheme);
+      window.removeEventListener("storage", updateTheme);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
       document.removeEventListener("pointerdown", onPointer);
@@ -83,7 +89,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
   }, [languageOpen]);
 
   function toggleTheme() {
-    localStorage.setItem("knowhere-color-theme", dark ? "light" : "dark");
+    syncSiteTheme(dark ? "light" : "dark");
     setDark(!dark);
   }
   function closeMenu() {

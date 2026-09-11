@@ -618,7 +618,7 @@ h1 span {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: url('/assets/billing-texture.png') -140px center / auto 140% no-repeat;
+  background: url('/assets/billing-texture-squares.png') -140px center / auto 140% no-repeat;
   opacity: 0.5;
 }
 .billing-card-top::after {
@@ -1110,7 +1110,9 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
     --layout-grid-gap: 16px;
     --layout-grid-edge: 24px;
   }
-  .rate-card { grid-template-columns: 1fr; justify-items: start; }
+  .rate-card { gap: 16px; }
+  .rate-rule { padding-inline: 8px; }
+  .rate-rule > p { white-space: nowrap; font-size: clamp(12px, 1.36vw, 14px); }
   .rate-rules { width: 100%; }
   .limits-table,
   .enterprise-card { grid-column: 1 / -1; grid-row: auto; }
@@ -1123,9 +1125,16 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   .faq-layout { display: flex; flex-direction: column; gap: 40px; }
   .faq-list { padding-top: 0; }
   .final-cta {
-    padding: 46px 48px;
+    padding: 46px var(--layout-grid-edge);
   }
-  .final-cta-detail { gap: 32px; }
+  .final-cta-inner {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 24px;
+  }
+  .final-cta-actions { flex-wrap: nowrap; }
+  .final-cta-actions .button { white-space: nowrap; }
+  .final-cta-benefits { grid-template-columns: minmax(0, 1fr); }
+  .final-cta-benefits li { white-space: normal; text-align: left; }
 }
 @media (max-width: 767px) {
   :root {
@@ -1299,21 +1308,26 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
 
 html[data-theme="dark"] {
   color-scheme: dark;
-  --black-1: rgb(255 255 255 / 1%);
-  --black-3: rgb(255 255 255 / 3%);
-  --black-6: rgb(255 255 255 / 6%);
-  --black-10: rgb(255 255 255 / 10%);
-  --black-20: rgb(255 255 255 / 20%);
-  --black-40: rgb(255 255 255 / 40%);
-  --black-80: rgb(255 255 255 / 80%);
+  --black-1: rgb(249 250 245 / 1%);
+  --black-3: rgb(249 250 245 / 3%);
+  --black-6: rgb(249 250 245 / 6%);
+  --black-10: rgb(249 250 245 / 10%);
+  --black-20: rgb(249 250 245 / 20%);
+  --black-40: rgb(249 250 245 / 40%);
+  --black-80: rgb(249 250 245 / 80%);
   --paper: #010909;
   --ink: #f9faf5;
   --body: #bbbcb3;
   --muted: #bbbcb3;
   --line: var(--black-10);
   --surface: var(--black-3);
-  --green: #23d6b1;
-  --green-dark: #23d6b1;
+  --green: #1dbe9d;
+  --action-primary: #23d6b1;
+  --action-on-primary: #011711;
+  --action-primary-hover: color-mix(in srgb, var(--action-primary) 92%, var(--action-on-primary));
+  --action-primary-pressed: color-mix(in srgb, var(--action-primary) 88%, var(--action-on-primary));
+  --coral-signal-500: #ff897d;
+  --green-dark: var(--action-primary);
   --teal: #7efedd;
   --brand-soft: #021d1d;
   --brand-tint: #042626;
@@ -1322,10 +1336,37 @@ html[data-theme="dark"] {
   --brand-panel: #073231;
   --rate-highlight: rgb(1 9 9 / 80%);
 }
-html[data-theme="dark"] .button { background: #23d6b1; color: #011711; }
-html[data-theme="dark"] .button:hover { background: #7efedd; }
+html[data-theme="dark"] .rate-card > .button,
+html[data-theme="dark"] .final-cta-actions .button:not(.button-secondary) {
+  --action-surface: var(--action-primary);
+  --action-ink: var(--action-on-primary);
+  --action-hover: var(--action-primary-hover);
+  --action-pressed: var(--action-primary-pressed);
+}
 html[data-theme="dark"] .button-secondary { background: transparent; color: var(--ink); border-color: var(--ink); }
-html[data-theme="dark"] .button-secondary:hover { background: #042626; }
+html[data-theme="dark"] .final-cta-actions .button-secondary {
+  --action-hover: var(--black-6);
+  --action-pressed: var(--black-10);
+}
+html[data-theme="dark"] .enterprise-card {
+  --body: #fff;
+  --line: rgb(255 255 255 / 25%);
+  color: #fff;
+}
+html[data-theme="dark"] .faq-list details[open] .faq-plus::before { background: var(--action-on-primary); }
+html[data-theme="dark"] .ruler-fill { background: rgb(35 214 177 / 18%); }
+.enterprise-card-action .button:active,
+html[data-theme="dark"] .enterprise-card-action .button:active {
+  background: color-mix(in srgb, #f7f8f4 97%, #000);
+  border-color: #b1b7a9;
+}
+html[data-theme="dark"] .billing-card {
+  --brand-panel: var(--green);
+  --on-brand-panel: #fff;
+  --on-brand-secondary: #fff;
+  --brand-highlight: #fff;
+  --brand-panel-line: rgb(255 255 255 / 25%);
+}
 html[data-theme="dark"] .ruler-budget { color: #011711; }
 html[data-theme="dark"] .final-cta {
   --cta-on-surface: #fff;
@@ -1335,3 +1376,9 @@ html[data-theme="dark"] .final-cta {
 html[data-theme="dark"] .ruler-handle { background: #021d1d; }
 html[data-theme="dark"] .final-cta-email a { background: #fff; color: #000; }
 html[data-theme="dark"] .final-cta-email a:hover { background: var(--black-80); }
+
+/* Pricing navigation shares the page's dark primary action palette. */
+html[data-theme="dark"] header.kh-site-header {
+  --chrome-primary: var(--action-primary);
+  --chrome-on-primary: var(--action-on-primary);
+}

@@ -1,3 +1,4 @@
+import { syncSiteTheme } from "../../../../shared/site-chrome/theme";
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { FluidCover } from '../components/fluid-cover'
@@ -12,6 +13,21 @@ import {
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
+  useEffect(() => {
+    const sync = () => { syncSiteTheme(); };
+    const media = matchMedia('(prefers-color-scheme: dark)');
+    sync();
+    window.addEventListener('focus', sync);
+    window.addEventListener('pageshow', sync);
+    window.addEventListener('storage', sync);
+    media.addEventListener('change', sync);
+    return () => {
+      window.removeEventListener('focus', sync);
+      window.removeEventListener('pageshow', sync);
+      window.removeEventListener('storage', sync);
+      media.removeEventListener('change', sync);
+    };
+  }, []);
   const [chinese, setChinese] = useState(false)
   const t = (en: string, zh: string) => (chinese ? zh : en)
   return (

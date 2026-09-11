@@ -1,0 +1,32 @@
+<!-- Source: https://blog.knowhereto.ai/2026/03/19/how-i-cured-my-ais-amnesia-literature-review/ -->
+
+<p><strong>A graduate student’s journey to make large language models remember every paper.</strong></p>
+<p>If you ask me what I’m researching these days, I might say, “Why do roosters lay eggs?” — an absurd question, I know. But it’s the perfect test case for something that has frustrated me for months: the inability of AI assistants to synthesize multiple academic papers without forgetting the earlier ones.</p>
+<p>As a grad student, I often need to write literature reviews that combine insights from half a dozen papers. I’d upload one PDF to ChatGPT, get a nice summary. Then I’d upload a second PDF and ask, “Combine this with the previous paper.” The model would dutifully talk about the second paper, but the first one would fade into a vague memory. By the third upload, it was all but forgotten. Even with the latest long-context models, details slipped through the cracks. My reviews were always incomplete, missing key references.</p>
+<p>I tried everything: concatenating PDFs, using hierarchical summaries, even manually feeding snippets. Nothing worked perfectly.</p>
+<p>Then I discovered Knowhere.</p>
+<p>Knowhere isn’t another chatbot. It’s a document parser built for AI agents. You upload your PDFs (or Word, Excel, images), and it transforms them into clean, structured knowledge chunks — preserving the original hierarchy, tables, and citations. These chunks become a permanent knowledge base. Then you talk to OpenClaw (an AI agent that integrates with Knowhere), and it answers your questions by retrieving from all your parsed documents. Every answer comes with citations, so you can trace it back to the source.</p>
+<p>I had to test it. First of all, I asked OpenClaw to search for the latest papers related to roosters laying eggs and sex reversal, and here are the results:</p>
+<figure><img alt="Image 2" src="https://blog.knowhereto.ai/wp-content/uploads/2026/03/fa02b-0_gpqcvweezoazmak.png"/></figure>
+<p>I grabbed five real academic papers (all vaguely related to avian biology, but I asked a deliberately odd question to push the system). I uploaded them to Knowhere — it took seconds. Then I opened OpenClaw and typed:</p>
+<blockquote>
+<p>_“Please write a short background review on the question: ‘Why do roosters lay eggs?’ Synthesize all the uploaded papers.”_</p>
+</blockquote>
+<p>A few seconds later, OpenClaw returned a beautifully structured mini‑review. It started with an introduction to the (mythical) phenomenon, then presented key findings from each paper, noted where they agreed or disagreed, and ended with a conclusion. Every statement had a citation in brackets, and I could click to see the exact chunk in the original PDF.</p>
+<figure><img alt="Image 3" src="https://blog.knowhereto.ai/wp-content/uploads/2026/03/5deff-0g7gk_hs9ln7qyxuv.png"/></figure>
+<figure><img alt="Image 4" src="https://blog.knowhereto.ai/wp-content/uploads/2026/03/3b563-0pl2n6kktvsgwsbn3.png"/></figure>
+<figure><img alt="Image 5" src="https://blog.knowhereto.ai/wp-content/uploads/2026/03/86b6f-0q95txniapeobyw1v.png"/></figure>
+<p>I checked carefully. All five papers were represented. No omissions. No hallucinations. The AI had remembered everything.</p>
+<p>Why does Knowhere work when others fail? Because it decouples document ingestion from question answering. Instead of cramming everything into a single prompt, it builds a searchable index first. Retrieval is precise, so the model always has the right context.</p>
+<p>This isn’t just for weird biology questions. It’s for anyone who works with multiple documents:</p>
+<ul>
+<li>Researchers synthesizing literature</li>
+<li>Engineers navigating technical specs</li>
+<li>Consultants reviewing contracts and reports</li>
+<li>Teams building knowledge bases</li>
+</ul>
+<p>Knowhere is out now, and there’s a free tier. If you’ve ever cursed your AI for forgetting that crucial paper, give it a try.</p>
+<p>👉 <a href="https://knowhereto.ai/claw?utm_source=Medium">https://knowhereto.ai/claw</a></p>
+<p>I’d love to hear your own stories of AI amnesia — and how you’ve solved them.</p>
+<hr/>
+<p><em>Originally published on <a href="https://medium.com/@13512395620/how-i-cured-my-ais-amnesia-from-rooster-eggs-to-a-perfect-literature-review-07c4f0a7d91c">Medium</a>.</em></p>

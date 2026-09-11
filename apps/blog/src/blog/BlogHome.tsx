@@ -48,7 +48,8 @@ export function DynamicLeadCover({ label, title }: { label?: string; title?: str
         if (canvas.dataset.ready !== 'true') canvas.dataset.ready = 'true';
       };
       const animate = (time: number) => {
-        phase = (phase + Math.min((time - previousTime) / 1000, 0.1) * studioSettings.values['motion.speed']) % 1;
+        // The marble field is not seamless at phase 1; keep time continuous.
+        phase += Math.min((time - previousTime) / 1000, 0.1) * studioSettings.values['motion.speed'];
         previousTime = time;
         draw();
         frame = requestAnimationFrame(animate);
@@ -107,9 +108,10 @@ export function ArticleCard({ article, originalCover = false, coverOverride }: {
   coverOverride?: string;
 }) {
   return <article className="kb-card kb-card-hybrid">
-    <Link to="/article-preview" preload="intent">
+    <Link to={article.category === 'Use Case' ? `/articles/${article.slug}` : '/article-preview'} preload="intent">
       <div className="kb-card-image">
-        {coverOverride ? <img className="kb-cover" src={coverOverride} width="4096" height="2304" alt={article.category} />
+        {article.category === 'Use Case' ? <img className="kb-cover" src={article.coverSource} width="4096" height="2304" alt={article.category} />
+          : coverOverride ? <img className="kb-cover" src={coverOverride} width="4096" height="2304" alt={article.category} />
           : (originalCover || ('originalCover' in article && article.originalCover)) ? <img className="kb-cover" src={`/covers/categories/${article.category.toLowerCase()}.png`}
           width="4096" height="2304" alt={article.category} />
           : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
@@ -196,9 +198,6 @@ function ArticleBrowser() {
     {matching.length === 0 && <div className="kb-empty">
       <h3>No articles here just yet.</h3>
       <p>Try another topic.</p>
-      <button onClick={() => setCategory('All')}>
-        View all articles <FiArrowRight aria-hidden="true" />
-      </button>
     </div>}
     {matching.length > 9 && <Pagination currentPage={currentPage} pageCount={Math.ceil(matching.length / 9)} onPageChange={setCurrentPage} />}
   </section>;

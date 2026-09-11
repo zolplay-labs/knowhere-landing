@@ -406,3 +406,37 @@ label {
     transition: none !important;
   }
 }
+
+html[data-theme="dark"] {
+  color: #f9faf5;
+  background: #010909;
+  --mineral-green-500: #1dbe9d;
+  --mist-white-50: #021d1d;
+  --mist-white-100: #011110;
+  --mist-white-200: #021d1d;
+  --mist-white-300: #042626;
+  --mist-white-500: #073231;
+  --mist-white-700: #bbbcb3;
+  --mist-white-900: #f9faf5;
+  --mist-white-950: #f9faf5;
+  --login-error-color: #ffa79f;
+  --black-2: rgb(249 250 245 / 2%);
+  --black-3: rgb(249 250 245 / 3%);
+  --black-6: rgb(249 250 245 / 6%);
+  --black-10: rgb(249 250 245 / 10%);
+  --black-40: rgb(249 250 245 / 40%);
+  --control-border: #083b3a;
+  --control-border-hover: #888a82;
+  --control-placeholder: #888a82;
+  --control-surface-hover: #042626;
+  --control-surface-pressed: #073231;
+  --control-black-surface: #23d6b1;
+  --control-black-hover: color-mix(in srgb, #23d6b1 92%, #011711);
+  --control-black-pressed: color-mix(in srgb, #23d6b1 88%, #011711);
+}
+html[data-theme="dark"] .control-button--black { --button-ink: #011711; }
+html[data-theme="dark"] .brand img { filter: invert(1); }
+html[data-theme="dark"] :is(.form-heading .eyebrow, .divider, .login-footer) { color: #bbbcb3; }
+html[data-theme="dark"] .divider::before,
+html[data-theme="dark"] .divider::after { background: var(--black-10); }
+html[data-theme="dark"] .social-buttons img[src*="github-invertocat"] { filter: invert(1); }

@@ -85,6 +85,27 @@ export const articles = [
     coverSource: '/covers/custom/5.png',
     description: 'Parse, semantically chunk, and ship RAG-ready manifests with Knowhere.',
   },
+  {
+    title: 'I Finally Cracked the Code on Why LLMs Fail at Real Work',
+    category: 'Use Case', date: '2026-04-18',
+    slug: 'why-llms-fail-at-real-work',
+    coverSource: '/covers/categories/use-case.png',
+    description: 'Visa-consultancy narrative: SnapFill + Knowhere raises form-fill success from ~20% to ~90%.',
+  },
+  {
+    title: 'Beyond the OpenClaw Hype: How I Finally Automated the Nightmare of Visa Processing',
+    category: 'Use Case', date: '2026-04-02',
+    slug: 'beyond-the-openclaw-hype-visa-processing',
+    coverSource: '/covers/categories/use-case.png',
+    description: 'Visa-agency story: SnapFill for OpenClaw enables accurate, traceable multi-form filling.',
+  },
+  {
+    title: 'How I Cured My AI’s Amnesia: From “Rooster Eggs” to a Perfect Literature Review',
+    category: 'Use Case', date: '2026-03-19',
+    slug: 'how-i-cured-my-ais-amnesia-literature-review',
+    coverSource: '/covers/categories/use-case.png',
+    description: 'Knowhere + OpenClaw synthesizes papers with citations without forgetting earlier uploads.',
+  },
 ] as const;
 
 export type Article = typeof articles[number];

@@ -229,6 +229,26 @@ export function LandingPage() {
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme || 'light')
 
   useEffect(() => {
+    // Cross-page fragments arrive before the client-rendered sections exist.
+    const hash = window.location.hash
+    if (!hash) return undefined
+    let cancelled = false
+    let frame
+    document.fonts.ready.then(() => {
+      if (cancelled) return
+      frame = requestAnimationFrame(() => {
+        if (window.location.hash === hash) {
+          document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: 'instant' })
+        }
+      })
+    })
+    return () => {
+      cancelled = true
+      cancelAnimationFrame(frame)
+    }
+  }, [])
+
+  useEffect(() => {
     const root = rootRef.current
     if (!root) return undefined
 

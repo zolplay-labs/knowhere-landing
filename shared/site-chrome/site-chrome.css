@@ -257,6 +257,8 @@ html[data-theme="dark"] .kh-site-footer .kh-footer-brand img { filter: none; }
   box-sizing: border-box;
 }
 html[data-theme="dark"] :is(.kh-site-header, .kh-site-footer) {
+  --chrome-primary: #23d6b1;
+  --chrome-on-primary: #011711;
   --chrome-paper: #010909;
   --chrome-ink: #f2f5f5;
   --chrome-line: rgb(255 255 255 / .14);
@@ -289,7 +291,7 @@ html[data-theme="dark"] .kh-site-header :is(.kh-header-api, .kh-header-mobile-ut
   border-color: color-mix(in srgb, var(--chrome-primary), var(--chrome-on-primary) 12%);
 }
 .kh-site-header .kh-header-icon img { width: 22px; height: 22px; }
-html[data-theme="dark"] .kh-site-header .kh-github-link img { filter: invert(1); }
+html[data-theme="dark"] .kh-site-header .github-link img { filter: invert(1); }
 .kh-site-footer .kh-footer-copyright { margin: 0; }
 .kh-site-footer .kh-footer-wordmark { background: color-mix(in srgb, var(--chrome-ink) 3%, transparent); }
 .kh-site-footer .kh-footer-links a + a::before { background: var(--chrome-line); }
