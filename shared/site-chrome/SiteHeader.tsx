@@ -130,7 +130,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
           <img src={headerLogo} width="132" height="52" alt="Knowhere" />
         </a>
         <div className="kh-header-links">
-          {links.map(([en, cn, href]) => <a key={en} href={href} target={en === "Docs" || en === "Blog" ? "_blank" : undefined} rel={en === "Docs" || en === "Blog" ? "noopener noreferrer" : undefined} aria-current={en.toLowerCase() === page ? "page" : undefined}>{zh ? cn : en}</a>)}
+          {links.map(([en, cn, href]) => <a key={en} href={href} target={en === "Docs" ? "_blank" : undefined} rel={en === "Docs" ? "noopener noreferrer" : undefined} aria-current={en.toLowerCase() === page ? "page" : undefined}>{zh ? cn : en}</a>)}
         </div>
         <div className="kh-header-actions">
           <div className="kh-desktop-utility">{github}</div>
