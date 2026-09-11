@@ -36,6 +36,8 @@ Login 和 Pricing 将上面的 `apps/blog` 分别换成 `apps/login`、`apps/pri
 
 Landing、Blog 和 Pricing 的导航与 Footer 共用 `shared/site-chrome/` 下的组件、样式和品牌素材。所有跨站目标统一维护在 `links.ts`；各应用的 Vite 配置通过 `resolve.dedupe` 使用自身的 React。语言翻译保留在所属应用中，共享导航通过语言事件或回调通知页面。修改共享组件后需要分别构建、检查并部署这三个应用，单独部署 Landing 不会更新另外两个站点。
 
+四个应用的语言偏好统一由 `shared/site-chrome/language.ts` 管理。`knowhere-language` Cookie 在 `knowhere-landing.workers.dev` 或 `knowhereto.ai` 的子域间共享，优先于各应用旧的 localStorage；本地同主机的不同端口也共享。没有已保存的选择时沿用英文默认值，首次选择后全站记住；刷新、前进后退和重新激活标签页时同步。两组不同根域名之间不共享 Cookie。修改此逻辑需要验证并分别部署四个应用；翻译内容仍由各应用维护。
+
 ## 保留原部署
 
 Landing 继续使用根目录的 `wrangler.jsonc` 和 `dist`。三个子应用继续使用各自 `vite.config.ts` 中的 `cloudflare_module` preset、兼容日期、`nodeCompat` 和 Worker 名称；执行 `pnpm build` 会生成各自的 `.output/server/wrangler.json`。

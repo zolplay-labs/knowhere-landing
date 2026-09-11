@@ -2,6 +2,7 @@ import { navigationLinks } from "./links";
 import footerLogo from "./assets/knowhere-footer-mark.svg";
 import "./site-chrome.css";
 import { useEffect, useRef, useState } from "react";
+import { syncSiteLanguage } from "./language";
 
 // The landing footer's 4px flickering grid, initialized on the client for SSR.
 function FooterGrid() {
@@ -80,7 +81,7 @@ function FooterGrid() {
 export function SiteFooter({ page = "landing" }: { page?: "landing" | "blog" | "pricing" }) {
   const [language, setLanguage] = useState("en");
   useEffect(() => {
-    setLanguage(localStorage.getItem("knowhere-language") || "en");
+    setLanguage(syncSiteLanguage());
     const update = (event: Event) => setLanguage((event as CustomEvent).detail.language);
     window.addEventListener("knowhere-language-change", update);
     return () => window.removeEventListener("knowhere-language-change", update);

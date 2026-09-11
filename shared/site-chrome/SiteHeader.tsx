@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { GlobalIcon, GitHubIcon } from "./HeaderIcons";
 import { AnimatedThemeToggler } from "./AnimatedThemeToggler";
 import { syncSiteTheme } from "./theme";
+import { observeSiteLanguage, syncSiteLanguage } from "./language";
 import { siteLinks, navigationLinks } from "./links";
 import headerLogo from "./assets/knowhere-back-to-top.svg";
 import "./site-chrome.css";
@@ -34,7 +35,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
       setDark(syncSiteTheme() === "dark");
     };
     updateTheme();
-    setLanguage(localStorage.getItem("knowhere-language") === "zh" ? "zh" : "en");
+    const stopLanguage = observeSiteLanguage(setLanguage);
     const onScroll = () => setScrolled(window.scrollY > 16);
     const onPointer = (event: PointerEvent) => {
       if (!header.current?.contains(event.target as Node)) setLanguageOpen(false);
@@ -50,6 +51,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
     window.addEventListener("resize", onResize);
     document.addEventListener("pointerdown", onPointer);
     return () => {
+      stopLanguage();
       media.removeEventListener("change", updateTheme);
       window.removeEventListener("focus", updateTheme);
       window.removeEventListener("pageshow", updateTheme);
@@ -97,8 +99,7 @@ export function SiteHeader({ page = "landing", onThemeChange, onLanguageChange }
     menuTrigger.current?.focus();
   }
   function chooseLanguage(value: string) {
-    setLanguage(value);
-    localStorage.setItem("knowhere-language", value);
+    setLanguage(syncSiteLanguage(value));
     setLanguageOpen(false);
     languageTrigger.current?.focus();
   }

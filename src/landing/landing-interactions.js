@@ -1,4 +1,5 @@
 import NumberFlow from 'number-flow'
+import { syncSiteLanguage } from '../../shared/site-chrome/language'
 
 // Initializes the non-canvas landing-page integrations after React mounts.
 export function initializeLandingInteractions(root) {
@@ -508,7 +509,7 @@ if (!(root instanceof Element)) return () => {};
     if (pricingReady) syncPricingCalculator();
   }
   addEventListener('knowhere-language-change', event => setLanguage(event.detail.language));
-  setLanguage(localStorage.getItem('knowhere-language') === 'zh' ? 'zh' : 'en');
+  setLanguage(syncSiteLanguage());
 
   $('.skip-link').addEventListener('click', () => {
     setTimeout(() => $('#main').focus({ preventScroll: true }), 0);

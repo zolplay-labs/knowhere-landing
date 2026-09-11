@@ -41,10 +41,7 @@ function Calculator() {
             <h2 id="calculator-title">Estimate your monthly processing cost</h2>
           </div>
           <p>
-            Your estimate is based on billable pages.{" "}
-            <a className="text-link" href="#billing-rules">
-              See how each file type is counted.
-            </a>
+            Your estimate is based on billable pages.
           </p>
         </div>
         <div className="calculator">

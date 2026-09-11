@@ -15,7 +15,6 @@ const chinese: Record<string, string> = {
   "No minimum spend": "无最低消费",
   "Estimate your monthly processing cost": "估算每月处理费用",
   "Your estimate is based on billable pages.": "估算以计费页数为准。",
-  "See how each file type is counted.": "查看各文件类型的计费方式。",
   "Estimated cost ($0.015 per billable page)": "预估费用（每计费页 $0.015）",
   "Number of billable pages": "计费页数",
   "Billable pages to process": "待处理计费页数",

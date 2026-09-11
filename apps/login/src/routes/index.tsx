@@ -1,4 +1,5 @@
 import { syncSiteTheme } from "../../../../shared/site-chrome/theme";
+import { observeSiteLanguage, syncSiteLanguage } from "../../../../shared/site-chrome/language";
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
 import { FluidCover } from '../components/fluid-cover'
@@ -29,6 +30,10 @@ function App() {
     };
   }, []);
   const [chinese, setChinese] = useState(false)
+  useEffect(() => observeSiteLanguage(language => setChinese(language === 'zh')), [])
+  function changeLanguage(chinese: boolean) {
+    setChinese(syncSiteLanguage(chinese ? 'zh' : 'en') === 'zh')
+  }
   const t = (en: string, zh: string) => (chinese ? zh : en)
   return (
     <div className="login-page" lang={chinese ? 'zh-CN' : 'en'}>
@@ -49,7 +54,7 @@ function App() {
             alt="Knowhere"
           />
         </a>
-        <LanguageMenu chinese={chinese} onChange={setChinese} />
+        <LanguageMenu chinese={chinese} onChange={changeLanguage} />
       </header>
       <main className="login-panel">
         <div className="form-area">
