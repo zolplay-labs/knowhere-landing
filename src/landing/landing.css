@@ -14346,7 +14346,6 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
 /* Tablet and short desktop viewports keep desktop content density in a static flow. */
 @media (min-width: 768px) and (max-width: 1439px),
        (min-width: 1440px) and (max-height: 1099px) {
-  #top.hero-b-layout,
   #comparison {
     overflow-x: clip;
   }
