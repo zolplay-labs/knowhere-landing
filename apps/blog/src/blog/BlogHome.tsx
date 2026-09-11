@@ -103,20 +103,28 @@ export function DynamicLeadCover({ label, title }: { label?: string; title?: str
   </div>;
 }
 
+export function ArticleCover({ article, originalCover = false, coverOverride }: {
+  article: Article;
+  originalCover?: boolean;
+  coverOverride?: string;
+}) {
+  return <div className="kb-card-image">
+        {article.category === 'Use Case' ? <CoverImage src={article.coverSource} alt={article.category} />
+          : coverOverride ? <CoverImage src={coverOverride} alt={article.category} />
+          : (originalCover || ('originalCover' in article && article.originalCover)) ? <CoverImage src={`/covers/categories/${article.category.toLowerCase()}.png`}
+          alt={article.category} />
+          : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
+      </div>;
+}
+
 export function ArticleCard({ article, originalCover = false, coverOverride }: {
   article: Article;
   originalCover?: boolean;
   coverOverride?: string;
 }) {
   return <article className="kb-card kb-card-hybrid">
-    <Link to={article.category === 'Use Case' ? `/articles/${article.slug}` : '/article-preview'} preload="intent">
-      <div className="kb-card-image">
-        {article.category === 'Use Case' ? <CoverImage src={article.coverSource} alt={article.category} />
-          : coverOverride ? <CoverImage src={coverOverride} alt={article.category} />
-          : (originalCover || ('originalCover' in article && article.originalCover)) ? <CoverImage src={`/covers/categories/${article.category.toLowerCase()}.png`}
-          alt={article.category} />
-          : <ProcessedArticleCover source={article.coverSource} label={article.category} />}
-      </div>
+    <Link to="/articles/$slug" params={{ slug: article.slug }} preload="intent">
+      <ArticleCover article={article} originalCover={originalCover} coverOverride={coverOverride} />
       <div className="kb-card-copy">
         <h3>{article.title}</h3>
         <p>{article.description}</p>
@@ -131,7 +139,7 @@ export function ArticleCard({ article, originalCover = false, coverOverride }: {
 
 function LeadArticle({ article }: { article: Article }) {
   return <article className="kb-photon-lead" aria-labelledby="lead-title">
-    <Link to="/article-preview" preload="intent">
+    <Link to="/articles/$slug" params={{ slug: article.slug }} preload="intent">
       <div className="kb-lead-image">
         <div className="kb-lead-cover-copy">
           <div className="kb-lead-story">

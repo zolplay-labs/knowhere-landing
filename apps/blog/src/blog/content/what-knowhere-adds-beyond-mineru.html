@@ -1,0 +1,203 @@
+<!-- Source: https://blog.knowhereto.ai/2026/06/17/what-knowhere-adds-beyond-mineru/ -->
+<figure><img alt="Image 2" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/b60e9-1zrripinkzedrhhp5nvt-yq.png"/></figure>
+<p><em>Parsing gets a document into Markdown. Agents need something more: navigable, source-grounded memory.</em></p>
+<p>On May 7, 2026, we open-sourced the full Knowhere stack.</p>
+<p>About a month later, the GitHub repo crossed 1,500 stars.</p>
+<p>For an infrastructure-heavy, engineering-led project, that happened faster than we expected.</p>
+<p>The interesting part is that Knowhere is not a flashy project. We did not release a new foundation model. We did not build another chat assistant. We focused on one of the least glamorous and most operationally difficult parts of making retrieval-augmented generation and AI agents work in production:</p>
+<h2>How do documents become knowledge that an agent can actually use?</h2>
+<figure><img alt="Image 3" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/55a4a-0wnso-guhviyx58po.png"/></figure>
+<p><em>Knowhere GitHub repository screenshot</em></p>
+<p>A lot of people ask the same question when they first see Knowhere:</p>
+<p><em>“Isn’t this just document parsing? How is it different from MinerU?”</em></p>
+<p>It is a fair question.</p>
+<p>The answer explains why we built Knowhere in the first place.</p>
+<h2>MinerU Parses Documents. Knowhere Handles What Comes After Parsing.</h2>
+<p>MinerU is a strong document parsing tool.</p>
+<p>It can extract text, headings, tables, and images from a PDF and convert them into Markdown or structured output. For many workflows, that step is already valuable.</p>
+<p>But parsing a PDF into Markdown does not mean the document is ready for an agent.</p>
+<p>The usual pipeline looks something like this:</p>
+<p><em>PDF -&gt; Markdown -&gt; chunks -&gt; vector database -&gt; retrieval -&gt; LLM answer</em></p>
+<p>It looks clean. In practice, this is where many systems run into trouble.</p>
+<p>A complex PDF has chapters, sections, tables, images, page references, captions, cross-page relationships, and sometimes multiple layers of layout. Once it is flattened into Markdown, a lot of that structure becomes weaker. Once it is chunked, each chunk becomes more isolated.</p>
+<p>A chunk may no longer know which section it belongs to. It may not know what came before or after it. It may not know that the table next to it is the actual evidence. It may not know that the paragraph it contains is only explaining a figure on the previous page.</p>
+<p>So when an agent retrieves from that corpus, it often gets a few fragments that look similar to the query. It does not know that Section 3.2 contains a comparison table, or that the paragraph it found is commentary on that table, or that the answer requires both.</p>
+<p>The LLM is left stitching together fragments.</p>
+<p>That is why teams can use a good parser and still feel disappointed with the final RAG result. The parser is not necessarily the problem. The problem is that the document was flattened before the agent ever saw it.</p>
+<p>Knowhere exists to fill that gap.</p>
+<p>It is not trying to be the next MinerU. It is trying to handle the step MinerU does not try to solve:</p>
+<p>Turning parsed document output into long-term memory that an agent can navigate, cite, and reason over.</p>
+<h2>The Extra Step Knowhere Adds</h2>
+<p>Knowhere’s position is simple:</p>
+<p>It is a memory layer between messy documents and AI agents.</p>
+<p>Not just a parser.</p>
+<p>Not just a chunker.</p>
+<p>Not just a vector database wrapper.</p>
+<p>It takes complex documents and turns them into structured, persistent memory that can keep being used after the initial parse.</p>
+<p>Between parsing and vectorization, Knowhere adds a structure reconstruction pipeline.</p>
+<p>First, it rebuilds document hierarchy.</p>
+<p>Knowhere uses a tree-like structure algorithm to recover section relationships. A chunk is no longer just a block of text. It knows which heading it sits under, what level it belongs to, and what its section path is.</p>
+<p>Second, it handles multimodal content.</p>
+<p>Images and tables are not treated as missing data or loose attachments. Knowhere runs OCR and descriptions on images, summarizes and structures tables, and links those assets back to the source chunks. When an agent retrieves evidence, it can retrieve the relevant chart or table context too, not just nearby prose.</p>
+<p>Third, it builds a lightweight memory graph.</p>
+<p>After a document is split into chunks, Knowhere stores navigation trees, summaries, graph links, and related metadata. The document is no longer a flat pile of text. It becomes a navigable knowledge structure. When multiple documents are uploaded, Knowhere can build relationships across them as well.</p>
+<p>Fourth, it provides Agentic Retrieval.</p>
+<p>Traditional RAG often does vector similarity, returns top-k chunks, and hands them to an LLM. Knowhere combines keyword, path, content, and semantic signals. The agent can first find the relevant area, then move through the section tree and graph links, and finally return evidence with source paths.</p>
+<p>That is the thing Knowhere does beyond MinerU.</p>
+<p>MinerU turns a PDF into Markdown.</p>
+<p>Knowhere turns parsed document output into memory an agent can use.</p>
+<p>This is not a small feature difference. It is the missing middle of the document-to-agent pipeline.</p>
+<figure><img alt="Image 4" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/59cfa-0yxpv2q1pktz8xaut.png"/></figure>
+<p><em>Knowhere document memory pipeline diagram</em></p>
+<h2>What Changed in the Results?</h2>
+<p>We ran internal evaluations on the same Agentic RAG tasks, comparing agents working from raw documents, ordinary parser output, and Knowhere’s structured memory.</p>
+<p>The results were direct:</p>
+<ul>
+<li>First-pass accuracy improved by 36%.</li>
+<li>Recall improved by 11%.</li>
+<li>With feedback, accuracy reached 79%, compared with roughly 53% when using raw documents directly.</li>
+<li>Agents needed fewer loops, used fewer tokens, and completed tasks faster.</li>
+</ul>
+<figure><img alt="Image 5" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/93198-06471vxfnhuv_dm8g.png"/></figure>
+<p>Internal evaluation chart comparing raw documents, Knowhere, Unstructured, MinerU, and Markitdown</p>
+<p>The reason is not mysterious.</p>
+<p>If the agent receives one undifferentiated block of text, it has to search blindly.</p>
+<p>If the agent receives a tree, a graph, and chunks with source paths, it can work more like a person reading a document: inspect the outline, locate the right section, open the relevant details, and cite the evidence.</p>
+<p>That is what structure buys you.</p>
+<h2>Where Knowhere Is Useful</h2>
+<p>If your AI application needs to use information from documents, Knowhere is relevant.</p>
+<p>For internal knowledge bases, the source material is rarely clean text. It is product manuals, SOPs, FAQs, training decks, spreadsheets, PDFs, Word files, and mixed-format material. Knowhere turns those files into structured memory that agents can retrieve from.</p>
+<p>For technical documentation assistants, the documents are often long and layout-heavy: equipment manuals, API docs, engineering drawings, and maintenance guides. Knowhere supports ultra-long PDFs and atlas-style documents, including technical manuals and drawing collections with hundreds of pages, routed through layout-aware parsing.</p>
+<p>For contract and report analysis, context matters. Legal documents, financial reports, tenders, and research reports rely heavily on section logic, definitions, references, and exceptions. Flat chunking loses too many of those relationships. Section paths and evidence links make the output more stable.</p>
+<p>For Agentic RAG, the need is even stronger. Many teams are no longer building simple Q&amp;A. They want agents to complete multi-step work based on documents. That only works if the document itself is navigable, not just searchable.</p>
+<h2>Knowhere Is Not a MinerU Replacement</h2>
+<p>The cleaner way to say it is:</p>
+<p>MinerU reads the document out.</p>
+<p>Knowhere connects the document into an AI system.</p>
+<p>MinerU is good at document parsing. It extracts text, headings, tables, and images, then produces Markdown or structured results. That is useful.</p>
+<p>But if the goal is a RAG system or an agent knowledge base, parsing is only the first step. After that, you still need chunk organization, embeddings, indexing, retrieval logic, evidence references, document updates, and lifecycle management.</p>
+<p>Knowhere’s value is that it keeps going after parsing.</p>
+<p>It does not just give you a parsed file. It turns the document into retrievable memory that agents can use directly.</p>
+<p>The main differences:</p>
+<ul>
+<li>Knowhere rebuilds document hierarchy instead of outputting flat text.</li>
+<li>It creates structured chunks with semantic context.</li>
+<li>It processes images and tables, then links multimodal content back to the source.</li>
+<li>It handles indexing and retrieval publication into queryable namespaces.</li>
+<li>It provides Agentic Retrieval, not just text for you to wire into a vector database.</li>
+<li>It supports document lifecycle management: update, query, and archive.</li>
+<li>It is model-agnostic. By default, it can use DeepSeek and Qwen-VL, and can be switched through environment variables to OpenAI, DashScope, Zhipu, Volcengine, and other providers.</li>
+<li>It is fully open source and self-hostable, which matters for teams whose data cannot leave their own environment.</li>
+</ul>
+<p>One sentence version:</p>
+<p>MinerU helps you read the document. Knowhere helps your agent use it.</p>
+<h2>Getting Started with Knowhere</h2>
+<p>There are three practical paths.</p>
+<h3>Path 1: Cloud API</h3>
+<p>Go to <a href="https://knowhereto.ai/?utm_source=medium">knowhereto.ai</a> and create an account. New users currently get $5 in free credits, so you can try it without deploying anything.</p>
+<p><strong>Install the Python SDK:</strong></p>
+<p>pip install knowhere-python-sdk</p>
+<p><strong>Parse an online PDF:</strong></p>
+<p>import knowhere</p>
+<p>client = knowhere.Knowhere(api_key="sk_your_key")</p>
+<p>result = client.parse(url="<a href='https://example.com/report.pdf")'>https://example.com/report.pdf")</a></p>
+<p>print(result.statistics.total_chunks)</p>
+<p>print(result.full_markdown[:500])</p>
+<p><strong>Parse a local file:</strong></p>
+<p>from pathlib import Path</p>
+<p>result = client.parse(</p>
+<p> file=Path("report.pdf"),</p>
+<p> parsing_params={"model": "advanced", "ocr_enabled": True},</p>
+<p>)</p>
+<p>print(result.manifest.source_file_name)</p>
+<p>print(len(result.chunks))</p>
+<p>print(result.document_id)</p>
+<p><strong>Access different chunk types:</strong></p>
+<p>for chunk in result.text_chunks:</p>
+<p> print(chunk.keywords)</p>
+<p> print(chunk.summary)</p>
+<p>for chunk in result.table_chunks:</p>
+<p> print(chunk.html[:100])</p>
+<p>for chunk in result.image_chunks:</p>
+<p> chunk.save("./output/")</p>
+<p><strong>Save all outputs:</strong></p>
+<p>result.save("./output/report/")</p>
+<h3>Path 2: Use It for RAG Retrieval</h3>
+<p><strong>After parsing, you can publish a document to a namespace and query it through the retrieval API.</strong></p>
+<p>job = client.jobs.create(</p>
+<p> source_type="url",</p>
+<p> source_url="<a href='https://example.com/manual.pdf",'>https://example.com/manual.pdf",</a></p>
+<p> namespace="support-center",</p>
+<p>)</p>
+<p>job_result = client.jobs.wait(job.job_id)</p>
+<p>document_id = job_result.document_id</p>
+<p>if document_id is None:</p>
+<p> raise RuntimeError("Expected document_id after successful publication.")</p>
+<p>response = client.retrieval.query(</p>
+<p> namespace="support-center",</p>
+<p> query="How do I reset Bluetooth pairing?",</p>
+<p> top_k=5,</p>
+<p> channels=["path", "term"],</p>
+<p> filter_mode="keep",</p>
+<p> signal_paths=["Bluetooth", "Pairing"],</p>
+<p>)</p>
+<p>print(response.answer_text)</p>
+<p>print(response.evidence_text)</p>
+<p>for item in response.results:</p>
+<p> print(item.content)</p>
+<p> print(item.score)</p>
+<p> print(item.source.source_file_name, item.source.section_path)</p>
+<p><strong>When a document has a new version, update it with the same document_id:</strong></p>
+<p>update_job = client.jobs.create(</p>
+<p> source_type="url",</p>
+<p> source_url="<a href='https://example.com/manual-v2.pdf",'>https://example.com/manual-v2.pdf",</a></p>
+<p> document_id=document_id,</p>
+<p>)</p>
+<p><strong>Archive it when it is no longer needed:</strong></p>
+<p>client.documents.archive(document_id)</p>
+<h3>Path 3: Self-Host</h3>
+<p>Use <a href="https://github.com/Ontos-AI/knowhere-self-hosted">knowhere-self-hosted</a> if your documents need to stay inside your own environment.</p>
+<p>You will need:</p>
+<ul>
+<li>Docker and Docker Compose</li>
+<li>A <a href="https://mineru.net/">MinerU</a> API key for PDF parsing</li>
+<li>An LLM API key, either <a href="https://platform.deepseek.com/">DeepSeek</a> or <a href="https://bailian.console.aliyun.com/">Alibaba Cloud DashScope</a></li>
+</ul>
+<p>Create a .env file in the project root.</p>
+<p><strong>Using DeepSeek:</strong></p>
+<p>MINERU_API_KEYS=your-mineru-api-key</p>
+<p>DS_KEY=your-deepseek-api-key</p>
+<p><strong>Using DashScope:</strong></p>
+<p>MINERU_API_KEYS=your-mineru-api-key</p>
+<p>ALI_API_KEYS=your-dashscope-api-key</p>
+<p>NORMOL_MODEL=qwen-plus</p>
+<p>HIERARCHY_LLM_MODEL=qwen-plus</p>
+<p>IMAGE_MODEL=qwen3.6-flash</p>
+<p>IMAGE_MODEL_MAX=qwen3.6-flash</p>
+<p><strong>Multiple keys can be comma-separated. Knowhere rotates them automatically to reduce rate-limit pressure on a single key:</strong></p>
+<p>MINERU_API_KEYS=mineru-key-1,mineru-key-2</p>
+<p><strong>If pulling images is slow in mainland China, use the Alibaba Cloud mirror:</strong></p>
+<p>KNOWHERE_IMAGE=knowhere-registry.cn-shenzhen.cr.aliyuncs.com/knowhere/knowhere:latest</p>
+<p><strong>Start the stack:</strong></p>
+<p>docker compose up -d</p>
+<p><strong>After startup:</strong></p>
+<p><code>Dashboard: <a href="http://localhost:3000/login">http://localhost:3000/login</a></code></p>
+<p><code>API health check: <a href="http://localhost:5005/health">http://localhost:5005/health</a></code></p>
+<p><code>API docs / Swagger: <a href="http://localhost:5005/docs">http://localhost:5005/docs</a></code></p>
+<p><strong>Common commands:</strong></p>
+<p>docker compose ps</p>
+<p>docker compose logs -f app</p>
+<p>docker compose pull &amp;&amp; docker compose up -d</p>
+<p>docker compose down</p>
+<p><strong>The self-hosted version sends anonymous product telemetry by default. It does not include document content, filenames, user identity, or other sensitive data. To disable it:</strong></p>
+<p>TELEMETRY_ENABLED=false</p>
+<h2>The Point</h2>
+<p>Knowhere crossed 1,500 stars in about a month not because of storytelling alone, but because a lot of teams are stuck in the same place:</p>
+<p>They have parsed their documents.</p>
+<p>Their agents still cannot use them well.</p>
+<p>The missing step is not glamorous. It is structure.</p>
+<p>Markdowns, images, tables, section hierarchy, cross-document links, and source paths need to be organized into memory that an agent can navigate, retrieve from, and cite.</p>
+<p>That is the step Knowhere adds.</p>
+<p>In production AI, model capability is only the beginning. The experience depends on whether the model gets the right knowledge, with the right structure, from the right source.</p>
+<p>If you are building RAG, document Q&amp;A, internal knowledge bases, or agent tooling, <a href="https://github.com/Ontos-AI/knowhere">Knowhere is open source</a> and <a href="https://knowhereto.ai/?utm_source=medium">ready to try</a>.</p>
+<p class="kb-detail-source">Originally published on <a href="https://medium.com/@13512395620/1-500-stars-in-a-month-what-knowhere-adds-beyond-mineru-222d1574c7f0">Medium</a>.</p>

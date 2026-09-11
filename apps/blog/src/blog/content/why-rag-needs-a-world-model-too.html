@@ -1,0 +1,117 @@
+<!-- Source: https://blog.knowhereto.ai/2026/06/11/why-rag-needs-a-world-model-too/ -->
+<figure><img alt="" height="700" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/why-rag-world-model-en.png?w=1024" width="1024"/></figure>
+<p>Fei-Fei Li’s recent piece on world models made me revisit a question that we often skip when talking about agents.</p>
+<p>Not whether an agent sees enough.</p>
+<p>But whether it has a world inside the system that can change, persist, and be acted on.</p>
+<p>At first glance, world models sound like a physical AI topic. Robots need to understand rooms. Autonomous driving systems need to understand roads. Video models need to generate scenes that evolve over time.</p>
+<p>But the part I find most interesting is not limited to physical space.</p>
+<p>Knowledge-work agents have the same problem. Their world is not a 3D room. Their world is a document space.</p>
+<p>A picture, a video frame, or a paragraph retrieved from a document is an observation. It can be detailed, relevant, and accurate. But an observation is not the world itself.</p>
+<p>A model can generate a video that looks like a room without knowing what objects exist in the room, how they relate to each other, or what happens if one object moves.</p>
+<p>In the same way, an agent can retrieve a paragraph that looks relevant without knowing which document it came from, which version it belongs to, what section it sits in, or which table supports it.</p>
+<p>That is why I find world models useful as a lens, not as a buzzword.</p>
+<p>They force us to ask three simple questions:</p>
+<ul>
+<li>What does the system see?</li>
+<li>What state does it believe the world is in?</li>
+<li>What can it do next?</li>
+</ul>
+<p>In some discussions, these map to renderer, simulator, and planner. The names matter less than the separation.</p>
+<p>The first layer presents the world to the model: a frame, a paragraph, a snippet, a summary.</p>
+<p>The second layer maintains a state that is more stable than a single observation: what objects exist, how they relate, what constraints hold, and what might happen after an action.</p>
+<p>The third layer chooses what to do next based on that state.</p>
+<p>In physical AI, this is obvious. A robot cannot just recognize “cup” and “table.” It needs to know that the cup is on the table, that the table has an edge, and that moving an arm may cause a collision.</p>
+<p>But enterprise agents face the same structure in a different medium.</p>
+<p>Their world is made of PDFs, decks, spreadsheets, contracts, reports, screenshots, product docs, meeting notes, comments, versions, citations, permissions, and links.</p>
+<p>This world has its own geography.</p>
+<p>Sections are terrain. Page numbers are coordinates. Tables and images are objects. Citations are paths. Versions are time. Permissions are boundaries. Comments and revisions are traces of past actions.</p>
+<p>If an agent treats all of that as flat text, the problem starts before reasoning begins.</p>
+<p>The world has already been compressed into snippets.</p>
+<p>This is where traditional RAG starts to show its limits.</p>
+<p>A common RAG pipeline looks like this:</p>
+<p>document -&gt; chunk -&gt; embedding/search -&gt; top-k context -&gt; answer</p>
+<p>This pipeline is useful. For FAQs, definitions, and finding a specific passage, it is often the simplest and most reliable path.</p>
+<p>The problem is not that RAG is useless. The problem is that it often reduces document work into text retrieval.</p>
+<p>For one-shot question answering, that may be enough.</p>
+<p>For long-running work, it breaks down.</p>
+<p>An agent can quote the right paragraph but not know whether it belongs to the current version. It can summarize all comments but not know which ones have already been resolved. It can move a number from a report into a memo but not know which table it came from, whether the number has changed, or whether it invalidates a later conclusion.</p>
+<p>This is not always a reading failure. Often, the model did read the relevant text.</p>
+<p>The failure is deeper: the agent received an observation, not a state.</p>
+<p>Context is temporary material placed into a prompt.</p>
+<p>State is the persistent current condition of the task: documents, sections, evidence, versions, citations, unresolved decisions, and what has already changed.</p>
+<p>Context can be truncated, compressed, or forgotten.</p>
+<p>State should persist across actions.</p>
+<p>That is why I think document agents need a document world state.</p>
+<p>Not because documents are physical worlds.</p>
+<p>But because agents need something stable to return to, inspect, update, compare, and cite.</p>
+<p>A minimal document world state might look like this:</p>
+<p>Document -&gt; Section -&gt; Chunk -&gt; Asset -&gt; Metadata -&gt; Source path -&gt; Graph link -&gt; Retrieval trace</p>
+<p>The point is not prettier storage.</p>
+<p>The point is to give the agent objects it can act on.</p>
+<p>A Document tells the system where evidence belongs. A Section preserves hierarchy and scope. A Chunk is not just content, but content with position, type, path, and source. An Asset keeps tables, images, pages, and slides from disappearing from the pipeline. Metadata preserves page numbers, filenames, summaries, and other signals. Graph links capture relationships across sections, documents, and assets. Retrieval traces make it possible to inspect where an answer came from.</p>
+<p>Once those objects exist, the agent’s action space changes.</p>
+<p>With only top-k snippets, the agent can mostly read and answer.</p>
+<p>With document state, it can search, open a document, expand a section, inspect a table or image, compare chunks, follow a graph edge, cite a source path, and revise its query with a reason.</p>
+<p>This is also why flat chunking loses more than boundary precision.</p>
+<p>It turns a document from a structured object into isolated slips of paper.</p>
+<p>You can improve ranking over those slips of paper, but the agent still cannot move through the document world.</p>
+<p>Tree-like chunking matters because it changes the shape of the retrieval object. A chunk is no longer just content. It is a node in a document tree. It knows which document it belongs to, which section it sits under, whether it connects to a table or image, where the source page is, and how it relates to nearby nodes.</p>
+<p>This is a more basic question than “how do we optimize RAG?”</p>
+<p>It asks: what kind of object is the agent actually consuming?</p>
+<p>This is where Knowhere fits inside Noire.</p>
+<p>Its job is not simply “PDF to text.”</p>
+<p>If Noire wants agents to handle complex documents, it cannot just parse files into text and pass that text to a model. It needs a document state layer.</p>
+<p>Knowhere turns messy documents into a persistent, navigable state:</p>
+<p>dirty documents -&gt; parse -&gt; hierarchy / sections -&gt; chunks / assets / metadata -&gt; graph -&gt; agentic retrieval -&gt; cited evidence</p>
+<p>The important part is not the PDF parser itself. Parsing into Markdown is only the entrance.</p>
+<p>What defines Knowhere is what happens after parsing: document trees, section paths, chunk metadata, table and image links, lightweight graph relationships, retrieval tables, and navigation interfaces that an agent can use.</p>
+<p>In engineering terms, the system is turning one-time file processing into durable document state publication.</p>
+<p>The API creates jobs. Workers parse files. Parsers normalize different formats into intermediate output. Chunk converters structure that output. The publication step writes Documents, Sections, Chunks, graph nodes, and graph edges into the system.</p>
+<p>After that, retrieval is no longer searching through temporary text. It is searching through state objects.</p>
+<p>This also draws a boundary around Knowhere.</p>
+<p>Knowhere is not the model. It is not the full agent harness. It does not replace sandboxing, permissions, planning, task queues, or execution loops.</p>
+<p>It also does not replace vector search, BM25, Milvus, or GraphRAG.</p>
+<p>Those systems can still be part of the stack. Vector search handles similarity. BM25 handles lexical matching. GraphRAG handles entity relationships and graph reasoning.</p>
+<p>Knowhere sits earlier in the pipeline. It asks whether the document entered the system with structure, paths, assets, sources, and relationships intact.</p>
+<p>This changes how retrieval should be evaluated.</p>
+<p>Recall@k still matters, but it is not enough.</p>
+<p>For complex document work, we also need to ask:</p>
+<ul>
+<li>Can the answer return to the original document, section, page, and asset?</li>
+<li>Can the agent expand the surrounding context after a result is found.</li>
+<li>Does the evidence include the necessary assumptions, exceptions, and table relationships?</li>
+<li>Are the same entities and metrics consistent across steps?</li>
+<li>When multiple documents conflict, does the system expose the conflict, or hide it?</li>
+</ul>
+<p>These are not as simple as “did the answer look good?”</p>
+<p>But they are closer to what production agents need.</p>
+<p>The next layer is finer-grained semantic relationships: same entity, same metric, same event, supporting evidence, conflicting evidence, time alignment, version alignment, and source path.</p>
+<p>Those relationships require extraction, normalization, evidence typing, timeline alignment, and conflict detection.</p>
+<p>Once they become stable graph relationships, Knowhere can move from “documents are navigable” toward “evidence is comparable, verifiable, and traceable.”</p>
+<p>It is important not to overstate the claim.</p>
+<p>A document world state is not a physical world model. It does not model geometry, physics, contact, materials, or robot actions.</p>
+<p>It is a domain-specific state representation for document work.</p>
+<p>Traditional RAG is also not obsolete. For short QA, simple retrieval, and low-risk lookups, flat retrieval is often enough.</p>
+<p>The problem appears when tasks become longer, documents become messier, and evidence needs to be checked across versions, sources, tables, and decisions.</p>
+<p>A larger context window helps, but it is not state management.</p>
+<p>It lets the model see more at once. It does not automatically recover document hierarchy, asset relationships, version differences, or citation paths.</p>
+<p>GraphRAG is also not a complete answer by itself. Graphs are valuable, but graph quality depends on ingestion quality: parsing, asset preservation, entity normalization, evidence extraction, and version management.</p>
+<p>If the document world is damaged before it enters the graph, the graph only stores damaged information in a different shape.</p>
+<p>So the core argument is simple:</p>
+<p><code>Agent = Model + Harness</code> is still useful.</p>
+<p>But for complex knowledge work, the harness needs an explicit World State layer.</p>
+<p>Physical AI needs physical world state: scenes, objects, constraints, and action consequences.</p>
+<p>Knowledge-work AI needs document world state: documents, sections, chunks, assets, sources, versions, citations, relationships, and traces.</p>
+<p>Without that layer, agents remain reactive. They see observations, respond to them, and then start over again on the next step.</p>
+<p>With that layer, agents can return to the same world, inspect it, compare evidence, update their understanding, and take more reliable actions.</p>
+<p>Knowhere’s role in Noire is to provide that document world state.</p>
+<p>Not more context for its own sake.</p>
+<p>Not another wrapper around RAG.</p>
+<p>But a persistent, inspectable, actionable map of the documents and evidence the agent is operating on.</p>
+<p>The next generation of document agents will not just read more.</p>
+<p>They will know what they are reading, where it lives, what it depends on, what changed, and what action is safe to take next.</p>
+<figure><img alt="Image 2" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/06/d7430-1vr7d0hwzrnya80sbuwlnzg.png"/></figure>
+<p>The missing piece is not more context.</p>
+<p>It is actionable knowledge state.</p>
+<p>Knowhere:<a href="https://knowhereto.ai/?utm_source=medium">https://knowhereto.ai/?utm_source=medium</a></p>
+<p class="kb-detail-source">Originally published on <a href="https://medium.com/@13512395620/why-rag-needs-a-world-model-too-6a833f3eba3c">Medium</a>.</p>

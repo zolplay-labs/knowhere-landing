@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { RiBlueskyFill, RiFacebookFill, RiLinkedinFill, RiMastodonFill, RiTwitterXFill } from '@remixicon/react';
-import { ArticleCard, DynamicLeadCover } from './BlogHome';
+import { ArticleCard } from './BlogHome';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { articles, articleDate, articleUrl, type Article } from './articles';
@@ -41,26 +41,28 @@ export default function ArticleDetail({ article = articles[0], content = article
           <div className="kb-detail-meta"><span>OntosAI</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span>{readingTime}</span></div>
         </header>
         <div className="kb-detail-primary">
-        <figure className="kb-detail-cover">{article.category === 'Use Case' ? <img src={article.coverSource} width="4096" height="2304" alt="Use Case" /> : <DynamicLeadCover title={article.title} />}</figure>
         <div className="kb-detail-body">
-          <ShareLinks article={article} />
           <div className="kb-detail-content" dangerouslySetInnerHTML={{ __html: content }} />
-          <div className="kb-detail-end"><ShareLinks article={article} /><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back to blog</Link></div>
+          <div className="kb-detail-end"><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back to blog</Link></div>
         </div>
         </div>
-        <aside className="kb-detail-sidebar" aria-label="Recommended reading">
-          <nav className="kb-detail-sidebar-inner kb-detail-recommendations" aria-label="Recommended reading">
-            <h2>Recommended reading</h2>
-            <ul>{recommendations.map(item => <li key={item.slug}>
-              <a href={item.category === 'Use Case' ? `/articles/${item.slug}` : articleUrl(item)}>{item.title}</a>
-            </li>)}</ul>
-          </nav>
+        <aside className="kb-detail-sidebar" aria-label="Article information">
+          <div className="kb-detail-sidebar-inner kb-detail-information">
+            <h2>Article information</h2>
+            <dl>
+              <div><dt>Author</dt><dd>OntosAI</dd></div>
+              <div><dt>Published</dt><dd><time dateTime={article.date}>{articleDate(article.date, 'long')}</time></dd></div>
+              <div><dt>Category</dt><dd>{article.category}</dd></div>
+              <div><dt>Reading time</dt><dd>{readingTime}</dd></div>
+            </dl>
+            <ShareLinks article={article} />
+          </div>
         </aside>
       </article>
       <section className="kb-detail-related kb-classic kb-hybrid kb-shell" aria-labelledby="related-title">
         <div className="kb-section-heading"><h2 id="related-title">Recommended articles</h2></div>
         <div className="kb-featured-grid">
-          {[articles[1], articles[3], articles[2]].map(item => <ArticleCard key={item.slug} article={item} />)}
+          {recommendations.slice(0, 3).map(item => <ArticleCard key={item.slug} article={item} />)}
         </div>
       </section>
     </main>

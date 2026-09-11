@@ -1,0 +1,132 @@
+<!-- Source: https://blog.knowhereto.ai/2026/07/09/knowhere-can-now-plug-into-your-agent/ -->
+<figure><img alt="" height="700" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/07/image.png?w=1024" width="1024"/></figure>
+<p>Over the past few months, more people have started using Knowhere to work with PDFs, web pages, reports, and other messy documents. Our open-source repo has also grown to nearly 2k stars — about 1,877 at the time of writing.</p>
+<p>In comments and user feedback, we kept seeing a very natural question:</p>
+<blockquote>
+<p><em>Can I use Knowhere as an MCP tool and connect it to my own agent?</em></p>
+</blockquote>
+<p>That way, when you’re coding or researching in Cursor, Claude Code, or Codex, you don’t have to keep re-uploading documents, copying summaries, or pasting context over and over again.</p>
+<p>We thought that was a good idea. Knowhere is already good at handling complex documents. If it only lived as a web tool, a lot of its value would stay locked inside the browser. The better version is simple: once your documents are organized, any agent should be able to look them up when it needs them.</p>
+<p>So we shipped two things:</p>
+<ul>
+<li>Knowhere Notebook — where you manage your document library in the cloud</li>
+<li>Knowhere MCP — how you connect that library to local agents</li>
+</ul>
+<p>They share the same account, and they share the same cloud document store.</p>
+<h2>What is Knowhere Notebook?</h2>
+<p>Think of Knowhere Notebook as a document workspace built for AI.</p>
+<p>It isn’t a traditional cloud drive, and it isn’t a normal note-taking app. It’s a place to store, parse, and search complex documents — then make that knowledge available to agents.</p>
+<p>You can put in things like:</p>
+<ul>
+<li>PDFs, web pages, papers, and reports</li>
+<li>product docs, technical docs, and API references</li>
+<li>interview notes, research materials, and past drafts</li>
+</ul>
+<p>What you get back is not just a pile of files. It’s a knowledge base that AI can actually use: structured parsing, cross-document retrieval, and readable context for agents.</p>
+<p>You can try it here: <a href="https://notebook.knowhereto.ai/">https://notebook.knowhereto.ai/</a></p>
+<h2>What is Knowhere MCP?</h2>
+<p>MCP stands for Model Context Protocol. In plain terms, it’s a standard way for agents to call external tools and data sources.</p>
+<p>With Knowhere MCP, you can connect Knowhere to tools that support MCP — including Cursor, Claude Code, Codex, Claude Desktop, and VS Code.</p>
+<p>Once it’s connected, your agent doesn’t just “know that Knowhere exists.” It can actually use Knowhere: search documents, inspect outlines, read chunks, grep inside a document, and — with Full access — parse new URLs or local files.</p>
+<p>More importantly, Notebook and MCP now share the same Brain.</p>
+<p>Documents you maintain in Notebook can be retrieved by your agent through MCP. Documents your agent parses through MCP can also show up back in Knowhere Notebook. To keep your manually organized web library clean, MCP-ingested documents can land in a separate ephemeral category.</p>
+<p>In other words:</p>
+<ul>
+<li>Web / Notebook is where you upload, organize, and manage documents</li>
+<li>MCP is how local agents search and work with those documents</li>
+<li>API is for automation and custom workflows</li>
+</ul>
+<p>All of them point to the same Knowhere Brain: one cloud store, one cloud retrieval layer. No separate local index.</p>
+<h2>Why this matters</h2>
+<p>A lot of people already use agents to write code, look things up, and summarize information. But one of the biggest gaps is still this: the agent doesn’t know your document library.</p>
+<p>You may have product docs, technical designs, papers, meeting notes, and old project records scattered across different places. Every time you ask an agent to help, you end up re-explaining the background, copying fragments, and rebuilding context from scratch.</p>
+<p>That’s the problem Knowhere Brain is trying to solve.</p>
+<p>A document only needs to enter the Brain once. After that, whether you use it from the web or from a local agent, you’re working with the same knowledge.</p>
+<p>Before, it looked more like this:</p>
+<ul>
+<li>upload one set of docs on the web</li>
+<li>re-provide context inside the agent</li>
+<li>keep MCP-parsed content separate from the web library</li>
+<li>end up with the same material duplicated across tools</li>
+</ul>
+<p>Now it looks more like this:</p>
+<ul>
+<li>Notebook and MCP share one document library</li>
+<li>agents can search existing documents directly</li>
+<li>newly parsed documents flow back into the Brain</li>
+<li>all retrieval happens in the cloud</li>
+</ul>
+<h2>Permissions: Read only vs Full access</h2>
+<p>We split MCP permissions into two levels. You choose during login, and you can revoke the session later.</p>
+<p>Read only</p>
+<ul>
+<li>search documents already in Knowhere Brain</li>
+<li>list documents, view outlines, and read chunks</li>
+<li>grep inside a single document</li>
+<li>cannot parse new documents</li>
+<li>cannot create or delete documents</li>
+</ul>
+<p>Full access</p>
+<ul>
+<li>everything above</li>
+<li>parse remote URLs</li>
+<li>parse local files</li>
+<li>parse content from other agent workflows and send it into the Brain</li>
+<li>archive / soft-delete documents when you ask</li>
+</ul>
+<p>If you only want the agent to look things up, Read only is enough. Choose Full access only when you want the agent to parse new documents, write into the Brain, or archive documents.</p>
+<h2>Who is this for?</h2>
+<p>Developers</p>
+<p>Put team docs, API references, and architecture decision records into Knowhere Notebook. While coding, your agent can search those materials directly instead of waiting for you to paste context.</p>
+<p>Researchers and product managers</p>
+<p>Keep industry reports, competitor notes, interview transcripts, and PRDs in one place. When you’re writing analysis or shaping a proposal, the agent can pull evidence from the library.</p>
+<p>People building AI workflows</p>
+<p>Use Knowhere as a long-term knowledge layer for agents. Different tools and different sessions can work against the same cloud document library.</p>
+<p>Writers and creators</p>
+<p>Store references, source materials, and past drafts in Notebook. A writing agent can retrieve what you’ve already collected, which helps reduce factual gaps and keep the voice more consistent.</p>
+<h2>How to get started</h2>
+<p>Here’s a quick setup using Cursor. The same idea works for Claude Code, Codex, Claude Desktop, VS Code, and other MCP hosts.</p>
+<ol>
+<li>Prepare your environment</li>
+</ol>
+<p>You’ll need Node.js 20.19+, npm 10+, and an MCP host that can run a local stdio MCP server.</p>
+<ol>
+<li>Log in to Knowhere MCP</li>
+</ol>
+<p>npx -y @ontos-ai/knowhere-mcp login</p>
+<p>This opens the Knowhere login page. After signing in, choose Read only or Full access.</p>
+<ol>
+<li>Add the MCP config in Cursor</li>
+</ol>
+<p>Add this to <code>~/.cursor/mcp.json</code>:</p>
+<p>{</p>
+<p> “mcpServers”: {</p>
+<p> “knowhere”: {</p>
+<p> “command”: “npx”,</p>
+<p> “args”: [“-y”, “@ontos-ai/knowhere-mcp”]</p>
+<p> }</p>
+<p> }</p>
+<p>}</p>
+<p>Save, restart Cursor, and confirm that Knowhere shows up as connected in MCP settings.</p>
+<ol>
+<li>Start using your Brain from the agent</li>
+</ol>
+<p>Try prompts like:</p>
+<ul>
+<li>“Search my Knowhere documents for the usage limits of this API.”</li>
+<li>“Read the outline of this report and summarize the parts relevant to the current project.”</li>
+<li>“Parse this local PDF into Knowhere, then write a research brief based on it.”</li>
+</ul>
+<p>Full docs are here: <a href="https://docs.knowhereto.ai/mcp">https://docs.knowhereto.ai/mcp</a></p>
+<figure><img alt="Image 2" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/07/adf59-1nq2dusac4a0yep69zz7erw.png"/></figure>
+<h2>One last thing</h2>
+<p>We’ve always felt that a strong agent isn’t just about a stronger model. It also needs access to the knowledge you’ve been accumulating over time. Otherwise every conversation starts from zero, and every task needs the same background explanation again.</p>
+<p>With Knowhere Notebook and Knowhere MCP, Knowhere becomes closer to a second brain that different agents can mount: documents live in the cloud, retrieval happens in the cloud, and you can manage that knowledge from the web or call it from a local agent.</p>
+<p>If you’re already using Cursor, Claude Code, or Codex, give Knowhere a try. And if you have ideas for how agents should work with your document library, we’d love to hear them.</p>
+<ul>
+<li>Try Knowhere: <a href="https://knowhereto.ai/">https://knowhereto.ai</a></li>
+<li>Knowhere Notebook: <a href="https://notebook.knowhereto.ai/">https://notebook.knowhereto.ai</a></li>
+<li>MCP docs: <a href="https://docs.knowhereto.ai/mcp">https://docs.knowhereto.ai/mcp</a></li>
+<li>GitHub: <a href="https://github.com/Ontos-AI/knowhere">https://github.com/Ontos-AI/knowhere</a></li>
+</ul>
+<p class="kb-detail-source">Originally published on <a href="https://medium.com/@13512395620/knowhere-can-now-plug-into-your-agent-ec412228dc75">Medium</a>.</p>

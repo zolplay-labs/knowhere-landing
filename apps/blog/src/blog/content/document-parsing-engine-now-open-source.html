@@ -1,0 +1,48 @@
+<!-- Source: https://blog.knowhereto.ai/2026/05/11/document-parsing-engine-now-open-source/ -->
+<figure><img alt="Image 2" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/05/78bd6-1ww2ud4-ccvhbcl8us4qfhg.jpeg"/></figure>
+<p>For a while, we’ve been working on a document parsing plugin called Knowhere — something we built to handle messy, unstructured data. Today, we’re excited to share that it’s officially open source.</p>
+<p><strong>Repo:</strong><a href="https://github.com/Ontos-AI/knowhere">https://github.com/Ontos-AI/knowhere</a></p>
+<p><strong>First, why did we build this?</strong></p>
+<p>If you‘ve built AI applications, you’ve felt the pain: models keep getting smarter, but throw a complex document at them — a 50‑page earnings report, a messy PDF — and they still fall apart.</p>
+<p>AI either starts hallucinating or just says “I don‘t have that content.” The internet calls it “AI hallucination.”</p>
+<p>At first I blamed the models. I tried Claude, GPT, you name it. But after a while, it became clear: the problem isn’t the model.</p>
+<p><strong>It‘s the garbage you feed into it.</strong></p>
+<p>Most document parsing tools today are brutally simple: they chunk everything by fixed token counts, slicing documents into disconnected pieces. But real documents have structure, hierarchy, cross‑references. Slice them blindly and all those connections break. The AI gets a pile of fragments and has to guess.</p>
+<p>And when you throw in multi‑level table headers, complex Excel relationships, or mixed‑layout PPTs, traditional solutions just give up.</p>
+<p>The result is: bad parsing → bad retrieval → AI makes stuff up → you get frustrated.</p>
+<p><strong>How Knowhere is different.</strong></p>
+<p>We spent a long time building a <strong>Tree‑like algorithm</strong> from scratch. The name says it pretty directly — it turns every document into a structured knowledge tree, not a pile of broken fragments.</p>
+<p>Key differences:</p>
+<ul>
+<li><strong>Traditional approach:</strong>fixed‑length, brute‑force chunking. Headers get separated from content, cross‑page tables turn into garbage.</li>
+<li><strong>Knowhere:</strong>it preserves the document’s original hierarchy and logical relationships. Headers, paragraphs, tables, images — their ownership and context are all aligned during parsing.</li>
+</ul>
+<p>The slices generated this way come with built‑in relationships. When the AI queries them, it doesn‘t have to guess. You can ask follow‑up questions and trace answers back to the exact source.</p>
+<p><strong>Some hard numbers from our tests.</strong></p>
+<p>We’ve run a lot of benchmarks. Here‘s what we’re seeing:</p>
+<ul>
+<li><strong>Multi‑modal parsing:</strong>PDF, Word, PPT, Excel, images — all supported. Information extraction completeness &gt;95%.</li>
+<li><strong>Complex tables:</strong>multi‑level headers, a known pain point — Knowhere hits &gt;90% accuracy and outputs clean HTML with full attributes. No extra correction steps downstream.</li>
+<li><strong>Token usage:</strong> down 50%+ compared to traditional RAG pipelines.</li>
+<li><strong>Parsing speed:</strong> 3x faster. A hundred documents can be processed in under 10 minutes.</li>
+<li><strong>Traceability:</strong> every output can be pinned to a specific location in the source document. This dramatically reduces hallucinations.</li>
+</ul>
+<figure><img alt="Image 3" loading="lazy" src="https://blog.knowhereto.ai/wp-content/uploads/2026/05/837a0-1lxbw9ugcvj9b6rlcjphvlg.png"/></figure>
+<p>We‘re also deeply integrated with the OpenClaw agent ecosystem as a native document parsing engine. Once you configure the API key, the agent automatically uses Knowhere — no new commands to learn.</p>
+<p><strong>What open source means for you.</strong></p>
+<p>With this release, the full document ingestion and parsing pipeline is open. You have two options:</p>
+<ul>
+<li><strong>SaaS version:</strong>zero setup, free 14‑day trial — no credit card required. <a href="https://knowhereto.ai/?utm_source=medium">Knowhere API</a></li>
+<li>Self‑hosted: grab the repo and run it yourself.</li>
+</ul>
+<p>pip install knowhere-self-hosted</p>
+<p>openclaw plugins install @ontos-ai/knowhere-claw</p>
+<p><strong>A few honest words.</strong></p>
+<p>There are already solid open source PDF parsers out there — MinerU, Docling, Marker, etc. They all have their strengths. But most are general‑purpose document tools, not designed specifically for AI agents.</p>
+<p>Knowhere’s focus is different: it‘s built from day one for LLMs and agents to consume. Parsing is just the first step. We’ll be adding retrieval APIs later to further lower inference costs and make data truly reusable.</p>
+<p>Our team believes one thing: <strong>the ceiling of a large language model is set by the quality of the data you feed it.</strong></p>
+<p>If you‘re tired of AI hallucinations, give Knowhere a try. Found a bug or have an idea? Open an issue or reply here — I’ll get back to you.</p>
+<p><strong>And finally, a star on GitHub would mean the world to us ⭐</strong></p>
+<p><a href="https://github.com/Ontos-AI/knowhere">https://github.com/Ontos-AI/knowhere</a></p>
+<p>Open source is a long road. Glad to walk it with you.</p>
+<p class="kb-detail-source">Originally published on <a href="https://medium.com/@13512395620/after-months-of-work-our-document-parsing-engine-is-now-open-source-built-to-kill-ai-9b8e17401cf9">Medium</a>.</p>
