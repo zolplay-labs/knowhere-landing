@@ -156,7 +156,8 @@
 .kb-classic .kb-card.kb-card-hybrid p { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; margin: 8px 0 0; color: var(--kb-secondary); font-size: 16px; line-height: 24px; font-weight: 400; }
 .kb-card-hybrid .kb-card-footer { width: 100%; margin-top: 0; }
 .kb-card-hybrid .kb-card-footer time { color: var(--kb-muted); font-family: var(--mono); text-transform: uppercase; }
-.kb-classic-featured .kb-card-hybrid .kb-card-footer time { font-size: 14px; line-height: 20px; transform: translateY(-16px); }
+.kb-classic-featured .kb-card-hybrid .kb-card-footer { transform: translateY(-16px); }
+.kb-classic-featured .kb-card-hybrid .kb-card-footer time { font-size: 14px; line-height: 20px; }
 .kb-hybrid .kb-featured h2 { transition: color 150ms ease; }
 .kb-hybrid .kb-featured a:is(:hover, :focus-visible) h2 { color: var(--kb-mineral); }
 .kb-card-read { display: inline-flex; align-items: center; gap: 8px; color: var(--kb-strong); font-size: 14px; line-height: 20px; opacity: 0; transform: translateX(-8px); transition: opacity 150ms ease, transform 150ms ease; }

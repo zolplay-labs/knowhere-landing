@@ -57,7 +57,7 @@
   .kb-detail-related .kb-featured-grid { grid-template-columns: 1fr; }
 }
 
-.kb-detail-related .kb-card.kb-card-hybrid .kb-card-copy { flex: none; padding-bottom: 8px; }
+.kb-detail-related .kb-card.kb-card-hybrid .kb-card-copy { padding-bottom: 8px; }
 .kb-detail-related .kb-card.kb-card-hybrid h3 { white-space: normal; }
 .kb-detail-related .kb-card.kb-card-hybrid p { -webkit-line-clamp: 2; }
 .kb-detail-related .kb-card { min-width: 0; }

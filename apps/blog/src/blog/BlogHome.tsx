@@ -157,7 +157,7 @@ function Pagination({ currentPage, pageCount, onPageChange }: {
   return <nav className="kb-pagination" aria-label="Article pages">
     <div className="kb-pagination-side kb-pagination-previous">
       {currentPage > 1 && <a href="#articles" onClick={() => onPageChange(currentPage - 1)}>
-        <FiArrowLeft aria-hidden="true" /> preview
+        <FiArrowLeft aria-hidden="true" /> previous
       </a>}
     </div>
     <div className="kb-pagination-pages">

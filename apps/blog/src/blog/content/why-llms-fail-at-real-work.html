@@ -10,27 +10,18 @@
 <p>Everything changed when I stumbled upon a technical deep-dive in an AI community.</p>
 <p>The article pointed out a core weakness: LLMs are far better at understanding <strong>“Values”</strong> than they are at understanding <strong>“Structure and Location”</strong>.</p>
 <p>If you give an AI a 500-word story, it’s brilliant. It can summarize and narrate perfectly. But professional documents aren’t stories. They are complex, multi-layered hierarchies. Imagine a financial report with 8 chapters, 24 sections, 68 sub-points, 32 images, and 10 nested tables. To an AI, that’s a structural nightmare. It usually just “hallucinates” a summary based on the first two sentences and ignores the rest.</p>
-<p>Then there’s the <strong>Context Window</strong> issue. Just because a model _can_ hold a million words doesn’t mean it _understands_ them. As the document length grows, the model’s focus drifts. It reads the beginning, forgets the middle, and makes up the end.</p>
+<p>Then there’s the <strong>Context Window</strong> issue. Just because a model <em>can</em> hold a million words doesn’t mean it <em>understands</em> them. As the document length grows, the model’s focus drifts. It reads the beginning, forgets the middle, and makes up the end.</p>
 <h2>The “Scissors Gap” (SCD)</h2>
 <p>This isn’t just a “bad model” problem; it’s a fundamental architecture problem. Even the most advanced models — like DeepSeek-V3 or R1 — suffer from what researchers call the <strong>SCD (Scissors Gap)</strong>.</p>
 <figure><img alt="Image 3" src="https://blog.knowhereto.ai/wp-content/uploads/2026/04/65c86-1udcbilcyr1-urh0kadd1ea.png"/></figure>
 <blockquote>
-<p><strong>_Key Takeaway from the Data:_</strong></p>
-</blockquote>
-<p>&gt;</p>
-<p>&gt;</p>
-<blockquote>
-<p><strong>_The Accuracy Collapse:_</strong>_As table structure becomes more complex (more rows), accuracy doesn’t just dip — it collapses._</p>
-</blockquote>
-<p>&gt;</p>
-<p>&gt;</p>
-<blockquote>
-<p><strong>_The Location Bias:_</strong>_The further a data point is from the starting cell, the more likely the AI is to get it wrong._</p>
-</blockquote>
-<p>&gt;</p>
-<p>&gt;</p>
-<blockquote>
-<p><strong>_The “Next Token” Trap:_</strong>_LLMs are built for “Next Token Prediction”. They read linearly, not structurally. They aren’t designed to “see” layers or hierarchies._</p>
+<p><strong>Key Takeaway from the Data:</strong></p>
+
+<p><strong>The Accuracy Collapse:</strong> As table structure becomes more complex (more rows), accuracy doesn’t just dip — it collapses.</p>
+
+<p><strong>The Location Bias:</strong> The further a data point is from the starting cell, the more likely the AI is to get it wrong.</p>
+
+<p><strong>The “Next Token” Trap:</strong> LLMs are built for “Next Token Prediction”. They read linearly, not structurally. They aren’t designed to “see” layers or hierarchies.</p>
 </blockquote>
 <h2>The Solution: Don’t Wait for the AI to Get Smarter</h2>
 <p>I realized I couldn’t wait for the models to “evolve” their way out of this. I also couldn’t afford a massive enterprise software overhaul.</p>
