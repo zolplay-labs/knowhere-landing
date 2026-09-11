@@ -9,6 +9,9 @@ import ShinyText from './ShinyText'
 import { FlickeringGrid } from '@/registry/magicui/flickering-grid'
 import { AnimatedThemeToggler } from '@/registry/magicui/animated-theme-toggler'
 
+const pricingUrl = 'https://knowhere-pricing.knowhere-landing.workers.dev/'
+const blogUrl = 'https://knowhere-blog.knowhere-landing.workers.dev/#featured-title'
+
 function SectionShinyText({ text }) {
   return (
     <ShinyText
@@ -293,7 +296,7 @@ export function LandingPage() {
     <nav className="nav shell" aria-label="Main navigation">
       <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-back-to-top.svg" width={132} height={52} alt="" /></a>
       <div className="desktop-nav">
-        <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a>
+        <a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href={blogUrl} target="_blank" rel="noopener noreferrer">Blog</a>
       </div>
       <div className="nav-actions">
         <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
@@ -314,7 +317,7 @@ export function LandingPage() {
     </nav>
     <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
       <nav aria-label="Mobile navigation">
-        <a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href="https://blog.knowhereto.ai/">Blog</a>
+        <a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href={blogUrl}>Blog</a>
       </nav>
       <div className="mobile-menu-utilities">
         <a className="github-link mobile-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
@@ -600,7 +603,7 @@ export function LandingPage() {
       <div className="footer-navigation">
         <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-footer-mark.svg" width={37} height={42} alt="" /></a>
         <div className="footer-navigation-content">
-          <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href="#pricing">Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href="https://blog.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Blog</a></nav>
+          <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href={blogUrl} target="_blank" rel="noopener noreferrer">Blog</a></nav>
           <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
         </div>
       </div>

@@ -10951,7 +10951,10 @@ html[data-theme="dark"] #playground .section-node,
 
   #integration .steps li::before,
   #integration .steps li::after,
-  #integration .steps .integration-step-number::after {
+  #integration .steps li:not(:last-child) .integration-step-number::after,
+  #integration .integration-plinth::before,
+  #integration .integration-plinth::after,
+  #integration .catenoid-field-workbench::after {
     content: none;
   }
 
@@ -14584,6 +14587,64 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
 
   #integration .integration-code-frame__copy {
     min-width: 44px;
+  }
+}
+
+/* Tablet keeps a three-column desktop canvas, scaled to the available width. */
+@media (min-width: 768px) and (max-width: 1199px) {
+  #playground .document-map-hierarchy-canvas {
+    container-type: inline-size;
+  }
+
+  #playground .document-map-content {
+    width: 1280px;
+    zoom: calc(100cqi / 1280px);
+  }
+
+  #playground .document-map-documents[data-document-count] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 33px;
+  }
+
+  #playground .document-map-documents[data-document-count="2"][data-cross-link] {
+    grid-template-columns: calc((100% - 66px) / 3 * 2 + 33px) minmax(0, 1fr);
+  }
+
+  #playground .document-map-content .document-map-documents[data-document-count="2"]:not([data-cross-link]),
+  #playground .document-map-content .source-sections[data-source-count="2"] {
+    width: calc((100% - 66px) / 3 * 2 + 33px);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 33px;
+    margin-inline: auto;
+  }
+
+  #playground .document-node {
+    min-height: 128px;
+  }
+
+  #playground .document-sections[data-section-count] {
+    grid-template-columns: repeat(var(--section-count), minmax(0, 1fr));
+    gap: 33px;
+  }
+
+  #playground .document-sections[data-section-count="1"] .section-node {
+    width: 100%;
+  }
+
+  #playground .source-sections[data-source-count] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 33px !important;
+  }
+
+  #playground .source-sections .trace-source-card:nth-child(n) {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  #playground .mobile-summary-item .trace-summary-card {
+    width: 860px;
+    margin-inline: auto;
   }
 }
 
