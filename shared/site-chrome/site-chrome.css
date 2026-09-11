@@ -271,11 +271,20 @@ html[data-theme="dark"] :is(.kh-site-header, .kh-site-footer) {
 .kh-site-header .kh-header-api, .kh-site-header .kh-header-mobile-utilities .kh-button {
   background: var(--chrome-ink); border-color: var(--chrome-ink); color: var(--chrome-paper);
   font-family: "Geist Mono", monospace; font-weight: 500;
+  transition: background-color 150ms, border-color 150ms, color 150ms, transform 150ms;
 }
 .kh-site-header .kh-header-api { padding: 0 12px; }
 .kh-site-header .kh-header-actions { height: var(--header-height); }
 .kh-site-header .kh-header-language > .kh-header-icon { width: 40px; }
-.kh-site-header .kh-header-api:hover { background: var(--chrome-muted); border-color: var(--chrome-muted); }
+.kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button):hover {
+  background: #33483d; border-color: #33483d;
+}
+.kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button):active {
+  background: #011110; border-color: #33483d; transform: translateY(1px);
+}
+.kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button):focus-visible {
+  outline: 2px solid var(--chrome-primary); outline-offset: 4px;
+}
 html[data-theme="dark"] .kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button) {
   background: var(--chrome-primary); border-color: var(--chrome-primary); color: var(--chrome-on-primary);
 }
@@ -285,7 +294,10 @@ html[data-theme="dark"] .kh-site-header :is(.kh-header-api, .kh-header-mobile-ut
 }
 html[data-theme="dark"] .kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button):active {
   background: color-mix(in srgb, var(--chrome-primary), var(--chrome-on-primary) 12%);
-  border-color: color-mix(in srgb, var(--chrome-primary), var(--chrome-on-primary) 12%);
+  border-color: color-mix(in srgb, var(--chrome-primary), var(--chrome-on-primary) 8%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kh-site-header :is(.kh-header-api, .kh-header-mobile-utilities .kh-button) { transition: none; }
 }
 .kh-site-header .kh-header-icon img { width: 22px; height: 22px; }
 html[data-theme="dark"] .kh-site-header .github-link img { filter: invert(1); }
