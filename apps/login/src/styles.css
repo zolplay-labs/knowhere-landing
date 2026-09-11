@@ -152,6 +152,64 @@ a:hover {
   width: 112px;
   height: auto;
 }
+.login-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.login-theme-button {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--mist-white-900);
+  line-height: 0;
+}
+.login-theme-button:hover {
+  background: #f7f8f9;
+}
+.login-theme-button:focus-visible {
+  outline: 2px solid var(--mineral-green-500);
+  outline-offset: 5px;
+}
+.login-theme-icon {
+  grid-area: 1 / 1;
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.login-theme-icon-sun,
+html[data-theme='dark'] .login-theme-icon-moon {
+  display: none;
+}
+html[data-theme='dark'] .login-theme-icon-sun {
+  display: block;
+}
+html[data-theme='dark'] .login-theme-button:hover {
+  border-color: rgb(249 250 245 / 1%);
+  background: #042626;
+}
+html[data-theme-transition='active']::view-transition-old(root),
+html[data-theme-transition='active']::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+html[data-theme-transition='active']::view-transition-new(root) {
+  animation: login-theme-circle-reveal 400ms ease-in-out both;
+}
+@keyframes login-theme-circle-reveal {
+  from { clip-path: circle(0% at var(--theme-reveal-origin)); }
+  to { clip-path: circle(var(--theme-reveal-radius) at var(--theme-reveal-origin)); }
+}
 .eyebrow {
   font-size: var(--type-meta-size);
   letter-spacing: 1.65px;
@@ -426,7 +484,7 @@ html[data-theme="dark"] {
   --black-10: rgb(249 250 245 / 10%);
   --black-40: rgb(249 250 245 / 40%);
   --control-border: #083b3a;
-  --control-border-hover: #888a82;
+  --control-border-hover: rgb(249 250 245 / 1%);
   --control-placeholder: #888a82;
   --control-surface-hover: #042626;
   --control-surface-pressed: #073231;

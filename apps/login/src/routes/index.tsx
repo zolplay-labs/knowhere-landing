@@ -1,4 +1,5 @@
 import { syncSiteTheme } from "../../../../shared/site-chrome/theme";
+import { AnimatedThemeToggler } from "../../../../shared/site-chrome/AnimatedThemeToggler";
 import { observeSiteLanguage, syncSiteLanguage } from "../../../../shared/site-chrome/language";
 import { createFileRoute } from '@tanstack/react-router'
 import { useEffect, useRef, useState } from 'react'
@@ -14,8 +15,9 @@ import {
 export const Route = createFileRoute('/')({ component: App })
 
 function App() {
+  const [dark, setDark] = useState(false)
   useEffect(() => {
-    const sync = () => { syncSiteTheme(); };
+    const sync = () => { setDark(syncSiteTheme() === 'dark'); };
     const media = matchMedia('(prefers-color-scheme: dark)');
     sync();
     window.addEventListener('focus', sync);
@@ -33,6 +35,9 @@ function App() {
   useEffect(() => observeSiteLanguage(language => setChinese(language === 'zh')), [])
   function changeLanguage(chinese: boolean) {
     setChinese(syncSiteLanguage(chinese ? 'zh' : 'en') === 'zh')
+  }
+  function changeTheme() {
+    setDark(syncSiteTheme(dark ? 'light' : 'dark') === 'dark')
   }
   const t = (en: string, zh: string) => (chinese ? zh : en)
   return (
@@ -54,7 +59,24 @@ function App() {
             alt="Knowhere"
           />
         </a>
-        <LanguageMenu chinese={chinese} onChange={changeLanguage} />
+        <div className="login-header-actions">
+          <LanguageMenu chinese={chinese} onChange={changeLanguage} />
+          <AnimatedThemeToggler
+            className="login-theme-button"
+            type="button"
+            onClick={changeTheme}
+            aria-pressed={dark}
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            <svg className="login-theme-icon login-theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="3.5" />
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" />
+            </svg>
+            <svg className="login-theme-icon login-theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" />
+            </svg>
+          </AnimatedThemeToggler>
+        </div>
       </header>
       <main className="login-panel">
         <div className="form-area">
