@@ -12,9 +12,9 @@
   --control-focus: var(--mineral-green-500);
   --control-error: var(--login-error-color);
   --control-surface-hover: #f7f8f4;
-  --control-surface-pressed: var(--mist-white-300);
+  --control-surface-pressed: color-mix(in srgb, var(--control-surface-hover) 97%, #000);
   --control-readonly-surface: var(--control-surface);
-  --control-disabled-surface: var(--mist-white-300);
+  --control-disabled-surface: var(--black-6);
   --control-disabled-ink: var(--mist-white-700);
   --control-button-disabled-surface: var(--black-10);
   --control-button-disabled-ink: var(--black-40);

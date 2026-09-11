@@ -14972,11 +14972,9 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
   text-align: left;
 }
 
-@media (min-width: 1200px) and (hover: hover) and (pointer: fine) {
-  #playground .document-map:is([data-format="Word"], [data-format="Excel"]) .ai-output-report .product-terminal-code {
-    max-height: 440px;
-    overflow: auto;
-  }
+#playground .ai-output-report .product-terminal-code {
+  max-height: none;
+  overflow: visible;
 }
 
 #playground .ai-output-report .product-terminal-code:focus-visible {
@@ -16032,8 +16030,8 @@ html[data-theme="dark"] .landing-page .button:not(.button-secondary) {
 }
 
 html[data-theme="dark"] .landing-page .hero-copy .button-secondary {
-  --button-hover-surface: var(--white-6);
-  --button-pressed-surface: var(--white-10);
+  --button-hover-surface: var(--black-6);
+  --button-pressed-surface: var(--black-10);
 }
 
 html[data-theme="dark"] .landing-page #final-cta .button:not(.button-secondary) {

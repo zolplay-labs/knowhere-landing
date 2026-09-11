@@ -270,7 +270,7 @@ html[data-theme="dark"] :is(.kh-site-header, .kh-site-footer) {
 .kh-site-header .kh-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid; border-radius: 2px; padding: 8px 16px; font-size: 13px; line-height: 20px; }
 .kh-site-header .kh-header-api, .kh-site-header .kh-header-mobile-utilities .kh-button {
   background: var(--chrome-ink); border-color: var(--chrome-ink); color: var(--chrome-paper);
-  font-family: "Geist Mono", monospace; font-weight: 500;
+  font-family: "Geist Mono", "Frex Sans GB VF", monospace; font-weight: 500;
   transition: background-color 150ms, border-color 150ms, color 150ms, transform 150ms;
 }
 .kh-site-header .kh-header-api { padding: 0 12px; }
