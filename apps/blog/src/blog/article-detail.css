@@ -1,9 +1,10 @@
-.kb-detail-heading { grid-column: 1 / -1; box-sizing: border-box; width: 100%; margin: 0; padding: 32px 0 16px; }
+.kb-detail #article-main { padding-top: var(--kb-header-height); }
+.kb-detail-heading { grid-column: 1 / -1; box-sizing: border-box; width: 100%; margin: 0; padding: 24px 0 16px; }
 .kb .kb-detail-back { display: inline-flex; align-items: center; gap: 8px; color: var(--kb-ink); font-size: 16px; line-height: 24px; font-weight: 500; margin-bottom: 32px; }
 .kb-detail .kb-detail-heading h1 { font-size: 24px; line-height: 30px; font-weight: 400; letter-spacing: -.5px; text-wrap: wrap; text-align: left; margin: 0 0 24px; }
 .kb-detail-meta { display: flex; align-items: center; justify-content: flex-start; flex-wrap: wrap; gap: 12px 24px; font-size: 12px; line-height: 16px; color: var(--black-50); }
 @media (min-width: 640px) {
-  .kb-detail-heading { padding: 48px 0 20px; }
+  .kb-detail-heading { padding: 32px 0 20px; }
   .kb-detail .kb-detail-heading h1 { margin-bottom: 32px; }
   .kb-detail-meta { font-size: 14px; line-height: 20px; }
 }
@@ -12,7 +13,7 @@
   .kb-detail-meta { font-size: 16px; line-height: 24px; }
 }
 @media (min-width: 1024px) {
-  .kb-detail-heading { padding: 64px 0 24px; }
+  .kb-detail-heading { padding: 32px 0 24px; }
 }
 .kb-detail-cover { width: 100%; margin: 0; }
 .kb-detail-body { width: 100%; margin: 40px 0 0; padding-bottom: 80px; font-size: 18px; line-height: 28px; color: var(--kb-body); }
