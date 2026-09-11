@@ -81,7 +81,7 @@ a {
   text-decoration: none;
   text-underline-offset: 4px;
 }
-::selection { background: var(--brand-highlight); color: #01251d; }
+::selection { background: transparent; }
 input { caret-color: var(--green-dark); }
 button,
 a,
@@ -448,7 +448,20 @@ h1 span {
 .calculator-facts > div { display: flex; flex-direction: column; text-align: left; }
 .calculator-facts > div + div::before { content: ""; position: absolute; left: 0; top: 50%; height: 40px; width: 1px; background: var(--line); transform: translateY(-50%); }
 .calculator-facts > div + div { position: relative; padding-left: clamp(24px, 5vw, 80px); }
-.calculator-facts dt { color: var(--body); font-size: 14px; }
+.calculator-facts dt {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--body);
+  font-size: 14px;
+}
+.calculator-facts dt::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  background: var(--coral-signal-500);
+}
 .calculator-facts dd { margin: 12px 0 0; color: var(--ink); font-size: 26px; line-height: 1.3; font-weight: 500; font-variant-numeric: tabular-nums; }
 .ruler-wrap {
   margin: 0;
@@ -1104,6 +1117,10 @@ html[data-theme="dark"] .enterprise-card-action .button:hover {
   .limits-table,
   .enterprise-card { grid-column: 1 / -1; grid-row: auto; }
   .enterprise-card { order: -1; }
+  .enterprise-card-features ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
   .limits-table { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .faq-layout { display: flex; flex-direction: column; gap: 40px; }
   .faq-list { padding-top: 0; }
