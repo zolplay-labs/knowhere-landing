@@ -3,6 +3,7 @@ import { IconChevronLeft } from '@tabler/icons-react';
 import { RiBlueskyFill, RiFacebookFill, RiLinkedinFill, RiMastodonFill, RiTwitterXFill } from '@remixicon/react';
 import { ArticleCard, DynamicLeadCover } from './BlogHome';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { articles, articleDate, articleUrl, type Article } from './articles';
 import articleContent from './content/pdf-parser.html?raw';
 import './article-detail.css';
@@ -27,22 +28,34 @@ function ShareLinks({ article }: { article: Article }) {
 }
 
 export default function ArticleDetail({ article = articles[0], content = articleContent, readingTime = '11–17 min read' }: { article?: Article; content?: string; readingTime?: string }) {
+  const recommendations = articles.filter(item => item.slug !== article.slug).slice(0, 4);
+
   return <div className="kb kb-standard kb-detail" lang="en" id="top">
     <a className="kb-skip" href="#article-main">Skip to content</a>
     <Header />
     <main id="article-main">
-      <article aria-labelledby="article-title">
+      <article className="kb-detail-grid kb-shell" aria-labelledby="article-title">
         <header className="kb-detail-heading">
           <Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back</Link>
           <h1 id="article-title">{article.title}</h1>
-          <div className="kb-detail-meta"><span>OntosAI</span><span aria-hidden="true">•</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span aria-hidden="true">•</span><span>{readingTime}</span></div>
+          <div className="kb-detail-meta"><span>OntosAI</span><time dateTime={article.date}>{articleDate(article.date, 'long')}</time><span>{readingTime}</span></div>
         </header>
+        <div className="kb-detail-primary">
         <figure className="kb-detail-cover">{article.category === 'Use Case' ? <img src={article.coverSource} width="4096" height="2304" alt="Use Case" /> : <DynamicLeadCover title={article.title} />}</figure>
         <div className="kb-detail-body">
           <ShareLinks article={article} />
           <div className="kb-detail-content" dangerouslySetInnerHTML={{ __html: content }} />
           <div className="kb-detail-end"><ShareLinks article={article} /><Link className="kb-detail-back" to="/" preload="intent"><IconChevronLeft size={20} aria-hidden="true" /> Back to blog</Link></div>
         </div>
+        </div>
+        <aside className="kb-detail-sidebar" aria-label="Recommended reading">
+          <nav className="kb-detail-sidebar-inner kb-detail-recommendations" aria-label="Recommended reading">
+            <h2>Recommended reading</h2>
+            <ul>{recommendations.map(item => <li key={item.slug}>
+              <a href={item.category === 'Use Case' ? `/articles/${item.slug}` : articleUrl(item)}>{item.title}</a>
+            </li>)}</ul>
+          </nav>
+        </aside>
       </article>
       <section className="kb-detail-related kb-classic kb-hybrid kb-shell" aria-labelledby="related-title">
         <div className="kb-section-heading"><h2 id="related-title">Recommended articles</h2></div>
@@ -51,5 +64,6 @@ export default function ArticleDetail({ article = articles[0], content = article
         </div>
       </section>
     </main>
+    <Footer />
   </div>;
 }

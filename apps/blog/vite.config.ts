@@ -15,7 +15,10 @@ const config = defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  server: { allowedHosts: true },
+  server: {
+    allowedHosts: true,
+    fs: { allow: [fileURLToPath(new URL('../..', import.meta.url))] },
+  },
   plugins: [
     nitro({
       preset: 'cloudflare_module',
