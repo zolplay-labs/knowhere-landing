@@ -1,3 +1,4 @@
+import faviconUrl from "../../../../public/assets/knowhere-favicon.svg?url";
 import { themeInitScript } from "../../../../shared/site-chrome/theme";
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
 
@@ -24,6 +25,7 @@ export const Route = createRootRoute({
       { name: "theme-color", content: "#FFFFFF" },
     ],
     links: [
+      { rel: "icon", type: "image/svg+xml", href: faviconUrl },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       {
         rel: "preconnect",

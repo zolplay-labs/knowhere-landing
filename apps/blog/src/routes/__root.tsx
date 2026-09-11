@@ -1,3 +1,4 @@
+import faviconUrl from '../../../../public/assets/knowhere-favicon.svg?url'
 import { themeInitScript } from "../../../../shared/site-chrome/theme";
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 
@@ -22,6 +23,7 @@ export const Route = createRootRoute({
       },
     ],
     links: [
+      { rel: 'icon', type: 'image/svg+xml', href: faviconUrl },
       ...['product', 'research', 'news'].map(category => ({
         rel: 'preload', as: 'image', href: `/covers/categories/${category}.png`,
       })),
