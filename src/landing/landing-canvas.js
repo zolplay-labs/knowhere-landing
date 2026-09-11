@@ -937,7 +937,7 @@ function initializeHeroCanvas(root, cleanups) {
     const SCAN_TRAIL_ALPHA = .56;
     const SCAN_GRID_UNIT = 6;
 
-    const scanRevealTargets = [header, copy, visual].filter(Boolean);
+    const scanRevealTargets = [header, ...copy.children, visual].filter(Boolean);
     let headerRevealForced = window.scrollY > 24 || hero.getBoundingClientRect().bottom <= 0;
 
     function revealHeaderImmediately() {
