@@ -305,6 +305,7 @@ export function LandingPage() {
         </article>
       </div>
     </section>
+    <canvas className="hero-scan-overlay" aria-hidden="true" />
     <div className="hero-b-pixel-tooltip" id="hero-b-pixel-tooltip" role="status" aria-live="polite" />
     <section className="section shell" id="playground" aria-labelledby="playground-title">
       <ProductStage heading={(

@@ -571,7 +571,7 @@
     .language-dropdown button[aria-checked="true"] { font-weight: 500; }
     .mobile-github { display: none; }
     .mobile-menu { pointer-events: auto; }
-    button, .button { border-radius: 4px; }
+    button, .button { border-radius: 2px; }
     #main .ascii-frame, #main .hierarchy-card, #main .result-chip, #main .source-card,
     #main .dropzone, #main .page-preview, #main .source-detail, #main .preset-workspace,
     #main .sample-panel, #main .sample-list button, #main .workbench-shell, #main .workbench-tree,
@@ -829,7 +829,7 @@
     .site-header .github-link { flex-basis: 44px; width: 44px; height: 44px; border: 0; border-radius: 6px; background: transparent; color: var(--ink); }
     .site-header .language-toggle:hover,
     .site-header .github-link:hover { background: var(--mist-white-300); }
-    .site-header .nav-actions .button { min-height: 36px; height: 36px; align-self: center; margin-left: 8px; padding-inline: 16px; border-radius: 6px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+    .site-header .nav-actions .button { min-height: 36px; height: 36px; align-self: center; margin-left: 8px; padding-inline: 16px; border-radius: 2px; font-size: 13px; font-weight: 500; white-space: nowrap; }
     .site-header.over-dark .language-toggle,
     .site-header.over-dark .github-link { color: var(--ink); }
     @media (max-width: 1199px) {
@@ -965,13 +965,15 @@
     html.js .site-header,
     html.js #top.hero-b-layout .hero-copy > *,
     html.js #top.hero-b-layout .hero-visual { opacity: 0; clip-path: inset(0 0 100% 0); will-change: clip-path, opacity; }
+    .hero-scan-overlay { display: none; position: fixed; inset: 0; z-index: 101; width: 100%; height: 100%; pointer-events: none; }
     @media (prefers-reduced-motion: no-preference) {
-      html.js #top.hero-b-layout:not(.is-scan-complete) ~ #playground .section-heading { visibility: hidden; }
+      html.js #top.hero-b-layout:not(.is-scan-complete) ~ .hero-scan-overlay { display: block; }
+      html.js #playground .section-heading { clip-path: inset(0 0 100% 0); }
     }
     #top.hero-b-layout .hero-copy { justify-content: center; }
     #top.hero-b-layout .hero-copy h1 { font-weight: 300; letter-spacing: .5px; }
     #top.hero-b-layout .hero-copy .lede { font-weight: 300; }
-    #top.hero-b-layout .hero-copy .button-row .button { min-height: 40px; padding-block: 8px; border-radius: 0; font-size: 14px; font-weight: 400; }
+    #top.hero-b-layout .hero-copy .button-row .button { min-height: 40px; padding-block: 8px; border-radius: 2px; font-size: 14px; font-weight: 400; }
     #playground .section-heading .section-no { font-weight: 400; }
     @media (min-width: 768px) {
       .site-header .nav-actions .button { margin-left: 12px; }
@@ -5847,7 +5849,7 @@
     input[type="button"],
     input[type="submit"],
     input[type="reset"] {
-      border-radius: 4px !important;
+      border-radius: 2px !important;
     }
 
     #playground .section-heading > p:last-child,
@@ -6496,7 +6498,7 @@
     }
 
     #top.hero-b-layout .hero-copy .button-row .button {
-      border-radius: 0 !important;
+      border-radius: 2px !important;
     }
 
     #playground .section-heading > p:last-child {
@@ -6832,7 +6834,7 @@
         margin-left: 0;
         padding: 0 12px;
         border: 1px solid var(--main-600);
-        border-radius: 4px !important;
+        border-radius: 2px !important;
         background: var(--main-600);
         color: var(--white);
         font-family: var(--mono);
@@ -6931,7 +6933,7 @@
     #final-cta-actions .button {
       min-height: 40px;
       padding: 8px 16px;
-      border-radius: 4px;
+      border-radius: 2px;
       font-family: var(--figma-display);
       font-size: 15px;
       font-weight: 500;
@@ -6974,7 +6976,7 @@
   min-height: 40px !important;
   padding: 8px 16px;
   border: 1px solid var(--mist-white-800);
-  border-radius: 0 !important;
+  border-radius: 2px !important;
   background: var(--mist-white-950);
   color: var(--white);
   font-family: var(--sans) !important;
@@ -8182,7 +8184,7 @@
   min-height: 40px !important;
   padding: 8px 16px;
   border: 1px solid var(--mist-white-950);
-  border-radius: 1px !important;
+  border-radius: 2px !important;
   background: var(--mist-white-950);
   color: var(--white);
   font-family: var(--sans) !important;
@@ -8291,7 +8293,7 @@
 .landing-page .site-header .nav-actions .button {
   min-height: 40px !important;
   padding: 8px 16px !important;
-  border-radius: 1px !important;
+  border-radius: 2px !important;
   font-family: var(--sans) !important;
   font-size: 15px !important;
   font-weight: 500 !important;
@@ -12913,7 +12915,7 @@ html[data-theme="dark"] .landing-page #main #final-cta .converging-helix-pair {
   min-height: 40px;
   padding: 8px 16px;
   border: 1px solid var(--mist-white-950);
-  border-radius: 1px;
+  border-radius: 2px;
   background: var(--mist-white-950);
   color: var(--white);
   font-family: var(--sans);
@@ -14767,7 +14769,7 @@ html[data-theme="dark"] #integration .catenoid-field-workbench::before {
   padding: 4px 16px;
   gap: 8px;
   border: 1px solid transparent;
-  border-radius: 4px !important;
+  border-radius: 2px !important;
   background: transparent;
   color: var(--demo-text-muted);
   font: 500 13px/20px var(--sans);
@@ -14839,7 +14841,7 @@ html[data-theme="dark"] #playground .document-map-switcher button[aria-pressed="
     padding: 4px 6px;
     gap: 6px;
     border: 1px solid transparent;
-    border-radius: 4px;
+    border-radius: 2px;
     font-size: 12px;
     line-height: 16px;
     text-align: center;
@@ -15993,7 +15995,7 @@ html[data-theme="dark"] #pricing .pricing-result-value {
 
 .landing-page .hero-copy .button {
   --button-height: 44px;
-  --button-radius: 1px;
+  --button-radius: 2px;
   --button-padding-inline: 16px;
 }
 

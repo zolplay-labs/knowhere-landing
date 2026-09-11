@@ -27,19 +27,19 @@ html[data-theme-transition="active"]::view-transition-new(root) {
 .kh-site-header .kh-header-links a {
   border: 1px solid transparent;
   display: flex; align-items: center; height: 36px; padding-inline: 12px;
-  border-radius: 10px; font-size: 14px; font-weight: 400; line-height: 21.7px;
+  border-radius: 2px; font-size: 14px; font-weight: 400; line-height: 21.7px;
 }
 .kh-site-header .kh-header-links a:hover, .kh-site-header .kh-header-icon:hover { background: var(--chrome-surface); }
 .kh-site-header .kh-header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
 .kh-site-header .kh-desktop-utility { display: flex; }
 .kh-site-header .kh-header-icon {
   display: grid; place-items: center; width: 36px; height: 36px;
-  flex-shrink: 0; padding: 0; border: 0; border-radius: 10px;
+  flex-shrink: 0; padding: 0; border: 0; border-radius: 2px;
   background: transparent; color: var(--chrome-ink);
 }
 .kh-site-header .kh-header-icon svg { width: 20px; height: 20px; }
 .kh-site-header .kh-header-language > .kh-header-icon svg { width: 18px; height: 18px; }
-.kh-site-header .kh-theme-toggle { width: 44px; height: 44px; border-radius: 10px; }
+.kh-site-header .kh-theme-toggle { width: 44px; height: 44px; border-radius: 2px; }
 .kh-site-header .kh-theme-icon {
   grid-area: 1 / 1;
   width: 20px;
@@ -60,7 +60,7 @@ html[data-theme="dark"] .kh-site-header .kh-theme-icon-sun { display: block; }
 }
 .kh-site-header .kh-header-language-options[hidden], .kh-site-header .kh-header-mobile-menu[hidden] { display: none; }
 .kh-site-header .kh-header-language-options button {
-  width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 4px;
+  width: 100%; min-height: 44px; padding: 8px 10px; border: 0; border-radius: 2px;
   background: transparent; text-align: left; color: var(--chrome-ink); font-size: 14px; line-height: 20px;
 }
 .kh-site-header .kh-header-language-options button[aria-checked="true"] { background: rgba(0, 0, 0, 0.06); font-weight: 500; }
@@ -77,7 +77,7 @@ html[data-theme="dark"] .kh-site-header .kh-theme-icon-sun { display: block; }
   .kh-site-header { --header-height: 72px; border-color: var(--chrome-line); }
   .kh-site-header .kh-header-wordmark img { width: 120px; }
   .kh-site-header .kh-header-links { display: none; }
-  .kh-site-header .kh-header-icon { width: 44px; height: 44px; border-radius: 10px; }
+  .kh-site-header .kh-header-icon { width: 44px; height: 44px; border-radius: 2px; }
   .kh-site-header .kh-header-api { margin-left: 12px; }
   .kh-site-header .kh-header-menu-toggle {
     width: 44px; height: 44px; display: grid; place-items: center;
@@ -267,7 +267,7 @@ html[data-theme="dark"] :is(.kh-site-header, .kh-site-footer) {
 .kh-site-header a { color: inherit; }
 .kh-site-header button { cursor: pointer; font-family: inherit; }
 .kh-site-header .kh-shell { width: min(1280px, calc(100% - 160px)); padding-inline: 0; margin-inline: auto; }
-.kh-site-header .kh-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid; border-radius: 1px; padding: 8px 16px; font-size: 13px; line-height: 20px; }
+.kh-site-header .kh-button { display: inline-flex; align-items: center; justify-content: center; border: 1px solid; border-radius: 2px; padding: 8px 16px; font-size: 13px; line-height: 20px; }
 .kh-site-header .kh-header-api, .kh-site-header .kh-header-mobile-utilities .kh-button {
   background: var(--chrome-ink); border-color: var(--chrome-ink); color: var(--chrome-paper);
   font-family: "Geist Mono", monospace; font-weight: 500;

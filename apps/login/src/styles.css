@@ -176,7 +176,7 @@ a:hover {
 .language-button {
   background: transparent;
   border: 0;
-  border-radius: 10px;
+  border-radius: 2px;
   display: grid;
   place-items: center;
   width: 36px;
@@ -220,7 +220,7 @@ a:hover {
   display: flex;
   align-items: center;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 2px;
   background: transparent;
   color: inherit;
   font-size: var(--type-meta-size);
@@ -363,7 +363,7 @@ label {
   .language-button {
     width: 44px;
     height: 44px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
   .language-button:hover {
     background: var(--mist-white-300);

@@ -18,12 +18,15 @@ function initializeHeroCanvas(root, cleanups) {
 
     const hero = root.querySelector('#top');
     const canvas = root.querySelector('#hero-b-pixel-field');
+    const scanCanvas = root.querySelector('.hero-scan-overlay');
+    const scanContext = scanCanvas?.getContext('2d');
+    const productHeading = root.querySelector('#playground .section-heading');
     const copy = hero?.querySelector('.hero-copy');
     const visual = hero?.querySelector('.hero-visual');
     const tooltip = root.querySelector('#hero-b-pixel-tooltip');
     const header = root.querySelector('.kh-site-header');
     const ctx = canvas?.getContext('2d');
-    if (!hero || !canvas || !copy || !visual || !tooltip || !ctx) return;
+    if (!hero || !canvas || !copy || !visual || !tooltip || !ctx || !scanContext) return;
     canvas.dataset.heroCanvasOwned = 'true';
     const controller = new AbortController();
     const { signal } = controller;
@@ -244,6 +247,8 @@ function initializeHeroCanvas(root, cleanups) {
 
     let width = 0;
     let height = 0;
+    let scanWidth = 0;
+    let scanHeight = 0;
     let dpr = 1;
     let cell = SETTINGS.cellSize;
     let cols = 0;
@@ -286,6 +291,13 @@ function initializeHeroCanvas(root, cleanups) {
       const nextWidth = Math.max(1, Math.round(rect.width));
       const nextHeight = Math.max(1, Math.round(rect.height));
       const nextDpr = Math.min(devicePixelRatio || 1, 2);
+      if (scanWidth !== innerWidth || scanHeight !== innerHeight || dpr !== nextDpr) {
+        scanWidth = innerWidth;
+        scanHeight = innerHeight;
+        scanCanvas.width = Math.round(scanWidth * nextDpr);
+        scanCanvas.height = Math.round(scanHeight * nextDpr);
+        scanContext.setTransform(nextDpr, 0, 0, nextDpr, 0, 0);
+      }
       if (width === nextWidth && height === nextHeight && dpr === nextDpr) return;
 
       width = nextWidth;
@@ -939,7 +951,7 @@ function initializeHeroCanvas(root, cleanups) {
     const SCAN_TRAIL_ALPHA = .56;
     const SCAN_GRID_UNIT = 6;
 
-    const scanRevealTargets = [header, ...copy.children, visual].filter(Boolean);
+    const scanRevealTargets = [header, ...copy.children, visual, productHeading].filter(Boolean);
     let headerRevealForced = window.scrollY > 24 || hero.getBoundingClientRect().bottom <= 0;
 
     function revealHeaderImmediately() {
@@ -959,7 +971,7 @@ function initializeHeroCanvas(root, cleanups) {
       return {
         scan,
         progress,
-        headY: SCAN_TRANSIT + (height - SCAN_TRANSIT) * progress
+        headY: SCAN_TRANSIT + (scanHeight - SCAN_TRANSIT) * progress
       };
     }
 
@@ -979,7 +991,7 @@ function initializeHeroCanvas(root, cleanups) {
         });
         return;
       }
-      const lineY = canvas.getBoundingClientRect().top + headY;
+      const lineY = headY;
       const states = activeRevealTargets.map(element => {
         const rect = element.getBoundingClientRect();
         const progress = Math.max(0, Math.min(1, (lineY - rect.top) / Math.max(1, rect.height)));
@@ -995,11 +1007,13 @@ function initializeHeroCanvas(root, cleanups) {
       if (reducedMotion) return;
       const { scan, headY } = scanState();
       if (scan <= 0 || scan >= 1) return;
+      const ctx = scanContext;
+      ctx.clearRect(0, 0, scanWidth, scanHeight);
       const fadeOut = scan < .9 ? 1 : Math.max(0, 1 - (scan - .9) / .1);
       const headRow = Math.round(headY / SCAN_GRID_UNIT);
       if (headRow < 1) return;
       const firstRow = Math.max(0, headRow - SCAN_TRAIL_ROWS);
-      const trailCols = Math.ceil(width / SCAN_GRID_UNIT) + 1;
+      const trailCols = Math.ceil(scanWidth / SCAN_GRID_UNIT) + 1;
 
       ctx.lineWidth = 1;
       ctx.strokeStyle = STAGE_COLORS[0];
@@ -1607,7 +1621,8 @@ function initializeHeroCanvas(root, cleanups) {
       if (visible) startAnimation();
       else {
         revealHeaderImmediately();
-        hero.classList.add('is-scan-complete');
+        intro = 1;
+        syncScanReveal();
         stopAnimation();
         tooltip.classList.remove('is-visible');
       }
