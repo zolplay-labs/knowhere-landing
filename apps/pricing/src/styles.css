@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@import "./components/header.css";
-@import "./components/footer.css";
 
 @font-face {
   font-family: "Frex Sans GB VF";

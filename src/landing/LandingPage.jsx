@@ -6,11 +6,8 @@ import { initializeLandingCanvases } from './landing-canvas'
 import { initializeLandingInteractions } from './landing-interactions'
 import { ProductStage } from './document-map'
 import ShinyText from './ShinyText'
-import { FlickeringGrid } from '@/registry/magicui/flickering-grid'
-import { AnimatedThemeToggler } from '@/registry/magicui/animated-theme-toggler'
-
-const pricingUrl = 'https://knowhere-pricing.knowhere-landing.workers.dev/'
-const blogUrl = 'https://knowhere-blog.knowhere-landing.workers.dev/#featured-title'
+import { SiteHeader } from '../../shared/site-chrome/SiteHeader'
+import { SiteFooter } from '../../shared/site-chrome/SiteFooter'
 
 function SectionShinyText({ text }) {
   return (
@@ -25,20 +22,6 @@ function SectionShinyText({ text }) {
       yoyo={false}
       pauseOnHover={false}
     />
-  )
-}
-
-function GlobalIcon() {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM9.71002 19.6674C8.74743 17.6259 8.15732 15.3742 8.02731 13H4.06189C4.458 16.1765 6.71639 18.7747 9.71002 19.6674ZM10.0307 13C10.1811 15.4388 10.8778 17.7297 12 19.752C13.1222 17.7297 13.8189 15.4388 13.9693 13H10.0307ZM19.9381 13H15.9727C15.8427 15.3742 15.2526 17.6259 14.29 19.6674C17.2836 18.7747 19.542 16.1765 19.9381 13ZM4.06189 11H8.02731C8.15732 8.62577 8.74743 6.37407 9.71002 4.33256C6.71639 5.22533 4.458 7.8235 4.06189 11ZM10.0307 11H13.9693C13.8189 8.56122 13.1222 6.27025 12 4.24799C10.8778 6.27025 10.1811 8.56122 10.0307 11ZM14.29 4.33256C15.2526 6.37407 15.8427 8.62577 15.9727 11H19.9381C19.542 7.8235 17.2836 5.22533 14.29 4.33256Z" />
-    </svg>
-  )
-}
-
-function GitHubIcon() {
-  return (
-    <img src="/assets/github-invertocat-black-clearspace.svg" width="22" height="22" alt="" aria-hidden="true" />
   )
 }
 
@@ -280,55 +263,11 @@ export function LandingPage() {
     return () => scanFrame?.removeEventListener('load', syncTheme)
   }, [theme])
 
-  const toggleTheme = () => {
-    setTheme((currentTheme) => {
-      const nextTheme = currentTheme === 'dark' ? 'light' : 'dark'
-      localStorage.setItem('knowhere-color-theme', nextTheme)
-      return nextTheme
-    })
-  }
-
   return (
 <div className="landing-page" ref={rootRef}>
   <div className="layout-grid-overlay" aria-hidden="true" />
   <a className="skip-link" href="#main">Skip to content</a>
-  <header className="site-header" data-header>
-    <nav className="nav shell" aria-label="Main navigation">
-      <a className="wordmark" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-back-to-top.svg" width={132} height={52} alt="" /></a>
-      <div className="desktop-nav">
-        <a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href={blogUrl} target="_blank" rel="noopener noreferrer">Blog</a>
-      </div>
-      <div className="nav-actions">
-        <a className="github-link desktop-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
-        <div className="language-menu" data-language-menu>
-          <button className="language-toggle header-language" type="button" data-language-menu-toggle aria-haspopup="menu" aria-expanded="false" aria-controls="language-options" aria-label="Choose language" title="Choose language"><GlobalIcon /></button>
-          <div className="language-dropdown" id="language-options" data-language-dropdown role="menu" aria-label="Language" hidden>
-            <button type="button" role="menuitemradio" aria-checked="true" tabIndex={-1} data-language-option="en">English</button>
-            <button type="button" role="menuitemradio" aria-checked="false" tabIndex={-1} data-language-option="zh">中文</button>
-          </div>
-        </div>
-        <AnimatedThemeToggler className="theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
-          <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
-          <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
-        </AnimatedThemeToggler>
-        <a className="button button-small" href="https://knowhere-login.knowhere-landing.workers.dev">Get API Key</a>
-        <button className="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu"><span className="sr-only">Open menu</span><span className="menu-toggle-icon" aria-hidden="true"><i /><i /></span></button>
-      </div>
-    </nav>
-    <div className="mobile-menu" id="mobile-menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
-      <nav aria-label="Mobile navigation">
-        <a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/">Docs</a><a href={blogUrl}>Blog</a>
-      </nav>
-      <div className="mobile-menu-utilities">
-        <a className="github-link mobile-github" href="https://knowhereto.ai/github" aria-label="GitHub" title="GitHub"><GitHubIcon /></a>
-        <AnimatedThemeToggler className="theme-toggle mobile-theme-toggle" type="button" data-theme-toggle onClick={toggleTheme} aria-pressed={theme === 'dark'} aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'} title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}>
-          <svg className="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.5" /><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42" /></svg>
-          <svg className="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.1A8.5 8.5 0 0 1 8.9 4a8.5 8.5 0 1 0 11.1 11.1Z" /></svg>
-        </AnimatedThemeToggler>
-        <a className="button mobile-menu-cta" href="https://knowhere-login.knowhere-landing.workers.dev">Get API Key</a>
-      </div>
-    </div>
-  </header>
+  <SiteHeader onThemeChange={setTheme} />
   <main id="main" tabIndex={-1}>
     <section className="hero shell hero-b-layout" id="top" aria-labelledby="hero-title">
       <canvas id="hero-b-pixel-field" aria-hidden="true" />
@@ -589,27 +528,7 @@ export function LandingPage() {
       </div>
     </section>
   </main>
-  <footer className="footer">
-    <FlickeringGrid
-      className="footer-flickering-grid"
-      squareSize={4}
-      gridGap={6}
-      color={theme === 'dark' ? 'var(--md-sys-color-on-surface-variant)' : 'var(--mist-white-700)'}
-      maxOpacity={theme === 'dark' ? 0.16 : 0.05}
-      flickerChance={0.1}
-      aria-hidden="true"
-    />
-    <div className="footer-inner">
-      <div className="footer-navigation">
-        <a className="footer-brand" href="#top" aria-label="Knowhere, back to top"><img src="/assets/knowhere-footer-mark.svg" width={37} height={42} alt="" /></a>
-        <div className="footer-navigation-content">
-          <nav className="footer-links" aria-label="Footer links"><a href="#comparison">Comparison</a><a href={pricingUrl}>Pricing</a><a href="https://docs.knowhereto.ai/" target="_blank" rel="noopener noreferrer">Docs</a><a href={blogUrl} target="_blank" rel="noopener noreferrer">Blog</a></nav>
-          <p className="footer-copyright" id="prototype-notice" tabIndex={-1}>© 2026 Knowhere API. All rights reserved.</p>
-        </div>
-      </div>
-      <span className="footer-wordmark" aria-hidden="true" />
-    </div>
-  </footer>
+  <SiteFooter />
   <div className="toast" role="status" aria-live="polite" hidden><p data-toast-message /><button type="button" aria-label="Close notification">×</button></div>
 </div>
 

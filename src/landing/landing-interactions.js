@@ -480,18 +480,6 @@ if (!(root instanceof Element)) return () => {};
       });
     });
   }
-  const languageMenu = $('[data-language-menu]');
-  const languageMenuToggle = $('[data-language-menu-toggle]', languageMenu);
-  const languageDropdown = $('[data-language-dropdown]', languageMenu);
-  const languageOptions = $$('[data-language-option]', languageMenu);
-  function setLanguageMenuOpen(open, focusSelected = false) {
-    languageDropdown.hidden = !open;
-    languageMenu.classList.toggle('is-open', open);
-    languageMenuToggle.setAttribute('aria-expanded', String(open));
-    if (open && focusSelected) {
-      (languageOptions.find(option => option.getAttribute('aria-checked') === 'true') || languageOptions[0])?.focus();
-    }
-  }
   const scanFrame = $('.section-scan-frame iframe');
   function syncScanFrameLanguage() {
     try {
@@ -506,119 +494,28 @@ if (!(root instanceof Element)) return () => {};
     activeLanguage = language;
     document.documentElement.lang = isChinese ? 'zh-CN' : 'en';
     document.body.dataset.language = language;
-    window.dispatchEvent(new CustomEvent('knowhere-language-change', { detail: { language } }));
+
     document.title = isChinese ? 'KNOWHERE — 面向智能体的文档上下文' : 'KNOWHERE — Document context for agents';
     const description = document.querySelector('meta[name="description"]');
     if (description) description.content = isChinese
       ? 'Knowhere 将复杂文档转化为供智能体使用的结构化、可导航、可追溯上下文。'
       : 'Knowhere turns complex documents into structured, navigable, and source-linked context for agents.';
-    languageOptions.forEach(option => {
-      const selected = option.dataset.languageOption === language;
-      option.setAttribute('aria-checked', String(selected));
-      option.classList.toggle('is-active', selected);
-    });
+
     translatePage();
     syncScanFrameLanguage();
     if (storyReady) renderStoryCanvas();
     if (headingEmphasisReady) refreshHeadingEmphasis();
     if (pricingReady) syncPricingCalculator();
   }
-  languageMenuToggle.addEventListener('click', () => {
-    const open = languageDropdown.hidden;
-    setLanguageMenuOpen(open, open);
-  });
-  languageOptions.forEach((option, index) => {
-    option.addEventListener('click', () => {
-      if (option.dataset.languageOption !== activeLanguage) setLanguage(option.dataset.languageOption);
-      setLanguageMenuOpen(false);
-      languageMenuToggle.focus();
-    });
-    option.addEventListener('keydown', event => {
-      let next;
-      if (event.key === 'ArrowDown') next = (index + 1) % languageOptions.length;
-      if (event.key === 'ArrowUp') next = (index - 1 + languageOptions.length) % languageOptions.length;
-      if (event.key === 'Home') next = 0;
-      if (event.key === 'End') next = languageOptions.length - 1;
-      if (next !== undefined) {
-        event.preventDefault();
-        languageOptions[next].focus();
-      }
-    });
-  });
-  languageMenuToggle.addEventListener('keydown', event => {
-    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
-    event.preventDefault();
-    setLanguageMenuOpen(true);
-    languageOptions[event.key === 'ArrowDown' ? 0 : languageOptions.length - 1]?.focus();
-  });
-  document.addEventListener('pointerdown', event => {
-    if (!languageDropdown.hidden && !languageMenu.contains(event.target)) setLanguageMenuOpen(false);
-  });
-  setLanguage('en');
+  addEventListener('knowhere-language-change', event => setLanguage(event.detail.language));
+  setLanguage(localStorage.getItem('knowhere-language') === 'zh' ? 'zh' : 'en');
 
   $('.skip-link').addEventListener('click', () => {
     setTimeout(() => $('#main').focus({ preventScroll: true }), 0);
   });
-
-  const header = $('[data-header]');
-  function syncHeaderState() {
-    const y = scrollY;
-    header.classList.toggle('scrolled', y > 24);
-    header.classList.remove('over-dark');
-    header.classList.remove('is-hidden');
-  }
-  addEventListener('scroll', syncHeaderState, { passive: true });
-  syncHeaderState();
-
-  const menuButton = $('.menu-toggle');
-  const menu = $('#mobile-menu');
-  const menuButtonLabel = $('.sr-only', menuButton);
-  let menuReturnFocus;
-  let menuCloseTimer;
-  function openMenu() {
-    clearTimeout(menuCloseTimer);
-    setLanguageMenuOpen(false);
-    menuReturnFocus = document.activeElement;
-    menu.hidden = false;
-    header.classList.add('menu-open');
-    menuButton.setAttribute('aria-expanded', 'true');
-    menuButton.setAttribute('aria-label', 'Close menu');
-    menuButtonLabel.textContent = 'Close menu';
-    document.body.style.overflow = 'hidden';
-    requestAnimationFrame(() => menu.classList.add('is-open'));
-    $('a', menu)?.focus();
-  }
-  function closeMenu() {
-    menu.classList.remove('is-open');
-    header.classList.remove('menu-open');
-    menuButton.setAttribute('aria-expanded', 'false');
-    menuButton.setAttribute('aria-label', 'Open menu');
-    menuButtonLabel.textContent = 'Open menu';
-    document.body.style.overflow = '';
-    (menuReturnFocus || menuButton).focus();
-    menuCloseTimer = setTimeout(() => { menu.hidden = true; }, 520);
-  }
-  menuButton.addEventListener('click', () => {
-    if (menu.hidden) openMenu();
-    else closeMenu();
-  });
-  $$('a', menu).forEach(link => link.addEventListener('click', () => { if (!link.classList.contains('prototype-link')) closeMenu(); }));
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') {
-      if (!languageDropdown.hidden) {
-        setLanguageMenuOpen(false);
-        languageMenuToggle.focus();
-      } else if (!menu.hidden) closeMenu();
-      else if (!toast.hidden) toast.hidden = true;
-    }
-    if (event.key === 'Tab' && !menu.hidden) {
-      const focusables = [menuButton, ...$$('button,a', menu)];
-      const first = focusables[0], last = focusables[focusables.length - 1];
-      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-    }
+    if (event.key === 'Escape' && !toast.hidden) toast.hidden = true;
   });
-
   function setupTabs(tablist, onChange) {
     const tabs = $$('[role="tab"]', tablist);
     tabs.forEach((tab, index) => {
@@ -728,9 +625,9 @@ if (!(root instanceof Element)) return () => {};
     if ((event.key === 'Enter' || event.key === ' ') && activeSampleKey === null) { event.preventDefault(); moveSample(sampleButtons[0]); }
   });
   renderSample('research');
-  languageOptions.forEach(button => button.addEventListener('click', () => {
+  addEventListener('knowhere-language-change', () => {
     if (activeSampleKey) renderSample(activeSampleKey);
-  }));
+  });
   $$('[data-hero-source]').forEach(button => button.addEventListener('click', () => {
     $$('[data-hero-source]').forEach(item => item.classList.toggle('is-active', item === button));
     $('[data-hero-coordinate]').textContent = `${localizeText('Page 12')} · ${activeLanguage === 'zh' ? '区域' : 'Region'} ${button.dataset.heroSource}`;
@@ -1488,7 +1385,7 @@ syncPricingCalculator();
     const copy = hero?.querySelector('.hero-copy');
     const visual = hero?.querySelector('.hero-visual');
     const tooltip = document.getElementById('hero-b-pixel-tooltip');
-    const header = document.querySelector('.site-header');
+    const header = document.querySelector('.kh-site-header');
     const ctx = canvas?.getContext('2d');
     if (!hero || !canvas || !copy || !visual || !tooltip || !ctx) return;
     if (canvas.dataset.heroCanvasOwned === 'true') return;

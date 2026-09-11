@@ -120,7 +120,7 @@ const chinese: Record<string, string> = {
 export function observePricingLanguage(language: string) {
   document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
   const originals = new Map<Text, { source: string; rendered: string }>();
-  const roots = Array.from(document.querySelectorAll("main, footer, .skip-link"));
+  const roots = Array.from(document.querySelectorAll("main, .skip-link"));
   const observer = new MutationObserver(translate);
   function translate() {
     observer.disconnect();

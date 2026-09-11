@@ -21,7 +21,7 @@ function initializeHeroCanvas(root, cleanups) {
     const copy = hero?.querySelector('.hero-copy');
     const visual = hero?.querySelector('.hero-visual');
     const tooltip = root.querySelector('#hero-b-pixel-tooltip');
-    const header = root.querySelector('.site-header');
+    const header = root.querySelector('.kh-site-header');
     const ctx = canvas?.getContext('2d');
     if (!hero || !canvas || !copy || !visual || !tooltip || !ctx) return;
     canvas.dataset.heroCanvasOwned = 'true';

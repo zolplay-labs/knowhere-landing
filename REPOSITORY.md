@@ -34,6 +34,8 @@ Login 和 Pricing 将上面的 `apps/blog` 分别换成 `apps/login`、`apps/pri
 
 根目录的 `npm run build` 仍然只构建 landing。各应用不共享依赖目录或锁文件，也没有把 React 18 与 React 19 合并成一个运行时。
 
+Landing、Blog 和 Pricing 的导航与 Footer 共用 `shared/site-chrome/` 下的组件、样式和品牌素材。所有跨站目标统一维护在 `links.ts`；各应用的 Vite 配置通过 `resolve.dedupe` 使用自身的 React。语言翻译保留在所属应用中，共享导航通过语言事件或回调通知页面。修改共享组件后需要分别构建、检查并部署这三个应用，单独部署 Landing 不会更新另外两个站点。
+
 ## 保留原部署
 
 Landing 继续使用根目录的 `wrangler.jsonc` 和 `dist`。三个子应用继续使用各自 `vite.config.ts` 中的 `cloudflare_module` preset、兼容日期、`nodeCompat` 和 Worker 名称；执行 `pnpm build` 会生成各自的 `.output/server/wrangler.json`。
